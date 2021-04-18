@@ -1,16 +1,16 @@
-import { LOGIN,LOGOUT } from "../types";
+import { LOGIN, LOGOUT } from "../types";
 
 const initialState = {
-    user: {}
+  user: {}
 };
 
 export default function redux(state = initialState, action) {
-    switch (action.type) {
-        case LOGIN:
-            return { ...state, user: action.payload };
-        case LOGOUT:
-            return {};
-        default:
-            return state;
-    }
-};
+  switch (action.type) {
+    case LOGIN:
+      return { ...state, user: action.payload };
+    case LOGOUT:
+      return {};
+    default:
+      return state;
+  }
+}
