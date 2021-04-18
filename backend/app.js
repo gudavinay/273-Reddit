@@ -38,4 +38,25 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+
+const config = require('./config');
+const db = config.mongoURI;
+const mongoose = require('mongoose');
+const UserProfile = require('./mongo/models/user_profile')
+
+mongoose.connect(db, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true
+});
+var connection = mongoose.connection;
+console.log('MongoDB Connected !!');
+
+app.get("/", (req, res) => {
+  const up = new UserProfile({ email: 'test@test.com' });
+  up.save();
+  res.send("Hello World");
+});
+
+
 module.exports = app;
