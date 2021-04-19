@@ -1,25 +1,16 @@
 import React, { Component } from "react";
 import { REDDIT } from "../../services/Constants";
-import redditLogoSVG from "../../assets/redditLogo.svg";
-import redditTextSVG from "../../assets/redditText.svg";
+import { Link } from "react-router-dom";
 
 class LandingPage extends Component {
   render() {
     return (
       <React.Fragment>
+        {REDDIT}
         <div style={{ margin: "auto" }}>
-          <img
-            style={{ height: "50px", width: "50px" }}
-            alt="Reddit Logo"
-            src={redditLogoSVG}
-          />
-          <img
-            style={{ height: "50px", width: "50px" }}
-            alt="Reddit Logo"
-            src={redditTextSVG}
-          />
-          {REDDIT}
-          <button>Login</button>
+          <Link to={"/home"} className="btn btn-primary">
+            Go to post login page ( HOME )
+          </Link>
         </div>
       </React.Fragment>
     );

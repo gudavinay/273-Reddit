@@ -102,3 +102,8 @@ dist
 
 # TernJS port file
 .tern-port
+
+# vscode settings
+.vscode*
+
+backend/package-lock.json

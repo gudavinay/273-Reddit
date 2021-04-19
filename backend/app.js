@@ -1,13 +1,9 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
-var app = express();
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const app = require('./server');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -19,13 +15,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+// app.use(function(req, res, next) {
+//   next(createError(404));
+// });
 
 // error handler
 app.use(function(err, req, res, next) {
@@ -38,25 +31,26 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+// DB connection
+require('./dbConnection')
 
-const config = require('./config');
-const db = config.mongoURI;
-const mongoose = require('mongoose');
-const UserProfile = require('./mongo/models/user_profile')
+// Mongo Router
+const mongoRouter = require('./routes/mongo/router')
+app.use('/mongoRouter', mongoRouter)
 
-mongoose.connect(db, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true
-});
-var connection = mongoose.connection;
-console.log('MongoDB Connected !!');
-
+const UserProfile = require('./models/mongo/user_profile')
 app.get("/", (req, res) => {
   const up = new UserProfile({ email: 'test@test.com' });
   up.save();
   res.send("Hello World");
 });
 
+// SQL router
+const sqlRouter = require('./routes/sql/router')
+const sqldb = require('./models/sql')
+app.use('/sqlRouter', sqlRouter)
+sqldb.sequelize.sync().then(() => {
+    console.log('sequelize is running');
+})
 
 module.exports = app;
