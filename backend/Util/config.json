@@ -1,0 +1,18 @@
+{
+    "development": {
+      "username": "admin",
+      "password": "redditpass",
+      "database": "Reddit",
+      "host": "redditdb.cyazxyujehyt.us-west-2.rds.amazonaws.com",
+      "dialect": "mysql"
+    },
+    
+    "production": {
+      "username": "admin",
+      "password": "redditpass",
+      "database": "Reddit",
+      "host": "redditdb.cyazxyujehyt.us-west-2.rds.amazonaws.com",
+      "dialect": "mysql"
+    }
+  }
+  
