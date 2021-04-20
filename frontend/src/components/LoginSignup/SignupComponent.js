@@ -12,6 +12,8 @@ import {
 import { isEmail } from "validator";
 import { connect } from "react-redux";
 import { signupRedux } from "../../reduxOps/reduxActions/signupRedux";
+import redditLogoSVG from "../../assets/redditLogo.svg";
+import redditTextSVG from "../../assets/redditText.svg";
 
 class Signup extends Component {
   constructor(props) {
@@ -102,7 +104,16 @@ class Signup extends Component {
           <div className="flex-container">
             <div className="row">
               <div className="col col-sm-6">
-                <img src="./assets/splitwiselogo-01.png" alt="..."></img>
+                <img
+                  style={{ height: "30px", width: "30px" }}
+                  alt="Reddit Logo"
+                  src={redditLogoSVG}
+                />
+                <img
+                  style={{ height: "30px", width: "30px" }}
+                  alt="Reddit Logo"
+                  src={redditTextSVG}
+                />
               </div>
               <div className="col col-sm-6">
                 <div
@@ -164,7 +175,7 @@ class Signup extends Component {
                       <Button
                         type="submit"
                         onClick={this.submitForm}
-                        color="btn btn-Normal"
+                        color="btn btn-primary"
                       >
                         Sign me up!
                       </Button>

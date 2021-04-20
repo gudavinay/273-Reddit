@@ -12,6 +12,8 @@ import {
 } from "reactstrap";
 import { connect } from "react-redux";
 import { loginRedux } from "../../reduxOps/reduxActions/loginRedux";
+import redditLogoSVG from "../../assets/redditLogo.svg";
+import redditTextSVG from "../../assets/redditText.svg";
 
 class Login extends Component {
   constructor(props) {
@@ -57,7 +59,7 @@ class Login extends Component {
     };
     const formerror = this.validateForm();
     if (Object.keys(formerror).length == 0) {
-      this.props.userLogin(data);
+      this.props.loginRedux(data);
       //set the with credentials to true
     } else {
       this.setState({ formerror });
@@ -102,7 +104,16 @@ class Login extends Component {
         <div className="flex-container">
           <div className="row">
             <div className="col col-sm-6">
-              <img src="./assets/splitwiselogo-01.png" alt="..."></img>
+              <img
+                style={{ height: "30px", width: "30px" }}
+                alt="Reddit Logo"
+                src={redditLogoSVG}
+              />
+              <img
+                style={{ height: "30px", width: "30px" }}
+                alt="Reddit Logo"
+                src={redditTextSVG}
+              />
             </div>
             <div className="col col-sm-6">
               <div

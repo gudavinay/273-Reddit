@@ -10,6 +10,8 @@ import MyCommunities from "./Home/MyCommunities/MyCommunities";
 import MyCommunitiesModeration from "./Home/MyCommunities/MyCommunitiesModeration";
 import UserProfile from "./Home/UserProfile/UserProfile";
 import Messages from "./Home/Messages/Messages";
+import Login from "./LoginSignup/LoginComponent";
+import Signup from "./LoginSignup/SignupComponent";
 class Main extends Component {
   render() {
     return (
