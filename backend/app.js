@@ -74,7 +74,7 @@ app.use(function (err, req, res, next) {
 const mongoRouter = require("./routes/mongo/router");
 app.use("/mongoRouter", mongoRouter);
 
-const UserProfile = require("./models/mongo/user_profile");
+const UserProfile = require("./models/mongo/UserProfile");
 app.get("/", (req, res) => {
   const up = new UserProfile({ email: "test@test.com" });
   up.save();

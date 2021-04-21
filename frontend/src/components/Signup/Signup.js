@@ -12,8 +12,6 @@ import {
 import { isEmail } from "validator";
 import { connect } from "react-redux";
 import { signupRedux } from "../../reduxOps/reduxActions/signupRedux";
-import redditLogoSVG from "../../assets/redditLogo.svg";
-import redditTextSVG from "../../assets/redditText.svg";
 
 class Signup extends Component {
   constructor(props) {
@@ -99,90 +97,83 @@ class Signup extends Component {
     } else redirectVar = <Redirect to="/signUp" />;
     return (
       <>
-        <div className="container-fluid form-cont">
+        <div className="container-fluid">
           {redirectVar}
-          <div className="flex-container">
-            <div className="row">
-              <div className="col col-sm-6">
-                <img
-                  style={{ height: "30px", width: "30px" }}
-                  alt="Reddit Logo"
-                  src={redditLogoSVG}
-                />
-                <img
-                  style={{ height: "30px", width: "30px" }}
-                  alt="Reddit Logo"
-                  src={redditTextSVG}
-                />
+          <div className="row">
+            <div className="col col-sm-1">
+              <img
+                className="reddit-login"
+                alt="Reddit Background"
+                src="https://www.redditstatic.com/accountmanager/bbb584033aa89e39bad69436c504c9bd.png"
+              />
+            </div>
+            <div className="col col-sm-4 login-form">
+              <div
+                id="errorLogin"
+                hidden={this.state.loginError.length > 0 ? false : true}
+                className="alert alert-danger"
+                role="alert"
+              >
+                {this.state.loginError}
               </div>
-              <div className="col col-sm-6">
-                <div
-                  id="errorLogin"
-                  hidden={this.state.loginError.length > 0 ? false : true}
-                  className="alert alert-danger"
-                  role="alert"
-                >
-                  {this.state.loginError}
-                </div>
-                <h3>Introduce Yourself</h3>
-                <Form onSubmit={this.handleSubmit} className="form-stacked">
-                  <FormGroup>
-                    <Label for="firstname" style={{ fontSize: "24px" }}>
-                      Hi there!My name is
-                    </Label>
-                    <Input
-                      type="text"
-                      id="name"
-                      name="name"
-                      placeholder="First Name"
-                      invalid={this.state.error.name ? true : false}
-                      onChange={this.handleChange}
-                    ></Input>
-                    <FormFeedback>{this.state.error.name}</FormFeedback>
-                  </FormGroup>
-                  <FormGroup>
-                    <Label htmlFor="email">
-                      Here&apos;s my <strong>email address</strong>
-                    </Label>
-                    <Input
-                      data-testid="email-input-box"
-                      type="email"
-                      id="email"
-                      name="email"
-                      placeholder="Email"
-                      onChange={this.handleChange}
-                      invalid={this.state.error.email ? true : false}
-                    ></Input>
-                    <FormFeedback>{this.state.error.email}</FormFeedback>
-                  </FormGroup>
+              <h3>Introduce Yourself</h3>
+              <Form onSubmit={this.handleSubmit} className="form-stacked">
+                <FormGroup>
+                  <Label for="firstname" style={{ fontSize: "24px" }}>
+                    Hi there!My name is
+                  </Label>
+                  <Input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="First Name"
+                    invalid={this.state.error.name ? true : false}
+                    onChange={this.handleChange}
+                  ></Input>
+                  <FormFeedback>{this.state.error.name}</FormFeedback>
+                </FormGroup>
+                <FormGroup>
+                  <Label htmlFor="email">
+                    Here&apos;s my <strong>email address</strong>
+                  </Label>
+                  <Input
+                    data-testid="email-input-box"
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Email"
+                    onChange={this.handleChange}
+                    invalid={this.state.error.email ? true : false}
+                  ></Input>
+                  <FormFeedback>{this.state.error.email}</FormFeedback>
+                </FormGroup>
 
-                  <FormGroup>
-                    <Label htmlFor="password">
-                      And here&apos;s my <strong>password</strong>
-                    </Label>
-                    <Input
-                      type="password"
-                      id="password"
-                      name="password"
-                      placeholder="Password"
-                      onChange={this.handleChange}
-                      invalid={this.state.error.password ? true : false}
-                    ></Input>
-                    <FormFeedback>{this.state.error.password}</FormFeedback>
-                  </FormGroup>
-                  <FormGroup row>
-                    <Col>
-                      <Button
-                        type="submit"
-                        onClick={this.submitForm}
-                        color="btn btn-primary"
-                      >
-                        Sign me up!
-                      </Button>
-                    </Col>
-                  </FormGroup>
-                </Form>
-              </div>
+                <FormGroup>
+                  <Label htmlFor="password">
+                    And here&apos;s my <strong>password</strong>
+                  </Label>
+                  <Input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Password"
+                    onChange={this.handleChange}
+                    invalid={this.state.error.password ? true : false}
+                  ></Input>
+                  <FormFeedback>{this.state.error.password}</FormFeedback>
+                </FormGroup>
+                <FormGroup row>
+                  <Col>
+                    <Button
+                      type="submit"
+                      onClick={this.submitForm}
+                      color="btn btn-primary"
+                    >
+                      Sign me up!
+                    </Button>
+                  </Col>
+                </FormGroup>
+              </Form>
             </div>
           </div>
         </div>

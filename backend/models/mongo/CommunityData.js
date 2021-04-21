@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 const CommunitySchema = new mongoose.Schema({
   communityIDSQL: {
     type: String,
