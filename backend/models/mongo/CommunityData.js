@@ -1,26 +1,26 @@
 const mongoose = require("mongoose");
 const CommunitySchema = new mongoose.Schema({
-  commu_id_SQL: {
+  communityIDSQL: {
     type: String,
     required: true,
     unique: true
   },
-  listOfUser: [
+  listOfUsers: [
     {
-      user_id: { type: Schema.Types.ObjectId, ref: "user_profile" },
+      userID: { type: Schema.Types.ObjectId, ref: "UserProfile" },
       isAccepted: { type: Boolean, defaultValue: false },
       isModerator: { type: Boolean, defaultValue: false }
     }
   ],
-  ownerID: { type: Schema.Types.ObjectId, ref: "user_profile" },
+  ownerID: { type: Schema.Types.ObjectId, ref: "UserProfile" },
   upvotedBy: [
     {
-      userID: { type: Schema.Types.ObjectId, ref: "user_profile" }
+      userID: { type: Schema.Types.ObjectId, ref: "UserProfile" }
     }
   ],
-  downVotedBy: [
+  downvotedBy: [
     {
-      userID: { type: Schema.Types.ObjectId, ref: "user_profile" }
+      userID: { type: Schema.Types.ObjectId, ref: "UserProfile" }
     }
   ],
   creationDate: { type: Schema.Types.Timestamp },
@@ -31,7 +31,7 @@ const CommunitySchema = new mongoose.Schema({
   ],
   sentInvitesTo: [
     {
-      user_id: { type: Schema.Types.ObjectId, ref: "user_profile" },
+      userID: { type: Schema.Types.ObjectId, ref: "UserProfile" },
       isAccepted: { type: Boolean, defaultValue: false },
       dateTime: { type: Schema.Types.Timestamp }
     }

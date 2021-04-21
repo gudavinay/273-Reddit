@@ -11,3 +11,27 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.login-form{
+  margin-top:200px;
+}
+
+.reddit-login{
+  height: 100vh;
+  width: 100px;
+  margin-left: -10px;
+}
+
+.btn-login{
+    font-family: "Noto Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: unset;
+    line-height: 18px;
+    text-transform: unset;
+    background: rgb(0, 121, 211);
+    border-radius: 999px;
+    color: rgb(255, 255, 255);
+    height: 40px;
+    padding: 0px 16px;
+}
