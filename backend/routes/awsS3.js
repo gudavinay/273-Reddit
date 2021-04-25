@@ -1,3 +1,5 @@
+const express = require("express");
+const router = express.Router();
 const multer = require("multer"); //upload image on server
 const multerS3 = require("multer-s3");
 const AWS = require("aws-sdk");
@@ -34,7 +36,6 @@ var storage = multer.memoryStorage({
   }
 });
 var multipleUpload = multer({ storage: storage }).array("file");
-var upload = multer({ storage: storage }).single("file");
 router.post("/upload", multipleUpload, function (req, res) {
   const file = req.files;
   let s3bucket = new AWS.S3({
@@ -71,6 +72,8 @@ router.post("/upload", multipleUpload, function (req, res) {
     });
   });
 });
+
+module.exports = router;
 
 // app.post("/upload", multipleUpload, (req, res, next) => {
 //   const file = req.files;
