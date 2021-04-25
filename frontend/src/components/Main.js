@@ -8,6 +8,7 @@ import Dashboard from "./Home/Dashboard/Dashboard";
 import CommunityAnalytics from "./Home/MyCommunities/CommunityAnalytics";
 import MyCommunities from "./Home/MyCommunities/MyCommunities";
 import MyCommunitiesModeration from "./Home/MyCommunities/MyCommunitiesModeration";
+import CreateCommunity from "./Home/MyCommunities/CreateCommunity";
 import UserProfile from "./Home/UserProfile/UserProfile";
 import Messages from "./Home/Messages/Messages";
 import Login from "./Login/Login";
@@ -28,6 +29,7 @@ class Main extends Component {
           component={CommunityAnalytics}
         />
         <Route path="/mycommunities" component={MyCommunities} />
+        <Route path="/createCommunity" component={CreateCommunity} />
         <Route
           path="/mycommunitiesmoderation"
           component={MyCommunitiesModeration}

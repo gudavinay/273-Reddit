@@ -45,7 +45,7 @@ class Navigationbar extends Component {
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item>
-                    <Link to="/topcommunities">Top Communities</Link>
+                    <Link to="/mycommunities">My Community</Link>
                   </NavDropdown.Item>
                 </NavDropdown>
               </Col>

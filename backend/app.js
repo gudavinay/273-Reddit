@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const express = require("express");
 const cors = require("cors");
+const s3 = require("./routes/awsS3");
 const app = express();
 const port = 3001;
 const { frontEnd } = require("./Util/config");

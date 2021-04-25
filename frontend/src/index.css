@@ -18,7 +18,7 @@ code {
 
 .reddit-login{
   height: 100vh;
-  width: 100px;
+  width: 120px;
   margin-left: -10px;
 }
 
@@ -34,4 +34,14 @@ code {
     color: rgb(255, 255, 255);
     height: 40px;
     padding: 0px 16px;
+}
+
+.information{
+  color: gray;
+    font-size: 12px;
+}
+
+.community-label{
+  font-weight: bold;
+  font-size:15px;
 }
