@@ -1,8 +1,11 @@
 var express = require("express");
+const app = require('../../app')
 const router = express.Router();
-/* GET users listing. */
-router.get("/", function (req, res, next) {
-  res.send("respond with a resource");
-});
+const UserProfile = require('../../models/mongo/UserProfile')
 
+
+app.get("/createUser", function (req, res, next) {
+  let userProfile = new UserProfile({userIDSQL:"1111"});
+  userProfile.save();
+});
 module.exports = router;
