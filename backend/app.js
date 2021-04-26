@@ -1,4 +1,3 @@
-const createError = require("http-errors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
@@ -6,14 +5,13 @@ const express = require("express");
 const cors = require("cors");
 const s3 = require("./routes/awsS3");
 const app = express();
-const port = 3001;
 const { frontEnd } = require("./Util/config");
 // DB connection
 require("./dbConnection");
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
+app.set("view engine", "ejs");
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -69,33 +67,6 @@ app.use(function (err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render("error");
-});
-
-// Mongo Router
-const mongoRouter = require("./routes/mongo/router");
-app.use("/mongoRouter", mongoRouter);
-
-const UserProfile = require("./models/mongo/UserProfile");
-app.get("/", (req, res) => {
-  const up = new UserProfile({ email: "test@test.com" });
-  up.save();
-  res.send("Hello World");
-});
-
-const userRouter = require("./routes/sql/user");
-const Community = require("./routes/sql/community");
-app.use("/userRouter", userRouter);
-app.use("/community", Community);
-// SQL router
-const sqlRouter = require("./routes/sql/router");
-const sqldb = require("./models/sql");
-app.use("/sqlRouter", sqlRouter);
-sqldb.sequelize.sync().then(() => {
-  console.log("sequelize is running");
-});
-
-app.listen(port, () => {
-  console.log("App is listening to 3001");
 });
 
 module.exports = app;
