@@ -23,9 +23,11 @@ router.post("/login", async (req, res) => {
           function (err, matchPassword) {
             if (err) return error;
             if (matchPassword) {
-              user.password = "";
-              req.session.user = user;
-              return res.status(200).send(JSON.stringify(user));
+              const userLogin = {
+                userID: user.user_id,
+                token: createToken(user)
+              };
+              return res.status(200).send(JSON.stringify(userLogin));
             } else {
               return res.status(401).send("UnAuthorized!");
             }
@@ -48,9 +50,12 @@ router.post("/signup", async (req, res) => {
       password: req.body.password,
       name: req.body.name
     });
-    user.token = createToken(user);
+    const userLogin = {
+      userID: user.user_id,
+      token: createToken(user)
+    };
     console.log(user);
-    return res.status(200).send(user);
+    return res.status(200).send(userLogin);
   } catch (error) {
     console.log(error);
   }

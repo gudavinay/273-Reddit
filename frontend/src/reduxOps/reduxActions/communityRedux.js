@@ -1,9 +1,12 @@
 import Axios from "axios";
 import backendServer from "../../webConfig";
 import { GETTOPIC, ERROR } from "../types";
-export const signupRedux = data => async dispatch => {
+export const getTopicFromDB = () => async dispatch => {
+  const storageToken = JSON.parse(localStorage.getItem("userData"));
+  console.log(storageToken.token);
+  Axios.defaults.headers.common["authorization"] = storageToken.token;
   console.log(`${backendServer}/userRouter/signup`);
-  await Axios.GET(`${backendServer}/community/signup`, data)
+  await Axios.GET(`${backendServer}/community/getTopic`)
     .then(response => {
       dispatch({
         type: GETTOPIC,

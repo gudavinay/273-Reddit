@@ -10,6 +10,10 @@ import {
 import Navigationbar from "../../LandingPage/Navigationbar";
 import axios from "axios";
 import config from "../../config";
+import { Dropdown } from "react-bootstrap";
+import backendServer from "../../../webConfig";
+// import { getTopicFromDB } from "../../../reduxOps/reduxActions/communityRedux";
+// import { connect } from "react-redux";
 
 class CreateCommunity extends Component {
   constructor(props) {
@@ -17,7 +21,8 @@ class CreateCommunity extends Component {
     this.state = {
       error: {},
       communityInfo: {},
-      communityImages: []
+      communityImages: [],
+      listOfTopics: []
     };
   }
 
@@ -37,9 +42,64 @@ class CreateCommunity extends Component {
       .catch(error => console.log("error " + error));
   };
 
-  getTopicFromDB() {}
+  componentDidMount() {
+    this.getTopicFromDB();
+  }
+
+  async getTopicFromDB() {
+    const storageToken = JSON.parse(localStorage.getItem("userData"));
+    axios.defaults.headers.common["authorization"] = storageToken.token;
+    await axios
+      .get(`${backendServer}/community/getTopic`)
+      .then(response => {
+        this.setState({
+          listOfTopics: response.data
+        });
+        console.log(this.state.listOfTopics);
+      })
+      .catch(error => {
+        this.setState({
+          error: error
+        });
+      });
+  }
+
+  // async getTopicFromDB() {
+  //   const storageToken = JSON.parse(localStorage.getItem("userData"));
+  //   axios.defaults.headers.common["authorization"] = storageToken.token;
+  //   await axios
+  //     .post(`${backendServer}/community/createCommunity`)
+  //     .then(response => {
+  //       this.setState({
+  //         listOfTopics: response.data
+  //       });
+  //       console.log(this.state.listOfTopics);
+  //     })
+  //     .catch(error => {
+  //       this.setState({
+  //         error: error
+  //       });
+  //     });
+  // }
+
+  handleTopicSelection = topic => {
+    console.log(topic);
+  };
 
   render() {
+    let dropDownItem = null;
+    if (this.state.listOfTopics != null && this.state.listOfTopics.length > 0) {
+      dropDownItem = this.state.listOfTopics.map(topic => {
+        return (
+          <Dropdown.Item
+            key={topic.topic_id}
+            onClick={() => this.handleTopicSelection(topic)}
+          >
+            {topic.topic}
+          </Dropdown.Item>
+        );
+      });
+    }
     return (
       <React.Fragment>
         <Navigationbar />
@@ -74,16 +134,13 @@ class CreateCommunity extends Component {
                   <Label className="community-label" htmlFor="topics">
                     Topics
                   </Label>
-                  <Input
-                    data-testid="email-input-box"
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="Email"
-                    onChange={this.handleChange}
-                    invalid={this.state.error.email ? true : false}
-                  ></Input>
-                  <FormFeedback>{this.state.error.email}</FormFeedback>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                      Select topic
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>{dropDownItem}</Dropdown.Menu>
+                  </Dropdown>
                 </FormGroup>
                 <FormGroup>
                   <Label htmlFor="description">Community Description</Label>
@@ -115,7 +172,7 @@ class CreateCommunity extends Component {
                     onClick={this.submitForm}
                     color="btn btn-primary"
                   >
-                    Sign me up!
+                    Create Community
                   </Button>
                 </FormGroup>
               </Form>
@@ -127,4 +184,12 @@ class CreateCommunity extends Component {
   }
 }
 
+// const mapStateToProps = state => {
+//   return {
+//     listOfTopic: state.community.listOfTopic
+//   };
+// };
 export default CreateCommunity;
+// export default connect(mapStateToProps, {
+//   getTopicFromDB
+// })(CreateCommunity);

@@ -83,7 +83,9 @@ app.get("/", (req, res) => {
 });
 
 const userRouter = require("./routes/sql/user");
+const Community = require("./routes/sql/community");
 app.use("/userRouter", userRouter);
+app.use("/community", Community);
 // SQL router
 const sqlRouter = require("./routes/sql/router");
 const sqldb = require("./models/sql");

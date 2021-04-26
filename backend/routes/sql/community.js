@@ -7,30 +7,15 @@ const { auth } = require("../../Util/passport");
 auth();
 
 const router = express.Router();
-router.post("/login", async (req, res) => {
-  db.User.findOne({
-    where: {
-      email: req.body.email
-    }
-  })
-    .then(user => {
-      if (user === null) {
-        return res.status(404).send("User not found!");
+router.get("/getTopic", async (req, res) => {
+  const topic = await db.Topic.findAll();
+  console.log(topic);
+  db.Topic.findAll()
+    .then(topic => {
+      if (topic === null) {
+        return res.status(404).send("Topic not found!");
       } else {
-        bcrypt.compare(
-          req.body.password,
-          user.password,
-          function (err, matchPassword) {
-            if (err) return error;
-            if (matchPassword) {
-              user.password = "";
-              req.session.user = user;
-              return res.status(200).send(JSON.stringify(user));
-            } else {
-              return res.status(401).send("UnAuthorized!");
-            }
-          }
-        );
+        res.status(200).send(JSON.stringify(topic));
       }
     })
     .catch(err => {
@@ -56,13 +41,5 @@ router.post("/signup", async (req, res) => {
   }
   return res.status(500).send("Internal Server Error!");
 });
-
-function createToken(user) {
-  const payload = { id: user.user_id };
-  const token = jwt.sign(payload, secret, {
-    expiresIn: 1008000
-  });
-  return "JWT " + token;
-}
 
 module.exports = router;
