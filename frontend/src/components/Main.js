@@ -14,15 +14,25 @@ import Messages from "./Home/Messages/Messages";
 import NavigationBar from "./LandingPage/Navigationbar";
 import { Fade } from "reactstrap";
 import Error404 from "./Error404";
+import { ThemeProvider } from "styled-components";
+import { GlobalStyles } from "./globalStyles";
+import { lightTheme, darkTheme } from "./Themes"
 class Main extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      darkMode: false
+    }
+  }
+  themeToggler = () => {
+    this.state.darkMode ? this.setState({ darkMode: false }) : this.setState({ darkMode: true });
   }
   render() {
-    return (
-      <React.Fragment>
+    return (<ThemeProvider theme={this.state.darkMode ? darkTheme : lightTheme}>
+      <>
+        <GlobalStyles />
         <Fade>
-          {this.props.location.pathname !== "/" && <NavigationBar />}
+          {this.props.location.pathname !== "/" && <NavigationBar themeToggler={this.themeToggler} currentTheme={this.state.darkMode} />}
           <Switch>
             <Route exact path="/" component={LandingPage} />
             <Route path="/home" component={Home} />
@@ -38,7 +48,8 @@ class Main extends Component {
             <Route component={Error404} />
           </Switch>
         </Fade>
-      </React.Fragment>
+      </>
+    </ThemeProvider>
     );
   }
 }

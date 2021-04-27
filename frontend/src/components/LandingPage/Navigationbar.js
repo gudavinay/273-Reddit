@@ -10,13 +10,18 @@ import {
 import { Link } from "react-router-dom";
 import redditLogoSVG from "../../assets/redditLogo.svg";
 import redditTextSVG from "../../assets/redditText.svg";
+import Switch from '@material-ui/core/Switch';
 
 class Navigationbar extends Component {
+  constructor(props) {
+    super(props);
+    console.log(this.state, props, "in navigation");
+  }
   render() {
     return (
       <React.Fragment>
         <Container>
-          <Navbar style={{ background: "white" }}>
+          <Navbar>
             <Row style={{ display: "contents" }}>
               <Col sm={2}>
                 <Navbar.Brand href="#">
@@ -56,7 +61,7 @@ class Navigationbar extends Component {
                   </Form.Group>
                 </Form>
               </Col>
-              <Col sm={2}>icons</Col>
+              <Col sm={1}>icons</Col>
               <Col sm={2}>
                 <NavDropdown title="User 1" id="collasible-nav-dropdown">
                   <NavDropdown.Item>
@@ -70,6 +75,9 @@ class Navigationbar extends Component {
                     <Link to="/login">Logout</Link>
                   </NavDropdown.Item>
                 </NavDropdown>
+              </Col>
+              <Col sm={2}>
+                <div>Dark Mode<Switch checked={this.props.darkMode} onChange={() => { this.props.themeToggler() }} color="primary" name="checkedB" inputProps={{ 'aria-label': 'primary checkbox' }} /></div>
               </Col>
             </Row>
           </Navbar>
