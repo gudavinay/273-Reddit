@@ -17,21 +17,23 @@ class Community extends Component {
             Community Name <Button>join</Button>{" "}
           </div>
           <Row>
-            <Row style={{ backgroundColor: "yellow" }}>
-              <Col xs={8} style={{ backgroundColor: "red" }}>
+            <Row style={{ backgroundColor: "#BBBDBF" }}>
+              <Col xs={8}>
+                <div className="createPostH">
+                  <a>profile logo</a>{" "}
+                  <input
+                    className="createPostInput"
+                    placeholder="Create Post"
+                    type="text"
+                  ></input>
+                </div>
                 <Post />
                 <Post />
                 <Post />
               </Col>
               <Col>
                 <Row>
-                  <Card
-                    style={{
-                      paddingLeft: "0px",
-                      paddingRight: "0px",
-                      margin: "10px",
-                    }}
-                  >
+                  <Card className="card">
                     <Card.Header className="cardHeader">
                       About Community
                     </Card.Header>
