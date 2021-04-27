@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router-dom";
+// import { Redirect } from "react-router-dom";
 import { isEmail } from "validator";
 import {
   Button,
@@ -7,11 +7,11 @@ import {
   FormGroup,
   Label,
   Input,
-  Col,
   FormFeedback
 } from "reactstrap";
 import { connect } from "react-redux";
 import { loginRedux } from "../../reduxOps/reduxActions/loginRedux";
+import { Row, Col } from "react-bootstrap";
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -91,22 +91,25 @@ class Login extends Component {
   render() {
     let redirectVar = null;
     //typeof this.props.user.token != "undefined" &&
-    if (typeof this.props.user != "undefined" && this.state.authFlag) {
-      console.log("Token is verified");
-      redirectVar = <Redirect to="/home" />;
-    } else redirectVar = <Redirect to="/login" />;
+
+    // TODO: Need to implement based on JWT
+
+    // if (typeof this.props.user != "undefined" && this.state.authFlag) {
+    //   console.log("Token is verified");
+    //   redirectVar = <Redirect to="/home" />;
+    // } else redirectVar = <Redirect to="/login" />;
     return (
       <div className="container-fluid">
         {redirectVar}
-        <div className="row">
-          <div className="col col-sm-1">
+        <Row>
+          <Col>
             <img
               className="reddit-login"
               alt="Reddit Background"
               src="https://www.redditstatic.com/accountmanager/bbb584033aa89e39bad69436c504c9bd.png"
             />
-          </div>
-          <div className="col col-sm-4 login-form">
+          </Col>
+          <Col className="login-form">
             <div
               id="errorLogin"
               hidden={this.state.error.length > 0 ? false : true}
@@ -159,8 +162,8 @@ class Login extends Component {
                 </Col>
               </FormGroup>
             </Form>
-          </div>
-        </div>
+          </Col>
+        </Row>
       </div>
     );
   }

@@ -32,27 +32,28 @@ app.get("/createDummyData", function (req, res, next) {
   community.save();
 
   let post = new Post({
-    communityIDSQL:"608753d9749f2e093b5fed3f",
-    type:"TEXT",
-    link:null,
+    communityIDSQL: "608753d9749f2e093b5fed3f",
+    type: "TEXT",
+    link: null,
     description: "This is a dummy post.",
     title: "POST DUMMY TITLE",
-    upvotedBy:[],
-    downvotedBy:[],
-    createdDate:Date.now(),
-    comments:[]
+    upvotedBy: [],
+    downvotedBy: [],
+    createdDate: Date.now(),
+    comments: []
   });
   post.save();
 
   let comment = new Comment({
-    postID:"6087559d4a8f9509d698bc9d",
+    postID: "6087559d4a8f9509d698bc9d",
     description: "TEST COMMENT",
-    upvotedBy:[],
-    downvotedBy:[],
+    upvotedBy: [],
+    downvotedBy: [],
     createdDate: Date.now(),
-    subComment:[],
-    isParentComment:true
-  })
+    subComment: [],
+    isParentComment: true
+  });
+  comment.save();
 
   res.send("inserted the dummy records")
 });

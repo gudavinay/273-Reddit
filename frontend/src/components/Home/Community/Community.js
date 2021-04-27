@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Post from "./Post";
-import { Row, Col, Button, Card } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 
 class Community extends Component {
   constructor(props) {

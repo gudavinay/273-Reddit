@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import Navigationbar from "../../LandingPage/Navigationbar";
 
 class MyCommunities extends Component {
   constructor(props) {
@@ -14,7 +13,6 @@ class MyCommunities extends Component {
   render() {
     return (
       <React.Fragment>
-        {/* <Navigationbar /> */}
         <div className="container">
           <div className="col-sm-8"></div>
           <div className="col-sm-4">

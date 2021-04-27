@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Col, Row } from "react-bootstrap";
-import Navigationbar from "../LandingPage/Navigationbar";
 import Post from "./Community/Post";
 class Home extends Component {
   // constructor(props) {

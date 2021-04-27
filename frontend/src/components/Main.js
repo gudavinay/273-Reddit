@@ -11,22 +11,16 @@ import MyCommunitiesModeration from "./Home/MyCommunities/MyCommunitiesModeratio
 import CreateCommunity from "./Home/MyCommunities/CreateCommunity";
 import UserProfile from "./Home/UserProfile/UserProfile";
 import Messages from "./Home/Messages/Messages";
-import Login from "./Login/Login";
-import Signup from "./Signup/Signup";
 import NavigationBar from "./LandingPage/Navigationbar";
 class Main extends Component {
   constructor(props) {
-    super();
+    super(props);
   }
   render() {
     return (
       <React.Fragment>
-        {this.props.location.pathname !== "/login" &&
-          this.props.location.pathname !== "/signup" && <NavigationBar />}
-        {/* <NavigationBar /> */}
+        {this.props.location.pathname !== "/" && <NavigationBar />}
         <Route exact path="/" component={LandingPage} />
-        <Route path="/login" component={Login} />
-        <Route path="/signUp" component={Signup} />
         <Route path="/home" component={Home} />
         <Route path="/community" component={Community} />
         <Route path="/communitysearch" component={CommunitySearch} />

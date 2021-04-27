@@ -1,17 +1,17 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router-dom";
+// import { Redirect } from "react-router-dom";
 import {
   Button,
   Form,
   FormGroup,
   Label,
   Input,
-  Col,
   FormFeedback
 } from "reactstrap";
 import { isEmail } from "validator";
 import { connect } from "react-redux";
 import { signupRedux } from "../../reduxOps/reduxActions/signupRedux";
+import { Row, Col } from 'react-bootstrap';
 
 class Signup extends Component {
   constructor(props) {
@@ -91,23 +91,26 @@ class Signup extends Component {
 
   render() {
     let redirectVar = null;
-    if (typeof this.props.user != "undefined" && this.state.authFlag) {
-      console.log("Control goes to home page from here");
-      redirectVar = <Redirect to="/login" />;
-    } else redirectVar = <Redirect to="/signUp" />;
+
+    //TODO: need to implement based on JWT/User
+
+    // if (typeof this.props.user != "undefined" && this.state.authFlag) {
+    //   console.log("Control goes to home page from here");
+    //   redirectVar = <Redirect to="/login" />;
+    // } else redirectVar = <Redirect to="/signUp" />;
     return (
       <>
         <div className="container-fluid">
           {redirectVar}
-          <div className="row">
-            <div className="col col-sm-1">
+          <Row>
+            <Col>
               <img
                 className="reddit-login"
                 alt="Reddit Background"
                 src="https://www.redditstatic.com/accountmanager/bbb584033aa89e39bad69436c504c9bd.png"
               />
-            </div>
-            <div className="col col-sm-4 login-form">
+            </Col>
+            <Col className="login-form">
               <div
                 id="errorLogin"
                 hidden={this.state.loginError.length > 0 ? false : true}
@@ -174,8 +177,8 @@ class Signup extends Component {
                   </Col>
                 </FormGroup>
               </Form>
-            </div>
-          </div>
+            </Col>
+          </Row>
         </div>
       </>
     );
