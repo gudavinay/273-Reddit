@@ -1,19 +1,18 @@
-import React, { Component } from 'react';
-import Comment from './Comment'
+import React, { Component } from "react";
+import Comment from "./Comment";
 class Post extends Component {
-    constructor(props) {
-        super(props);
-    }
+  constructor(props) {
+    super(props);
+  }
 
-    render() {
-        return (
-            <React.Fragment>
-            inside Post ... {this.props.content}
-            <Comment content="new comment"/>
-            </React.Fragment>
-        );
-    }
+  render() {
+    return (
+      <React.Fragment>
+        <div>Post inside Post ... {this.props.content}</div>
+        <Comment content="new comment" />
+      </React.Fragment>
+    );
+  }
 }
-
 
 export default Post;
