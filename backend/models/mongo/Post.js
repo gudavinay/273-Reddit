@@ -1,11 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const PostSchema = new mongoose.Schema({
-  communityIDSQL: {
-    type: String,
-    required: true,
-    unique: true
-  },
+  communityID: { type: Schema.Types.ObjectId, ref: "Community" },
   type: {
     type: String,
     required: true
@@ -23,7 +19,7 @@ const PostSchema = new mongoose.Schema({
       userID: { type: Schema.Types.ObjectId, ref: "UserProfile" }
     }
   ],
-  creationDate: { type: Schema.Types.Timestamp }, // TODO : Check if timestamp works fine
+  createdDate: { type: Date, defaultValue: Date.now() },
   comments: [
     {
       commentID: { type: Schema.Types.ObjectId, ref: "Comment" } // list of main comments
