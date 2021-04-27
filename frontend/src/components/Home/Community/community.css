@@ -1,0 +1,30 @@
+.cardHeader {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 18px;
+  font-weight: 700;
+  text-transform: none;
+  background-color: #373c3f;
+  color: white;
+}
+
+.cardButton {
+  font-family: Noto Sans, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: unset;
+  line-height: 17px;
+  text-transform: unset;
+  min-height: 32px;
+  min-width: 32px;
+  padding: 4px 16px;
+  background-color: #202020;
+  border-radius: 30px;
+  width: 100%;
+}
+
+.card {
+  padding-left: 0px;
+  padding-right: 0px;
+  margin: 10px;
+}

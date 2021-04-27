@@ -19,6 +19,7 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "validator": "^13.5.2",
+    "watchpack": "^1.7.5",
     "web-vitals": "^1.1.1"
   },
   "scripts": {
