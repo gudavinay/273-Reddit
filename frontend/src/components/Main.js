@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Route } from "react-router-dom";
+import { Route, withRouter } from "react-router-dom";
 import LandingPage from "./LandingPage/LandingPage";
 import Home from "./Home/Home";
 import Community from "./Home/Community/Community";
@@ -13,10 +13,17 @@ import UserProfile from "./Home/UserProfile/UserProfile";
 import Messages from "./Home/Messages/Messages";
 import Login from "./Login/Login";
 import Signup from "./Signup/Signup";
+import NavigationBar from "./LandingPage/Navigationbar";
 class Main extends Component {
+  constructor(props) {
+    super();
+  }
   render() {
     return (
       <React.Fragment>
+        {this.props.location.pathname !== "/login" &&
+          this.props.location.pathname !== "/signup" && <NavigationBar />}
+        {/* <NavigationBar /> */}
         <Route exact path="/" component={LandingPage} />
         <Route path="/login" component={Login} />
         <Route path="/signUp" component={Signup} />
@@ -40,4 +47,4 @@ class Main extends Component {
     );
   }
 }
-export default Main;
+export default withRouter(Main);

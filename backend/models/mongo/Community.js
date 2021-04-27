@@ -24,7 +24,6 @@ const CommunitySchema = new mongoose.Schema({
       userID: { type: Schema.Types.ObjectId, ref: "UserProfile" }
     }
   ],
-  createdDate: { type: Date, defaultValue: Date.now() },
   posts: [
     {
       postID: { type: Schema.Types.ObjectId, ref: "Post" }
@@ -37,6 +36,9 @@ const CommunitySchema = new mongoose.Schema({
       dateTime: { type: Date, default: Date.now() }
     }
   ]
-});
+},
+  {
+    timestamps: true
+  });
 
 module.exports = mongoose.model("Community", CommunitySchema);

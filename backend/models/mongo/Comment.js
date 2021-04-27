@@ -13,13 +13,15 @@ const CommentSchema = new mongoose.Schema({
       userID: { type: Schema.Types.ObjectId, ref: "UserProfile" }
     }
   ],
-  createdDate: { type: Date, defaultValue: Date.now() },
   subComment: [
     {
       commentID: { type: Schema.Types.ObjectId, ref: "Comment" }
     }
   ],
   isParentComment: { type: Boolean, defaultValue: true }
-});
+},
+  {
+    timestamps: true
+  });
 
 module.exports = mongoose.model("Comment", CommentSchema);

@@ -19,12 +19,14 @@ const PostSchema = new mongoose.Schema({
       userID: { type: Schema.Types.ObjectId, ref: "UserProfile" }
     }
   ],
-  createdDate: { type: Date, defaultValue: Date.now() },
   comments: [
     {
       commentID: { type: Schema.Types.ObjectId, ref: "Comment" } // list of main comments
     }
   ]
-});
+},
+  {
+    timestamps: true
+  });
 
 module.exports = mongoose.model("Post", PostSchema);
