@@ -4,10 +4,11 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { secret } = require("../../Util/config");
 const { auth } = require("../../Util/passport");
+const app = require('../../app')
 auth();
 
 const router = express.Router();
-router.post("/login", async (req, res) => {
+app.post("/login", async (req, res) => {
   db.User.findOne({
     where: {
       email: req.body.email
@@ -40,7 +41,7 @@ router.post("/login", async (req, res) => {
     });
 });
 
-router.post("/signup", async (req, res) => {
+app.post("/signup", async (req, res) => {
   console.log("Inside Sign up Post Request");
   const salt = await bcrypt.genSalt(10);
   req.body.password = await bcrypt.hash(req.body.password, salt);
