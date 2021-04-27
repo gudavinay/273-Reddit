@@ -7,7 +7,6 @@ import {
   Input,
   FormFeedback
 } from "reactstrap";
-import Navigationbar from "../../LandingPage/Navigationbar";
 import axios from "axios";
 import config from "../../config";
 import { Dropdown } from "react-bootstrap";
@@ -102,7 +101,6 @@ class CreateCommunity extends Component {
     }
     return (
       <React.Fragment>
-        <Navigationbar />
         <div className="container-fluid">
           <div className="row">
             <div className="col col-sm-1">

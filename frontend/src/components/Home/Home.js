@@ -11,7 +11,6 @@ class Home extends Component {
   render() {
     return (
       <React.Fragment>
-        {/* <Navigationbar/> */}
         <Row style={{ paddingTop: "70px", background: "#DAE0E6" }}>
           <Col sm={8}>
             <div style={{ float: "right", padding: "1rem" }}>

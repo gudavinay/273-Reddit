@@ -46,6 +46,7 @@ class LandingPage extends Component {
     return (
       <React.Fragment>
         {REDDIT}
+        IAM IN LANDING PAGE
         <div style={{ margin: "auto" }}>
           <Link to={"/home"} className="btn btn-primary">
             Go to post login page ( HOME )
