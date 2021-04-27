@@ -24,7 +24,7 @@ const CommunitySchema = new mongoose.Schema({
       userID: { type: Schema.Types.ObjectId, ref: "UserProfile" }
     }
   ],
-  creationDate: { type: Schema.Types.Timestamp },
+  createdDate: { type: Date, defaultValue: Date.now() },
   posts: [
     {
       postID: { type: Schema.Types.ObjectId, ref: "Post" }
@@ -34,7 +34,7 @@ const CommunitySchema = new mongoose.Schema({
     {
       userID: { type: Schema.Types.ObjectId, ref: "UserProfile" },
       isAccepted: { type: Boolean, defaultValue: false },
-      dateTime: { type: Schema.Types.Timestamp }
+      dateTime: { type: Date, default: Date.now() }
     }
   ]
 });

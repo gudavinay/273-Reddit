@@ -1,11 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const CommentSchema = new mongoose.Schema({
-  userIDSQL: {
-    type: String,
-    required: true,
-    unique: true
-  },
+  postID: { type: Schema.Types.ObjectId, ref: "Post" },
   description: { type: String, required: true },
   upvotedBy: [
     {
@@ -17,7 +13,7 @@ const CommentSchema = new mongoose.Schema({
       userID: { type: Schema.Types.ObjectId, ref: "UserProfile" }
     }
   ],
-  creationDate: { type: Schema.Types.Timestamp },
+  createdDate: { type: Date, defaultValue: Date.now() },
   subComment: [
     {
       commentID: { type: Schema.Types.ObjectId, ref: "Comment" }
