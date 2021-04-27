@@ -7,14 +7,14 @@ class MyCommunities extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: {}
+      error: {},
     };
   }
 
   render() {
     return (
       <React.Fragment>
-        <Navigationbar />
+        {/* <Navigationbar /> */}
         <div className="container">
           <div className="col-sm-8"></div>
           <div className="col-sm-4">
