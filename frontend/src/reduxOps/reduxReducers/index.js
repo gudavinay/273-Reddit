@@ -1,10 +1,12 @@
 import { combineReducers } from 'redux';
 import loginReducer from './loginReducer';
 import signupReducer from './signupReducer';
+import searchReducer from './communitySearchReducer';
 
 export default combineReducers({
     login: loginReducer,
-    signup: signupReducer
+    signup: signupReducer,
+    search: searchReducer
 });
 
 // const rootReducer = (state, action) => {

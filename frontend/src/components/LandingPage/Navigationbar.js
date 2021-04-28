@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
 import {
   Row,
   Col,
@@ -8,14 +9,18 @@ import {
   Form
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import qs from "query-string";
+import Switch from '@material-ui/core/Switch';
 import redditLogoSVG from "../../assets/redditLogo.svg";
 import redditTextSVG from "../../assets/redditText.svg";
-import Switch from '@material-ui/core/Switch';
 
 class Navigationbar extends Component {
   constructor(props) {
     super(props);
-    console.log(this.state, props, "in navigation");
+    const qR = qs.parse(props.location.search);
+    this.state = {
+      search: qR.q || ""
+    };
   }
   render() {
     return (
@@ -55,9 +60,17 @@ class Navigationbar extends Component {
                 </NavDropdown>
               </Col>
               <Col sm={4}>
-                <Form>
+                <Form onSubmit={
+                  (e) => {
+                    e.preventDefault();
+                    this.props.history.push({
+                      pathname: '/communitysearch',
+                      search: "?" + new URLSearchParams({ q: this.state.search }).toString()
+                    })
+                  }
+                }>
                   <Form.Group controlId="search">
-                    <Form.Control type="text" placeholder="Search" />
+                    <Form.Control value={this.state.search} onChange={(e) => this.setState({ search: e.target.value })} type="text" placeholder="Search" />
                   </Form.Group>
                 </Form>
               </Col>
@@ -87,4 +100,9 @@ class Navigationbar extends Component {
   }
 }
 
-export default Navigationbar;
+export default connect(
+  (state) => {
+    return state;
+  },
+  {}
+)(Navigationbar);

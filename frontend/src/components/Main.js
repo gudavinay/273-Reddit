@@ -16,7 +16,8 @@ import { Fade } from "reactstrap";
 import Error404 from "./Error404";
 import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "./globalStyles";
-import { lightTheme, darkTheme } from "./Themes"
+import { lightTheme, darkTheme } from "./Themes";
+
 class Main extends Component {
   constructor(props) {
     super(props);
@@ -32,7 +33,10 @@ class Main extends Component {
       <>
         <GlobalStyles />
         <Fade>
-          {this.props.location.pathname !== "/" && <NavigationBar themeToggler={this.themeToggler} currentTheme={this.state.darkMode} />}
+          {
+            this.props.location.pathname !== "/" &&
+            <NavigationBar {...this.props} themeToggler={this.themeToggler} currentTheme={this.state.darkMode} />
+          }
           <Switch>
             <Route exact path="/" component={LandingPage} />
             <Route path="/home" component={Home} />
