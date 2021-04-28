@@ -18,7 +18,6 @@ class CreateCommunity extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: {},
       communityName: "",
       communityImages: [],
       listOfTopics: [],
@@ -47,9 +46,16 @@ class CreateCommunity extends Component {
     this.getTopicFromDB();
   }
 
-  AddCommunityDetail() {}
-
-  handleSubmit = e => {};
+  handleSubmit = e => {
+    e.preventDefault();
+    const data = {
+      communityName: this.state.communityName,
+      communityImages: this.state.communityImages,
+      selectedTopic: this.state.selectedTopic,
+      communityDescription: this.state.communityDescription
+    };
+    console.log(data);
+  };
 
   async getTopicFromDB() {
     const storageToken = JSON.parse(localStorage.getItem("userData"));
@@ -96,7 +102,6 @@ class CreateCommunity extends Component {
     }
     return (
       <React.Fragment>
-        <Navigationbar />
         <Container fluid>
           <Row>
             <Col xs={2}>
