@@ -6,7 +6,6 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { secret } = require("../../Util/config");
 const { auth } = require("../../Util/passport");
-const app = require("../../app");
 auth();
 app.post("/login", async (req, res, next) => {
   db.User.findOne({
