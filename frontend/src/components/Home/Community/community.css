@@ -36,6 +36,7 @@
   display: -ms-flexbox;
   display: flex;
   margin-bottom: 16px;
+  margin-top: 10px;
   padding: 8px;
 }
 
@@ -53,4 +54,12 @@
   margin-right: 8px;
   outline: none;
   padding: 0 16px;
+}
+
+.galleryAnchor {
+  position: relative;
+  border: 1px solid transparent;
+  color: var(--newRedditTheme-actionIcon);
+  fill: var(--newRedditTheme-actionIcon);
+  margin: 3px;
 }

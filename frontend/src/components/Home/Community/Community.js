@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import Post from "./Post";
 import "./community.css";
+import gallerySvg from "../../../assets/communityIcons/galleryIcon.svg";
+import linkSvg from "../../../assets/communityIcons/linkIcon.svg";
+import userSvg from "../../../assets/communityIcons/redditUserLogoIcon.svg";
 import { Row, Col, Button, Card } from "react-bootstrap";
 
 class Community extends Component {
@@ -20,12 +23,32 @@ class Community extends Component {
             <Row style={{ backgroundColor: "#BBBDBF" }}>
               <Col xs={8}>
                 <div className="createPostH">
-                  <a>profile logo</a>{" "}
+                  <a>
+                    <img
+                      style={{ height: "30px", width: "30px" }}
+                      alt="User Logo"
+                      src={userSvg}
+                    />
+                  </a>{" "}
                   <input
                     className="createPostInput"
                     placeholder="Create Post"
                     type="text"
                   ></input>
+                  <a className="galleryAnchor">
+                    <img
+                      style={{ height: "30px", width: "30px" }}
+                      alt="Gallery Logo"
+                      src={gallerySvg}
+                    />
+                  </a>
+                  <a className="galleryAnchor">
+                    <img
+                      style={{ height: "30px", width: "30px" }}
+                      alt="Link Logo"
+                      src={linkSvg}
+                    />
+                  </a>
                 </div>
                 <Post />
                 <Post />

@@ -1,14 +1,13 @@
 const express = require("express");
+const app = require("../../app");
+const router = express.Router();
 const db = require("../../models/sql");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { secret } = require("../../Util/config");
 const { auth } = require("../../Util/passport");
-const app = require('../../app')
 auth();
-
-const router = express.Router();
-app.post("/login", async (req, res) => {
+app.post("/login", async (req, res, next) => {
   db.User.findOne({
     where: {
       email: req.body.email

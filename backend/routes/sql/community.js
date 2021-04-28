@@ -1,13 +1,7 @@
 const express = require("express");
-const db = require("../../models/sql");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const { secret } = require("../../Util/config");
-const { auth } = require("../../Util/passport");
-const app = require('../../app')
-auth();
-
 const router = express.Router();
+const app = require("../../app");
+const db = require("../../models/sql");
 app.get("/getTopic", async (req, res) => {
   const topic = await db.Topic.findAll();
   console.log(topic);
@@ -24,16 +18,17 @@ app.get("/getTopic", async (req, res) => {
     });
 });
 
-app.post("/createTopic", async (req, res) => {
-  try{
-    const topic = await db.Topic.create({
-      topic: req.body.topic
+app.post("/createCommunity", async (req, res) => {
+  console.log("Inside Create Community Request");
+  try {
+    let community = await db.Community.create({
+      name: req.body.communityName,
+      description: req.body.description
     });
-    // console.log(topic);
-  } catch(error){
+    return res.status(200).send(community);
+  } catch (error) {
     console.log(error);
   }
-  
 });
 
 module.exports = router;

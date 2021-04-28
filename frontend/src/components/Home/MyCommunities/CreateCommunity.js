@@ -9,7 +9,7 @@ import {
 } from "reactstrap";
 import axios from "axios";
 import config from "../../config";
-import { Dropdown } from "react-bootstrap";
+import { Dropdown, Col, Container, Row } from "react-bootstrap";
 import backendServer from "../../../webConfig";
 // import { getTopicFromDB } from "../../../reduxOps/reduxActions/communityRedux";
 // import { connect } from "react-redux";
@@ -18,10 +18,11 @@ class CreateCommunity extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: {},
-      communityInfo: {},
+      communityName: "",
       communityImages: [],
-      listOfTopics: []
+      listOfTopics: [],
+      selectedTopic: [],
+      communityDescription: ""
     };
   }
 
@@ -45,6 +46,17 @@ class CreateCommunity extends Component {
     this.getTopicFromDB();
   }
 
+  handleSubmit = e => {
+    e.preventDefault();
+    const data = {
+      communityName: this.state.communityName,
+      communityImages: this.state.communityImages,
+      selectedTopic: this.state.selectedTopic,
+      communityDescription: this.state.communityDescription
+    };
+    console.log(data);
+  };
+
   async getTopicFromDB() {
     const storageToken = JSON.parse(localStorage.getItem("userData"));
     axios.defaults.headers.common["authorization"] = storageToken.token;
@@ -63,26 +75,15 @@ class CreateCommunity extends Component {
       });
   }
 
-  // async getTopicFromDB() {
-  //   const storageToken = JSON.parse(localStorage.getItem("userData"));
-  //   axios.defaults.headers.common["authorization"] = storageToken.token;
-  //   await axios
-  //     .post(`${backendServer}/community/createCommunity`)
-  //     .then(response => {
-  //       this.setState({
-  //         listOfTopics: response.data
-  //       });
-  //       console.log(this.state.listOfTopics);
-  //     })
-  //     .catch(error => {
-  //       this.setState({
-  //         error: error
-  //       });
-  //     });
-  // }
-
   handleTopicSelection = topic => {
-    console.log(topic);
+    this.setState(prevState => ({
+      selectedTopic: [
+        ...prevState.selectedTopic,
+        {
+          topic: topic
+        }
+      ]
+    }));
   };
 
   render() {
@@ -101,16 +102,16 @@ class CreateCommunity extends Component {
     }
     return (
       <React.Fragment>
-        <div className="container-fluid">
-          <div className="row">
-            <div className="col col-sm-1">
+        <Container fluid>
+          <Row>
+            <Col xs={2}>
               <img
                 className="reddit-login"
                 alt="Reddit Background"
                 src="https://www.redditstatic.com/accountmanager/bbb584033aa89e39bad69436c504c9bd.png"
               />
-            </div>
-            <div className="col col-sm-6">
+            </Col>
+            <Col xs={6}>
               <Form onSubmit={this.handleSubmit} className="form-stacked">
                 <FormGroup>
                   <Label className="community-label" for="name">
@@ -120,13 +121,12 @@ class CreateCommunity extends Component {
                     type="text"
                     id="name"
                     name="name"
-                    invalid={this.state.error.name ? true : false}
-                    onChange={this.handleChange}
+                    onChange={e => this.setState({ name: e.target.value })}
+                    required
                   ></Input>
                   <Label className="information" for="name">
                     Community names including capitialization cannot be changed.
                   </Label>
-                  <FormFeedback>{this.state.error.name}</FormFeedback>
                 </FormGroup>
                 <FormGroup>
                   <Label className="community-label" htmlFor="topics">
@@ -147,10 +147,11 @@ class CreateCommunity extends Component {
                     type="textarea"
                     id="description"
                     name="description"
-                    onChange={this.handleChange}
-                    invalid={this.state.error.email ? true : false}
+                    onChange={e =>
+                      this.setState({ description: e.target.value })
+                    }
+                    required
                   ></Input>
-                  <FormFeedback>{this.state.error.email}</FormFeedback>
                 </FormGroup>
                 <FormGroup>
                   <Label htmlFor="uploadImage">Upload Image</Label>
@@ -167,16 +168,16 @@ class CreateCommunity extends Component {
                 <FormGroup>
                   <Button
                     type="submit"
-                    onClick={this.submitForm}
+                    onClick={this.handleSubmit}
                     color="btn btn-primary"
                   >
                     Create Community
                   </Button>
                 </FormGroup>
               </Form>
-            </div>
-          </div>
-        </div>
+            </Col>
+          </Row>
+        </Container>
       </React.Fragment>
     );
   }
