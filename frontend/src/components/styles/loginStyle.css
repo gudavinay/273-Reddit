@@ -1,0 +1,127 @@
+/* .login-form{
+    margin-top:200px;
+  }
+  
+  .reddit-login{
+    height: 100vh;
+    width: 120px;
+    margin-left: -10px;
+  }
+  
+  .btn-login{
+      font-family: "Noto Sans", sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: unset;
+      line-height: 18px;
+      text-transform: unset;
+      background: rgb(0, 121, 211);
+      border-radius: 999px;
+      color: rgb(255, 255, 255);
+      height: 40px;
+      padding: 0px 16px;
+  }
+   */
+
+.Sso__divider {
+  -webkit-box-align: center;
+  align-items: center;
+  display: flex;
+  margin: 28px 0px;
+  -webkit-box-pack: justify;
+  justify-content: space-between;
+}
+
+.Sso__dividerLine {
+  border-top: 1px solid rgb(237, 239, 241);
+  width: 40%;
+}
+
+.Sso__dividerText {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 18px;
+  color: rgb(135, 138, 140);
+  text-transform: uppercase;
+}
+
+.Sso__button {
+  font-family: IBMPlexSans, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-radius: 4px;
+  text-align: center;
+  background: rgb(255, 255, 255);
+  text-transform: uppercase;
+  cursor: pointer;
+  line-height: unset;
+  min-height: 35px;
+  max-width: 392px;
+  min-width: 155px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: rgb(0, 121, 211);
+  border: 1px solid rgb(0, 121, 211);
+  display: block;
+  height: auto;
+  margin: 8px 0px;
+  padding: 12px 28px;
+  width: 100%;
+}
+
+.Sso__googleIdButton {
+  padding: 16px 0px 16px 65px;
+  position: relative;
+  text-align: left;
+}
+
+.Sso__googleIdButton::after {
+  background-repeat: no-repeat;
+  content: "";
+  height: 20px;
+  left: 16px;
+  position: absolute;
+  width: 20px;
+  background-image: url("https://www.redditstatic.com/accountmanager/021031274726bcaef27a190f609eb59f.svg");
+}
+
+.Sso__googleIdButton::before {
+  background-color: rgb(255, 255, 255);
+  border-radius: 3px;
+  content: "";
+  height: 46px;
+  left: 2px;
+  position: absolute;
+  top: 2px;
+  width: 46px;
+}
+
+.Sso__appleIdContainer {
+  padding: 16px 0px 16px 65px;
+  text-align: left;
+  position: relative;
+}
+
+.Sso__appleIdContainer::after {
+  background-repeat: no-repeat;
+  content: "";
+  height: 20px;
+  left: 16px;
+  position: absolute;
+  width: 20px;
+  background-image: url("https://www.redditstatic.com/accountmanager/56133cfff407f8c1fb8694b4ef00975c.svg");
+  bottom: 15px;
+}
+
+.Sso__appleIdContainer::before {
+  background-color: rgb(255, 255, 255);
+  border-radius: 3px;
+  content: "";
+  height: 46px;
+  left: 2px;
+  position: absolute;
+  top: 2px;
+  width: 46px;
+}
