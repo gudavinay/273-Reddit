@@ -3,6 +3,7 @@ const app = require("../../app");
 const router = express.Router();
 const Community = require("../../models/mongo/Community");
 const Post = require("../../models/mongo/Post");
+const Comment = require("../../models/mongo/Comment");
 
 /* get communities */
 app.get("/getCommunities", function (req, res, next) {
@@ -86,5 +87,75 @@ app.post("/createPost", function (req, res, next) {
     }
     res.status(200).send(result);
   });
+});
+
+app.post("/comment", (req, res) => {
+  let comment = {};
+  if (req.body.isParentComment) {
+    comment = {
+      postID: req.body.postID,
+      description: req.body.description,
+      isParentComment: req.body.isParentComment,
+    };
+    new Comment(comment).save((err, result) => {
+      if (err) {
+        res.status(500).send(err);
+      }
+      res.status(200).send(result);
+    });
+  } else {
+    comment = {
+      postID: req.body.postID,
+      description: req.body.description,
+      isParentComment: req.body.isParentComment,
+    };
+    new Comment(comment).save((err, result) => {
+      if (err) {
+        res.status(500).send(err);
+      }
+      Comment.updateOne(
+        { _id: req.body.parentID },
+        {
+          $push: { subComment: [{ commentID: result._id }] },
+        },
+        (err, result) => {
+          if (err) {
+            res.status(500).send(err);
+          }
+          res.status(200).send(result);
+        }
+      );
+    });
+  }
+});
+
+app.post("/vote", (req, res) => {
+  if (req.body.voteType == "U") {
+    Comment.updateOne(
+      { _id: req.body.commentID },
+      {
+        $push: { upvotedBy: [{ userID: req.body.user_id }] },
+      },
+      (err, result) => {
+        if (err) {
+          res.status(500).send(err);
+        }
+        res.status(200).send(result);
+      }
+    );
+  } else if (req.body.voteType == "D") {
+    Comment.updateOne(
+      { _id: req.body.commentID },
+      {
+        $push: { downvotedBy: [{ userID: req.body.user_id }] },
+      },
+      (err, result) => {
+        if (err) {
+          res.status(500).send(err);
+        }
+        res.status(200).send(result);
+      }
+    );
+  }
 });
 module.exports = router;
