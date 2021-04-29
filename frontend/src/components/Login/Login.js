@@ -7,11 +7,12 @@ import {
   FormGroup,
   Label,
   Input,
-  FormFeedback
+  FormFeedback,
 } from "reactstrap";
 import { connect } from "react-redux";
 import { loginRedux } from "../../reduxOps/reduxActions/loginRedux";
 import { Row, Col } from "react-bootstrap";
+import "./../styles/loginStyle.css";
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -19,7 +20,7 @@ class Login extends Component {
       this.state = {
         error: "",
         formerror: "",
-        authFlag: ""
+        authFlag: "",
       };
     }
   }
@@ -35,24 +36,24 @@ class Login extends Component {
     return error;
   };
 
-  emailEventHandler = e => {
+  emailEventHandler = (e) => {
     this.setState({
-      email: e.target.value
+      email: e.target.value,
     });
   };
 
-  passEventHandler = e => {
+  passEventHandler = (e) => {
     this.setState({
-      password: e.target.value
+      password: e.target.value,
     });
   };
   ///LoginUser'
-  submitForm = e => {
+  submitForm = (e) => {
     //prevent page from refresh
     e.preventDefault();
     const data = {
       email: this.state.email,
-      password: this.state.password
+      password: this.state.password,
     };
     const formerror = this.validateForm();
     if (Object.keys(formerror).length == 0) {
@@ -69,12 +70,12 @@ class Login extends Component {
         this.setState({
           authFlag: false,
           formerror: {},
-          error: this.props.user
+          error: this.props.user,
         });
       } else {
         this.setState({
           authFlag: true,
-          error: ""
+          error: "",
         });
         this.SetLocalStorage(JSON.stringify(this.props.user));
       }
@@ -90,6 +91,7 @@ class Login extends Component {
 
   render() {
     let redirectVar = null;
+    // console.log(this.props);
     //typeof this.props.user.token != "undefined" &&
 
     // TODO: Need to implement based on JWT
@@ -99,17 +101,18 @@ class Login extends Component {
     //   redirectVar = <Redirect to="/home" />;
     // } else redirectVar = <Redirect to="/login" />;
     return (
-      <div className="container-fluid">
+      <div className="container-fluid" style={{ padding: "0" }}>
         {redirectVar}
-        <Row>
-          <Col>
+        <Row style={{ padding: "0", margin: "0" }}>
+          <Col className="col-2" style={{ padding: "0", height: "648px" }}>
             <img
               className="reddit-login"
               alt="Reddit Background"
               src="https://www.redditstatic.com/accountmanager/bbb584033aa89e39bad69436c504c9bd.png"
+              style={{ height: "100%", width: "100%" }}
             />
           </Col>
-          <Col className="login-form">
+          <Col className="login-form" style={{ paddingLeft: "30px" }}>
             <div
               id="errorLogin"
               hidden={this.state.error.length > 0 ? false : true}
@@ -118,8 +121,32 @@ class Login extends Component {
             >
               {this.state.error}
             </div>
-            <h4>Login</h4>
-            <Form className="loginForm">
+            <div
+              style={{ fontSize: "24px", fontWeight: "500", marginTop: "35px" }}
+            >
+              Login
+            </div>
+            <span style={{ fontSize: "12px" }}>
+              By continuing, you agree to our User Agreement and Privacy Policy.
+            </span>
+            <div style={{ width: "45%", marginTop: "50px" }}>
+              <div className="Sso__button Sso__googleIdButton">
+                Continue with Google
+              </div>
+              <div className="Sso__button Sso__appleIdContainer">
+                Continue with Apple
+              </div>
+              <div className="Sso__divider">
+                <span className="Sso__dividerLine"></span>
+                <span className="Sso__dividerText">or</span>
+                <span className="Sso__dividerLine"></span>
+              </div>
+            </div>
+            <Form
+              className="loginForm"
+              style={{ width: "45%" }}
+              onSubmit={this.submitForm}
+            >
               <FormGroup>
                 <Label htmlFor="email" className="Lable-align">
                   Email address
@@ -154,7 +181,6 @@ class Login extends Component {
                     data-testid="btn-submit"
                     type="submit"
                     className="btn btn-Login"
-                    onClick={this.submitForm}
                     color="btn btn-primary"
                   >
                     Login
@@ -162,6 +188,23 @@ class Login extends Component {
                 </Col>
               </FormGroup>
             </Form>
+
+            <div style={{ fontSize: "13px" }}>
+              New to Reddit?{" "}
+              <div
+                style={{
+                  color: "rgb(0, 121, 211)",
+                  cursor: "pointer",
+                  display: "inline-block",
+                  fontWeight: "700",
+                }}
+                onClick={() => {
+                  this.props.signup();
+                }}
+              >
+                SIGN UP
+              </div>
+            </div>
           </Col>
         </Row>
       </div>
@@ -169,9 +212,9 @@ class Login extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    user: state.login.user
+    user: state.login.user,
   };
 };
 

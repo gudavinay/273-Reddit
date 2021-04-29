@@ -6,36 +6,35 @@ import {
   FormGroup,
   Label,
   Input,
-  FormFeedback
+  FormFeedback,
 } from "reactstrap";
 import { isEmail } from "validator";
 import { connect } from "react-redux";
 import { signupRedux } from "../../reduxOps/reduxActions/signupRedux";
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col } from "react-bootstrap";
+import "./../styles/loginStyle.css";
 
 class Signup extends Component {
   constructor(props) {
     super(props);
-    {
-      this.state = {
-        userInfo: {},
-        error: {},
-        loginError: "",
-        auth: true
-      };
-    }
+    this.state = {
+      userInfo: {},
+      error: {},
+      loginError: "",
+      auth: true,
+    };
   }
 
-  handleChange = e => {
+  handleChange = (e) => {
     this.setState({
       userInfo: {
         ...this.state.userInfo,
-        [e.target.name]: e.target.value
-      }
+        [e.target.name]: e.target.value,
+      },
     });
   };
 
-  submitForm = e => {
+  submitForm = (e) => {
     //prevent page from refresh
     e.preventDefault();
 
@@ -55,11 +54,11 @@ class Signup extends Component {
         this.setState({
           authFlag: false,
           formerror: {},
-          loginError: "User is already registered"
+          loginError: "User is already registered",
         });
       } else {
         this.setState({
-          authFlag: true
+          authFlag: true,
         });
         this.SetLocalStorage(JSON.stringify(this.props.user));
       }
@@ -100,17 +99,18 @@ class Signup extends Component {
     // } else redirectVar = <Redirect to="/signUp" />;
     return (
       <>
-        <div className="container-fluid">
+        <div className="container-fluid" style={{ padding: "0" }}>
           {redirectVar}
-          <Row>
-            <Col>
+          <Row style={{ padding: "0", margin: "0" }}>
+            <Col className="col-2" style={{ padding: "0", height: "648px" }}>
               <img
                 className="reddit-login"
                 alt="Reddit Background"
                 src="https://www.redditstatic.com/accountmanager/bbb584033aa89e39bad69436c504c9bd.png"
+                style={{ height: "100%", width: "100%" }}
               />
             </Col>
-            <Col className="login-form">
+            <Col className="login-form" style={{ paddingLeft: "30px" }}>
               <div
                 id="errorLogin"
                 hidden={this.state.loginError.length > 0 ? false : true}
@@ -119,11 +119,40 @@ class Signup extends Component {
               >
                 {this.state.loginError}
               </div>
-              <h3>Introduce Yourself</h3>
-              <Form onSubmit={this.handleSubmit} className="form-stacked">
+              <div
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "500",
+                  marginTop: "35px",
+                }}
+              >
+                Sign up
+              </div>
+              <span style={{ fontSize: "12px" }}>
+                By continuing, you agree to our User Agreement and Privacy
+                Policy.
+              </span>
+              <div style={{ width: "45%", marginTop: "30px" }}>
+                <div className="Sso__button Sso__googleIdButton">
+                  Continue with Google
+                </div>
+                <div className="Sso__button Sso__appleIdContainer">
+                  Continue with Apple
+                </div>
+                <div className="Sso__divider">
+                  <span className="Sso__dividerLine"></span>
+                  <span className="Sso__dividerText">or</span>
+                  <span className="Sso__dividerLine"></span>
+                </div>
+              </div>
+              <Form
+                onSubmit={this.submitForm}
+                className="signupForm"
+                style={{ width: "45%" }}
+              >
                 <FormGroup>
-                  <Label for="firstname" style={{ fontSize: "24px" }}>
-                    Hi there!My name is
+                  <Label for="firstname">
+                    Hi there! My <strong>Name</strong> is
                   </Label>
                   <Input
                     type="text"
@@ -167,11 +196,7 @@ class Signup extends Component {
                 </FormGroup>
                 <FormGroup row>
                   <Col>
-                    <Button
-                      type="submit"
-                      onClick={this.submitForm}
-                      color="btn btn-primary"
-                    >
+                    <Button type="submit" color="btn btn-primary">
                       Sign me up!
                     </Button>
                   </Col>
@@ -184,9 +209,9 @@ class Signup extends Component {
     );
   }
 }
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    user: state.login.user
+    user: state.login.user,
   };
 };
 
