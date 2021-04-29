@@ -1,42 +1,23 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: "IBM Plex Sans", source-code-pro, Menlo, Monaco, Consolas,
+    "Courier New", monospace;
 }
 
-.login-form{
-  margin-top:200px;
-}
-
-.reddit-login{
-  height: 100vh;
-  width: 120px;
-  margin-left: -10px;
-}
-
-.btn-login{
-    font-family: "Noto Sans", sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: unset;
-    line-height: 18px;
-    text-transform: unset;
-    background: rgb(0, 121, 211);
-    border-radius: 999px;
-    color: rgb(255, 255, 255);
-    height: 40px;
-    padding: 0px 16px;
-}
-
-.information{
+.information {
   color: gray;
-    font-size: 12px;
+  font-size: 12px;
+}
+
+.community-label {
+  font-weight: bold;
+  font-size: 15px;
 }
