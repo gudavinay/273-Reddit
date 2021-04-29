@@ -12,10 +12,19 @@ class Post extends Component {
       <React.Fragment>
         <div>
           <div>
-            <Card>
+            <Card style={{ margin: "0px" }}>
               <Card.Body>
                 <Row>
-                  <Col xs={1}> Hi</Col>
+                  <Col xs={1}>
+                    <div>
+                      <i
+                        style={{ cursor: "pointer" }}
+                        className="icon icon-arrow-up"
+                      ></i>
+                      <span>698</span>
+                      <i className="icon icon-arrow-down"></i>
+                    </div>
+                  </Col>
                   <Col>
                     <Row className="postHeader">
                       posted by u/noiragent 21 hours ago
