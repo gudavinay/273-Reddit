@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import loginReducer from './loginReducer';
 import signupReducer from './signupReducer';
-import searchReducer from './communitySearchReducer';
+import searchReducer from './searchReducer';
 
 export default combineReducers({
     login: loginReducer,

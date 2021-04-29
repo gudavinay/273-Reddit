@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import qs from "query-string";
 import { connect } from 'react-redux';
-import { updateCommunitySearchOptions } from "../../../reduxOps/reduxActions/communitySearchRedux";
+import { updateSearchOptions } from "../../../reduxOps/reduxActions/searchRedux";
 
 class CommunitySearch extends Component {
     constructor(props) {
@@ -9,7 +9,7 @@ class CommunitySearch extends Component {
     }
     processSearch = () => {
         const qR = qs.parse(this.props.location.search);
-        this.props.updateCommunitySearchOptions({ query: qR.q })
+        this.props.updateSearchOptions({ query: qR.q })
     }
     getSnapshotBeforeUpdate(prevProps) {
         return { notifyRequired: prevProps.location.search !== this.props.location.search };
@@ -24,9 +24,30 @@ class CommunitySearch extends Component {
     }
 
     render() {
+        const {query, processing, results} = this.props.search;
+        
         return (
             <React.Fragment>
-                inside CommunitySearch For {this.props.search.query || "Nothing"}...
+                <h2>
+                    {query || ""}
+                </h2>
+                <h6>
+                    Search results
+                </h6>
+                {
+                    processing ? (
+                        <div style={{color: "red"}}>
+                            Searching....
+                        </div>
+                    ) : (
+                        results.communities && results.communities.length > 0 ? (
+                            <div><pre>{JSON.stringify(results, null, 2) }</pre></div>
+                        ) : (
+                            <div>Sorry, there were no community results for “<b>{query}</b>”</div>
+                        )
+                    )
+                }
+                
             </React.Fragment>
         );
     }
@@ -40,6 +61,6 @@ export default connect(
         };
     },
     {
-        updateCommunitySearchOptions
+        updateSearchOptions
     }
 )(CommunitySearch);

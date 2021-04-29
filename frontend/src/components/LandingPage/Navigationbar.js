@@ -22,6 +22,15 @@ class Navigationbar extends Component {
       search: qR.q || ""
     };
   }
+  onSubmitSearch = (e) => {
+    e.preventDefault();
+    if (this.state.search.trim() === "") return;
+    this.props.history.push({
+      pathname: '/communitysearch',
+      search: "?" + new URLSearchParams({ q: this.state.search }).toString()
+    })
+  }
+  onChangeSearchText = (e) => this.setState({ search: e.target.value })
   render() {
     return (
       <React.Fragment>
@@ -60,17 +69,9 @@ class Navigationbar extends Component {
                 </NavDropdown>
               </Col>
               <Col sm={4}>
-                <Form onSubmit={
-                  (e) => {
-                    e.preventDefault();
-                    this.props.history.push({
-                      pathname: '/communitysearch',
-                      search: "?" + new URLSearchParams({ q: this.state.search }).toString()
-                    })
-                  }
-                }>
+                <Form onSubmit={this.onSubmitSearch}>
                   <Form.Group controlId="search">
-                    <Form.Control value={this.state.search} onChange={(e) => this.setState({ search: e.target.value })} type="text" placeholder="Search" />
+                    <Form.Control value={this.state.search} onChange={this.onChangeSearchText} type="text" placeholder="Search" />
                   </Form.Group>
                 </Form>
               </Col>
