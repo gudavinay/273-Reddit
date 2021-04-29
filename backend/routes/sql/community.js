@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const app = require("../../app");
 const db = require("../../models/sql");
+
 app.get("/getTopic", async (req, res) => {
   const topic = await db.Topic.findAll();
   console.log(topic);
@@ -23,7 +24,7 @@ app.post("/createCommunity", async (req, res) => {
   try {
     let community = await db.Community.create({
       name: req.body.communityName,
-      description: req.body.description
+      description: req.body.communityDescription
     });
     return res.status(200).send(community);
   } catch (error) {

@@ -1,16 +1,10 @@
 import React, { Component } from "react";
-import {
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  FormFeedback
-} from "reactstrap";
 import axios from "axios";
-import config from "../../config";
-import { Dropdown, Col, Container, Row } from "react-bootstrap";
+import { Dropdown, Col, Container, Row, Form, Button } from "react-bootstrap";
 import backendServer from "../../../webConfig";
+import "./mycommunity.css";
+import Chip from "@material-ui/core/Chip";
+import Paper from "@material-ui/core/Paper";
 // import { getTopicFromDB } from "../../../reduxOps/reduxActions/communityRedux";
 // import { connect } from "react-redux";
 
@@ -32,15 +26,30 @@ class CreateCommunity extends Component {
     console.log(e.target.files[0]);
     data.append("file", e.target.files[0]);
     axios
-      .post(`${config.serverAddress}/upload`, data)
+      .post(`${backendServer}/upload`, data)
       .then(response => {
         console.log(response);
-        this.setState({
-          groupPhoto: response.data
-        });
       })
       .catch(error => console.log("error " + error));
   };
+
+  AddCommunityDataToDB(communityData) {
+    const data = {
+      communityIDSQL: communityData.community_id,
+      communityName: communityData.name,
+      communityDescription: communityData.description,
+      communityImages: this.state.communityImages,
+      selectedTopic: this.state.selectedTopic
+    };
+    axios
+      .post(`${backendServer}/addCommunity`, data)
+      .then(response => {
+        if (response.status == 200) {
+          alert("Community created successfully");
+        }
+      })
+      .catch(error => console.log("error " + error));
+  }
 
   componentDidMount() {
     this.getTopicFromDB();
@@ -50,18 +59,20 @@ class CreateCommunity extends Component {
     e.preventDefault();
     const data = {
       communityName: this.state.communityName,
-      communityImages: this.state.communityImages,
-      selectedTopic: this.state.selectedTopic,
       communityDescription: this.state.communityDescription
     };
-    console.log(data);
+    axios
+      .post(`${backendServer}/createCommunity`, data)
+      .then(response => {
+        console.log(response.data);
+        this.AddCommunityDataToDB(response.data);
+      })
+      .catch(error => console.log("error " + error));
   };
 
   async getTopicFromDB() {
-    const storageToken = JSON.parse(localStorage.getItem("userData"));
-    axios.defaults.headers.common["authorization"] = storageToken.token;
     await axios
-      .get(`${backendServer}/community/getTopic`)
+      .get(`${backendServer}/getTopic`)
       .then(response => {
         this.setState({
           listOfTopics: response.data
@@ -80,14 +91,24 @@ class CreateCommunity extends Component {
       selectedTopic: [
         ...prevState.selectedTopic,
         {
-          topic: topic
+          topic: topic.topic
         }
       ]
     }));
+    console.log(this.state.selectedTopic);
+  };
+
+  handleDelete = (e, topic) => {
+    console.log(topic);
+    e.preventDefault();
+    this.setState({
+      listOfTopics: this.state.listOfTopics.filter(x => x !== topic.topic)
+    });
   };
 
   render() {
     let dropDownItem = null;
+    let selectedTopic = null;
     if (this.state.listOfTopics != null && this.state.listOfTopics.length > 0) {
       dropDownItem = this.state.listOfTopics.map(topic => {
         return (
@@ -99,81 +120,103 @@ class CreateCommunity extends Component {
           </Dropdown.Item>
         );
       });
+      if (this.state.selectedTopic.length > 0) {
+        selectedTopic = this.state.selectedTopic.map((topic, id) => {
+          console.log(topic);
+          return (
+            <Chip
+              key={id}
+              label={topic.topic}
+              onDelete={e => this.handleDelete(e, topic)}
+              className="chip"
+            />
+          );
+        });
+      }
     }
     return (
       <React.Fragment>
         <Container fluid>
           <Row>
-            <Col xs={2}>
+            <Col xs={1}>
               <img
                 className="reddit-login"
-                alt="Reddit Background"
-                src="https://www.redditstatic.com/accountmanager/bbb584033aa89e39bad69436c504c9bd.png"
+                alt="Create Community"
+                src="https://www.redditstatic.com/desktop2x/img/partner-connection.png"
               />
             </Col>
-            <Col xs={6}>
+            <Col xs={4} style={{ padding: "50px", align: "center" }}>
               <Form onSubmit={this.handleSubmit} className="form-stacked">
-                <FormGroup>
-                  <Label className="community-label" for="name">
-                    Name
-                  </Label>
-                  <Input
+                <Form.Label>Create a community</Form.Label>
+                <hr style={{ borderTop: "0px" }} />
+                <Form.Group>
+                  <Form.Label className="community-label" htmlFor="name">
+                    Name<sup>*</sup>
+                  </Form.Label>
+                  <Form.Control
                     type="text"
                     id="name"
                     name="name"
-                    onChange={e => this.setState({ name: e.target.value })}
+                    onChange={e =>
+                      this.setState({ communityName: e.target.value })
+                    }
+                    aria-describedby="passwordHelpBlock"
                     required
-                  ></Input>
-                  <Label className="information" for="name">
+                  ></Form.Control>
+                  <Form.Text id="passwordHelpBlock" muted>
                     Community names including capitialization cannot be changed.
-                  </Label>
-                </FormGroup>
-                <FormGroup>
-                  <Label className="community-label" htmlFor="topics">
-                    Topics
-                  </Label>
+                  </Form.Text>
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label className="community-label" htmlFor="topics">
+                    Topics<sup>*</sup>
+                  </Form.Label>
                   <Dropdown>
-                    <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                      Select topic
-                    </Dropdown.Toggle>
-
+                    <Dropdown.Toggle>Select topic</Dropdown.Toggle>
                     <Dropdown.Menu>{dropDownItem}</Dropdown.Menu>
                   </Dropdown>
-                </FormGroup>
-                <FormGroup>
-                  <Label htmlFor="description">Community Description</Label>
-                  <Input
+                  <Paper component="ul" className="root">
+                    {selectedTopic}
+                  </Paper>
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label htmlFor="description" className="community-label">
+                    Description<sup>*</sup>
+                  </Form.Label>
+                  <Form.Control
                     data-testid="email-input-box"
                     type="textarea"
                     id="description"
                     name="description"
                     onChange={e =>
-                      this.setState({ description: e.target.value })
+                      this.setState({ communityDescription: e.target.value })
                     }
                     required
-                  ></Input>
-                </FormGroup>
-                <FormGroup>
-                  <Label htmlFor="uploadImage">Upload Image</Label>
-                  <Input
+                  ></Form.Control>
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label htmlFor="uploadImage" className="community-label">
+                    Upload Image
+                  </Form.Label>
+                  <Form.Control
+                    className="form-control"
                     type="file"
                     id="image"
                     name="image"
                     multiple
                     onChange={this.OnImageUpload}
-                    invalid={this.state.error.password ? true : false}
-                  ></Input>
-                  <FormFeedback>{this.state.error.password}</FormFeedback>
-                </FormGroup>
-                <FormGroup>
+                  ></Form.Control>
+                </Form.Group>
+                <Form.Group className="text-center">
                   <Button
                     type="submit"
+                    className="createCommunity"
                     onClick={this.handleSubmit}
                     color="btn btn-primary"
                   >
                     Create Community
                   </Button>
-                </FormGroup>
+                </Form.Group>
               </Form>
             </Col>
           </Row>
