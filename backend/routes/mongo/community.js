@@ -29,11 +29,11 @@ app.post("/addCommunity", function (req, res, next) {
   });
 });
 
-app.get("/getCommunityDetails", (req, res) => {
-  Community.find({ _id: req.body.community_id })
+app.post("/getCommunityDetails", (req, res) => {
+  Community.findOne({ _id: req.body.community_id })
     .populate("posts.postID")
-    .then(result => {
-      res.send(result);
+    .then((result) => {
+      res.status(200).send(JSON.stringify(result));
     });
 });
 

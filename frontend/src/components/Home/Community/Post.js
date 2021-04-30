@@ -2,9 +2,11 @@ import React, { Component } from "react";
 import Comment from "./Comment";
 import { Row, Col, Card } from "react-bootstrap";
 import "./post.css";
+import { getRelativeTime } from "../../../services/ControllerUtils";
 class Post extends Component {
   constructor(props) {
     super(props);
+    console.log("PROPS IN POST COMPONENT", props);
   }
 
   render() {
@@ -27,14 +29,11 @@ class Post extends Component {
                   </Col>
                   <Col>
                     <Row className="postHeader">
-                      posted by u/noiragent 21 hours ago
+                      posted by {this.props.data.createBy} {getRelativeTime(this.props.data.createdAt)}
                     </Row>
                     <Row style={{ paddingLeft: "0px" }}>
                       <h3 className="postBodyContent">
-                        [Floyd Mayweather] JUNE 6, 2021!!!! #MIAMI Me and Logan
-                        Paul will be fighting at the Hardrock Stadium.
-                        @mayweatherpromotions @fanmio and @showtimeboxing have
-                        come together to bring an epic Event!!!
+                        [{this.props.data?.title}] {this.props.data?.description}
                       </h3>
                     </Row>
                   </Col>
