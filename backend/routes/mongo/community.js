@@ -28,4 +28,13 @@ app.post("/addCommunity", function (req, res, next) {
     }
   });
 });
+
+app.get("/getCommunityDetails", (req, res) => {
+  Community.find({ _id: req.body.community_id })
+    .populate("posts.postID")
+    .then(result => {
+      res.send(result);
+    });
+});
+
 module.exports = router;
