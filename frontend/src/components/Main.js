@@ -101,6 +101,7 @@ class Main extends Component {
   }
 
   unsetLoader = () => {
+    if(!this.state.loading) return; // To resolve unnecessary state change
     setTimeout(() => {
       this.setState({ loading: false });
     }, 500);
