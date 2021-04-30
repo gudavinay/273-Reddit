@@ -5,9 +5,9 @@ const Community = require("../../models/mongo/Community");
 
 app.post("/addCommunity", function (req, res, next) {
   let topicList = [];
-  req.body.selectedTopic.map(topic => {
+  req.body.selectedTopic.map((topic) => {
     topicList.push({
-      topic: topic.topic
+      topic: topic.topic,
     });
   });
   let community = new Community({
@@ -16,7 +16,7 @@ app.post("/addCommunity", function (req, res, next) {
     communityDescription: req.body.communityDescription,
     ownerID: "6089d63ea112c02c1df2914c",
     topicSelected: topicList,
-    imageURL: req.body.communityImages
+    imageURL: req.body.communityImages,
   });
   community.save((error, data) => {
     if (error) {
@@ -27,4 +27,13 @@ app.post("/addCommunity", function (req, res, next) {
     }
   });
 });
+
+app.get("/getCommunityDetails", (req, res) => {
+  Community.find({ _id: req.body.community_id })
+    .populate("posts.postID")
+    .then((result) => {
+      res.send(result);
+    });
+});
+
 module.exports = router;

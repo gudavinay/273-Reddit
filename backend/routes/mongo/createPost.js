@@ -85,7 +85,19 @@ app.post("/createPost", function (req, res, next) {
     if (err) {
       res.status(500).send(err);
     }
-    res.status(200).send(result);
+
+    Community.updateOne(
+      { _id: req.body.community_id },
+      {
+        $push: { posts: [{ postID: result._id }] },
+      },
+      (err, result) => {
+        if (err) {
+          res.status(500).send(err);
+        }
+        res.status(200).send(result);
+      }
+    );
   });
 });
 
