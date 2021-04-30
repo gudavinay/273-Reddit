@@ -16,7 +16,8 @@ app.post("/addCommunity", function (req, res, next) {
     communityDescription: req.body.communityDescription,
     ownerID: "6089d63ea112c02c1df2914c",
     topicSelected: topicList,
-    imageURL: req.body.communityImages
+    imageURL: req.body.communityImages,
+    rules: req.body.listOfRules
   });
   community.save((error, data) => {
     if (error) {

@@ -1,10 +1,20 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Dropdown, Col, Container, Row, Form, Button } from "react-bootstrap";
+import {
+  Dropdown,
+  Col,
+  Container,
+  Row,
+  Form,
+  Button
+  // ListGroup
+} from "react-bootstrap";
 import backendServer from "../../../webConfig";
 import "./mycommunity.css";
 import Chip from "@material-ui/core/Chip";
 import Paper from "@material-ui/core/Paper";
+import TextField from "@material-ui/core/TextField";
+
 // import { getTopicFromDB } from "../../../reduxOps/reduxActions/communityRedux";
 // import { connect } from "react-redux";
 
@@ -16,7 +26,12 @@ class CreateCommunity extends Component {
       communityImages: [],
       listOfTopics: [],
       selectedTopic: [],
-      communityDescription: ""
+      communityDescription: "",
+      listOfRule: [],
+      title: "",
+      rulesDescription: "",
+      addEditButton: "Add Rule",
+      editRule: {}
     };
   }
 
@@ -39,7 +54,8 @@ class CreateCommunity extends Component {
       communityName: communityData.name,
       communityDescription: communityData.description,
       communityImages: this.state.communityImages,
-      selectedTopic: this.state.selectedTopic
+      selectedTopic: this.state.selectedTopic,
+      listOfRules: this.state.listOfRule
     };
     axios
       .post(`${backendServer}/addCommunity`, data)
@@ -91,24 +107,69 @@ class CreateCommunity extends Component {
       selectedTopic: [
         ...prevState.selectedTopic,
         {
-          topic: topic.topic
+          topic: topic.topic,
+          topic_id: topic.topic_id
         }
       ]
     }));
     console.log(this.state.selectedTopic);
   };
+  handleAddRule = e => {
+    e.preventDefault();
+    if (Object.keys(this.state.editRule).length > 0) {
+      let items = this.state.listOfRule;
+      items.splice(items.indexOf(this.state.editRule), 1);
+      this.setState({
+        listOfRule: items
+      });
+    }
+    this.setState(prevState => ({
+      listOfRule: [
+        ...prevState.listOfRule,
+        {
+          title: this.state.title,
+          description: this.state.rulesDescription
+        }
+      ],
+      rulesDescription: "",
+      title: "",
+      addEditButton: "Add Rule"
+    }));
+  };
 
   handleDelete = (e, topic) => {
-    console.log(topic);
     e.preventDefault();
+    let items = this.state.selectedTopic;
+    items.splice(items.indexOf(topic), 1);
     this.setState({
-      listOfTopics: this.state.listOfTopics.filter(x => x !== topic.topic)
+      selectedTopic: items
+    });
+  };
+
+  handleRuleDelete = (e, rule) => {
+    e.preventDefault();
+    let items = this.state.listOfRule;
+    items.splice(items.indexOf(rule), 1);
+    this.setState({
+      listOfRule: items
+    });
+  };
+
+  handleEditRules = (e, rule) => {
+    e.preventDefault();
+
+    this.setState({
+      editRule: rule,
+      title: rule.title,
+      rulesDescription: rule.description,
+      addEditButton: "Update Rule"
     });
   };
 
   render() {
     let dropDownItem = null;
     let selectedTopic = null;
+    let rules = null;
     if (this.state.listOfTopics != null && this.state.listOfTopics.length > 0) {
       dropDownItem = this.state.listOfTopics.map(topic => {
         return (
@@ -121,15 +182,41 @@ class CreateCommunity extends Component {
         );
       });
       if (this.state.selectedTopic.length > 0) {
-        selectedTopic = this.state.selectedTopic.map((topic, id) => {
-          console.log(topic);
+        selectedTopic = this.state.selectedTopic.map(topic => {
           return (
             <Chip
-              key={id}
+              key={topic.topic_id}
               label={topic.topic}
               onDelete={e => this.handleDelete(e, topic)}
               className="chip"
             />
+          );
+        });
+      }
+
+      if (this.state.listOfRule.length > 0) {
+        rules = this.state.listOfRule.map((rule, idx) => {
+          return (
+            <Row key={idx}>
+              <Col xs={2}>
+                <strong>{rule.title}</strong>
+              </Col>
+              <Col xs={7}>{rule.description}</Col>
+              <Col xs={3}>
+                <button
+                  className="btn"
+                  onClick={e => this.handleEditRules(e, rule)}
+                >
+                  <i className="fa fa-pencil" aria-hidden="true"></i>
+                </button>
+                <button
+                  className="btn"
+                  onClick={e => this.handleRuleDelete(e, rule)}
+                >
+                  <i className="fa fa-trash" aria-hidden="true"></i>
+                </button>
+              </Col>
+            </Row>
           );
         });
       }
@@ -145,10 +232,14 @@ class CreateCommunity extends Component {
                 src="https://www.redditstatic.com/desktop2x/img/partner-connection.png"
               />
             </Col>
-            <Col xs={4} style={{ padding: "50px", align: "center" }}>
+            <Col
+              xs={5}
+              style={{ padding: "50px", borderRight: "1px solid #ddd" }}
+            >
               <Form onSubmit={this.handleSubmit} className="form-stacked">
-                <Form.Label>Create a community</Form.Label>
-                <hr style={{ borderTop: "0px" }} />
+                <Form.Label>
+                  <b>Create a community</b>
+                </Form.Label>
                 <Form.Group>
                   <Form.Label className="community-label" htmlFor="name">
                     Name<sup>*</sup>
@@ -218,6 +309,54 @@ class CreateCommunity extends Component {
                   </Button>
                 </Form.Group>
               </Form>
+            </Col>
+            <Col xs={5} className="rulesForm">
+              <Form.Group>
+                <Form.Label
+                  className="community-label"
+                  htmlFor="Rules"
+                  style={{ fontWeight: "bold" }}
+                >
+                  Rules
+                </Form.Label>
+                <br />
+                <form noValidate autoComplete="off">
+                  <TextField
+                    className="rulesTextbox"
+                    id="outlined-basic"
+                    label="Title"
+                    variant="outlined"
+                    value={this.state.title}
+                    onChange={e => this.setState({ title: e.target.value })}
+                  />
+
+                  <TextField
+                    style={{ width: "300px", marginLeft: "5px" }}
+                    className="rulesTextbox"
+                    id="outlined-basic"
+                    label="Description"
+                    variant="outlined"
+                    value={this.state.rulesDescription}
+                    onChange={e =>
+                      this.setState({ rulesDescription: e.target.value })
+                    }
+                  />
+                </form>
+                <Button
+                  style={{ marginTop: "10px" }}
+                  className="createCommunity"
+                  onClick={this.handleAddRule}
+                  color="btn btn-primary"
+                >
+                  {this.state.addEditButton}
+                </Button>
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>
+                  <strong>List of Rules</strong>
+                </Form.Label>
+                {rules}
+              </Form.Group>
             </Col>
           </Row>
         </Container>

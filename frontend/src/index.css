@@ -11,13 +11,3 @@ code {
   font-family: "IBM Plex Sans", source-code-pro, Menlo, Monaco, Consolas,
     "Courier New", monospace;
 }
-
-.information {
-  color: gray;
-  font-size: 12px;
-}
-
-.community-label {
-  font-weight: bold;
-  font-size: 15px;
-}

@@ -21,11 +21,19 @@
     justify-content:'center';
     list-style: none;
     padding: 1px;
-
+    justify-content: center;
     margin: 1px;
   }
 
   .chip {
     margin: 3px;
     display: inline-block;
+    justify-content: center;
   }
+  
+  .rulesForm{
+    margin-left: 5px;
+    margin-top: 50px;
+  }
+
+  
