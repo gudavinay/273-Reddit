@@ -88,6 +88,7 @@ app.post("/createPost", function (req, res, next) {
       res.status(500).send(err);
     }
 
+    res.status(200).send(result);
     // Community.updateOne(
     //   { _id: req.body.community_id },
     //   {
@@ -142,6 +143,18 @@ app.post("/comment", (req, res) => {
     });
   }
 });
+
+app.post("/getPostsInCommunity", (req, res) => {
+  Post.find({ communityID: req.body.community_id })
+    .populate("userID")
+    .then((result) => {
+      res.status(200).send(result);
+    }).catch((err) => {
+      res.status(500).send(err);
+    });
+});
+
+
 
 app.post("/vote", (req, res) => {
   if (req.body.voteType == "U") {

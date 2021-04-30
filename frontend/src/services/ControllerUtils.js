@@ -20,6 +20,9 @@ export function getDateFromUtils(date) {
 }
 
 export function getRelativeTime(date) {
+    if (!date) {
+        return null;
+    }
     var now = new Date();
     var diff = parseInt((now.getTime() - Date.parse(date)) / 1000);
     if (diff < 60) { return 'less than a minute ago'; }
@@ -29,4 +32,5 @@ export function getRelativeTime(date) {
     else if (diff < (86400)) { return 'about ' + (parseInt(diff / 3600)).toString() + ' hours ago'; }
     else if (diff < (172800)) { return '1 day ago'; }
     else { return (parseInt(diff / 86400)).toString() + ' days ago'; }
+
 }

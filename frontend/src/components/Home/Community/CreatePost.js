@@ -11,7 +11,8 @@ class CreatePost extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            community_id: props.location.params
+            community_id: props.location.params,
+            type: "0"
         }
         console.log("PROPS AND STATE in create post", this.props, this.state);
     }
@@ -26,12 +27,15 @@ class CreatePost extends Component {
                     <Col sm={8}>
                         <Form onSubmit={(e) => {
                             e.preventDefault();
-                            Axios.post(backendServer + '/createPost', this.state, (err, result) => {
-                                if (err) {
-                                    console.log(err);
-                                }
+                            this.props.setLoader();
+                            Axios.post(backendServer + '/createPost', this.state).then((result) => {
+                                this.props.unsetLoader();
                                 console.log(result);
+                            }).catch((err) => {
+                                this.props.unsetLoader();
+                                console.log(err);
                             })
+
                         }}>
                             {JSON.stringify(this.state)}
                             <Tabs defaultActiveKey="0" id="tabs" onSelect={(eventKey) => { this.setState({ type: eventKey }) }}>

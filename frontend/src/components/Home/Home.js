@@ -1,19 +1,24 @@
 import React, { Component } from "react";
-import { Col, Row } from "react-bootstrap";
+import { Alert, Col, Row } from "react-bootstrap";
 import Post from "./Community/Post";
 class Home extends Component {
-  // constructor(props) {
-  //     super(props);
-  //     this.state = {
-  //     };
-  // }
+  constructor(props) {
+    super(props);
+    this.state = {
+    };
+    console.log("PROPS IN HOME", this.props);
+  }
 
   render() {
     return (
       <React.Fragment>
-        <Row style={{ paddingTop: "70px", background: "#DAE0E6" }}>
+        <Row style={{ paddingTop: "70px", background: this.props.darkMode ? "black" : "#DAE0E6" }}>
           <Col sm={8}>
             <div style={{ float: "right", padding: "1rem" }}>
+              <Alert variant="danger">
+                <button onClick={() => this.props.setLoader()}>SET LOADER</button>
+                <button onClick={() => this.props.unsetLoader()}>UNSET LOADER</button>
+              </Alert>
               <Post content="post 1" />
               <Post content="post 2" />
               <Post content="post 3" />

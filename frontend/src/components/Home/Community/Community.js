@@ -24,14 +24,24 @@ class Community extends Component {
     // console.log(props, "COMM PROPS");
     super(props);
     this.state = {
-      community_id: this.props.match.params.community_id ? "6089eff68a05a7043c3f3c32" : "6089eff68a05a7043c3f3c32"
+      community_id: props.match.params.community_id ? "6089eff68a05a7043c3f3c32" : "6089eff68a05a7043c3f3c32"
     }
   }
 
   componentDidMount() {
-    Axios.post(backendServer + '/getCommunityDetails', { community_id: this.state.community_id })
+    let data = {
+      community_id: this.state.community_id
+    };
+    Axios.post(backendServer + '/getCommunityDetails', data)
       .then(response => {
         this.setState({ communityDetails: response.data });
+      }).catch(err => {
+        console.log(err);
+      });
+
+    Axios.post(backendServer + '/getPostsInCommunity', data)
+      .then(response => {
+        this.setState({ posts: response.data });
       }).catch(err => {
         console.log(err);
       })
@@ -39,12 +49,10 @@ class Community extends Component {
 
   render() {
     var postsToRender = [];
-    if (this.state.communityDetails) {
-      if (this.state.communityDetails.posts) {
-        this.state.communityDetails.posts.forEach(post => {
-          postsToRender.push((<Post data={post.postID}></Post>));
-        })
-      }
+    if (this.state.posts) {
+      this.state.posts.forEach(post => {
+        postsToRender.push((<Post data={post} ></Post>));
+      })
     }
     return (
       <React.Fragment>
