@@ -66,6 +66,7 @@ app.post("/createPost", function (req, res, next) {
       type: req.body.type,
       title: req.body.title,
       description: req.body.description,
+      userID: req.body.userID,
     };
   } else if (req.body.type == 1) {
     data = {
@@ -73,6 +74,7 @@ app.post("/createPost", function (req, res, next) {
       type: req.body.type,
       title: req.body.title,
       link: req.body.link,
+      userID: req.body.userID,
     };
   } else if (req.body.type == 2) {
     // let post = new Post({
@@ -86,18 +88,18 @@ app.post("/createPost", function (req, res, next) {
       res.status(500).send(err);
     }
 
-    Community.updateOne(
-      { _id: req.body.community_id },
-      {
-        $push: { posts: [{ postID: result._id }] },
-      },
-      (err, result) => {
-        if (err) {
-          res.status(500).send(err);
-        }
-        res.status(200).send(result);
-      }
-    );
+    // Community.updateOne(
+    //   { _id: req.body.community_id },
+    //   {
+    //     $push: { posts: [{ postID: result._id }] },
+    //   },
+    //   (err, result) => {
+    //     if (err) {
+    //       res.status(500).send(err);
+    //     }
+    //     res.status(200).send(result);
+    //   }
+    // );
   });
 });
 
