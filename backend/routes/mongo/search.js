@@ -10,7 +10,7 @@ app.get("/getAllCommunities", async function (req, res, next) {
     try {
         const { searchText } = req.query;
 
-        const regexSearchText = new RegExp(searchText, "g");
+        const regexSearchText = new RegExp(searchText);
 
         const communities = await Community.find({
             $or: [
