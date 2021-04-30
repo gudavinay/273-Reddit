@@ -11,8 +11,9 @@ class CreatePost extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            community_id: "6089eff68a05a7043c3f3c32"
-        } // props get the community id
+            community_id: props.location.params
+        }
+        console.log("PROPS AND STATE in create post", this.props, this.state);
     }
 
     render() {
@@ -33,7 +34,7 @@ class CreatePost extends Component {
                             })
                         }}>
                             {JSON.stringify(this.state)}
-                            <Tabs defaultActiveKey="post" id="tabs" onSelect={(eventKey) => { this.setState({ type: eventKey }) }}>
+                            <Tabs defaultActiveKey="0" id="tabs" onSelect={(eventKey) => { this.setState({ type: eventKey }) }}>
                                 <Tab eventKey="0" title="Post">
                                     {titleTag}
                                     <Input type="text" className="form-control" placeholder="Text (optional)" id="description" name="description" onChange={(e) => { this.setState({ description: e.target.value }) }} />
@@ -58,6 +59,22 @@ class CreatePost extends Component {
                         <Row>
                             <Card className="card">
                                 <Card.Header className="cardHeader">
+                                    <img alt="" height="40px" src={createPostRulesSVG} />  SELECTED COMM NAME
+                                </Card.Header>
+                                <Card.Body>
+                                    <ListGroup>
+                                        <ListGroupItem>SELECTED COMM RULES</ListGroupItem>
+                                        {/* <ListGroupItem>Behave like you would in real life</ListGroupItem>
+                                        <ListGroupItem>Look for the original source of content</ListGroupItem>
+                                        <ListGroupItem>Search for duplicates before posting</ListGroupItem>
+                                        <ListGroupItem>Read the community’s rules</ListGroupItem> */}
+                                    </ListGroup>
+                                </Card.Body>
+                            </Card>
+                        </Row>
+                        <Row>
+                            <Card className="card">
+                                <Card.Header className="cardHeader">
                                     <img alt="" height="40px" src={createPostRulesSVG} />  Posting to Reddit
                                 </Card.Header>
                                 <Card.Body>
@@ -69,9 +86,6 @@ class CreatePost extends Component {
                                         <ListGroupItem>Read the community’s rules</ListGroupItem>
                                     </ListGroup>
                                 </Card.Body>
-                                <Card.Footer>
-                                    <Button className="cardButton">Create Post</Button>
-                                </Card.Footer>
                             </Card>
                         </Row>
                     </Col>

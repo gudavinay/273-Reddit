@@ -17,6 +17,7 @@ import Error404 from "./Error404";
 import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "./globalStyles";
 import { lightTheme, darkTheme } from "./Themes";
+import CreatePost from "./Home/Community/CreatePost";
 
 class Main extends Component {
   constructor(props) {
@@ -40,7 +41,8 @@ class Main extends Component {
           <Switch>
             <Route exact path="/" component={LandingPage} />
             <Route path="/home" component={Home} />
-            <Route path="/community" component={Community} />
+            <Route path="/community/:community_id" component={Community} />
+            <Route path="/createPost" component={CreatePost} />
             <Route path="/communitysearch" component={CommunitySearch} />
             <Route path="/dashboard" component={Dashboard} />
             <Route path="/community/communityanalytics" component={CommunityAnalytics} />

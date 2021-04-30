@@ -5,13 +5,25 @@ import gallerySvg from "../../../assets/communityIcons/galleryIcon.svg";
 import linkSvg from "../../../assets/communityIcons/linkIcon.svg";
 import userSvg from "../../../assets/communityIcons/redditUserLogoIcon.svg";
 import { Row, Col, Button, Card } from "react-bootstrap";
+// import CreatePost from "./CreatePost";
+import { Link } from 'react-router-dom'
+// import { withStyles } from "@material-ui/core/styles";
+// import { useTheme } from "@material-ui/core/styles";
 
+// import { useTheme } from '@react-navigation/native';
+// eslint-disable-next-line no-unused-vars
+// const styles = theme => ({
+//   rowBackround: {
+//     backgroundColor: theme.palette.background,
+//   }
+// });
 class Community extends Component {
   constructor(props) {
+    // console.log(props, "COMM PROPS");
     super(props);
   }
-
   render() {
+    // const { theme } = this.props;
     return (
       <React.Fragment>
         <div className="container">
@@ -20,73 +32,85 @@ class Community extends Component {
             Community Name <Button>join</Button>{" "}
           </div>
           <Row>
-            <Row style={{ backgroundColor: "#BBBDBF" }}>
-              <Col xs={8}>
-                <div className="createPostH">
-                  <a>
-                    <img
-                      style={{ height: "30px", width: "30px" }}
-                      alt="User Logo"
-                      src={userSvg}
-                    />
-                  </a>{" "}
-                  <input
-                    className="createPostInput"
-                    placeholder="Create Post"
-                    type="text"
-                  ></input>
-                  <a className="galleryAnchor">
-                    <img
-                      style={{ height: "30px", width: "30px" }}
-                      alt="Gallery Logo"
-                      src={gallerySvg}
-                    />
-                  </a>
-                  <a className="galleryAnchor">
-                    <img
-                      style={{ height: "30px", width: "30px" }}
-                      alt="Link Logo"
-                      src={linkSvg}
-                    />
-                  </a>
-                </div>
-                <Post />
-                <Post />
-                <Post />
-              </Col>
-              <Col>
-                <Row>
-                  <Card className="card">
-                    <Card.Header className="cardHeader">
-                      About Community
+            <p>
+              <Row >
+                <Col xs={8}>
+                  <div className="createPostH">
+                    <a>
+                      <img
+                        style={{ height: "30px", width: "30px" }}
+                        alt="User Logo"
+                        src={userSvg}
+                      />
+                    </a>{" "}
+                    <Link to={{
+                      pathname: "/createPost",
+                      params: this.props.match.params.community_id
+                    }
+                    }>
+                      <input className="createPostInput" placeholder="Create Post" type="text" />
+                    </Link>
+                    <a className="galleryAnchor">
+                      <img
+                        style={{ height: "30px", width: "30px" }}
+                        alt="Gallery Logo"
+                        src={gallerySvg}
+                      />
+                    </a>
+                    <a className="galleryAnchor">
+                      <img
+                        style={{ height: "30px", width: "30px" }}
+                        alt="Link Logo"
+                        src={linkSvg}
+                      />
+                    </a>
+                  </div>
+                  <Post />
+                  <Post />
+                  <Post />
+                </Col>
+                <Col>
+                  <Row>
+                    <Card className="card">
+                      <Card.Header className="cardHeader">
+                        About Community
                     </Card.Header>
-                    <Card.Body>
-                      The leading community for cryptocurrency news, discussion
-                      & analysis.
+                      <Card.Body>
+                        The leading community for cryptocurrency news, discussion & analysis.
                     </Card.Body>
-                    <Card.Footer>
-                      <Button className="cardButton">Create Post</Button>
-                    </Card.Footer>
-                  </Card>
-                </Row>
-                <Row>
-                  <Card className="card">
-                    <Card.Header className="cardHeader">
-                      r/Community Rules
+                      <Card.Footer>
+                        <Button className="cardButton">Create Post</Button>
+                      </Card.Footer>
+                    </Card>
+                  </Row>
+                  <Row>
+                    <Card className="card">
+                      <Card.Header className="cardHeader">
+                        r/Community Rules
                     </Card.Header>
-                    <Card.Body>This is some text within a card body.</Card.Body>
-                    <Card.Footer>
-                      <Button className="cardButton">Create Post</Button>
-                    </Card.Footer>
-                  </Card>
-                </Row>
-              </Col>
-            </Row>
+                      <Card.Body>This is some text within a card body.</Card.Body>
+                      <Card.Footer>
+                        <Button className="cardButton">Create Post</Button>
+                      </Card.Footer>
+                    </Card>
+                  </Row>
+                </Col>
+              </Row>
+            </p>
           </Row>
         </div>
       </React.Fragment>
     );
   }
 }
+// Wrap and export
+// eslint-disable-next-line react/display-name
+// export default function (props) {
+//   const theme = useTheme();
+
+//   return <Community {...props} theme={theme} />;
+// }
 
 export default Community;
+// export default withStyles(styles, { withTheme: true })(Community);
+// export default withStyles(styles)(Community);
