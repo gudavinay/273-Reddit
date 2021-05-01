@@ -38,7 +38,6 @@ app.get("/getCommunityDetails", (req, res) => {
     .then((result) => {
       let usersIdOfSQL = [];
       let acceptedIdOfSQL = [];
-      console.log(result.listOfUsers.length);
       for (let i = 0; i < result.listOfUsers.length; i++) {
         if (!result.listOfUsers[i].isAccepted) {
           usersIdOfSQL.push(result.listOfUsers[i].userID.userIDSQL);

@@ -59,8 +59,6 @@
 // }
 // export default withRouter(Main);
 
-
-
 import React, { Component } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import LandingPage from "./LandingPage/LandingPage";
@@ -74,6 +72,7 @@ import MyCommunitiesModeration from "./Home/MyCommunities/MyCommunitiesModeratio
 import CreateCommunity from "./Home/MyCommunities/CreateCommunity";
 import UserProfile from "./Home/UserProfile/UserProfile";
 import Messages from "./Home/Messages/Messages";
+import Invitation from "./Home/Invitation/invitation";
 import NavigationBar from "./LandingPage/Navigationbar";
 import { Fade } from "reactstrap";
 import Error404 from "./Error404";
@@ -89,35 +88,41 @@ class Main extends Component {
       darkMode: false,
       loading: false,
       setLoader: this.setLoader,
-      unsetLoader: this.unsetLoader
-    }
+      unsetLoader: this.unsetLoader,
+    };
   }
   themeToggler = () => {
-    this.state.darkMode ? this.setState({ darkMode: false }) : this.setState({ darkMode: true });
-  }
+    this.state.darkMode
+      ? this.setState({ darkMode: false })
+      : this.setState({ darkMode: true });
+  };
 
   setLoader = () => {
     this.setState({ loading: true });
-  }
+  };
 
   unsetLoader = () => {
-    if(!this.state.loading) return; // To resolve unnecessary state change
+    if (!this.state.loading) return; // To resolve unnecessary state change
     setTimeout(() => {
       this.setState({ loading: false });
     }, 500);
-  }
+  };
   render() {
     return (
       <ThemeProvider theme={this.state.darkMode ? darkTheme : lightTheme}>
         <GlobalStyles />
         <Fade>
-          {
-            this.props.location.pathname !== "/" &&
-            <NavigationBar {...this.props} {...this.state} themeToggler={this.themeToggler} currentTheme={this.state.darkMode} />
-          }
+          {this.props.location.pathname !== "/" && (
+            <NavigationBar
+              {...this.props}
+              {...this.state}
+              themeToggler={this.themeToggler}
+              currentTheme={this.state.darkMode}
+            />
+          )}
           <Switch>
             <Route exact path="/" component={LandingPage} />
-            <Route path="/home" >
+            <Route path="/home">
               <Home {...this.state} {...this.props} />
             </Route>
             <Route path="/community/:community_id">
@@ -150,7 +155,10 @@ class Main extends Component {
             <Route path="/messages">
               <Messages {...this.state} {...this.props} />
             </Route>
-            <Route component={Error404} > </Route>
+            <Route path="/invitation">
+              <Invitation {...this.state} {...this.props} />
+            </Route>
+            <Route component={Error404}> </Route>
           </Switch>
         </Fade>
       </ThemeProvider>
