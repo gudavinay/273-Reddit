@@ -13,10 +13,12 @@ import qs from "query-string";
 import Switch from '@material-ui/core/Switch';
 import redditLogoSVG from "../../assets/redditLogo.svg";
 import redditTextSVG from "../../assets/redditText.svg";
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 class Navigationbar extends Component {
   constructor(props) {
     super(props);
+    console.log("PROPS in NAVIGATION BAR", this.props);
     const qR = qs.parse(props.location.search);
     this.state = {
       search: qR.q || ""
@@ -34,6 +36,7 @@ class Navigationbar extends Component {
   render() {
     return (
       <React.Fragment>
+        {this.props.loading && <LinearProgress color="secondary" style={{ backgroundColor: this.props.darkMode ? '#363537' : 'white' }} />}
         <Container>
           <Navbar>
             <Row style={{ display: "contents" }}>

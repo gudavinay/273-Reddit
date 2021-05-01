@@ -6,7 +6,9 @@ import linkSvg from "../../../assets/communityIcons/linkIcon.svg";
 import userSvg from "../../../assets/communityIcons/redditUserLogoIcon.svg";
 import { Row, Col, Button, Card } from "react-bootstrap";
 // import CreatePost from "./CreatePost";
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import Axios from 'axios';
+import backendServer from '../../../webConfig'
 // import { withStyles } from "@material-ui/core/styles";
 // import { useTheme } from "@material-ui/core/styles";
 
@@ -21,9 +23,43 @@ class Community extends Component {
   constructor(props) {
     // console.log(props, "COMM PROPS");
     super(props);
+    this.state = {
+      community_id: props.match.params.community_id ? "6089eff68a05a7043c3f3c32" : "6089eff68a05a7043c3f3c32"
+    }
   }
+
+  componentDidMount() {
+    let data = {
+      community_id: this.state.community_id
+    };
+    this.props.setLoader();
+    Axios.post(backendServer + '/getCommunityDetails', data)
+      .then(response => {
+        this.props.unsetLoader();
+        this.setState({ communityDetails: response.data });
+      }).catch(err => {
+        this.props.unsetLoader();
+        console.log(err);
+      });
+
+    this.props.setLoader();
+    Axios.post(backendServer + '/getPostsInCommunity', data)
+      .then(response => {
+        this.props.unsetLoader();
+        this.setState({ posts: response.data });
+      }).catch(err => {
+        this.props.unsetLoader();
+        console.log(err);
+      })
+  }
+
   render() {
-    // const { theme } = this.props;
+    var postsToRender = [];
+    if (this.state.posts) {
+      this.state.posts.forEach(post => {
+        postsToRender.push((<Post data={post} {...this.props}></Post>));
+      })
+    }
     return (
       <React.Fragment>
         <div className="container">
@@ -65,9 +101,7 @@ class Community extends Component {
                       />
                     </a>
                   </div>
-                  <Post />
-                  <Post />
-                  <Post />
+                  {postsToRender}
                 </Col>
                 <Col>
                   <Row>

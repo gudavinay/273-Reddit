@@ -5,9 +5,9 @@ const Community = require("../../models/mongo/Community");
 
 app.post("/addCommunity", function (req, res, next) {
   let topicList = [];
-  req.body.selectedTopic.map(topic => {
+  req.body.selectedTopic.map((topic) => {
     topicList.push({
-      topic: topic.topic
+      topic: topic.topic,
     });
   });
   let community = new Community({
@@ -17,7 +17,7 @@ app.post("/addCommunity", function (req, res, next) {
     ownerID: "6089d63ea112c02c1df2914c",
     topicSelected: topicList,
     imageURL: req.body.communityImages,
-    rules: req.body.listOfRules
+    rules: req.body.listOfRules,
   });
   community.save((error, data) => {
     if (error) {
@@ -36,10 +36,34 @@ app.get("/myCommunity", function (req, res) {
 });
 
 app.get("/getCommunityDetails", (req, res) => {
-  Community.find({ _id: req.body.community_id })
-    .populate("posts.postID")
-    .then(result => {
-      res.send(result);
+  Community.findOne({
+    _id: req.body.community_id,
+    ownerID: req.body.ownerID,
+  })
+    .populate("listOfUsers.userID")
+    .then((result) => {
+      let usersIdOfSQL = [];
+      let acceptedIdOfSQL = [];
+      for (let i = 0; i < result.listOfUsers.length; i++) {
+        if (!result.listOfUsers[i].isAccepted) {
+          usersIdOfSQL.push(result.listOfUsers[i].userID.userIDSQL);
+        } else {
+          acceptedIdOfSQL.push(result.listOfUsers[i].userID.userIDSQL);
+        }
+      }
+      let data = JSON.parse(JSON.stringify(result));
+      data.requestedUserSQLIds = usersIdOfSQL;
+      data.acceptedUsersSQLIds = acceptedIdOfSQL;
+      delete data.listOfUsers;
+      delete data.upvotedBy;
+      delete data.downvotedBy;
+      delete data.sentInvitesTo;
+      delete data.imageURL;
+      delete data.posts;
+      delete data.rules;
+      delete data.topicSelected;
+
+      res.status(200).send(data);
     });
 });
 

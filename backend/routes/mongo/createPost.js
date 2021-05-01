@@ -66,6 +66,7 @@ app.post("/createPost", function (req, res, next) {
       type: req.body.type,
       title: req.body.title,
       description: req.body.description,
+      userID: req.body.userID,
     };
   } else if (req.body.type == 1) {
     data = {
@@ -73,6 +74,7 @@ app.post("/createPost", function (req, res, next) {
       type: req.body.type,
       title: req.body.title,
       link: req.body.link,
+      userID: req.body.userID,
     };
   } else if (req.body.type == 2) {
     // let post = new Post({
@@ -86,18 +88,19 @@ app.post("/createPost", function (req, res, next) {
       res.status(500).send(err);
     }
 
-    Community.updateOne(
-      { _id: req.body.community_id },
-      {
-        $push: { posts: [{ postID: result._id }] },
-      },
-      (err, result) => {
-        if (err) {
-          res.status(500).send(err);
-        }
-        res.status(200).send(result);
-      }
-    );
+    res.status(200).send(result);
+    // Community.updateOne(
+    //   { _id: req.body.community_id },
+    //   {
+    //     $push: { posts: [{ postID: result._id }] },
+    //   },
+    //   (err, result) => {
+    //     if (err) {
+    //       res.status(500).send(err);
+    //     }
+    //     res.status(200).send(result);
+    //   }
+    // );
   });
 });
 
@@ -108,6 +111,7 @@ app.post("/comment", (req, res) => {
       postID: req.body.postID,
       description: req.body.description,
       isParentComment: req.body.isParentComment,
+      userID: req.body.userID,
     };
     new Comment(comment).save((err, result) => {
       if (err) {
@@ -120,25 +124,39 @@ app.post("/comment", (req, res) => {
       postID: req.body.postID,
       description: req.body.description,
       isParentComment: req.body.isParentComment,
+      userID: req.body.userID,
+      parentCommentID: req.body.parentCommentID,
     };
     new Comment(comment).save((err, result) => {
       if (err) {
         res.status(500).send(err);
       }
-      Comment.updateOne(
-        { _id: req.body.parentID },
-        {
-          $push: { subComment: [{ commentID: result._id }] },
-        },
-        (err, result) => {
-          if (err) {
-            res.status(500).send(err);
-          }
-          res.status(200).send(result);
-        }
-      );
+      res.status(200).send(result);
+      // Comment.updateOne(
+      //   { _id: req.body.parentID },
+      //   {
+      //     $push: { subComment: [{ commentID: result._id }] },
+      //   },
+      //   (err, result) => {
+      //     if (err) {
+      //       res.status(500).send(err);
+      //     }
+      //     res.status(200).send(result);
+      //   }
+      // );
     });
   }
+});
+
+app.post("/getPostsInCommunity", (req, res) => {
+  Post.find({ communityID: req.body.community_id })
+    .populate("userID")
+    .then((result) => {
+      res.status(200).send(result);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
 });
 
 app.post("/vote", (req, res) => {
@@ -169,5 +187,10 @@ app.post("/vote", (req, res) => {
       }
     );
   }
+});
+app.post("/getCommentsWithPostID", (req, res) => {
+  Comment.find({ postID: req.body.post_id }, (err, result) => {
+    res.status(200).send(result);
+  });
 });
 module.exports = router;

@@ -21,11 +21,13 @@ class CommunitySearch extends Component {
         if (snapshot.notifyRequired) {
             this.processSearch();
         }
+        if (prevProps.search.processing !== this.props.search.processing) {
+            this.props.search.processing ? this.props.setLoader() : this.props.unsetLoader();
+        }
     }
 
     render() {
-        const {query, processing, results} = this.props.search;
-        
+        const { query, processing, results } = this.props.search;
         return (
             <React.Fragment>
                 <h2>
@@ -35,19 +37,15 @@ class CommunitySearch extends Component {
                     Search results
                 </h6>
                 {
-                    processing ? (
-                        <div style={{color: "red"}}>
-                            Searching....
-                        </div>
-                    ) : (
+                    !processing && (
                         results.communities && results.communities.length > 0 ? (
-                            <div><pre>{JSON.stringify(results, null, 2) }</pre></div>
+                            <div><pre>{JSON.stringify(results, null, 2)}</pre></div>
                         ) : (
                             <div>Sorry, there were no community results for “<b>{query}</b>”</div>
                         )
                     )
                 }
-                
+
             </React.Fragment>
         );
     }

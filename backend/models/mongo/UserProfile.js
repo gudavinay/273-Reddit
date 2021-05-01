@@ -4,25 +4,26 @@ const UserProfileSchema = new mongoose.Schema({
   userIDSQL: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   listOfTopics: [{ type: String }],
   communityInvites: [
     {
       communityID: {
         type: Schema.Types.ObjectId,
-        ref: "Community"
+        ref: "Community",
       },
       isAccepted: {
         type: Boolean,
-        defaultValue: false
+        defaultValue: false,
       },
       invitedBy: {
         type: Schema.Types.ObjectId,
-        ref: "UserProfile"
-      }
-    }
-  ]
+        ref: "UserProfile",
+      },
+      dateTime: { type: Date, default: Date.now() },
+    },
+  ],
 });
 
 module.exports = mongoose.model("UserProfile", UserProfileSchema);
