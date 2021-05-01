@@ -29,6 +29,12 @@ app.post("/addCommunity", function (req, res, next) {
   });
 });
 
+app.get("/myCommunity", function (req, res) {
+  Community.find({ _id: req.body.ownerID }).then(result => {
+    res.send(JSON.stringify(result));
+  });
+});
+
 app.get("/getCommunityDetails", (req, res) => {
   Community.find({ _id: req.body.community_id })
     .populate("posts.postID")
