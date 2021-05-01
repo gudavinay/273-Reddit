@@ -8,7 +8,7 @@ class Comment extends Component {
     render() {
         return (
             <React.Fragment>
-                <div>  inside Comment ... {this.props.content} </div>
+                <div>{JSON.stringify(this.props.data)}</div>
 
             </React.Fragment>
         );

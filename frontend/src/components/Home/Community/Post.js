@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Comment from "./Comment";
 import { Row, Col, Card, Modal, ModalBody } from "react-bootstrap";
 import "./post.css";
 import { getRelativeTime } from "../../../services/ControllerUtils";
@@ -109,7 +108,6 @@ class Post extends Component {
           </Card.Footer>
         </Card>
         {_modalWindow}
-        <Comment content="new comment" />
       </React.Fragment>
     );
   }
