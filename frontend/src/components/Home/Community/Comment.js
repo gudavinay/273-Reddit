@@ -8,7 +8,8 @@ class Comment extends Component {
     render() {
         return (
             <React.Fragment>
-            inside Comment ... {this.props.content}
+                <div>  inside Comment ... {this.props.content} </div>
+
             </React.Fragment>
         );
     }

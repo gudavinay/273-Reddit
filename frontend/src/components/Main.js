@@ -105,8 +105,8 @@ class Main extends Component {
     if (!this.state.loading) return; // To resolve unnecessary state change
     setTimeout(() => {
       this.setState({ loading: false });
-    }, 500);
-  };
+    }, 1000);
+  }
   render() {
     return (
       <ThemeProvider theme={this.state.darkMode ? darkTheme : lightTheme}>

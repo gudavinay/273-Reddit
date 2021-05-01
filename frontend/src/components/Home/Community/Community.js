@@ -32,17 +32,23 @@ class Community extends Component {
     let data = {
       community_id: this.state.community_id
     };
+    this.props.setLoader();
     Axios.post(backendServer + '/getCommunityDetails', data)
       .then(response => {
+        this.props.unsetLoader();
         this.setState({ communityDetails: response.data });
       }).catch(err => {
+        this.props.unsetLoader();
         console.log(err);
       });
 
+    this.props.setLoader();
     Axios.post(backendServer + '/getPostsInCommunity', data)
       .then(response => {
+        this.props.unsetLoader();
         this.setState({ posts: response.data });
       }).catch(err => {
+        this.props.unsetLoader();
         console.log(err);
       })
   }
@@ -51,7 +57,7 @@ class Community extends Component {
     var postsToRender = [];
     if (this.state.posts) {
       this.state.posts.forEach(post => {
-        postsToRender.push((<Post data={post} ></Post>));
+        postsToRender.push((<Post data={post} {...this.props}></Post>));
       })
     }
     return (
