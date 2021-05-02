@@ -102,6 +102,7 @@ class MyCommunities extends Component {
                   {community.listOfUsers.length + 1}
                   <br />
                   <strong>No of Post:</strong>
+                  {community.count}
                   <br />
                 </p>
               </Col>

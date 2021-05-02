@@ -2,6 +2,7 @@ var express = require("express");
 const app = require("../../app");
 const router = express.Router();
 const Community = require("../../models/mongo/Community");
+const Post = require("../../models/mongo/Post");
 
 app.post("/addCommunity", function (req, res, next) {
   let topicList = [];
@@ -30,8 +31,30 @@ app.post("/addCommunity", function (req, res, next) {
 });
 
 app.get("/myCommunity", function (req, res) {
-  Community.find({ ownerID: req.query.ID }).then(result => {
-    res.send(JSON.stringify(result));
+  let data = [];
+  Community.find({ ownerID: req.query.ID }).then((result, error) => {
+    if (error) {
+      res.status(500).send("Error Occured");
+    } else {
+      const findResult = JSON.parse(JSON.stringify(result));
+      findResult.map(community => {
+        Post.find({ communityID: community._id }).then((postResult, error) => {
+          console.log(JSON.stringify(postResult.length));
+          data.push({
+            communityName: community.communityName,
+            communityDescription: community.communityDescription,
+            imageURL: community.communityImages,
+            listOfUsers: community.listOfUsers,
+            count: postResult.length
+          });
+          console.log(JSON.stringify(data));
+          if (result.length == data.length) {
+            console.log(JSON.stringify(data));
+            res.status(200).send(JSON.stringify(data));
+          }
+        });
+      });
+    }
   });
 });
 
