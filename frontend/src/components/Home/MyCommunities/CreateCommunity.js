@@ -6,7 +6,7 @@ import {
   Container,
   Row,
   Form,
-  Button
+  Button,
   // ListGroup
 } from "react-bootstrap";
 import backendServer from "../../../webConfig";
@@ -31,21 +31,21 @@ class CreateCommunity extends Component {
       title: "",
       rulesDescription: "",
       addEditButton: "Add Rule",
-      editRule: {}
+      editRule: {},
     };
   }
 
-  OnImageUpload = e => {
+  OnImageUpload = (e) => {
     e.preventDefault();
     let data = new FormData();
     console.log(e.target.files[0]);
     data.append("file", e.target.files[0]);
     axios
       .post(`${backendServer}/upload`, data)
-      .then(response => {
+      .then((response) => {
         console.log(response);
       })
-      .catch(error => console.log("error " + error));
+      .catch((error) => console.log("error " + error));
   };
 
   AddCommunityDataToDB(communityData) {
@@ -55,85 +55,85 @@ class CreateCommunity extends Component {
       communityDescription: communityData.description,
       communityImages: this.state.communityImages,
       selectedTopic: this.state.selectedTopic,
-      listOfRules: this.state.listOfRule
+      listOfRules: this.state.listOfRule,
     };
     axios
       .post(`${backendServer}/addCommunity`, data)
-      .then(response => {
+      .then((response) => {
         if (response.status == 200) {
           alert("Community created successfully");
         }
       })
-      .catch(error => console.log("error " + error));
+      .catch((error) => console.log("error " + error));
   }
 
   componentDidMount() {
     this.getTopicFromDB();
   }
 
-  handleSubmit = e => {
+  handleSubmit = (e) => {
     e.preventDefault();
     const data = {
       communityName: this.state.communityName,
-      communityDescription: this.state.communityDescription
+      communityDescription: this.state.communityDescription,
     };
     axios
       .post(`${backendServer}/createCommunity`, data)
-      .then(response => {
+      .then((response) => {
         console.log(response.data);
         this.AddCommunityDataToDB(response.data);
       })
-      .catch(error => console.log("error " + error));
+      .catch((error) => console.log("error " + error));
   };
 
   async getTopicFromDB() {
     await axios
       .get(`${backendServer}/getTopic`)
-      .then(response => {
+      .then((response) => {
         this.setState({
-          listOfTopics: response.data
+          listOfTopics: response.data,
         });
         console.log(this.state.listOfTopics);
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({
-          error: error
+          error: error,
         });
       });
   }
 
-  handleTopicSelection = topic => {
-    this.setState(prevState => ({
+  handleTopicSelection = (topic) => {
+    this.setState((prevState) => ({
       selectedTopic: [
         ...prevState.selectedTopic,
         {
           topic: topic.topic,
-          topic_id: topic.topic_id
-        }
-      ]
+          topic_id: topic.topic_id,
+        },
+      ],
     }));
     console.log(this.state.selectedTopic);
   };
-  handleAddRule = e => {
+  handleAddRule = (e) => {
     e.preventDefault();
     if (Object.keys(this.state.editRule).length > 0) {
       let items = this.state.listOfRule;
       items.splice(items.indexOf(this.state.editRule), 1);
       this.setState({
-        listOfRule: items
+        listOfRule: items,
       });
     }
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       listOfRule: [
         ...prevState.listOfRule,
         {
           title: this.state.title,
-          description: this.state.rulesDescription
-        }
+          description: this.state.rulesDescription,
+        },
       ],
       rulesDescription: "",
       title: "",
-      addEditButton: "Add Rule"
+      addEditButton: "Add Rule",
     }));
   };
 
@@ -142,7 +142,7 @@ class CreateCommunity extends Component {
     let items = this.state.selectedTopic;
     items.splice(items.indexOf(topic), 1);
     this.setState({
-      selectedTopic: items
+      selectedTopic: items,
     });
   };
 
@@ -151,7 +151,7 @@ class CreateCommunity extends Component {
     let items = this.state.listOfRule;
     items.splice(items.indexOf(rule), 1);
     this.setState({
-      listOfRule: items
+      listOfRule: items,
     });
   };
 
@@ -162,7 +162,7 @@ class CreateCommunity extends Component {
       editRule: rule,
       title: rule.title,
       rulesDescription: rule.description,
-      addEditButton: "Update Rule"
+      addEditButton: "Update Rule",
     });
   };
 
@@ -171,7 +171,7 @@ class CreateCommunity extends Component {
     let selectedTopic = null;
     let rules = null;
     if (this.state.listOfTopics != null && this.state.listOfTopics.length > 0) {
-      dropDownItem = this.state.listOfTopics.map(topic => {
+      dropDownItem = this.state.listOfTopics.map((topic) => {
         return (
           <Dropdown.Item
             key={topic.topic_id}
@@ -182,12 +182,12 @@ class CreateCommunity extends Component {
         );
       });
       if (this.state.selectedTopic.length > 0) {
-        selectedTopic = this.state.selectedTopic.map(topic => {
+        selectedTopic = this.state.selectedTopic.map((topic) => {
           return (
             <Chip
               key={topic.topic_id}
               label={topic.topic}
-              onDelete={e => this.handleDelete(e, topic)}
+              onDelete={(e) => this.handleDelete(e, topic)}
               className="chip"
             />
           );
@@ -205,13 +205,13 @@ class CreateCommunity extends Component {
               <Col xs={3}>
                 <button
                   className="btn"
-                  onClick={e => this.handleEditRules(e, rule)}
+                  onClick={(e) => this.handleEditRules(e, rule)}
                 >
                   <i className="fa fa-pencil" aria-hidden="true"></i>
                 </button>
                 <button
                   className="btn"
-                  onClick={e => this.handleRuleDelete(e, rule)}
+                  onClick={(e) => this.handleRuleDelete(e, rule)}
                 >
                   <i className="fa fa-trash" aria-hidden="true"></i>
                 </button>
@@ -248,7 +248,7 @@ class CreateCommunity extends Component {
                     type="text"
                     id="name"
                     name="name"
-                    onChange={e =>
+                    onChange={(e) =>
                       this.setState({ communityName: e.target.value })
                     }
                     aria-describedby="passwordHelpBlock"
@@ -279,7 +279,7 @@ class CreateCommunity extends Component {
                     type="textarea"
                     id="description"
                     name="description"
-                    onChange={e =>
+                    onChange={(e) =>
                       this.setState({ communityDescription: e.target.value })
                     }
                     required
@@ -327,7 +327,7 @@ class CreateCommunity extends Component {
                     label="Title"
                     variant="outlined"
                     value={this.state.title}
-                    onChange={e => this.setState({ title: e.target.value })}
+                    onChange={(e) => this.setState({ title: e.target.value })}
                   />
 
                   <TextField
@@ -337,7 +337,7 @@ class CreateCommunity extends Component {
                     label="Description"
                     variant="outlined"
                     value={this.state.rulesDescription}
-                    onChange={e =>
+                    onChange={(e) =>
                       this.setState({ rulesDescription: e.target.value })
                     }
                   />
