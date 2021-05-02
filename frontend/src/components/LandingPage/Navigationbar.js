@@ -107,7 +107,7 @@ class Navigationbar extends Component {
                     width: "225px",
                     borderRadius: "5px",
                     backgroundColor: this.props.darkMode ? "#363537" : "#fff",
-                    zIndex: "10000",
+                    zIndex: "2",
                     border: "1px solid #777",
                   }}
                 >
@@ -255,7 +255,7 @@ class Navigationbar extends Component {
                     width: "217px",
                     borderRadius: "5px",
                     backgroundColor: this.props.darkMode ? "#363537" : "#fff",
-                    zIndex: "10000",
+                    zIndex: "2",
                     border: "1px solid #777",
                   }}
                 >
