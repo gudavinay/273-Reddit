@@ -40,8 +40,9 @@ class Post extends Component {
         </Row>
         <Row style={{ paddingLeft: "0px" }}>
           <h3 className="postBodyContent">
-            [{this.props.data?.title}] {this.props.data?.description}
+            [{this.props.data?.title}]
           </h3>
+          {this.props.data?.description}
         </Row>
       </>
     );
@@ -58,7 +59,7 @@ class Post extends Component {
 
     return (
       <React.Fragment>
-        {JSON.stringify(this.props.data)}
+        {/* {JSON.stringify(this.props.data)} */}
         <Card style={{ margin: "0px" }}>
           <Card.Body>
             <Row>

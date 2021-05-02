@@ -189,7 +189,7 @@ app.post("/vote", (req, res) => {
   }
 });
 app.post("/getCommentsWithPostID", (req, res) => {
-  Comment.find({ postID: req.body.post_id }, (err, result) => {
+  Comment.find({ postID: req.body.postID }, (err, result) => {
     res.status(200).send(result);
   });
 });

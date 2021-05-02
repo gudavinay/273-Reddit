@@ -4,7 +4,7 @@ import Post from './Post';
 import backendServer from '../../../webConfig';
 import Axios from 'axios';
 import { getRelativeTime } from '../../../services/ControllerUtils';
-import '../../styles/voteButtonStyles.css'
+import '../../styles/voteButtonStyles.css';
 
 class DetailedPostView extends Component {
     constructor(props) {
@@ -16,7 +16,7 @@ class DetailedPostView extends Component {
 
     componentDidMount() {
         this.props.setLoader();
-        Axios.post(backendServer + '/getCommentsWithPostID', { post_id: this.props.data._id })
+        Axios.post(backendServer + '/getCommentsWithPostID', { postID: this.props.data._id })
             .then(response => {
                 this.props.unsetLoader();
                 this.setState({ comments: response.data });
@@ -28,7 +28,6 @@ class DetailedPostView extends Component {
 
     render() {
         var commentsToRender = [];
-        // var parentChildCommentList = {};
         if (this.state.comments) {
             var parentCommentList = this.state.comments.filter(comment => comment.isParentComment);
             console.log("BEFORE", parentCommentList);
@@ -43,25 +42,6 @@ class DetailedPostView extends Component {
             console.log("AFTER", parentCommentList);
 
             parentCommentList.forEach(comment => {
-                // commentsToRender.push(<div>{comment.description}</div>)
-                // comment.child.forEach(chi => {
-                //     commentsToRender.push(<div>{"*" + chi.description}</div>)
-                // })
-
-
-
-                // let subComm = [];
-                // let tempArr = [];
-                // comment.child.forEach(chi => {
-                //     subComm.push(<div>{"*" + chi.description}</div>);
-                // })
-                // tempArr.push(<div style={{ paddingLeft: '3%', }}>{subComm}</div>)
-                // commentsToRender.push(<div>{comment.description}</div>)
-                // commentsToRender.push(tempArr)
-                // commentsToRender.push(<Card><div>{comment.description}</div></Card>) 
-
-
-
                 commentsToRender.push(
                     <div>
                         <div style={{ marginTop: '10px' }}>
@@ -80,7 +60,7 @@ class DetailedPostView extends Component {
                         </div>
                     </div>
                 );
-                comment.child.forEach(chi => {
+                comment.child.forEach(childComment => {
                     commentsToRender.push(
                         <div style={{ padding: '1% 4%', borderLeft: '2px solid #edeff1', marginLeft: '2.5%', fontSize: '14px' }}>
                             <div>
@@ -88,7 +68,7 @@ class DetailedPostView extends Component {
                                 <span style={{ fontSize: '12px', fontWeight: '400', lineHeight: '16px' }}>{comment.userID} {getRelativeTime(comment.createdAt)}</span>
                             </div>
                             <div style={{ fontSize: '14px', paddingLeft: '2%', borderLeft: '2px solid #edeff1', marginLeft: '2.5%' }}>
-                                <div>{chi.description}</div>
+                                <div>{childComment.description}</div>
                                 <div>
                                     <i style={{ cursor: "pointer" }} className="icon icon-arrow-up upvote" />
                                     <span style={{ margin: '0 5px' }}><strong> 698 </strong></span>
@@ -99,16 +79,18 @@ class DetailedPostView extends Component {
                     );
                 })
             });
-
-            // this.state.comments.forEach(comment => {
-            //     commentsToRender.push(<Comment data={comment} />)
-            // });
         }
         return (
             <React.Fragment>
                 <Post data={this.props} detailedView={true} />
-                <div style={{ paddingLeft: '20px' }}>{commentsToRender}</div>
-            </React.Fragment>
+                <div style={{ padding: '0 20px', marginTop: '20px' }}>
+                    <div style={{ boxShadow: "0px 0px 1px #777", padding: '1px' }}>
+                        <textarea style={{ border: "none" }} type="text" className="form-control commentTextArea" name="primaryComment" id="primaryComment" placeholder="What are your thoughts?" onChange={(e) => this.setState({ primaryComment: e.target.value })} />
+                        <button className="form-control" style={{ backgroundColor: '#0266b3', borderRadius: '20px', width: '100px', height: '25px', fontSize: '12px', color: 'white', fontWeight: 'bold', lineHeight: '0px', border: 'none', margin: '1% 85%' }}>Comment</button>
+                    </div>
+                    {commentsToRender}
+                </div>
+            </React.Fragment >
         );
     }
 }
