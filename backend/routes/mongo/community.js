@@ -41,6 +41,7 @@ app.get("/myCommunity", function (req, res) {
         Post.find({ communityID: community._id }).then((postResult, error) => {
           console.log(JSON.stringify(postResult.length));
           data.push({
+            _id: community._id,
             communityName: community.communityName,
             communityDescription: community.communityDescription,
             imageURL: community.communityImages,
