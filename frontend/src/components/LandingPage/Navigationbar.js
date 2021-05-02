@@ -27,12 +27,20 @@ class Navigationbar extends Component {
   onSubmitSearch = (e) => {
     e.preventDefault();
     if (this.state.search.trim() === "") return;
-    this.props.history.push({
-      pathname: '/communitysearch',
-      search: "?" + new URLSearchParams({ q: this.state.search }).toString()
-    })
+    this.processSearchSubmitActivity();
   }
   onChangeSearchText = (e) => this.setState({ search: e.target.value })
+  processSearchSubmitActivity = () => {
+    const { pathname } = this.props.location;
+    if (pathname === "/communitysearch") {
+      this.props.history.push({
+        pathname: '/communitysearch',
+        search: "?" + new URLSearchParams({ q: this.state.search }).toString()
+      })
+    } else {
+      // Write logic for posts search
+    }
+  }
   render() {
     return (
       <React.Fragment>

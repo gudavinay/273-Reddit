@@ -12,7 +12,7 @@ app.get("/getAllCommunities", async function (req, res, next) {
 
         const regexSearchText = new RegExp(searchText);
 
-        const communities = await Community.find({
+        let communities = await Community.find({
             $or: [
                 {
                     "communityName": { $regex: regexSearchText, $options: 'i' }
@@ -21,13 +21,34 @@ app.get("/getAllCommunities", async function (req, res, next) {
                     "communityDescription": { $regex: regexSearchText, $options: 'i' }
                 }
             ]
+        }).populate("ownerID");
+
+        const communitiesBySqlUserId = communities.map(c => c.ownerID?.userIDSQL);
+
+        const users = await db.User.findAll({
+            where: {
+                user_id: communitiesBySqlUserId
+            }
+        });
+
+        const userById = users.reduce((acc, it) => {
+            acc[it.user_id] = it;
+            return acc;
+        }, {});
+
+        communities = communities.map(c => {
+            return {
+                ...c.toObject(),
+                createdBy: userById[c.ownerID?.userIDSQL] || false
+            }
         });
 
         res.json({
             communities
         });
     } catch (e) {
-        res.status(500).send(e);
+        console.log(e);
+        res.status(500).send(e.message);
     }
 });
 
@@ -51,7 +72,7 @@ app.get("/getUserProfile/:user_id", async function (req, res, next) {
         if (!mongoUser) {
             throw new Error(`Mongo User Not Found`);
         }
-        
+
         const user_communities = await Community.find({
             listOfUsers: {
                 $elemMatch: { userID: mongoUser._id, isAccepted: true },
