@@ -88,7 +88,7 @@ class Main extends Component {
       darkMode: false,
       loading: false,
       setLoader: this.setLoader,
-      unsetLoader: this.unsetLoader,
+      unsetLoader: this.unsetLoader
     };
   }
   themeToggler = () => {
@@ -106,7 +106,7 @@ class Main extends Component {
     setTimeout(() => {
       this.setState({ loading: false });
     }, 1000);
-  }
+  };
   render() {
     return (
       <ThemeProvider theme={this.state.darkMode ? darkTheme : lightTheme}>

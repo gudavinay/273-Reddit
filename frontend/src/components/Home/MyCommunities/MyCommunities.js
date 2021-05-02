@@ -30,7 +30,7 @@ class MyCommunities extends Component {
   getMyCommunities() {
     const ownerID = "6089d63ea112c02c1df2914c"; //TO DO: Take it from JWT TOKEN AFTER LOGIN
     axios
-      .get(`${backendServer}/myCommunity/?ID=${ownerID}`)
+      .get(`${backendServer}/myCommunity?ID=${ownerID}`)
       .then(response => {
         if (response.status == 200) {
           this.setState({
@@ -69,7 +69,6 @@ class MyCommunities extends Component {
       redirectVar = <Redirect to="/createCommunity"></Redirect>;
     if (this.state.myCommunity.length > 0) {
       myCommunities = this.state.myCommunity.map((community, idx) => {
-        const redirectlink = `/community/${community._id}`;
         return (
           <Card key={idx}>
             <Row>
@@ -108,7 +107,7 @@ class MyCommunities extends Component {
               </Col>
             </Row>
             <Card.Footer className="text-right">
-              <Link to={redirectlink}>
+              <Link to={`/community/${community._id}`}>
                 <Button className="createCommunity">View More Details</Button>
               </Link>
             </Card.Footer>
