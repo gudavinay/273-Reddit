@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { secret } = require("../../Util/config");
 const { auth } = require("../../Util/passport");
+const { Op } = require("sequelize");
 auth();
 app.post("/login", async (req, res, next) => {
   db.User.findOne({
@@ -60,6 +61,22 @@ app.post("/signup", async (req, res) => {
     console.log(error);
   }
   return res.status(500).send("Internal Server Error!");
+});
+
+app.post("/getSearchedUser", async (req, res) => {
+  const findUser = await db.User.findAll({
+    attributes: ["user_id", "name"],
+    where: {
+      name: {
+        [Op.startsWith]: req.body.name
+      }
+    }
+  });
+  if (findUser.length > 0) {
+    return res.status(200).send(findUser);
+  } else {
+    return res.status(500).send("No User Found");
+  }
 });
 
 function createToken(user) {
