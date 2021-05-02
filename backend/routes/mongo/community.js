@@ -6,9 +6,9 @@ const Post = require("../../models/mongo/Post");
 
 app.post("/addCommunity", function (req, res, next) {
   let topicList = [];
-  req.body.selectedTopic.map(topic => {
+  req.body.selectedTopic.map((topic) => {
     topicList.push({
-      topic: topic.topic
+      topic: topic.topic,
     });
   });
   let community = new Community({
@@ -18,7 +18,7 @@ app.post("/addCommunity", function (req, res, next) {
     ownerID: "6089d63ea112c02c1df2914c",
     topicSelected: topicList,
     imageURL: req.body.communityImages,
-    rules: req.body.listOfRules
+    rules: req.body.listOfRules,
   });
   community.save((error, data) => {
     if (error) {
@@ -37,7 +37,7 @@ app.get("/myCommunity", function (req, res) {
       res.status(500).send("Error Occured");
     } else {
       const findResult = JSON.parse(JSON.stringify(result));
-      findResult.map(community => {
+      findResult.map((community) => {
         Post.find({ communityID: community._id }).then((postResult, error) => {
           console.log(JSON.stringify(postResult.length));
           data.push({
@@ -46,7 +46,7 @@ app.get("/myCommunity", function (req, res) {
             communityDescription: community.communityDescription,
             imageURL: community.communityImages,
             listOfUsers: community.listOfUsers,
-            count: postResult.length
+            count: postResult.length,
           });
           console.log(JSON.stringify(data));
           if (result.length == data.length) {
@@ -61,10 +61,10 @@ app.get("/myCommunity", function (req, res) {
 
 app.get("/getCommunityDetails", (req, res) => {
   Community.findOne({
-    ownerID: req.body.ownerID
+    ownerID: req.body.ownerID,
   })
     .populate("listOfUsers.userID")
-    .then(result => {
+    .then((result) => {
       let usersIdOfSQL = [];
       let acceptedIdOfSQL = [];
       for (let i = 0; i < result.listOfUsers.length; i++) {
