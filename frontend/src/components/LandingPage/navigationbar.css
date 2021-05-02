@@ -1,0 +1,18 @@
+.NavLinks {
+  font-weight: 500;
+  padding: 14px 15px;
+  cursor: pointer;
+  /* border-top: 1px solid #aaa; */
+}
+
+.backGround_light:hover {
+  background-color: #eee;
+}
+
+.backGround_dark:hover {
+  background-color: #222;
+}
+
+.hidden {
+  display: none;
+}
