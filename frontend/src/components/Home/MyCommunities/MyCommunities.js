@@ -22,8 +22,27 @@ class MyCommunities extends Component {
     this.state = {
       error: {},
       success: false,
-      communityName: ""
+      communityName: "",
+      myCommunity: []
     };
+  }
+
+  getMyCommunities() {
+    const ownerID = "6089d63ea112c02c1df2914c"; //TO DO: Take it from JWT TOKEN AFTER LOGIN
+    axios
+      .get(`${backendServer}/myCommunity/?ID=${ownerID}`)
+      .then(response => {
+        if (response.status == 200) {
+          this.setState({
+            myCommunity: response.data
+          });
+        }
+      })
+      .catch(error => console.log("error " + error));
+  }
+
+  componentDidMount() {
+    this.getMyCommunities();
   }
 
   CheckIfTheCommunityCanBeCreated = e => {
@@ -45,35 +64,63 @@ class MyCommunities extends Component {
 
   render() {
     let redirectVar = null;
-    if (this.state.success) redirectVar = <Redirect to="/createCommunity" />;
-
+    let myCommunities = null;
+    if (this.state.success)
+      redirectVar = <Redirect to="/createCommunity"></Redirect>;
+    if (this.state.myCommunity.length > 0) {
+      myCommunities = this.state.myCommunity.map((community, idx) => {
+        const redirectlink = `/community/${community._id}`;
+        return (
+          <Card key={idx}>
+            <Row>
+              <Col xs={4}>
+                <Carousel>
+                  <Carousel.Item interval={1000}>
+                    <img
+                      className="myCarasoulSize"
+                      src={image1}
+                      alt="First slide"
+                    />
+                  </Carousel.Item>
+                  <Carousel.Item interval={1000}>
+                    <img className="myCarasoulSize" src={image2} />
+                  </Carousel.Item>
+                  <Carousel.Item interval={1000}>
+                    <img className="myCarasoulSize" src={image3} />
+                  </Carousel.Item>
+                </Carousel>
+              </Col>
+              <Col xs={6}>
+                <p>
+                  <strong>Community Name:</strong>
+                  {community.communityName}
+                  <br />
+                  <strong> Description:</strong>
+                  {community.communityDescription}
+                  <br />
+                  <strong>Total Users:</strong>
+                  {community.listOfUsers.length + 1}
+                  <br />
+                  <strong>No of Post:</strong>
+                  <br />
+                </p>
+              </Col>
+            </Row>
+            <Card.Footer className="text-right">
+              <Link to={redirectlink}>
+                <Button className="createCommunity">View More Details</Button>
+              </Link>
+            </Card.Footer>
+          </Card>
+        );
+      });
+    }
     return (
       <React.Fragment>
         {redirectVar}
-        <Container>
+        <Container fluid>
           <Row>
-            <Col xs={8}>
-              <Card>
-                <Carousel>
-                  <Carousel.Item interval={500}>
-                    <img src={image1} alt="First slide" />
-                    <Carousel.Caption>
-                      <h3>First slide label</h3>
-                      <p>
-                        Nulla vitae elit libero, a pharetra augue mollis
-                        interdum.
-                      </p>
-                    </Carousel.Caption>
-                  </Carousel.Item>
-                  <Carousel.Item interval={500}>
-                    <img src={image2} />
-                  </Carousel.Item>
-                  <Carousel.Item interval={500}>
-                    <img src={image3} />
-                  </Carousel.Item>
-                </Carousel>
-              </Card>
-            </Col>
+            <Col xs={8}>{myCommunities}</Col>
             <Col xs={4}>
               <Card>
                 <Card.Header>Create Community</Card.Header>

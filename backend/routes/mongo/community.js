@@ -5,9 +5,9 @@ const Community = require("../../models/mongo/Community");
 
 app.post("/addCommunity", function (req, res, next) {
   let topicList = [];
-  req.body.selectedTopic.map((topic) => {
+  req.body.selectedTopic.map(topic => {
     topicList.push({
-      topic: topic.topic,
+      topic: topic.topic
     });
   });
   let community = new Community({
@@ -17,7 +17,7 @@ app.post("/addCommunity", function (req, res, next) {
     ownerID: "6089d63ea112c02c1df2914c",
     topicSelected: topicList,
     imageURL: req.body.communityImages,
-    rules: req.body.listOfRules,
+    rules: req.body.listOfRules
   });
   community.save((error, data) => {
     if (error) {
@@ -30,18 +30,17 @@ app.post("/addCommunity", function (req, res, next) {
 });
 
 app.get("/myCommunity", function (req, res) {
-  Community.find({ _id: req.body.ownerID }).then(result => {
+  Community.find({ ownerID: req.query.ID }).then(result => {
     res.send(JSON.stringify(result));
   });
 });
 
 app.get("/getCommunityDetails", (req, res) => {
   Community.findOne({
-    _id: req.body.community_id,
-    ownerID: req.body.ownerID,
+    ownerID: req.body.ownerID
   })
     .populate("listOfUsers.userID")
-    .then((result) => {
+    .then(result => {
       let usersIdOfSQL = [];
       let acceptedIdOfSQL = [];
       for (let i = 0; i < result.listOfUsers.length; i++) {
