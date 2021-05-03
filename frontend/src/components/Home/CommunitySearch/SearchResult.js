@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Row, Col, Card } from "react-bootstrap";
 import { Link } from 'react-router-dom';
+
 import { getRelativeTime, nFormatter } from "../../../services/ControllerUtils";
 import DefaultCardText from "../../../assets/communityIcons/card-text.svg";
 
@@ -10,7 +11,17 @@ class SearchResult extends Component {
     }
     render() {
         const { data } = this.props;
-        const { _id: community_id, imageURL, communityName, communityDescription, listOfUsers, upvotedBy, downvotedBy, posts, createdAt, createdBy } = data || {};
+        const { _id: community_id,
+            imageURL,
+            communityName,
+            communityDescription,
+            listOfUsersLength,
+            upVotedLength,
+            downVotedLength,
+            postsLength,
+            createdAt,
+            createdBy
+        } = data || {};
         return (
             <React.Fragment>
                 <Card style={{ margin: "0px" }}>
@@ -18,9 +29,15 @@ class SearchResult extends Component {
                         <Row>
                             <Col xs={1} style={{ background: "#eef3f7", maxWidth: "3.7%", marginLeft: "14px" }}>
                                 <div>
-                                    <i style={{ cursor: "pointer" }} className="icon icon-arrow-up"></i>
-                                    <span>{nFormatter(upvotedBy.length - downvotedBy.length, 1)}</span>
-                                    <i style={{ cursor: "pointer" }} className="icon icon-arrow-down"></i>
+                                    <i style={{ cursor: "pointer" }} className="icon icon-arrow-up"
+                                        onClick={() => { this.props.vote({ community_id, voting: "1" }) }}
+                                    ></i>
+
+                                    <span>{nFormatter(upVotedLength - downVotedLength, 1)}</span>
+
+                                    <i style={{ cursor: "pointer" }} className="icon icon-arrow-down"
+                                        onClick={() => { this.props.vote({ community_id, voting: "-1" }) }}
+                                    ></i>
                                 </div>
                             </Col>
                             <Col xs={1} style={{ paddingLeft: "1px" }}>
@@ -51,11 +68,11 @@ class SearchResult extends Component {
                                     <div style={{ display: "flex", flexDirection: "row", color: "#878a8c", fill: "#878a8c", fontSize: "12px" }}>
                                         <div style={{ marginLeft: "0px" }}>
                                             <i className="fa fa-users"></i>
-                                            <span style={{ marginLeft: "4px" }}> {nFormatter((listOfUsers.length), 1)} Members</span>
+                                            <span style={{ marginLeft: "4px" }}> {nFormatter((listOfUsersLength), 1)} Members</span>
                                         </div>
                                         <div style={{ marginLeft: "10px" }}>
                                             <i className="fa fa-sticky-note-o"></i>
-                                            <span style={{ marginLeft: "4px" }}> {nFormatter((posts.length), 1)} Posts</span>
+                                            <span style={{ marginLeft: "4px" }}> {nFormatter((postsLength), 1)} Posts</span>
                                         </div>
                                         <div style={{ marginLeft: "10px" }}>
                                             <i className="icon icon-user"></i>

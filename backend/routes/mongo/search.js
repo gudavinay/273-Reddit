@@ -8,8 +8,8 @@ const UserProfile = require("../../models/mongo/UserProfile");
 /* get all communities */
 app.get("/getAllCommunities", async function (req, res, next) {
     try {
-        const { sortBy, limit, page, searchText } = req.query;
-        
+        const { sortKey, sortValue, limit, page, searchText } = req.query;
+
         const aggregate = Community.aggregate([
             {
                 "$match": {
@@ -17,23 +17,58 @@ app.get("/getAllCommunities", async function (req, res, next) {
                 }
             },
             {
-                "$project": {
-                    "communityName": 1,
-                    "communityDescription": 1,
-                    "listOfUsers": 1,
-                    "ownerID": 1,
-                    "upvotedBy": 1,
-                    "downvotedBy": 1,
-                    "imageURL": 1,
-                    "posts": 1,
-                    "createdAt": 1,
-                    "postsLength": { "$size": "$posts" },
-                    "listOfUsersLength": { "$size": "$listOfUsers" },
-                    "upVotedLength": { "$size": "$upvotedBy" },
-                    "downVotedLength": { "$size": "$downvotedBy" }
+                $lookup:
+                {
+                    from: "votes",
+                    localField: "_id",
+                    foreignField: "entityId",
+                    as: "vote"
                 }
             },
-            { "$sort": { "postsLength": sortBy === "DESC" ? -1 : 1, "createdAt": -1 } }
+            { '$unwind': { 'path': '$vote', 'preserveNullAndEmptyArrays': true } },
+            {
+                $group: {
+                    _id: "$_id",
+                    communityName: { "$first": "$communityName" },
+                    communityDescription: { "$first": "$communityDescription" },
+                    ownerID: { "$first": "$ownerID" },
+                    imageURL: { "$first": "$imageURL" },
+                    createdAt: { "$first": "$createdAt" },
+                    posts: { "$first": "$posts" },
+                    listOfUsers: { "$first": "$listOfUsers" },
+                    upvoteCount: {
+                        $sum: { $cond: { if: { $eq: ["$vote.voteDir", 1] }, then: 1, else: 0 } },
+                    },
+                    downvoteCount: {
+                        $sum: {
+                            $cond: { if: { $eq: ["$vote.voteDir", -1] }, then: 1, else: 0 },
+                        },
+                    },
+                },
+            },
+            {
+                $lookup:
+                {
+                    from: "posts",
+                    localField: "_id",
+                    foreignField: "communityID",
+                    as: "posts"
+                }
+            },
+            {
+                "$project": {
+                    "communityName": "$communityName",
+                    "communityDescription": "$communityDescription",
+                    "ownerID": "$ownerID",
+                    "imageURL": "$imageURL",
+                    "createdAt": "$createdAt",
+                    "postsLength": { "$size": "$posts" },
+                    "listOfUsersLength": { "$size": "$listOfUsers" },
+                    "upVotedLength": "$upvoteCount",
+                    "downVotedLength": "$downvoteCount"
+                }
+            },
+            { "$sort": { [sortKey]: sortValue.toLowerCase() === "desc" ? -1 : 1, "_id": -1 } }
         ]);
 
         const communities = await Community.aggregatePaginate(aggregate, {
@@ -67,7 +102,6 @@ app.get("/getAllCommunities", async function (req, res, next) {
             communities
         });
     } catch (e) {
-        console.log(e);
         res.status(500).send(e.message);
     }
 });

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Row, Col, Container, Navbar, Form } from "react-bootstrap";
-import qs from "query-string";
 import Switch from "@material-ui/core/Switch";
 import redditLogoDark from "../../assets/header_logo1.svg";
 import redditLogoLight from "../../assets/Reddit_logo_full_1SVG.svg";
@@ -16,9 +15,9 @@ class Navigationbar extends Component {
   constructor(props) {
     super(props);
     console.log("PROPS in NAVIGATION BAR", this.props);
-    const qR = qs.parse(props.location.search);
+    const qR = new URLSearchParams(props.location.search);
     this.state = {
-      search: qR.q || "",
+      search: qR.get("q") || "",
       leftDropdown: "Home",
     };
   }
@@ -186,8 +185,10 @@ class Navigationbar extends Component {
                         document
                           .getElementById("expandLeftDropDown")
                           .classList.add("hidden");
-                        this.setState({ search: "" });
-                        this.props.history.push("/communitysearch");
+                        this.props.history.push({
+                          pathname: "/communitysearch",
+                          search: "?" + new URLSearchParams({ q: this.state.search }).toString(),
+                        });
                       }}
                     >
                       Community Search

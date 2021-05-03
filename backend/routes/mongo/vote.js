@@ -28,7 +28,7 @@ app.post("/addVote", (req, res) => {
       },
     };
     Vote.findOneAndUpdate(
-      { entityId: entityId },
+      { entityId: entityId, userId: userId, },
       query,
       options,
       (err, result) => {
