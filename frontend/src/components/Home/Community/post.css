@@ -21,8 +21,13 @@
 
 .postFooterDiv {
   margin-left: 30px;
+  cursor: not-allowed;
 }
 
 .postFooterSpan {
   margin-left: 4px;
+}
+
+.pointerCursor {
+  cursor: pointer;
 }

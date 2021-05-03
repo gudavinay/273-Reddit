@@ -87,9 +87,8 @@ class Post extends Component {
           <Card.Footer>
             <div className="postFooter">
               <div
-                style={{ cursor: "pointer" }}
                 onClick={() => this.postClicked()}
-                className="postFooterDiv"
+                className="postFooterDiv pointerCursor"
               >
                 <i className="icon icon-comment"></i>
                 <span className="postFooterSpan">1.1k comments</span>

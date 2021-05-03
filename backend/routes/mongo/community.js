@@ -1,4 +1,5 @@
 var express = require("express");
+const { getUserID } = require("../../../frontend/src/services/ControllerUtils");
 const app = require("../../app");
 const router = express.Router();
 const Community = require("../../models/mongo/Community");
@@ -15,7 +16,7 @@ app.post("/addCommunity", function (req, res, next) {
     communityIDSQL: req.body.communityIDSQL,
     communityName: req.body.communityName,
     communityDescription: req.body.communityDescription,
-    ownerID: "6089d63ea112c02c1df2914c",
+    ownerID: getUserID(),
     topicSelected: topicList,
     imageURL: req.body.communityImages,
     rules: req.body.listOfRules,
