@@ -188,6 +188,7 @@ class Navigationbar extends Component {
                         document
                           .getElementById("expandLeftDropDown")
                           .classList.add("hidden");
+                        this.setState({ search: "" });
                         this.props.history.push("/communitysearch");
                       }}
                     >

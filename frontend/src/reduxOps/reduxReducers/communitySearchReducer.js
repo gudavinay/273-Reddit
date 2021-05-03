@@ -3,7 +3,7 @@ import { COMMUNITY_SEARCH_OPTIONS, COMMUNITY_SEARCH_RESULTS_PROCESSING, COMMUNIT
 const initialState = {
     query: "",
     processing: false,
-    results: []
+    results: false
 };
 
 export default function communitySearchReducer(state = initialState, action) {

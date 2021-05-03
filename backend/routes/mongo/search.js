@@ -8,27 +8,47 @@ const UserProfile = require("../../models/mongo/UserProfile");
 /* get all communities */
 app.get("/getAllCommunities", async function (req, res, next) {
     try {
-        const { searchText } = req.query;
-
-        const regexSearchText = new RegExp(searchText);
-
-        let communities = await Community.find({
-            $or: [
-                {
-                    "communityName": { $regex: regexSearchText, $options: 'i' }
-                },
-                {
-                    "communityDescription": { $regex: regexSearchText, $options: 'i' }
+        const { sortBy, limit, page, searchText } = req.query;
+        
+        const aggregate = Community.aggregate([
+            {
+                "$match": {
+                    "communityName": { $regex: searchText, $options: "i" }
                 }
-            ]
-        }).populate("ownerID");
+            },
+            {
+                "$project": {
+                    "communityName": 1,
+                    "communityDescription": 1,
+                    "listOfUsers": 1,
+                    "ownerID": 1,
+                    "upvotedBy": 1,
+                    "downvotedBy": 1,
+                    "imageURL": 1,
+                    "posts": 1,
+                    "createdAt": 1,
+                    "postsLength": { "$size": "$posts" },
+                    "listOfUsersLength": { "$size": "$listOfUsers" },
+                    "upVotedLength": { "$size": "$upvotedBy" },
+                    "downVotedLength": { "$size": "$downvotedBy" }
+                }
+            },
+            { "$sort": { "postsLength": sortBy === "DESC" ? -1 : 1, "createdAt": -1 } }
+        ]);
 
-        const communitiesBySqlUserId = communities.map(c => c.ownerID?.userIDSQL);
+        const communities = await Community.aggregatePaginate(aggregate, {
+            page, limit
+        });
+
+        communities.docs = await Community.populate(communities.docs, "ownerID");
+
+        const communitiesBySqlUserId = communities.docs.map(c => c.ownerID?.userIDSQL);
 
         const users = await db.User.findAll({
             where: {
                 user_id: communitiesBySqlUserId
-            }
+            },
+            attributes: ['user_id', 'name', "email"]
         });
 
         const userById = users.reduce((acc, it) => {
@@ -36,9 +56,9 @@ app.get("/getAllCommunities", async function (req, res, next) {
             return acc;
         }, {});
 
-        communities = communities.map(c => {
+        communities.docs = communities.docs.map(c => {
             return {
-                ...c.toObject(),
+                ...c,
                 createdBy: userById[c.ownerID?.userIDSQL] || false
             }
         });
