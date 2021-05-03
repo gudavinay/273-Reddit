@@ -89,6 +89,7 @@ class DetailedPostView extends Component {
                                     }} />
 
                                     <button className="form-control" style={{ backgroundColor: "#0266b3", borderRadius: "20px", width: "100px", height: "25px", fontSize: "12px", color: "white", fontWeight: "bold", lineHeight: "0px", border: "none", margin: "1% 85%", }} onClick={() => {
+                                        this.props.setLoader();
                                         Axios.post(backendServer + "/comment", {
                                             postID: this.props.data._id,
                                             description: this.state[`${comment._id}:`],
@@ -141,6 +142,7 @@ class DetailedPostView extends Component {
                     <div style={{ boxShadow: "0px 0px 1px #777", padding: "1px" }}>
                         <textarea type="text" className="commentTextArea" name="primaryComment" id="primaryComment" placeholder="What are your thoughts?" onChange={(e) => this.setState({ primaryComment: e.target.value })} />
                         <button className="form-control" style={{ backgroundColor: "#0266b3", borderRadius: "20px", width: "100px", height: "25px", fontSize: "12px", color: "white", fontWeight: "bold", lineHeight: "0px", border: "none", margin: "1% 85%", }} onClick={() => {
+                            this.props.setLoader();
                             Axios.post(backendServer + "/comment", {
                                 postID: this.props.data._id,
                                 description: this.state.primaryComment,

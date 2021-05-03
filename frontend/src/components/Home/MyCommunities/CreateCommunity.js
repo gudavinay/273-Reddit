@@ -40,12 +40,16 @@ class CreateCommunity extends Component {
     let data = new FormData();
     console.log(e.target.files[0]);
     data.append("file", e.target.files[0]);
-    axios
-      .post(`${backendServer}/upload`, data)
+    this.props.setLoader();
+    axios.post(`${backendServer}/upload`, data)
       .then((response) => {
+        this.props.unsetLoader();
         console.log(response);
       })
-      .catch((error) => console.log("error " + error));
+      .catch((error) => {
+        this.props.unsetLoader();
+        console.log("error " + error);
+      });
   };
 
   AddCommunityDataToDB(communityData) {
@@ -57,14 +61,18 @@ class CreateCommunity extends Component {
       selectedTopic: this.state.selectedTopic,
       listOfRules: this.state.listOfRule,
     };
-    axios
-      .post(`${backendServer}/addCommunity`, data)
+    this.props.setLoader();
+    axios.post(`${backendServer}/addCommunity`, data)
       .then((response) => {
+        this.props.unsetLoader();
         if (response.status == 200) {
           alert("Community created successfully");
         }
       })
-      .catch((error) => console.log("error " + error));
+      .catch((error) => {
+        this.props.unsetLoader();
+        console.log("error " + error);
+      });
   }
 
   componentDidMount() {

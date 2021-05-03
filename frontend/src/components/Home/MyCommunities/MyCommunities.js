@@ -30,16 +30,20 @@ class MyCommunities extends Component {
 
   getMyCommunities() {
     const ownerID = getUserID(); //TO DO: Take it from JWT TOKEN AFTER LOGIN
-    axios
-      .get(`${backendServer}/myCommunity?ID=${ownerID}`)
+    this.props.setLoader();
+    axios.get(`${backendServer}/myCommunity?ID=${ownerID}`)
       .then((response) => {
+        this.props.unsetLoader();
         if (response.status == 200) {
           this.setState({
             myCommunity: response.data,
           });
         }
       })
-      .catch((error) => console.log("error " + error));
+      .catch((error) => {
+        this.props.unsetLoader();
+        console.log("error " + error);
+      });
   }
 
   componentDidMount() {
