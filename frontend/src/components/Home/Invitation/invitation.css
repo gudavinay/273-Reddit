@@ -1,3 +1,4 @@
-.onClick:hover {
-  outline-color: transparent;
+.searchbar:focus {
+  outline: none;
+  border: none;
 }

@@ -30,8 +30,8 @@ app.post("/sendInvite", (req, res) => {
     }
   );
 });
-
-app.get("/showInvitationStatus", (req, res) => {
+//TO show the users who are invited and the status of invitation
+app.post("/showInvitationStatus", (req, res) => {
   Community.findOne({ _id: req.body.community_id })
     .populate("sentInvitesTo.userID", ["userIDSQL"])
     .then(async (result) => {
@@ -45,7 +45,21 @@ app.get("/showInvitationStatus", (req, res) => {
       delete data.topicSelected;
       delete data.createdAt;
       delete data.updatedAt;
-      res.status(200).send(data);
+      res.status(200).send(data.sentInvitesTo);
     });
+});
+
+app.post("/getCommunitiesCreatedByMe", (req, res) => {
+  Community.find({ ownerID: req.body.user_id }, (err, result) => {
+    let communities = [];
+    result.forEach((element) => {
+      let communityDetails = {
+        communityName: element.communityName,
+        communityID: element._id,
+      };
+      communities.push(communityDetails);
+    });
+    res.status(200).send(communities);
+  });
 });
 module.exports = router;
