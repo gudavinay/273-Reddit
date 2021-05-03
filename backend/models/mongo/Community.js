@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2');
+
 const Schema = mongoose.Schema;
 const CommunitySchema = new mongoose.Schema(
   {
@@ -60,5 +62,7 @@ const CommunitySchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+CommunitySchema.plugin(mongooseAggregatePaginate);
 
 module.exports = mongoose.model("Community", CommunitySchema);

@@ -70,9 +70,11 @@ class Messages extends Component {
     console.log(e);
     if (e.target.value.length > 1) {
       const data = { name: e.target.value };
+      this.props.setLoader();
       axios
         .post(`${backendServer}/getSearchedUser`, data)
         .then(response => {
+          this.props.unsetLoader();
           if (response.status == 200) {
             this.setState({
               searchedUser: response.data
@@ -80,6 +82,7 @@ class Messages extends Component {
           }
         })
         .catch(error => {
+          this.props.unsetLoader();
           console.log(error);
         });
     }

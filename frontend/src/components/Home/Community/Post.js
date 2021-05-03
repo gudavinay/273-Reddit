@@ -7,60 +7,61 @@ import DetailedPostView from "./DetailedPostView";
 class Post extends Component {
   constructor(props) {
     super(props);
-    console.log("PROPS IN POST COMPONENT", props);
+    console.log("PROPS IN POST COMPONENT", this.props.detailedView, props);
     this.state = {
-      showPostModal: false
-    }
+      showPostModal: false,
+    };
+    this.postClicked = this.postClicked.bind(this);
   }
 
   // componentDidMount() {
+  //   console.log("this.props post.js  = ", this.props);
   //   this.props.setLoader();
   // }
-
+  postClicked = () => {
+    console.log(this.props.data._id);
+    this.setState({ selectedPostID: this.props.data._id, showPostModal: true });
+  };
   render() {
-    let _modalWindow, postSpecificContent = null;
+    let _modalWindow,
+      postSpecificContent = null;
     if (this.state.showPostModal) {
       _modalWindow = (
         <Modal
           show={this.state.showPostModal}
           onHide={() => this.setState({ showPostModal: false })}
-          size="lg">
-          <ModalHeader closeButton>
-          </ModalHeader>
-          <ModalBody>
+          size="lg"
+
+        >
+          <ModalHeader style={{ backgroundColor: this.props.darkMode ? "#1B1B1B" : 'white' }} closeButton></ModalHeader>
+          <ModalBody style={{ backgroundColor: this.props.darkMode ? "#1B1B1B" : 'white' }}>
             <DetailedPostView {...this.props} />
           </ModalBody>
         </Modal>
       );
     }
     postSpecificContent = (
-      <>
+      <div style={{ cursor: this.props.detailedView ? "default" : "pointer" }}
+        onClick={() => {
+          if (!this.props.detailedView) {
+            this.postClicked();
+          }
+        }}>
         <Row className="postHeader">
-          posted by {this.props.data?.createBy} {getRelativeTime(this.props.data?.createdAt)}
+          posted by {this.props.data?.createBy}{" "}
+          {getRelativeTime(this.props.data?.createdAt)}
         </Row>
         <Row style={{ paddingLeft: "0px" }}>
-          <h3 className="postBodyContent">
-            [{this.props.data?.title}]
-          </h3>
+          <h3 className="postBodyContent">[{this.props.data?.title}]</h3>
           {this.props.data?.description}
         </Row>
-      </>
+      </div>
     );
-    if (!this.props.detailedView) {
-      postSpecificContent = (
-        <div style={{ cursor: "pointer" }} onClick={() => {
-          console.log(this.props.data._id);
-          this.setState({ selectedPostID: this.props.data._id, showPostModal: true })
-        }}>
-          {postSpecificContent}
-        </div>
-      );
-    }
 
     return (
       <React.Fragment>
         {/* {JSON.stringify(this.props.data)} */}
-        <Card style={{ margin: "0px" }}>
+        <Card style={{ margin: "0px", backgroundColor: this.props.darkMode ? '#1B1B1B' : 'white' }}>
           <Card.Body>
             <Row>
               <Col xs={1}>
@@ -73,15 +74,20 @@ class Post extends Component {
                   <i className="icon icon-arrow-down"></i>
                 </div>
               </Col>
-              <Col >
-                {postSpecificContent}
-              </Col>
+              <Col>{postSpecificContent}</Col>
             </Row>
           </Card.Body>
 
           <Card.Footer>
             <div className="postFooter">
-              <div className="postFooterDiv">
+              <div style={{ cursor: this.props.detailedView ? "default" : "pointer" }}
+                onClick={() => {
+                  if (!this.props.detailedView) {
+                    this.postClicked();
+                  }
+                }}
+                className="postFooterDiv"
+              >
                 <i className="icon icon-comment"></i>
                 <span className="postFooterSpan">1.1k comments</span>
               </div>

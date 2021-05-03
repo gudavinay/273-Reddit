@@ -7,7 +7,7 @@ import {
   Col,
   Container,
   Card,
-  Form
+  Form,
 } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import backendServer from "../../../webConfig";
@@ -15,6 +15,7 @@ import "./mycommunity.css";
 import image1 from "../../../assets/CommunityImage1.jpeg";
 import image2 from "../../../assets/CommunityImage2.jpeg";
 import image3 from "../../../assets/CommunityImage3.jpeg";
+import { getUserID } from "../../../services/ControllerUtils";
 
 class MyCommunities extends Component {
   constructor(props) {
@@ -23,43 +24,47 @@ class MyCommunities extends Component {
       error: {},
       success: false,
       communityName: "",
-      myCommunity: []
+      myCommunity: [],
     };
   }
 
   getMyCommunities() {
-    const ownerID = "6089d63ea112c02c1df2914c"; //TO DO: Take it from JWT TOKEN AFTER LOGIN
-    axios
-      .get(`${backendServer}/myCommunity?ID=${ownerID}`)
-      .then(response => {
+    const ownerID = getUserID(); //TO DO: Take it from JWT TOKEN AFTER LOGIN
+    this.props.setLoader();
+    axios.get(`${backendServer}/myCommunity?ID=${ownerID}`)
+      .then((response) => {
+        this.props.unsetLoader();
         if (response.status == 200) {
           this.setState({
-            myCommunity: response.data
+            myCommunity: response.data,
           });
         }
       })
-      .catch(error => console.log("error " + error));
+      .catch((error) => {
+        this.props.unsetLoader();
+        console.log("error " + error);
+      });
   }
 
   componentDidMount() {
     this.getMyCommunities();
   }
 
-  CheckIfTheCommunityCanBeCreated = e => {
+  CheckIfTheCommunityCanBeCreated = (e) => {
     e.preventDefault();
     const data = {
-      communityName: this.state.communityName
+      communityName: this.state.communityName,
     };
     axios
       .post(`${backendServer}/checkForUniqueCommunity`, data)
-      .then(response => {
+      .then((response) => {
         if (response.status == 200) {
           this.setState({
-            success: true
+            success: true,
           });
         }
       })
-      .catch(error => console.log("error " + error));
+      .catch((error) => console.log("error " + error));
   };
 
   render() {
@@ -134,7 +139,7 @@ class MyCommunities extends Component {
                         type="text"
                         id="name"
                         name="name"
-                        onChange={e =>
+                        onChange={(e) =>
                           this.setState({ communityName: e.target.value })
                         }
                         aria-describedby="passwordHelpBlock"
