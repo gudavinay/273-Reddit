@@ -1,9 +1,7 @@
 var express = require("express");
 const app = require("../../app");
 const router = express.Router();
-const Community = require("../../models/mongo/Community");
 const Vote = require("../../models/mongo/Vote");
-const User = require("../../models/mongo/UserProfile");
 
 app.post("/addVote", (req, res) => {
   const { userId, voteDir, entityId } = req.body;
