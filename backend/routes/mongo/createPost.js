@@ -77,11 +77,13 @@ app.post("/createPost", function (req, res, next) {
       userID: req.body.userID,
     };
   } else if (req.body.type == 2) {
-    // let post = new Post({
-    //   communityID: req.body.community_id,
-    //   type: req.body.type,
-    //   title: req.body.title,
-    // })
+    data = {
+      communityID: req.body.community_id,
+      type: req.body.type,
+      title: req.body.title,
+      location: req.body.location,
+      userID: req.body.userID,
+    };
   }
   new Post(data).save((err, result) => {
     if (err) {

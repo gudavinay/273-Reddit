@@ -49,7 +49,9 @@ class Community extends Component {
     Axios.post(backendServer + "/getPostsInCommunity", data)
       .then((response) => {
         this.props.unsetLoader();
-        this.setState({ posts: response.data });
+        this.setState({ posts: response.data }, () => {
+          console.log(this.state.posts);
+        });
         console.log("in community did mount = ", response.data);
       })
       .catch((err) => {

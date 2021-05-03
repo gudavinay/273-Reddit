@@ -47,7 +47,7 @@ const CommunitySchema = new mongoose.Schema(
     sentInvitesTo: [
       {
         userID: { type: Schema.Types.ObjectId, ref: "UserProfile" },
-        isAccepted: { type: Boolean, defaultValue: false },
+        isAccepted: { type: Number, defaultValue: 0 },
         dateTime: { type: Date, default: Date.now() },
       },
     ],
