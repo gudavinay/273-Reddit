@@ -31,22 +31,32 @@ class Post extends Component {
           show={this.state.showPostModal}
           onHide={() => this.setState({ showPostModal: false })}
           size="lg"
-
         >
-          <ModalHeader style={{ backgroundColor: this.props.darkMode ? "#1B1B1B" : 'white' }} closeButton></ModalHeader>
-          <ModalBody style={{ backgroundColor: this.props.darkMode ? "#1B1B1B" : 'white' }}>
+          <ModalHeader
+            style={{
+              backgroundColor: this.props.darkMode ? "#1B1B1B" : "white",
+            }}
+            closeButton
+          ></ModalHeader>
+          <ModalBody
+            style={{
+              backgroundColor: this.props.darkMode ? "#1B1B1B" : "white",
+            }}
+          >
             <DetailedPostView {...this.props} />
           </ModalBody>
         </Modal>
       );
     }
     postSpecificContent = (
-      <div style={{ cursor: this.props.detailedView ? "default" : "pointer" }}
+      <div
+        style={{ cursor: this.props.detailedView ? "default" : "pointer" }}
         onClick={() => {
           if (!this.props.detailedView) {
             this.postClicked();
           }
-        }}>
+        }}
+      >
         <Row className="postHeader">
           posted by {this.props.data?.createBy}{" "}
           {getRelativeTime(this.props.data?.createdAt)}
@@ -54,6 +64,19 @@ class Post extends Component {
         <Row style={{ paddingLeft: "0px" }}>
           <h3 className="postBodyContent">[{this.props.data?.title}]</h3>
           {this.props.data?.description}
+          {this.props.data.link && (
+            <a href={this.props.data?.link} target="_blank" rel="noreferrer">
+              {this.props.data?.link}
+            </a>
+          )}
+          {this.props.data.location && (
+            <img
+              alt=""
+              width="40px"
+              style={{ borderRadius: "20px", margin: "5px" }}
+              src={this.props.data?.location}
+            />
+          )}
         </Row>
       </div>
     );
@@ -61,7 +84,12 @@ class Post extends Component {
     return (
       <React.Fragment>
         {/* {JSON.stringify(this.props.data)} */}
-        <Card style={{ margin: "0px", backgroundColor: this.props.darkMode ? '#1B1B1B' : 'white' }}>
+        <Card
+          style={{
+            margin: "0px",
+            backgroundColor: this.props.darkMode ? "#1B1B1B" : "white",
+          }}
+        >
           <Card.Body>
             <Row>
               <Col xs={1}>
@@ -80,7 +108,10 @@ class Post extends Component {
 
           <Card.Footer>
             <div className="postFooter">
-              <div style={{ cursor: this.props.detailedView ? "default" : "pointer" }}
+              <div
+                style={{
+                  cursor: this.props.detailedView ? "default" : "pointer",
+                }}
                 onClick={() => {
                   if (!this.props.detailedView) {
                     this.postClicked();
