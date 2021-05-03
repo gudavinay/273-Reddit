@@ -15,37 +15,33 @@ class DetailedPostView extends Component {
         this.state = {};
     }
 
-    componentDidMount() {
-        console.log("this.props detailed post view = ", this.props.data);
+    fetchCommentsWithPostID() {
         this.props.setLoader();
         Axios.post(backendServer + "/getCommentsWithPostID", {
             postID: this.props.data._id,
         })
             .then((response) => {
                 this.props.unsetLoader();
-                // this.setState({ comments: response.data });
-
                 var parentCommentList = response.data.filter(
                     (comment) => comment.isParentComment
                 );
-                console.log("BEFORE", parentCommentList);
-
                 parentCommentList.forEach((parentComment) => {
                     var child = response.data.filter(
                         (comment) => comment.parentCommentID == parentComment._id
                     );
-                    console.log("CHILDREN", child);
-                    console.log("PARENT BEFORE ADDING", parentComment);
                     parentComment.child = child;
-                    console.log("PARENT AFTER ADDING", parentComment);
                 });
-                console.log("AFTER", parentCommentList);
                 this.setState({ parentCommentList: parentCommentList });
             })
             .catch((err) => {
                 this.props.unsetLoader();
                 console.log(err);
             });
+
+    }
+
+    componentDidMount() {
+        this.fetchCommentsWithPostID();
     }
 
     render() {
@@ -81,25 +77,30 @@ class DetailedPostView extends Component {
                             </div>
                             <Collapse in={this.state[comment._id]}>
                                 <div style={{ boxShadow: "0px 0px 1px #777", padding: "1px", margin: '5px' }}>
-                                    <textarea type="text" className="commentTextArea" name="subComment" id="subComment" placeholder="What are your thoughts?" onChange={(e) => {
+                                    <textarea style={{ backgroundColor: this.props.darkMode ? "#1B1B1B" : 'white', color: !this.props.darkMode ? "#1B1B1B" : 'white' }} type="text" className="commentTextArea" name="subComment" id={comment._id + "id"} placeholder="What are your thoughts?" onChange={(e) => {
                                         let key = comment._id + ":"; //to denote the comment text
                                         var obj = {};
                                         obj[key] = e.target.value;
                                         this.setState(obj);
                                     }} />
-
-                                    <button className="form-control" style={{ backgroundColor: "#0266b3", borderRadius: "20px", width: "100px", height: "25px", fontSize: "12px", color: "white", fontWeight: "bold", lineHeight: "0px", border: "none", margin: "1% 85%", }} onClick={() => {
+                                    <button disabled={!this.state[`${comment._id}:`]} className="form-control" style={{ backgroundColor: this.state[`${comment._id}:`] ? "#0266b3" : "#777", borderRadius: "20px", width: "100px", height: "25px", fontSize: "12px", color: "white", fontWeight: "bold", lineHeight: "0px", border: "none", margin: "1% 84%", }} onClick={() => {
                                         this.props.setLoader();
                                         Axios.post(backendServer + "/comment", {
                                             postID: this.props.data._id,
                                             description: this.state[`${comment._id}:`],
                                             isParentComment: 0,
                                             userID: getUserID(),
-                                            parentID: comment._id
+                                            parentCommentID: comment._id
                                         })
                                             .then((response) => {
                                                 this.props.unsetLoader();
                                                 console.log(response);
+                                                document.getElementById(comment._id + "id").value = '';
+                                                let key = comment._id + ":"; //to denote the comment text
+                                                var obj = {};
+                                                obj[key] = "";
+                                                this.setState(obj);
+                                                this.fetchCommentsWithPostID();
                                             })
                                             .catch((err) => {
                                                 this.props.unsetLoader();
@@ -137,11 +138,11 @@ class DetailedPostView extends Component {
         }
         return (
             <React.Fragment>
-                <Post data={this.props.data} detailedView={true} />
-                <div style={{ padding: "0 20px", marginTop: "20px" }}>
+                <Post data={this.props.data} {...this.props} detailedView={true} />
+                <div style={{ padding: "0 20px", marginTop: "20px", backgroundColor: this.props.darkMode ? "#1B1B1B" : "white" }}>
                     <div style={{ boxShadow: "0px 0px 1px #777", padding: "1px" }}>
-                        <textarea type="text" className="commentTextArea" name="primaryComment" id="primaryComment" placeholder="What are your thoughts?" onChange={(e) => this.setState({ primaryComment: e.target.value })} />
-                        <button className="form-control" style={{ backgroundColor: "#0266b3", borderRadius: "20px", width: "100px", height: "25px", fontSize: "12px", color: "white", fontWeight: "bold", lineHeight: "0px", border: "none", margin: "1% 85%", }} onClick={() => {
+                        <textarea style={{ backgroundColor: this.props.darkMode ? "#1B1B1B" : 'white', color: !this.props.darkMode ? "#1B1B1B" : 'white' }} type="text" className="commentTextArea" name="primaryComment" id="primaryComment" placeholder="What are your thoughts?" onChange={(e) => this.setState({ primaryComment: e.target.value })} />
+                        <button disabled={!this.state.primaryComment} className="form-control" style={{ backgroundColor: this.state.primaryComment ? "#0266b3" : "#777", borderRadius: "20px", width: "100px", height: "25px", fontSize: "12px", color: "white", fontWeight: "bold", lineHeight: "0px", border: "none", margin: "1% 85%", }} onClick={() => {
                             this.props.setLoader();
                             Axios.post(backendServer + "/comment", {
                                 postID: this.props.data._id,
@@ -152,6 +153,9 @@ class DetailedPostView extends Component {
                                 .then((response) => {
                                     this.props.unsetLoader();
                                     console.log(response);
+                                    document.getElementById("primaryComment").value = '';
+                                    this.setState({ primaryComment: null });
+                                    this.fetchCommentsWithPostID();
                                 })
                                 .catch((err) => {
                                     this.props.unsetLoader();
