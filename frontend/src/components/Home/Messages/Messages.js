@@ -1,25 +1,22 @@
 import React, { Component } from "react";
-import {
-  Col,
-  Row,
-  Container,
-  Card,
-  Modal,
-  Form,
-  Dropdown
-} from "react-bootstrap";
+import { Col, Row, Container, Modal, Form, Dropdown } from "react-bootstrap";
 import { FiX } from "react-icons/fi";
 import axios from "axios";
 import backendServer from "../../../webConfig";
-import Chip from "@material-ui/core/Chip";
 import Paper from "@material-ui/core/Paper";
+import "./message.css";
+import MessageContent from "./MessageContent";
 class Messages extends Component {
   constructor(props) {
     super(props);
     this.state = {
       startNewChatModel: false,
       searchedUser: [],
-      selectedUser: []
+      selectedUser: [],
+      users: [],
+      getUniqueMembers: [],
+      component: null,
+      loggedinUser: { user_id: 3 }
     };
   }
 
@@ -35,6 +32,39 @@ class Messages extends Component {
     }));
     console.log(this.state.selectedUser);
   };
+
+  getUniqueUsers(users) {
+    console.log(users);
+    let userNameList = [];
+    users.forEach(user => {
+      let keyB = user.sentByUser.user_id;
+      if (keyB != this.state.loggedinUser.user_id)
+        userNameList[keyB] = user.sentByUser;
+      let keyT = user.sentToUser.user_id;
+      if (keyT != this.state.loggedinUser.user_id)
+        userNameList[keyT] = user.sentToUser;
+    });
+    this.setState({
+      getUniqueMembers: userNameList
+    });
+  }
+
+  getUsers() {
+    const user_id = 3;
+    axios
+      .get(`${backendServer}/getMessageUserNames?ID=${user_id}`)
+      .then(response => {
+        if (response.status == 200) {
+          this.setState({
+            message: response.data
+          });
+          this.getUniqueUsers(response.data);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
 
   searchUser = e => {
     console.log(e);
@@ -61,11 +91,29 @@ class Messages extends Component {
       startNewChatModel: true
     });
   };
-  componentDidMount() {}
+  componentDidMount() {
+    this.getUsers();
+  }
+
+  showMessage = member => {
+    this.setState({
+      component: <MessageContent chattedWith={member} />
+    });
+  };
 
   render() {
     let selectedUser = null;
     let showSelectedUser = null;
+    let peopleChattedWith = null;
+    if (this.state.getUniqueMembers.length > 0) {
+      peopleChattedWith = this.state.getUniqueMembers.map((member, idx) => {
+        return (
+          <tr key={idx} onClick={() => this.showMessage(member)}>
+            <td>{member.name}</td>
+          </tr>
+        );
+      });
+    }
     if (this.state.searchedUser.length > 0) {
       selectedUser = this.state.searchedUser.map(user => {
         return (
@@ -77,18 +125,6 @@ class Messages extends Component {
           </Dropdown.Item>
         );
       });
-      if (this.state.selectedUser.length > 0) {
-        showSelectedUser = this.state.selectedUser.map(user => {
-          return (
-            <Chip
-              key={user.user_id}
-              label={user.name}
-              onDelete={e => this.handleDelete(e, user)}
-              className="chip"
-            />
-          );
-        });
-      }
     }
     const renderLogin = (
       <Modal
@@ -147,22 +183,24 @@ class Messages extends Component {
     return (
       <React.Fragment>
         <Container>
-          <Row>
-            <Col xs={3} className="colheight">
-              <Card>
-                <Card.Header className="text-right">
-                  Divya Mittal
-                  <button className="btn" onClick={this.startChat}>
-                    <i className="fas fa-edit"></i>
-                  </button>
-                </Card.Header>
-                <Card.Body></Card.Body>
-              </Card>
+          <Row className="row">
+            <Col xs={3} className="colheight changePadding">
+              <div className="colheight border">
+                <label>Divya Mittal</label>
+                <button className="btn text-right" onClick={this.startChat}>
+                  <i className="fas fa-edit"></i>
+                </button>
+                <table className="table table-hover changePadding">
+                  <tbody>{peopleChattedWith}</tbody>
+                </table>
+              </div>
             </Col>
-            <Col xs={9}></Col>
+            <Col xs={9} className="changePadding border">
+              {this.state.component}
+            </Col>
           </Row>
-          {renderLogin}
         </Container>
+        {renderLogin}
       </React.Fragment>
     );
   }

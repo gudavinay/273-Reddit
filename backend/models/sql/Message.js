@@ -14,12 +14,14 @@ module.exports = (sequelize, DataTypes) => {
 
   Message.associate = models => {
     Message.belongsTo(models.User, {
+      as: "sentByUser",
       foreignKey: {
         allowNull: false,
         name: "sent_by"
       }
     }),
       Message.belongsTo(models.User, {
+        as: "sentToUser",
         foreignKey: {
           allowNull: false,
           name: "sent_to"
