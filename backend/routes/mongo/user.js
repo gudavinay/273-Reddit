@@ -6,7 +6,6 @@ const CommunityInfo = require("../../models/mongo/Community");
 const Post = require("../../models/mongo/Post");
 const Comment = require("../../models/mongo/Comment");
 const passport = require("passport");
-const { getUserID } = require("../../../frontend/src/services/ControllerUtils");
 
 app.get("/createDummyData", function (req, res, next) {
   let userProfile = new UserProfile({
@@ -27,12 +26,12 @@ app.get("/createDummyData", function (req, res, next) {
     ],
     listOfUsers: [
       {
-        userID: getUserID(),
+        userID: "6089d63ea112c02c1df2914c",
         isAccepted: false,
         isModerator: false,
       },
     ],
-    ownerID: getUserID(),
+    ownerID: "6089d63ea112c02c1df2914c",
     upvotedBy: [],
     downvotedBy: [],
     createdDate: Date.now(),
