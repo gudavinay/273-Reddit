@@ -47,7 +47,7 @@
   box-shadow: none;
   box-sizing: border-box;
   color: #1c1c1c;
-  display: block;
+  /* display: block; */
   -ms-flex-positive: 1;
   flex-grow: 1;
   height: 38px;

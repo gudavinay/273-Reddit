@@ -6,9 +6,9 @@ import linkSvg from "../../../assets/communityIcons/linkIcon.svg";
 import userSvg from "../../../assets/communityIcons/redditUserLogoIcon.svg";
 import { Row, Col, Button, Card } from "react-bootstrap";
 // import CreatePost from "./CreatePost";
-import { Link } from 'react-router-dom';
-import Axios from 'axios';
-import backendServer from '../../../webConfig'
+import { Link } from "react-router-dom";
+import Axios from "axios";
+import backendServer from "../../../webConfig";
 // import { withStyles } from "@material-ui/core/styles";
 // import { useTheme } from "@material-ui/core/styles";
 
@@ -24,52 +24,57 @@ class Community extends Component {
     // console.log(props, "COMM PROPS");
     super(props);
     this.state = {
-      community_id: props.match.params.community_id ? "6089eff68a05a7043c3f3c32" : "6089eff68a05a7043c3f3c32"
-    }
+      community_id: props.match.params.community_id
+        ? "6089eff68a05a7043c3f3c32"
+        : "6089eff68a05a7043c3f3c32",
+    };
   }
 
   componentDidMount() {
     let data = {
-      community_id: this.state.community_id
+      community_id: this.state.community_id,
     };
     this.props.setLoader();
-    Axios.post(backendServer + '/getCommunityDetails', data)
-      .then(response => {
+    Axios.post(backendServer + "/getCommunityDetails", data)
+      .then((response) => {
         this.props.unsetLoader();
         this.setState({ communityDetails: response.data });
-      }).catch(err => {
+      })
+      .catch((err) => {
         this.props.unsetLoader();
         console.log(err);
       });
 
     this.props.setLoader();
-    Axios.post(backendServer + '/getPostsInCommunity', data)
-      .then(response => {
+    Axios.post(backendServer + "/getPostsInCommunity", data)
+      .then((response) => {
         this.props.unsetLoader();
         this.setState({ posts: response.data });
-      }).catch(err => {
+        console.log("in community did mount = ", response.data);
+      })
+      .catch((err) => {
         this.props.unsetLoader();
         console.log(err);
-      })
+      });
   }
 
   render() {
     var postsToRender = [];
     if (this.state.posts) {
-      this.state.posts.forEach(post => {
-        postsToRender.push((<Post data={post} {...this.props}></Post>));
-      })
+      this.state.posts.forEach((post) => {
+        postsToRender.push(<Post data={post} {...this.props}></Post>);
+      });
     }
     return (
       <React.Fragment>
         <div className="container">
-          inside Community ...
+          {/* inside Community ...
           <div>
             Community Name <Button>join</Button>{" "}
-          </div>
+          </div> */}
           <Row>
             <p>
-              <Row >
+              <Row>
                 <Col xs={8}>
                   <div className="createPostH">
                     <a>
@@ -79,12 +84,17 @@ class Community extends Component {
                         src={userSvg}
                       />
                     </a>{" "}
-                    <Link to={{
-                      pathname: "/createPost",
-                      params: this.props.match.params.community_id
-                    }
-                    }>
-                      <input className="createPostInput" placeholder="Create Post" type="text" />
+                    <Link
+                      to={{
+                        pathname: "/createPost",
+                        params: this.props.match.params.community_id,
+                      }}
+                    >
+                      <input
+                        className="createPostInput"
+                        placeholder="Create Post"
+                        type="text"
+                      />
                     </Link>
                     <a className="galleryAnchor">
                       <img
@@ -108,10 +118,11 @@ class Community extends Component {
                     <Card className="card">
                       <Card.Header className="cardHeader">
                         About Community
-                    </Card.Header>
+                      </Card.Header>
                       <Card.Body>
-                        The leading community for cryptocurrency news, discussion & analysis.
-                    </Card.Body>
+                        The leading community for cryptocurrency news,
+                        discussion & analysis.
+                      </Card.Body>
                       <Card.Footer>
                         <Button className="cardButton">Create Post</Button>
                       </Card.Footer>
@@ -121,8 +132,10 @@ class Community extends Component {
                     <Card className="card">
                       <Card.Header className="cardHeader">
                         r/Community Rules
-                    </Card.Header>
-                      <Card.Body>This is some text within a card body.</Card.Body>
+                      </Card.Header>
+                      <Card.Body>
+                        This is some text within a card body.
+                      </Card.Body>
                       <Card.Footer>
                         <Button className="cardButton">Create Post</Button>
                       </Card.Footer>
