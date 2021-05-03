@@ -9,6 +9,10 @@ export function getToken() {
     return "To be impl...";
 }
 
+export function getUserID() {
+    return "6089d63ea112c02c1df2914c"; // to be impl
+}
+
 export function getMonthFromUtils(date) {
     let localDate = new Date(new Date(date).setHours(new Date(date).getHours() - 7))
     return months[localDate.getMonth()];
@@ -25,7 +29,7 @@ export function getRelativeTime(date) {
     }
     var now = new Date();
     var diff = parseInt((now.getTime() - Date.parse(date)) / 1000);
-    if (diff < 60) { return 'less than a minute ago'; }
+    if (diff < 60) { return 'a few seconds ago'; }
     else if (diff < 120) { return 'about a minute ago'; }
     else if (diff < (2700)) { return (parseInt(diff / 60)).toString() + ' minutes ago'; }
     else if (diff < (5400)) { return 'about an hour ago'; }
