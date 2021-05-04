@@ -72,8 +72,6 @@ class Post extends Component {
           {this.props.data.location && (
             <img
               alt=""
-              width="40px"
-              style={{ borderRadius: "20px", margin: "5px" }}
               src={this.props.data?.location}
             />
           )}
@@ -86,7 +84,7 @@ class Post extends Component {
         {/* {JSON.stringify(this.props.data)} */}
         <Card
           style={{
-            margin: "0px",
+            margin: "10px",
             backgroundColor: this.props.darkMode ? "#1B1B1B" : "white",
           }}
         >

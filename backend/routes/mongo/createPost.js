@@ -198,58 +198,63 @@ app.post("/getCommentsWithPostID", (req, res) => {
       res.status(500).send("Internal server error...");
     }
     const responseData = JSON.parse(JSON.stringify(result));
-    responseData.forEach((resp, index) => {
-      const entityId = resp._id;
-      // console.log("searching for ", entityId);
-      Vote.aggregate(
-        [
-          {
-            $match: {
-              entityId: mongoose.Types.ObjectId(entityId)
-            }
-          },
-          {
-            $group: {
-              _id: "$entityId",
-              // entityId: entityId,
-              upvoteCount: {
-                $sum: {
-                  $sum: { $cond: { if: { $eq: ["$voteDir", 1] }, then: 1, else: 0 } },
+    if (responseData && responseData.length > 0) {
+      responseData.forEach((resp, index) => {
+        const entityId = resp._id;
+        // console.log("searching for ", entityId);
+        Vote.aggregate(
+          [
+            {
+              $match: {
+                entityId: mongoose.Types.ObjectId(entityId)
+              }
+            },
+            {
+              $group: {
+                _id: "$entityId",
+                // entityId: entityId,
+                upvoteCount: {
+                  $sum: {
+                    $sum: { $cond: { if: { $eq: ["$voteDir", 1] }, then: 1, else: 0 } },
+                  },
                 },
-              },
-              downvoteCount: {
-                $sum: {
-                  $cond: { if: { $eq: ["$voteDir", -1] }, then: 1, else: 0 },
+                downvoteCount: {
+                  $sum: {
+                    $cond: { if: { $eq: ["$voteDir", -1] }, then: 1, else: 0 },
+                  },
                 },
-              },
+              }
+            },
+            // {
+            //   $project: {
+            //     _id: 0,
+            //     upvoteCount: "$upvoteCount",
+            //     downvoteCount: "$downvoteCount"
+            //   }
+            // }
+          ],
+          (err, result) => {
+            // console.log(result);
+            if (err) {
+              return res.status(500).send(err);
+            } else {
+              resp.score = resp.upvoteCount = resp.downvoteCount = 0;
+              if (result && result[0]) {
+                resp.score = result[0].upvoteCount - result[0].downvoteCount
+                resp.upvoteCount = result[0].upvoteCount;
+                resp.downvoteCount = result[0].downvoteCount;
+              }
             }
-          },
-          // {
-          //   $project: {
-          //     _id: 0,
-          //     upvoteCount: "$upvoteCount",
-          //     downvoteCount: "$downvoteCount"
-          //   }
-          // }
-        ],
-        (err, result) => {
-          console.log(result);
-          if (err) {
-            return res.status(500).send(err);
-          } else {
-            resp.score = resp.upvoteCount = resp.downvoteCount = 0;
-            if (result && result[0]) {
-              resp.score = result[0].upvoteCount - result[0].downvoteCount
-              resp.upvoteCount = result[0].upvoteCount;
-              resp.downvoteCount = result[0].downvoteCount;
+            if (index == responseData.length - 1) {
+              res.status(200).send(responseData);
             }
           }
-          if (index == responseData.length - 1) {
-            res.status(200).send(responseData);
-          }
-        }
-      );
-    });
+        );
+      });
+    } else {
+      res.status(200).send(responseData);
+    }
+
   });
 });
 module.exports = router;
