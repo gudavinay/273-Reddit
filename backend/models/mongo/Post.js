@@ -9,7 +9,7 @@ const PostSchema = new mongoose.Schema(
       required: true,
     },
     link: { type: String }, // if post type is link, save link otherwise save url of image if post type is image
-    location: { type: String },
+    postImageUrl: { type: String },
     description: { type: String },
     title: { type: String, required: true },
     upvotedBy: [

@@ -69,11 +69,8 @@ class Post extends Component {
               {this.props.data?.link}
             </a>
           )}
-          {this.props.data.location && (
-            <img
-              alt=""
-              src={this.props.data?.location}
-            />
+          {this.props.data.postImageUrl && (
+            <img alt="" src={this.props.data?.postImageUrl} />
           )}
         </Row>
       </div>

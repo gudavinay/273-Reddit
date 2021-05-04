@@ -6,7 +6,7 @@ const Post = require("../../models/mongo/Post");
 const Comment = require("../../models/mongo/Comment");
 const Vote = require("../../models/mongo/Vote");
 
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 /* get communities */
 app.get("/getCommunities", function (req, res, next) {
   current_user = req.body.u_id;
@@ -83,7 +83,7 @@ app.post("/createPost", function (req, res, next) {
       communityID: req.body.community_id,
       type: req.body.type,
       title: req.body.title,
-      location: req.body.location,
+      postImageUrl: req.body.postImageUrl,
       userID: req.body.userID,
     };
   }
@@ -206,8 +206,8 @@ app.post("/getCommentsWithPostID", (req, res) => {
           [
             {
               $match: {
-                entityId: mongoose.Types.ObjectId(entityId)
-              }
+                entityId: mongoose.Types.ObjectId(entityId),
+              },
             },
             {
               $group: {
@@ -215,7 +215,9 @@ app.post("/getCommentsWithPostID", (req, res) => {
                 // entityId: entityId,
                 upvoteCount: {
                   $sum: {
-                    $sum: { $cond: { if: { $eq: ["$voteDir", 1] }, then: 1, else: 0 } },
+                    $sum: {
+                      $cond: { if: { $eq: ["$voteDir", 1] }, then: 1, else: 0 },
+                    },
                   },
                 },
                 downvoteCount: {
@@ -223,7 +225,7 @@ app.post("/getCommentsWithPostID", (req, res) => {
                     $cond: { if: { $eq: ["$voteDir", -1] }, then: 1, else: 0 },
                   },
                 },
-              }
+              },
             },
             // {
             //   $project: {
@@ -240,7 +242,7 @@ app.post("/getCommentsWithPostID", (req, res) => {
             } else {
               resp.score = resp.upvoteCount = resp.downvoteCount = 0;
               if (result && result[0]) {
-                resp.score = result[0].upvoteCount - result[0].downvoteCount
+                resp.score = result[0].upvoteCount - result[0].downvoteCount;
                 resp.upvoteCount = result[0].upvoteCount;
                 resp.downvoteCount = result[0].downvoteCount;
               }
@@ -254,7 +256,6 @@ app.post("/getCommentsWithPostID", (req, res) => {
     } else {
       res.status(200).send(responseData);
     }
-
   });
 });
 module.exports = router;
