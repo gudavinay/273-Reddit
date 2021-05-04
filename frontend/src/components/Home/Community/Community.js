@@ -7,7 +7,7 @@ import userSvg from "../../../assets/communityIcons/redditUserLogoIcon.svg";
 import { Row, Col, Button, Card } from "react-bootstrap";
 // import CreatePost from "./CreatePost";
 import { Link } from "react-router-dom";
-import Axios from "axios";
+import axios from "axios";
 import backendServer from "../../../webConfig";
 // import { withStyles } from "@material-ui/core/styles";
 // import { useTheme } from "@material-ui/core/styles";
@@ -31,11 +31,11 @@ class Community extends Component {
   }
 
   componentDidMount() {
-    let data = {
-      community_id: this.state.community_id,
-    };
     this.props.setLoader();
-    Axios.post(backendServer + "/getCommunityDetails", data)
+    axios
+      .get(
+        `${backendServer}/getCommunitiesForOwner?ID=${this.state.community_id}`
+      )
       .then((response) => {
         this.props.unsetLoader();
         this.setState({ communityDetails: response.data });
@@ -46,7 +46,8 @@ class Community extends Component {
       });
 
     this.props.setLoader();
-    Axios.post(backendServer + "/getPostsInCommunity", data)
+    axios
+      .get(`${backendServer}/getPostsInCommunity?ID=${this.state.community_id}`)
       .then((response) => {
         this.props.unsetLoader();
         this.setState({ posts: response.data }, () => {

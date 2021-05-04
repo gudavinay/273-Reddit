@@ -54,7 +54,7 @@ class Navigationbar extends Component {
         <Container
           style={{
             boxShadow: "0px 0px 5px #777",
-            marginBottom: "30px",
+            // marginBottom: "30px",
             maxWidth: "100%",
           }}
         >

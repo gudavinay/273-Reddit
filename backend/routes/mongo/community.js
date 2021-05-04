@@ -59,34 +59,55 @@ app.get("/myCommunity", function (req, res) {
   });
 });
 
-app.get("/getCommunityDetails", (req, res) => {
-  Community.findOne({
-    ownerID: req.body.ownerID,
+app.get("/getCommunitiesForOwner", (req, res) => {
+  Community.find({
+    ownerID: req.query.ID,
   })
     .populate("listOfUsers.userID")
     .then((result) => {
-      let usersIdOfSQL = [];
-      let acceptedIdOfSQL = [];
-      for (let i = 0; i < result.listOfUsers.length; i++) {
-        if (!result.listOfUsers[i].isAccepted) {
-          usersIdOfSQL.push(result.listOfUsers[i].userID.userIDSQL);
-        } else {
-          acceptedIdOfSQL.push(result.listOfUsers[i].userID.userIDSQL);
+      let output = [];
+      result.forEach((item) => {
+        let usersIdOfSQL = [];
+        let acceptedIdOfSQL = [];
+        for (let i = 0; i < item.listOfUsers.length; i++) {
+          if (!item.listOfUsers[i].isAccepted) {
+            usersIdOfSQL.push(item.listOfUsers[i].userID.userIDSQL);
+          } else {
+            acceptedIdOfSQL.push(item.listOfUsers[i].userID.userIDSQL);
+          }
         }
-      }
-      let data = JSON.parse(JSON.stringify(result));
-      data.requestedUserSQLIds = usersIdOfSQL;
-      data.acceptedUsersSQLIds = acceptedIdOfSQL;
-      delete data.listOfUsers;
-      delete data.upvotedBy;
-      delete data.downvotedBy;
-      delete data.sentInvitesTo;
-      delete data.imageURL;
-      delete data.posts;
-      delete data.rules;
-      delete data.topicSelected;
+        let data = JSON.parse(JSON.stringify(item));
+        data.requestedUserSQLIds = usersIdOfSQL;
+        data.acceptedUsersSQLIds = acceptedIdOfSQL;
+        delete data.listOfUsers;
+        delete data.upvotedBy;
+        delete data.downvotedBy;
+        delete data.sentInvitesTo;
+        delete data.imageURL;
+        delete data.posts;
+        delete data.rules;
+        delete data.topicSelected;
+        output.push(data);
+      });
+      res.status(200).send(output);
+    });
+});
 
-      res.status(200).send(data);
+app.get("/getUsersForCommunitiesForOwner", (req, res) => {
+  Community.find({
+    ownerID: req.query.ID,
+  })
+    .populate("listOfUsers.userID")
+    .then((result) => {
+      let output = new Set();
+      result.forEach((item) => {
+        for (let i = 0; i < item.listOfUsers.length; i++) {
+          if (item.listOfUsers[i].isAccepted) {
+            output.add(Number(item.listOfUsers[i].userID.userIDSQL));
+          }
+        }
+      });
+      res.status(200).send(Array.from(output));
     });
 });
 

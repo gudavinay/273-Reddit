@@ -1,0 +1,8 @@
+input:focus {
+  border: none;
+  outline: none;
+}
+
+.cardrow-light:hover {
+  background-color: #eee;
+}

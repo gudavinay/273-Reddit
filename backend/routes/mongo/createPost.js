@@ -152,8 +152,8 @@ app.post("/comment", (req, res) => {
   }
 });
 
-app.post("/getPostsInCommunity", (req, res) => {
-  Post.find({ communityID: req.body.community_id })
+app.get("/getPostsInCommunity", (req, res) => {
+  Post.find({ communityID: req.query.ID })
     .populate("userID")
     .then((result) => {
       res.status(200).send(result);
