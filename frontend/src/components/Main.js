@@ -74,6 +74,7 @@ import UserProfile from "./Home/UserProfile/UserProfile";
 import User from "./Home/UserProfile/User";
 import Messages from "./Home/Messages/Messages";
 import Invitation from "./Home/Invitation/invitation";
+import Notification from "./Home/Notification/Notification";
 import NavigationBar from "./LandingPage/Navigationbar";
 import { Fade } from "reactstrap";
 import Error404 from "./Error404";
@@ -89,7 +90,7 @@ class Main extends Component {
       darkMode: false,
       loading: false,
       setLoader: this.setLoader,
-      unsetLoader: this.unsetLoader
+      unsetLoader: this.unsetLoader,
     };
   }
   themeToggler = () => {
@@ -161,6 +162,9 @@ class Main extends Component {
             </Route>
             <Route path="/invitation">
               <Invitation {...this.state} {...this.props} />
+            </Route>
+            <Route path="/notification">
+              <Notification {...this.state} {...this.props} />
             </Route>
             <Route component={Error404}> </Route>
           </Switch>

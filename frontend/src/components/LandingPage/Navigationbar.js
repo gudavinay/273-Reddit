@@ -10,6 +10,9 @@ import { IoChatboxEllipsesOutline } from "react-icons/io5";
 import { BiBell } from "react-icons/bi";
 import "./navigationbar.css";
 import userProfileSVG from "../../assets/default_avatar.svg";
+import Axios from "axios";
+import backendServer from "../../webConfig";
+import Notification from "../Home/Notification/Notification";
 
 class Navigationbar extends Component {
   constructor(props) {
@@ -19,6 +22,8 @@ class Navigationbar extends Component {
     this.state = {
       search: qR.get("q") || "",
       leftDropdown: "Home",
+      showNotificationModal: false,
+      notificationData: [],
     };
   }
   onSubmitSearch = (e) => {
@@ -38,8 +43,35 @@ class Navigationbar extends Component {
       // Write logic for posts search
     }
   };
+  hideModal = () => {
+    this.setState({
+      showNotificationModal: false,
+    });
+  };
+  showModal = () => {
+    this.setState({
+      showNotificationModal: true,
+    });
+  };
+  componentDidMount() {
+    this.getNotificationData();
+  }
+  getNotificationData = () => {
+    let data = {
+      user_id: "608d19875c5f547d0888b52f",
+    };
+    Axios.post(backendServer + "/getNotificationData", data)
+      .then((result) => {
+        this.props.unsetLoader();
+        this.setState({ notificationData: result.data });
+      })
+      .catch((err) => {
+        this.props.unsetLoader();
+        console.log(err);
+      });
+  };
   render() {
-    console.log(this.state);
+    // console.log(this.state);
     return (
       <React.Fragment>
         {this.props.loading && (
@@ -187,7 +219,11 @@ class Navigationbar extends Component {
                           .classList.add("hidden");
                         this.props.history.push({
                           pathname: "/communitysearch",
-                          search: "?" + new URLSearchParams({ q: this.state.search }).toString(),
+                          search:
+                            "?" +
+                            new URLSearchParams({
+                              q: this.state.search,
+                            }).toString(),
                         });
                       }}
                     >
@@ -231,6 +267,15 @@ class Navigationbar extends Component {
                     />
                   </Form.Group>
                 </Form>
+                {
+                  <Notification
+                    hideNav={this.hideModal}
+                    notificationData={this.state.notificationData}
+                    showNav={this.state.showNotificationModal}
+                    getNotificationData={this.getNotificationData}
+                    {...this.props}
+                  />
+                }
               </Col>
               <Col
                 sm={2}
@@ -242,7 +287,10 @@ class Navigationbar extends Component {
                     this.props.history.push("/messages");
                   }}
                 />
-                <BiBell style={{ fontSize: "24px", cursor: "pointer" }} />
+                <BiBell
+                  style={{ fontSize: "24px", cursor: "pointer" }}
+                  onClick={this.showModal}
+                />
               </Col>
               <Col sm={2} style={{ position: "relative" }}>
                 <div

@@ -2,7 +2,7 @@ var express = require("express");
 const app = require("../../app");
 const router = express.Router();
 const UserProfile = require("../../models/mongo/UserProfile");
-const CommunityInfo = require("../../models/mongo/Community");
+const Community = require("../../models/mongo/Community");
 const Post = require("../../models/mongo/Post");
 const Comment = require("../../models/mongo/Comment");
 const passport = require("passport");
@@ -64,5 +64,99 @@ app.get("/createDummyData", function (req, res, next) {
   // comment.save();
 
   res.send("inserted the dummy records");
+});
+
+app.post("/getNotificationData", (req, res) => {
+  UserProfile.findOne({ _id: req.body.user_id })
+    .populate("communityInvites.communityID")
+    .then((result) => {
+      let details = [];
+      result.communityInvites.forEach((element) => {
+        let inviteDetails = {
+          communityName: element.communityID.communityName,
+          communityID: element.communityID._id,
+          time: element.dateTime,
+        };
+        details.push(inviteDetails);
+      });
+      res.status(200).send(details);
+    });
+});
+app.post("/rejectInvite", (req, res) => {
+  console.log("reject");
+  UserProfile.findOneAndUpdate(
+    { _id: req.body.user_id },
+    {
+      $pull: { communityInvites: { communityID: req.body.community_id } },
+    },
+    (err, result) => {
+      if (err) {
+        res.status(404).send(err);
+      } else {
+        Community.updateOne(
+          {
+            _id: req.body.community_id,
+            "sentInvitesTo.userID": req.body.user_id,
+          },
+          {
+            $set: { "sentInvitesTo.$.isAccepted": -1 },
+          },
+          (err, result) => {
+            if (err) {
+              res.status(404).send(err);
+            } else {
+              res.status(200).send(result);
+            }
+          }
+        );
+      }
+    }
+  );
+});
+app.post("/acceptInvite", (req, res) => {
+  UserProfile.findOneAndUpdate(
+    { _id: req.body.user_id },
+    {
+      $pull: { communityInvites: { communityID: req.body.community_id } },
+    },
+    (err, result) => {
+      if (err) {
+        res.status(404).send(err);
+      } else {
+        Community.updateOne(
+          {
+            _id: req.body.community_id,
+            "sentInvitesTo.userID": req.body.user_id,
+          },
+          {
+            $set: { "sentInvitesTo.$.isAccepted": 1 },
+          },
+          (err, result) => {
+            if (err) {
+              res.status(404).send(err);
+            } else {
+              Community.updateOne(
+                { _id: req.body.community_id },
+                {
+                  $push: {
+                    listOfUsers: [
+                      { userID: req.body.user_id, isAccepted: true },
+                    ],
+                  },
+                },
+                (err, result) => {
+                  if (err) {
+                    res.status(404).send(err);
+                  } else {
+                    res.status(200).send(result);
+                  }
+                }
+              );
+            }
+          }
+        );
+      }
+    }
+  );
 });
 module.exports = router;
