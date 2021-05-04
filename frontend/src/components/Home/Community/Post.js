@@ -64,13 +64,18 @@ class Post extends Component {
         <Row style={{ paddingLeft: "0px" }}>
           <h3 className="postBodyContent">[{this.props.data?.title}]</h3>
           {this.props.data?.description}
-          {this.props.data.link && (
+          {this.props.data && this.props.data.link && (
             <a href={this.props.data?.link} target="_blank" rel="noreferrer">
               {this.props.data?.link}
             </a>
           )}
-          {this.props.data.postImageUrl && (
-            <img alt="" src={this.props.data?.postImageUrl} />
+          {this.props.data && this.props.data.location && (
+            <img
+              alt=""
+              width="40px"
+              style={{ borderRadius: "20px", margin: "5px" }}
+              src={this.props.data?.location}
+            />
           )}
         </Row>
       </div>

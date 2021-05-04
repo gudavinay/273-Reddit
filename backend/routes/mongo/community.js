@@ -59,11 +59,24 @@ app.get("/myCommunity", function (req, res) {
   });
 });
 
-app.get("/getCommunitiesForOwner", (req, res) => {
-  Community.find({
-    ownerID: req.query.ID,
+app.get("/getCommunitiesForOwner", async (req, res) => {
+  let skip = Number(req.query.page) * Number(req.query.size);
+  let count = await Community.count({
+    $and: [
+      { ownerID: req.query.ID },
+      { communityName: { $regex: req.query.search } },
+    ],
+  });
+  console.log(count);
+  await Community.find({
+    $and: [
+      { ownerID: req.query.ID },
+      { communityName: { $regex: req.query.search, $options: "i" } },
+    ],
   })
     .populate("listOfUsers.userID")
+    .limit(Number(req.query.size))
+    .skip(skip)
     .then((result) => {
       let output = [];
       result.forEach((item) => {
@@ -89,7 +102,7 @@ app.get("/getCommunitiesForOwner", (req, res) => {
         delete data.topicSelected;
         output.push(data);
       });
-      res.status(200).send(output);
+      res.status(200).send({ com: output, total: count });
     });
 });
 
@@ -110,5 +123,28 @@ app.get("/getUsersForCommunitiesForOwner", (req, res) => {
       res.status(200).send(Array.from(output));
     });
 });
+
+// app.get("/getUsersForCommunitiesForOwner", async (req, res) => {
+//   let skip = req.query.page * req.query.size;
+//   let count = await Community.count({
+//     $and: [{ ownerID: req.query.ID }, { communityName: /req.query.search/i }],
+//   });
+//   console.log(count);
+//   await Community.find({
+//     $and: [{ ownerID: req.query.ID }, { communityName: /req.query.search/i }],
+//   })
+//     .populate("listOfUsers.userID")
+//     .then((result) => {
+//       let output = new Set();
+//       result.forEach((item) => {
+//         for (let i = 0; i < item.listOfUsers.length; i++) {
+//           if (item.listOfUsers[i].isAccepted) {
+//             output.add(Number(item.listOfUsers[i].userID.userIDSQL));
+//           }
+//         }
+//       });
+//       res.status(200).send({ output: Array.from(output), total: count });
+//     });
+// });
 
 module.exports = router;

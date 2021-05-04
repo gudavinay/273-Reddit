@@ -6,3 +6,12 @@ input:focus {
 .cardrow-light:hover {
   background-color: #eee;
 }
+
+.fa {
+  cursor: pointer;
+}
+
+.fa:hover {
+  color: green;
+  transform: scale(1.2);
+}
