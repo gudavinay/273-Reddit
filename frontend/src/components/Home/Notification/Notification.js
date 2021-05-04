@@ -18,6 +18,7 @@ export class Notification extends Component {
       user_id: "608d19875c5f547d0888b52f",
       community_id: communityID,
     };
+    this.props.setLoader();
     Axios.post(backendServer + "/acceptInvite", data)
       .then((result) => {
         this.props.unsetLoader();
@@ -36,6 +37,7 @@ export class Notification extends Component {
       user_id: "608d19875c5f547d0888b52f",
       community_id: communityID,
     };
+    this.props.setLoader();
     Axios.post(backendServer + "/rejectInvite", data)
       .then((result) => {
         this.props.unsetLoader();

@@ -23,6 +23,7 @@ export class invitation extends Component {
     let data = {
       user_id: "6089d63ea112c02c1df2914c",
     };
+    this.props.setLoader();
     Axios.post(backendServer + "/getCommunitiesCreatedByMe", data)
       .then((response) => {
         this.props.unsetLoader();
@@ -39,6 +40,7 @@ export class invitation extends Component {
     let data = {
       community_id: communityID,
     };
+    this.props.setLoader();
     Axios.post(backendServer + "/showInvitationStatus", data)
       .then((response) => {
         this.props.unsetLoader();

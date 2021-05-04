@@ -60,6 +60,7 @@ class Navigationbar extends Component {
     let data = {
       user_id: "608d19875c5f547d0888b52f",
     };
+    this.props.setLoader();
     Axios.post(backendServer + "/getNotificationData", data)
       .then((result) => {
         this.props.unsetLoader();
