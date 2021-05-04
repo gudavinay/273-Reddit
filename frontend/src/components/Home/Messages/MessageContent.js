@@ -8,8 +8,9 @@ class MessageContent extends Component {
     super(props);
     this.state = {
       message: [],
+      messageTobeSent: "",
       getUniqueMembers: [],
-      loggedinUser: 3
+      loggedinUser: { user_id: 3 }
     };
   }
   getMessageFromUser(membeDetail) {
@@ -23,12 +24,37 @@ class MessageContent extends Component {
           this.setState({
             message: response.data
           });
+          console.log(response.data);
         }
       })
       .catch(error => {
         console.log(error);
       });
   }
+
+  sendMessage = e => {
+    e.preventDefault();
+    const user_id = 3;
+    console.log(this.state.messageTobeSent);
+    const data = {
+      message: this.state.messageTobeSent,
+      sent_by: user_id,
+      sent_to: this.props.chattedWith.user_id
+    };
+    axios
+      .post(`${backendServer}/sendMessage`, data)
+      .then(response => {
+        if (response.status == 200) {
+          this.setState({
+            message: response.data
+          });
+          console.log(response.data);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
 
   componentDidUpdate(prevState) {
     if (prevState.chattedWith.user_id !== this.props.chattedWith.user_id) {
@@ -43,7 +69,20 @@ class MessageContent extends Component {
     let renderMessage = null;
     if (this.state.message.length > 0) {
       renderMessage = this.state.message.map((message, idx) => {
-        return <div key={idx}>{message.message}</div>;
+        if (message.sent_by == this.state.loggedinUser.user_id)
+          return (
+            <div key={idx} className="text-right">
+              {message.message}
+            </div>
+          );
+        else
+          return (
+            <div key={idx} className="text-left">
+              <strong>{this.props.chattedWith.name}</strong>
+              <br />
+              {message.message}
+            </div>
+          );
       });
     } else {
       console.log("No message found");
@@ -60,12 +99,21 @@ class MessageContent extends Component {
                   <Row>
                     <Col xs={10}>
                       <Form.Control
+                        type="text"
                         className="form-control"
                         style={{ align: "bottom" }}
+                        onChange={e =>
+                          this.setState({ messageTobeSent: e.target.value })
+                        }
                       ></Form.Control>
                     </Col>
                     <Col xs={2}>
-                      <Button className="createCommunity">Send</Button>
+                      <Button
+                        className="createCommunity"
+                        onClick={this.sendMessage}
+                      >
+                        Send
+                      </Button>
                     </Col>
                   </Row>
                 </Form>

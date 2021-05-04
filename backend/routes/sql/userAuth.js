@@ -10,10 +10,10 @@ auth();
 app.post("/login", async (req, res, next) => {
   db.User.findOne({
     where: {
-      email: req.body.email,
-    },
+      email: req.body.email
+    }
   })
-    .then((user) => {
+    .then(user => {
       if (user === null) {
         return res.status(404).send("User not found!");
       } else {
@@ -25,7 +25,7 @@ app.post("/login", async (req, res, next) => {
             if (matchPassword) {
               const userLogin = {
                 userID: user.user_id,
-                token: createToken(user),
+                token: createToken(user)
               };
               return res.status(200).send(JSON.stringify(userLogin));
             } else {
@@ -35,7 +35,7 @@ app.post("/login", async (req, res, next) => {
         );
       }
     })
-    .catch((err) => {
+    .catch(err => {
       return res.status(500).send("Internal Error!");
     });
 });
@@ -48,11 +48,11 @@ app.post("/signup", async (req, res) => {
     let user = await db.User.create({
       email: req.body.email,
       password: req.body.password,
-      name: req.body.name,
+      name: req.body.name
     });
     const userLogin = {
       userID: user.user_id,
-      token: createToken(user),
+      token: createToken(user)
     };
     console.log(user);
     return res.status(200).send(userLogin);
@@ -65,7 +65,7 @@ app.post("/signup", async (req, res) => {
 function createToken(user) {
   const payload = { id: user.user_id };
   const token = jwt.sign(payload, secret, {
-    expiresIn: 1008000,
+    expiresIn: 1008000
   });
   return "JWT " + token;
 }

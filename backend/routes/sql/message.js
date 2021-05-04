@@ -55,7 +55,8 @@ app.get("/getMessage", async (req, res) => {
         { sent_by: req.query.ID, sent_to: req.query.chatWith },
         { sent_by: req.query.chatWith, sent_to: req.query.ID }
       ]
-    }
+    },
+    order: [["createdAt", "ASC"]]
   });
 
   if (getMessage.length > 0) {

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-// import { Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { isEmail } from "validator";
 import {
   Button,
@@ -7,12 +7,13 @@ import {
   FormGroup,
   Label,
   Input,
-  FormFeedback,
+  FormFeedback
 } from "reactstrap";
 import { connect } from "react-redux";
 import { loginRedux } from "../../reduxOps/reduxActions/loginRedux";
 import { Row, Col } from "react-bootstrap";
 import "./../styles/loginStyle.css";
+const jwt_decode = require("jwt-decode");
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -20,7 +21,7 @@ class Login extends Component {
       this.state = {
         error: "",
         formerror: "",
-        authFlag: "",
+        authFlag: ""
       };
     }
   }
@@ -36,24 +37,24 @@ class Login extends Component {
     return error;
   };
 
-  emailEventHandler = (e) => {
+  emailEventHandler = e => {
     this.setState({
-      email: e.target.value,
+      email: e.target.value
     });
   };
 
-  passEventHandler = (e) => {
+  passEventHandler = e => {
     this.setState({
-      password: e.target.value,
+      password: e.target.value
     });
   };
   ///LoginUser'
-  submitForm = (e) => {
+  submitForm = e => {
     //prevent page from refresh
     e.preventDefault();
     const data = {
       email: this.state.email,
-      password: this.state.password,
+      password: this.state.password
     };
     const formerror = this.validateForm();
     if (Object.keys(formerror).length == 0) {
@@ -70,12 +71,12 @@ class Login extends Component {
         this.setState({
           authFlag: false,
           formerror: {},
-          error: this.props.user,
+          error: this.props.user
         });
       } else {
         this.setState({
           authFlag: true,
-          error: "",
+          error: ""
         });
         this.SetLocalStorage(JSON.stringify(this.props.user));
       }
@@ -91,15 +92,22 @@ class Login extends Component {
 
   render() {
     let redirectVar = null;
-    // console.log(this.props);
-    //typeof this.props.user.token != "undefined" &&
+    if (Object.keys(this.props.user).length > 0 && this.state.authFlag) {
+      localStorage.setItem("token", this.props.user.token);
+      console.log("Came inside of login");
+      var decoded = jwt_decode(this.state.token.split(" ")[1]);
+      localStorage.setItem("user_id", decoded._id);
+      redirectVar = <Redirect to="/home" />;
+    } else {
+      redirectVar = <Redirect to="/" />;
+    }
 
-    // TODO: Need to implement based on JWT
+    console.log(redirectVar);
 
     // if (typeof this.props.user != "undefined" && this.state.authFlag) {
     //   console.log("Token is verified");
     //   redirectVar = <Redirect to="/home" />;
-    // } else redirectVar = <Redirect to="/login" />;
+    // } else
     return (
       <div className="container-fluid" style={{ padding: "0" }}>
         {redirectVar}
@@ -196,7 +204,7 @@ class Login extends Component {
                   color: "rgb(0, 121, 211)",
                   cursor: "pointer",
                   display: "inline-block",
-                  fontWeight: "700",
+                  fontWeight: "700"
                 }}
                 onClick={() => {
                   this.props.signup();
@@ -212,9 +220,9 @@ class Login extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
-    user: state.login.user,
+    user: state.login.user
   };
 };
 
