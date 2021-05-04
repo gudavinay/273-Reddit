@@ -110,11 +110,12 @@ app.get("/getAllCommunities", async function (req, res, next) {
 app.get("/getUserProfile/:user_id", async function (req, res, next) {
     try {
         const { user_id } = req.params;
-
+        
         const user = await db.User.findOne({
             where: {
                 user_id: user_id
-            }
+            },
+            attributes: { exclude: ['password'] }
         });
         if (!user) {
             throw new Error(`User Not Found`);
@@ -127,10 +128,90 @@ app.get("/getUserProfile/:user_id", async function (req, res, next) {
             throw new Error(`Mongo User Not Found`);
         }
 
-        const user_communities = await Community.find({
-            listOfUsers: {
-                $elemMatch: { userID: mongoUser._id, isAccepted: true },
+        let user_communities = await Community.aggregate([
+            {
+                "$match": {
+                    listOfUsers: {
+                        $elemMatch: { userID: mongoUser._id, isAccepted: true },
+                    },
+                }
             },
+            {
+                $lookup:
+                {
+                    from: "votes",
+                    localField: "_id",
+                    foreignField: "entityId",
+                    as: "vote"
+                }
+            },
+            { '$unwind': { 'path': '$vote', 'preserveNullAndEmptyArrays': true } },
+            {
+                $group: {
+                    _id: "$_id",
+                    communityName: { "$first": "$communityName" },
+                    communityDescription: { "$first": "$communityDescription" },
+                    ownerID: { "$first": "$ownerID" },
+                    imageURL: { "$first": "$imageURL" },
+                    createdAt: { "$first": "$createdAt" },
+                    posts: { "$first": "$posts" },
+                    listOfUsers: { "$first": "$listOfUsers" },
+                    upvoteCount: {
+                        $sum: { $cond: { if: { $eq: ["$vote.voteDir", 1] }, then: 1, else: 0 } },
+                    },
+                    downvoteCount: {
+                        $sum: {
+                            $cond: { if: { $eq: ["$vote.voteDir", -1] }, then: 1, else: 0 },
+                        },
+                    },
+                },
+            },
+            {
+                $lookup:
+                {
+                    from: "posts",
+                    localField: "_id",
+                    foreignField: "communityID",
+                    as: "posts"
+                }
+            },
+            {
+                "$project": {
+                    "communityName": "$communityName",
+                    "communityDescription": "$communityDescription",
+                    "ownerID": "$ownerID",
+                    "imageURL": "$imageURL",
+                    "createdAt": "$createdAt",
+                    "postsLength": { "$size": "$posts" },
+                    "listOfUsersLength": { "$size": "$listOfUsers" },
+                    "upVotedLength": "$upvoteCount",
+                    "downVotedLength": "$downvoteCount"
+                }
+            },
+            { "$sort": { createdAt: -1 } }
+        ]);
+
+        user_communities = await Community.populate(user_communities, "ownerID");
+
+        const communitiesBySqlUserId = user_communities.map(c => c.ownerID?.userIDSQL);
+
+        const users = await db.User.findAll({
+            where: {
+                user_id: communitiesBySqlUserId
+            },
+            attributes: ['user_id', 'name', "email"]
+        });
+
+        const userById = users.reduce((acc, it) => {
+            acc[it.user_id] = it;
+            return acc;
+        }, {});
+
+        user_communities = user_communities.map(c => {
+            return {
+                ...c,
+                createdBy: userById[c.ownerID?.userIDSQL] || false
+            }
         });
 
         res.json({

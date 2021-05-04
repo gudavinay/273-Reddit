@@ -71,6 +71,7 @@ import MyCommunities from "./Home/MyCommunities/MyCommunities";
 import MyCommunitiesModeration from "./Home/MyCommunities/MyCommunitiesModeration";
 import CreateCommunity from "./Home/MyCommunities/CreateCommunity";
 import UserProfile from "./Home/UserProfile/UserProfile";
+import User from "./Home/UserProfile/User";
 import Messages from "./Home/Messages/Messages";
 import Invitation from "./Home/Invitation/invitation";
 import NavigationBar from "./LandingPage/Navigationbar";
@@ -124,6 +125,9 @@ class Main extends Component {
             <Route exact path="/" component={LandingPage} />
             <Route path="/home">
               <Home {...this.state} {...this.props} />
+            </Route>
+            <Route path="/user/:user_id">
+              <User {...this.state} {...this.props} />
             </Route>
             <Route path="/community/:community_id">
               <Community {...this.state} {...this.props} />

@@ -126,7 +126,7 @@ class CommunitySearch extends Component {
 
       temp[entityId].upVotedLength = upvoteCount;
       temp[entityId].downVotedLength = downvoteCount;
-      
+
       this.setState({
         communities: Object.values(temp)
       });
@@ -137,125 +137,127 @@ class CommunitySearch extends Component {
     const { searchText, processing, communities } = this.state;
     return (
       <React.Fragment>
-        <Row
-          style={{
-            background: this.props.darkMode ? "black" : "#DAE0E6",
-            maxWidth: "100%",
-          }}
-        >
-          <Col sm={12}>
-            {
-              searchText === "" ?
-                (
-                  <div style={{ margin: "1rem" }}>
-                    List of All Communities
-                  </div>
-                ) :
-                (
-                  <div style={{ margin: "1rem" }}>
-                    Community search results for <b>&quot;{searchText}&quot;</b>
-                  </div>
-                )
-            }
-          </Col>
-          <Col sm={12}>
-            <div style={{ width: "95%", margin: "0 auto", background: "#fff", height: "50px", borderRadius: "5px" }}>
-              <div style={{ float: "left" }}>
-                <Form.Group style={{ margin: "5px", display: "inline-flex" }}>
-                  <label style={{ whiteSpace: "nowrap", marginTop: "5px", color: "#7d72728a" }}>Sort By</label>
-                  <Form.Control as="select" onChange={e => {
-                    this.setState({ sortKey: e.target.value }, () => {
-                      this.processSearch(true);
-                    })
-                  }} style={{ fontSize: "14px", marginLeft: "5px", fontWeight: "600", width: "auto" }}>
-                    {
-                      Object.keys(options.sortKey).map(key => {
-                        return (
-                          <option
-                            key={key}
-                            selected={this.state.sortKey === key ? "selected" : ""}
-                            value={key}
-                          >{options.sortKey[key]}</option>
-                        )
-                      })
-                    }
-                  </Form.Control>
-                  <Form.Control as="select" onChange={e => {
-                    this.setState({ sortValue: e.target.value }, () => {
-                      this.processSearch(true);
-                    })
-                  }} style={{ fontSize: "14px", marginLeft: "5px", fontWeight: "600", width: "auto" }}>
-                    {
-                      Object.keys(options.sortValue).map(key => {
-                        return (
-                          <option
-                            key={key}
-                            selected={this.state.sortValue === key ? "selected" : ""}
-                            value={key}
-                          >{options.sortValue[key]}</option>
-                        )
-                      })
-                    }
-                  </Form.Control>
-                </Form.Group>
-              </div>
-              <div style={{ float: "right" }}>
-                <Form.Group style={{ margin: "5px", display: "inline-flex" }}>
-                  <label style={{ whiteSpace: "nowrap", marginTop: "5px", color: "#7d72728a" }}>Per Page</label>
-                  <Form.Control as="select" onChange={e => {
-                    this.setState({ perPage: e.target.value }, () => {
-                      this.processSearch(true);
-                    })
-                  }} style={{ fontSize: "14px", marginLeft: "5px", fontWeight: "600", width: "auto" }}>
-                    {
-                      Object.keys(options.perPageValues).map(key => {
-                        return (
-                          <option
-                            key={key}
-                            selected={this.state.perPage === key ? "selected" : ""}
-                            value={key}
-                          >{options.perPageValues[key]}</option>
-                        )
-                      })
-                    }
-                  </Form.Control>
-                </Form.Group>
-              </div>
-            </div>
-          </Col>
-          <Col sm={12}>
-            <div style={{ margin: "1rem", padding: "1rem" }}>
-              {(communities && communities.length > 0 && (
-                communities.map((c) => {
-                  return (
-                    <div key={c._id} style={{
-                      // height: "400px" // load more testing purpose due to low data
-                    }}>
-                      <SearchResult key={c._id} data={c} vote={this.vote} />
-                    </div>
-                  );
-                })
-              ))}
+        <div className="container">
+          <Row
+            style={{
+              background: this.props.darkMode ? "black" : "#DAE0E6",
+              maxWidth: "100%",
+            }}
+          >
+            <Col sm={12}>
               {
-                !processing && communities.length === 0 && (
-                  <div>
-                    Sorry, there were no community results for “<b>{searchText}</b>”
-                  </div>
-                )
+                searchText === "" ?
+                  (
+                    <div style={{ margin: "1rem" }}>
+                      List of All Communities
+                    </div>
+                  ) :
+                  (
+                    <div style={{ margin: "1rem" }}>
+                      Community search results for <b>&quot;{searchText}&quot;</b>
+                    </div>
+                  )
               }
-            </div>
-            <div id="scroll_to_bottom_detector"></div>
-          </Col>
-          {
-            processing && communities.length > 0 && (
-              <Col sm={12}>
-                <div style={{ textAlign: "center", height: "50px" }}>
-                  <p>Loading more communities...</p>
+            </Col>
+            <Col sm={12}>
+              <div style={{ margin: "0 auto", background: "#fff", height: "50px", borderRadius: "5px" }}>
+                <div style={{ float: "left" }}>
+                  <Form.Group style={{ margin: "5px", display: "inline-flex" }}>
+                    <label style={{ whiteSpace: "nowrap", marginTop: "5px", color: "#7d72728a" }}>Sort By</label>
+                    <Form.Control as="select" onChange={e => {
+                      this.setState({ sortKey: e.target.value }, () => {
+                        this.processSearch(true);
+                      })
+                    }} style={{ fontSize: "14px", marginLeft: "5px", fontWeight: "600", width: "auto" }}>
+                      {
+                        Object.keys(options.sortKey).map(key => {
+                          return (
+                            <option
+                              key={key}
+                              selected={this.state.sortKey === key ? "selected" : ""}
+                              value={key}
+                            >{options.sortKey[key]}</option>
+                          )
+                        })
+                      }
+                    </Form.Control>
+                    <Form.Control as="select" onChange={e => {
+                      this.setState({ sortValue: e.target.value }, () => {
+                        this.processSearch(true);
+                      })
+                    }} style={{ fontSize: "14px", marginLeft: "5px", fontWeight: "600", width: "auto" }}>
+                      {
+                        Object.keys(options.sortValue).map(key => {
+                          return (
+                            <option
+                              key={key}
+                              selected={this.state.sortValue === key ? "selected" : ""}
+                              value={key}
+                            >{options.sortValue[key]}</option>
+                          )
+                        })
+                      }
+                    </Form.Control>
+                  </Form.Group>
                 </div>
-              </Col>
-            )
-          }
-        </Row>
+                <div style={{ float: "right" }}>
+                  <Form.Group style={{ margin: "5px", display: "inline-flex" }}>
+                    <label style={{ whiteSpace: "nowrap", marginTop: "5px", color: "#7d72728a" }}>Per Page</label>
+                    <Form.Control as="select" onChange={e => {
+                      this.setState({ perPage: e.target.value }, () => {
+                        this.processSearch(true);
+                      })
+                    }} style={{ fontSize: "14px", marginLeft: "5px", fontWeight: "600", width: "auto" }}>
+                      {
+                        Object.keys(options.perPageValues).map(key => {
+                          return (
+                            <option
+                              key={key}
+                              selected={this.state.perPage === key ? "selected" : ""}
+                              value={key}
+                            >{options.perPageValues[key]}</option>
+                          )
+                        })
+                      }
+                    </Form.Control>
+                  </Form.Group>
+                </div>
+              </div>
+            </Col>
+            <Col sm={12}>
+              <div style={{ margin: "0rem", padding: "1rem 0rem" }}>
+                {(communities && communities.length > 0 && (
+                  communities.map((c) => {
+                    return (
+                      <div key={c._id} style={{
+                        // height: "400px" // load more testing purpose due to low data
+                      }}>
+                        <SearchResult key={c._id} data={c} vote={this.vote} />
+                      </div>
+                    );
+                  })
+                ))}
+                {
+                  !processing && communities.length === 0 && (
+                    <div>
+                      Sorry, there were no community results for “<b>{searchText}</b>”
+                    </div>
+                  )
+                }
+              </div>
+              <div id="scroll_to_bottom_detector"></div>
+            </Col>
+            {
+              processing && communities.length > 0 && (
+                <Col sm={12}>
+                  <div style={{ textAlign: "center", height: "50px" }}>
+                    <p>Loading more communities...</p>
+                  </div>
+                </Col>
+              )
+            }
+          </Row>
+        </div>
       </React.Fragment>
     );
   }

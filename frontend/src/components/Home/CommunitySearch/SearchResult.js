@@ -27,13 +27,13 @@ class SearchResult extends Component {
                 <Card style={{ margin: "0px" }}>
                     <Card.Body style={{ padding: "1px" }}>
                         <Row>
-                            <Col xs={1} style={{ background: "#eef3f7", maxWidth: "3.7%", marginLeft: "14px" }}>
+                            <Col xs={1} style={{ background: "#eef3f7", maxWidth: "4.8%", marginLeft: "14px" }}>
                                 <div>
                                     <i style={{ cursor: "pointer" }} className="icon icon-arrow-up"
                                         onClick={() => { this.props.vote({ community_id, voting: "1" }) }}
                                     ></i>
 
-                                    <span>{nFormatter(upVotedLength - downVotedLength, 1)}</span>
+                                    <span style={{whiteSpace: "nowrap"}}>{nFormatter(upVotedLength - downVotedLength, 1)}</span>
 
                                     <i style={{ cursor: "pointer" }} className="icon icon-arrow-down"
                                         onClick={() => { this.props.vote({ community_id, voting: "-1" }) }}
