@@ -4,7 +4,9 @@ const router = express.Router();
 const Community = require("../../models/mongo/Community");
 const Post = require("../../models/mongo/Post");
 const Comment = require("../../models/mongo/Comment");
+const Vote = require("../../models/mongo/Vote");
 
+const mongoose = require('mongoose')
 /* get communities */
 app.get("/getCommunities", function (req, res, next) {
   current_user = req.body.u_id;
@@ -192,7 +194,62 @@ app.post("/vote", (req, res) => {
 });
 app.post("/getCommentsWithPostID", (req, res) => {
   Comment.find({ postID: req.body.postID }, (err, result) => {
-    res.status(200).send(result);
+    if (err) {
+      res.status(500).send("Internal server error...");
+    }
+    const responseData = JSON.parse(JSON.stringify(result));
+    responseData.forEach((resp, index) => {
+      const entityId = resp._id;
+      // console.log("searching for ", entityId);
+      Vote.aggregate(
+        [
+          {
+            $match: {
+              entityId: mongoose.Types.ObjectId(entityId)
+            }
+          },
+          {
+            $group: {
+              _id: "$entityId",
+              // entityId: entityId,
+              upvoteCount: {
+                $sum: {
+                  $sum: { $cond: { if: { $eq: ["$voteDir", 1] }, then: 1, else: 0 } },
+                },
+              },
+              downvoteCount: {
+                $sum: {
+                  $cond: { if: { $eq: ["$voteDir", -1] }, then: 1, else: 0 },
+                },
+              },
+            }
+          },
+          // {
+          //   $project: {
+          //     _id: 0,
+          //     upvoteCount: "$upvoteCount",
+          //     downvoteCount: "$downvoteCount"
+          //   }
+          // }
+        ],
+        (err, result) => {
+          console.log(result);
+          if (err) {
+            return res.status(500).send(err);
+          } else {
+            resp.score = resp.upvoteCount = resp.downvoteCount = 0;
+            if (result && result[0]) {
+              resp.score = result[0].upvoteCount - result[0].downvoteCount
+              resp.upvoteCount = result[0].upvoteCount;
+              resp.downvoteCount = result[0].downvoteCount;
+            }
+          }
+          if (index == responseData.length - 1) {
+            res.status(200).send(responseData);
+          }
+        }
+      );
+    });
   });
 });
 module.exports = router;

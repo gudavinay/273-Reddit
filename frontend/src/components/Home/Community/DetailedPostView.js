@@ -62,7 +62,7 @@ class DetailedPostView extends Component {
                             <div>
                                 <i style={{ cursor: "pointer" }} className="icon icon-arrow-up upvote" />
                                 <span style={{ margin: "0 5px" }}>
-                                    <strong> 698 </strong>
+                                    <strong> {comment.score} </strong>
                                 </span>
                                 <i style={{ cursor: "pointer" }} className="icon icon-arrow-down downvote" />
                                 <span style={{ cursor: "pointer" }} onClick={() => {
@@ -118,7 +118,7 @@ class DetailedPostView extends Component {
                             <div>
                                 <img alt="" width="30px" style={{ borderRadius: "15px", margin: "2px" }} src="https://pixinvent.com/materialize-material-design-admin-template/app-assets/images/user/12.jpg" />
                                 <span style={{ fontSize: "12px", fontWeight: "400", lineHeight: "16px", }}>
-                                    {comment.userID} {getRelativeTime(comment.createdAt)}
+                                    {childComment.userID} {getRelativeTime(childComment.createdAt)}
                                 </span>
                             </div>
                             <div style={{ fontSize: "14px", paddingLeft: "2%", borderLeft: "2px solid #edeff1", marginLeft: "2.5%", }}>
@@ -126,7 +126,7 @@ class DetailedPostView extends Component {
                                 <div>
                                     <i style={{ cursor: "pointer" }} className="icon icon-arrow-up upvote" />
                                     <span style={{ margin: "0 5px" }}>
-                                        <strong> 698 </strong>
+                                        <strong> {childComment.score} </strong>
                                     </span>
                                     <i style={{ cursor: "pointer" }} className="icon icon-arrow-down downvote" />
                                 </div>
