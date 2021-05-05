@@ -6,19 +6,19 @@ const Post = require("../../models/mongo/Post");
 
 app.post("/addCommunity", function (req, res, next) {
   let topicList = [];
-  req.body.selectedTopic.map((topic) => {
+  req.body.selectedTopic.map(topic => {
     topicList.push({
-      topic: topic.topic,
+      topic: topic.topic
     });
   });
   let community = new Community({
     communityIDSQL: req.body.communityIDSQL,
     communityName: req.body.communityName,
     communityDescription: req.body.communityDescription,
-    ownerID: "6089d63ea112c02c1df2914c",
+    ownerID: req.body.ownerID,
     topicSelected: topicList,
     imageURL: req.body.communityImages,
-    rules: req.body.listOfRules,
+    rules: req.body.listOfRules
   });
   community.save((error, data) => {
     if (error) {
@@ -37,7 +37,7 @@ app.get("/myCommunity", function (req, res) {
       res.status(500).send("Error Occured");
     } else {
       const findResult = JSON.parse(JSON.stringify(result));
-      findResult.map((community) => {
+      findResult.map(community => {
         Post.find({ communityID: community._id }).then((postResult, error) => {
           console.log(JSON.stringify(postResult.length));
           data.push({
@@ -46,7 +46,7 @@ app.get("/myCommunity", function (req, res) {
             communityDescription: community.communityDescription,
             imageURL: community.communityImages,
             listOfUsers: community.listOfUsers,
-            count: postResult.length,
+            count: postResult.length
           });
           console.log(JSON.stringify(data));
           if (result.length == data.length) {
@@ -64,22 +64,22 @@ app.get("/getCommunitiesForOwner", async (req, res) => {
   let count = await Community.count({
     $and: [
       { ownerID: req.query.ID },
-      { communityName: { $regex: req.query.search } },
-    ],
+      { communityName: { $regex: req.query.search } }
+    ]
   });
   console.log(count);
   await Community.find({
     $and: [
       { ownerID: req.query.ID },
-      { communityName: { $regex: req.query.search, $options: "i" } },
-    ],
+      { communityName: { $regex: req.query.search, $options: "i" } }
+    ]
   })
     .populate("listOfUsers.userID")
     .limit(Number(req.query.size))
     .skip(skip)
-    .then((result) => {
+    .then(result => {
       let output = [];
-      result.forEach((item) => {
+      result.forEach(item => {
         let usersIdOfSQL = [];
         let acceptedIdOfSQL = [];
         for (let i = 0; i < item.listOfUsers.length; i++) {
@@ -108,12 +108,12 @@ app.get("/getCommunitiesForOwner", async (req, res) => {
 
 app.get("/getUsersForCommunitiesForOwner", (req, res) => {
   Community.find({
-    ownerID: req.query.ID,
+    ownerID: req.query.ID
   })
     .populate("listOfUsers.userID")
-    .then((result) => {
+    .then(result => {
       let output = new Set();
-      result.forEach((item) => {
+      result.forEach(item => {
         for (let i = 0; i < item.listOfUsers.length; i++) {
           if (item.listOfUsers[i].isAccepted) {
             output.add(Number(item.listOfUsers[i].userID.userIDSQL));

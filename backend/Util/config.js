@@ -12,5 +12,6 @@ module.exports = {
   AWSAccessKeyId: "",
   AWSSecretKey: "",
   redisPort: 6379,
-  redisHost: ""
+  redisHost: "54.85.111.171",
+  redisPass: "secure-redis"
 };
