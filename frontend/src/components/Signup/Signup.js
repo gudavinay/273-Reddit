@@ -1,19 +1,21 @@
 import React, { Component } from "react";
-// import { Redirect } from "react-router-dom";
+import backendServer from "../../webConfig";
 import {
   Button,
   Form,
   FormGroup,
   Label,
   Input,
-  FormFeedback,
+  FormFeedback
 } from "reactstrap";
+import axios from "axios";
 import { isEmail } from "validator";
 import { connect } from "react-redux";
 import { signupRedux } from "../../reduxOps/reduxActions/signupRedux";
 import { Row, Col } from "react-bootstrap";
 import "./../styles/loginStyle.css";
-
+import { Redirect } from "react-router-dom";
+import { SetLocalStorage } from "../../services/ControllerUtils";
 class Signup extends Component {
   constructor(props) {
     super(props);
@@ -21,23 +23,41 @@ class Signup extends Component {
       userInfo: {},
       error: {},
       loginError: "",
-      auth: true,
+      auth: true
     };
   }
 
-  handleChange = (e) => {
+  handleChange = e => {
     this.setState({
       userInfo: {
         ...this.state.userInfo,
-        [e.target.name]: e.target.value,
-      },
+        [e.target.name]: e.target.value
+      }
     });
   };
 
-  submitForm = (e) => {
+  CreateUserProfile(user_id) {
+    const data = {
+      email: this.state.userInfo.email,
+      name: this.state.userInfo.name,
+      sqlUserID: user_id
+    };
+    axios
+      .post(`${backendServer}/createUserProfile`, data)
+      .then(response => {
+        if (response.status == 200) {
+          console.log(response.data);
+          const data = response.data;
+          data.token = this.props.user.token;
+          SetLocalStorage(data);
+        }
+      })
+      .catch(error => console.log("error " + error));
+  }
+
+  submitForm = e => {
     //prevent page from refresh
     e.preventDefault();
-
     const { userInfo } = this.state;
     const error = this.validateForm();
     if (Object.keys(error).length == 0) {
@@ -49,30 +69,17 @@ class Signup extends Component {
 
   componentDidUpdate(prevState) {
     if (prevState.user != this.props.user) {
-      console.log(this.props.user);
       if (this.props.user == "Registered") {
         this.setState({
           authFlag: false,
           formerror: {},
-          loginError: "User is already registered",
+          loginError: "User is already registered"
         });
       } else {
+        this.CreateUserProfile(this.props.user.userID);
         this.setState({
-          authFlag: true,
+          authFlag: true
         });
-        this.SetLocalStorage(JSON.stringify(this.props.user));
-      }
-    }
-  }
-
-  SetLocalStorage(userInfo) {
-    if (typeof Storage !== "undefined") {
-      console.log("Set local storage here");
-      localStorage.clear();
-      try {
-        localStorage.setItem("userData", userInfo);
-      } catch (error) {
-        console.log(error);
       }
     }
   }
@@ -90,13 +97,11 @@ class Signup extends Component {
 
   render() {
     let redirectVar = null;
-
-    //TODO: need to implement based on JWT/User
-
-    // if (typeof this.props.user != "undefined" && this.state.authFlag) {
-    //   console.log("Control goes to home page from here");
-    //   redirectVar = <Redirect to="/login" />;
-    // } else redirectVar = <Redirect to="/signUp" />;
+    if (typeof this.props.user !== "undefined" && this.props.user.token) {
+      redirectVar = <Redirect to="/home" />;
+    } else {
+      redirectVar = <Redirect to="/" />;
+    }
     return (
       <>
         <div className="container-fluid" style={{ padding: "0" }}>
@@ -123,7 +128,7 @@ class Signup extends Component {
                 style={{
                   fontSize: "24px",
                   fontWeight: "500",
-                  marginTop: "35px",
+                  marginTop: "35px"
                 }}
               >
                 Sign up
@@ -209,9 +214,9 @@ class Signup extends Component {
     );
   }
 }
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
-    user: state.login.user,
+    user: state.login.user
   };
 };
 

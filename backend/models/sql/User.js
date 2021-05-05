@@ -19,15 +19,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(45),
       allowNull: false
     },
-    gender: {
-      type: DataTypes.STRING(10)
-    },
-    location: {
-      type: DataTypes.STRING(15)
-    },
-    bio: {
-      type: DataTypes.STRING(150)
-    },
     profile_picture_url: {
       type: DataTypes.STRING(80)
     }

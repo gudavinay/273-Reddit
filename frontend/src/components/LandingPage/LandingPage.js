@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 // import { REDDIT } from "../../services/Constants";
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
 import { Modal } from "react-bootstrap";
 import Login from "../Login/Login";
 import Signup from "../Signup/Signup";
@@ -9,7 +9,7 @@ import "./../styles/landingPageStyle.css";
 import headerLogo from "./../../assets/Reddit_logo_full_1SVG.svg";
 import {
   Row,
-  Col,
+  Col
   // Container,
   // Navbar,
   // NavDropdown,
@@ -24,7 +24,7 @@ class LandingPage extends Component {
     super(props);
     this.state = {
       showLogin: false,
-      showSignup: false,
+      showSignup: false
     };
   }
   render() {
@@ -39,7 +39,7 @@ class LandingPage extends Component {
       >
         <Modal.Body
           style={{
-            padding: "0",
+            padding: "0"
           }}
         >
           <button
@@ -73,7 +73,7 @@ class LandingPage extends Component {
       >
         <Modal.Body
           style={{
-            padding: "0",
+            padding: "0"
           }}
         >
           <button
@@ -97,9 +97,9 @@ class LandingPage extends Component {
         {/* IAM IN LANDING PAGE */}
         <div style={{ margin: "auto", overflow: "hidden" }}>
           <div className="landing_img">
-            <Link to={"/home"} className="btn btn-primary">
+            {/* <Link to={"/home"} className="btn btn-primary">
               Go to post login page ( HOME )
-            </Link>
+            </Link> */}
             {/* <button onClick={() => this.setState({ showLogin: true })}>
               Login
             </button>
@@ -115,7 +115,7 @@ class LandingPage extends Component {
                 style={{
                   width: "385px",
                   height: "95px",
-                  marginLeft: "-30px",
+                  marginLeft: "-30px"
                 }}
               ></img>
               <Row style={{ margin: "0", padding: "30px 70px" }}>

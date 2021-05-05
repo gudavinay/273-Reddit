@@ -7,7 +7,7 @@ import { getRelativeTime } from "../../../services/ControllerUtils";
 import "../../styles/voteButtonStyles.css";
 import "./DetailedPostView.css";
 import { Collapse } from "react-bootstrap";
-import { getUserID } from "../../../services/ControllerUtils";
+import { getMongoUserID } from "../../../services/ControllerUtils";
 
 class DetailedPostView extends Component {
   constructor(props) {
@@ -19,22 +19,22 @@ class DetailedPostView extends Component {
     this.props.setLoader();
     Axios.post(backendServer + "/getCommentsWithPostID", {
       postID: this.props.data._id,
-      userId: getUserID(),
+      userId: getMongoUserID()
     })
-      .then((response) => {
+      .then(response => {
         this.props.unsetLoader();
         var parentCommentList = response.data.filter(
-          (comment) => comment.isParentComment
+          comment => comment.isParentComment
         );
-        parentCommentList.forEach((parentComment) => {
+        parentCommentList.forEach(parentComment => {
           var child = response.data.filter(
-            (comment) => comment.parentCommentID == parentComment._id
+            comment => comment.parentCommentID == parentComment._id
           );
           parentComment.child = child;
         });
         this.setState({ parentCommentList: parentCommentList });
       })
-      .catch((err) => {
+      .catch(err => {
         this.props.unsetLoader();
         console.log(err);
       });
@@ -47,7 +47,7 @@ class DetailedPostView extends Component {
   render() {
     var commentsToRender = [];
     if (this.state.parentCommentList) {
-      this.state.parentCommentList.forEach((comment) => {
+      this.state.parentCommentList.forEach(comment => {
         commentsToRender.push(
           <div>
             <div style={{ marginTop: "10px" }}>
@@ -61,7 +61,7 @@ class DetailedPostView extends Component {
                 style={{
                   fontSize: "12px",
                   fontWeight: "400",
-                  lineHeight: "16px",
+                  lineHeight: "16px"
                 }}
               >
                 {comment.userID} {getRelativeTime(comment.createdAt)}
@@ -72,7 +72,7 @@ class DetailedPostView extends Component {
                 fontSize: "14px",
                 paddingLeft: "2%",
                 borderLeft: "2px solid #edeff1",
-                marginLeft: "2.5%",
+                marginLeft: "2.5%"
               }}
             >
               <div>{comment.description}</div>
@@ -106,7 +106,7 @@ class DetailedPostView extends Component {
                   style={{
                     boxShadow: "0px 0px 1px #777",
                     padding: "1px",
-                    margin: "5px",
+                    margin: "5px"
                   }}
                 >
                   <textarea
@@ -114,14 +114,14 @@ class DetailedPostView extends Component {
                       backgroundColor: this.props.darkMode
                         ? "#1B1B1B"
                         : "white",
-                      color: !this.props.darkMode ? "#1B1B1B" : "white",
+                      color: !this.props.darkMode ? "#1B1B1B" : "white"
                     }}
                     type="text"
                     className="commentTextArea"
                     name="subComment"
                     id={comment._id + "id"}
                     placeholder="What are your thoughts?"
-                    onChange={(e) => {
+                    onChange={e => {
                       let key = comment._id + ":"; //to denote the comment text
                       var obj = {};
                       obj[key] = e.target.value;
@@ -143,7 +143,7 @@ class DetailedPostView extends Component {
                       fontWeight: "bold",
                       lineHeight: "0px",
                       border: "none",
-                      margin: "1% 84%",
+                      margin: "1% 84%"
                     }}
                     onClick={() => {
                       this.props.setLoader();
@@ -151,10 +151,10 @@ class DetailedPostView extends Component {
                         postID: this.props.data._id,
                         description: this.state[`${comment._id}:`],
                         isParentComment: 0,
-                        userID: getUserID(),
-                        parentCommentID: comment._id,
+                        userID: getMongoUserID(),
+                        parentCommentID: comment._id
                       })
-                        .then((response) => {
+                        .then(response => {
                           this.props.unsetLoader();
                           console.log(response);
                           document.getElementById(comment._id + "id").value =
@@ -165,7 +165,7 @@ class DetailedPostView extends Component {
                           this.setState(obj);
                           this.fetchCommentsWithPostID();
                         })
-                        .catch((err) => {
+                        .catch(err => {
                           this.props.unsetLoader();
                           console.log(err);
                         });
@@ -178,14 +178,14 @@ class DetailedPostView extends Component {
             </div>
           </div>
         );
-        comment.child.forEach((childComment) => {
+        comment.child.forEach(childComment => {
           commentsToRender.push(
             <div
               style={{
                 padding: "1% 4%",
                 borderLeft: "2px solid #edeff1",
                 marginLeft: "2.5%",
-                fontSize: "14px",
+                fontSize: "14px"
               }}
             >
               <div>
@@ -199,7 +199,7 @@ class DetailedPostView extends Component {
                   style={{
                     fontSize: "12px",
                     fontWeight: "400",
-                    lineHeight: "16px",
+                    lineHeight: "16px"
                   }}
                 >
                   {childComment.userID}{" "}
@@ -211,7 +211,7 @@ class DetailedPostView extends Component {
                   fontSize: "14px",
                   paddingLeft: "2%",
                   borderLeft: "2px solid #edeff1",
-                  marginLeft: "2.5%",
+                  marginLeft: "2.5%"
                 }}
               >
                 <div>{childComment.description}</div>
@@ -241,23 +241,21 @@ class DetailedPostView extends Component {
           style={{
             padding: "0 20px",
             marginTop: "20px",
-            backgroundColor: this.props.darkMode ? "#1B1B1B" : "white",
+            backgroundColor: this.props.darkMode ? "#1B1B1B" : "white"
           }}
         >
           <div style={{ boxShadow: "0px 0px 1px #777", padding: "1px" }}>
             <textarea
               style={{
                 backgroundColor: this.props.darkMode ? "#1B1B1B" : "white",
-                color: !this.props.darkMode ? "#1B1B1B" : "white",
+                color: !this.props.darkMode ? "#1B1B1B" : "white"
               }}
               type="text"
               className="commentTextArea"
               name="primaryComment"
               id="primaryComment"
               placeholder="What are your thoughts?"
-              onChange={(e) =>
-                this.setState({ primaryComment: e.target.value })
-              }
+              onChange={e => this.setState({ primaryComment: e.target.value })}
             />
             <button
               disabled={!this.state.primaryComment}
@@ -272,7 +270,7 @@ class DetailedPostView extends Component {
                 fontWeight: "bold",
                 lineHeight: "0px",
                 border: "none",
-                margin: "1% 85%",
+                margin: "1% 85%"
               }}
               onClick={() => {
                 this.props.setLoader();
@@ -280,16 +278,16 @@ class DetailedPostView extends Component {
                   postID: this.props.data._id,
                   description: this.state.primaryComment,
                   isParentComment: 1,
-                  userID: getUserID(),
+                  userID: getMongoUserID()
                 })
-                  .then((response) => {
+                  .then(response => {
                     this.props.unsetLoader();
                     console.log(response);
                     document.getElementById("primaryComment").value = "";
                     this.setState({ primaryComment: null });
                     this.fetchCommentsWithPostID();
                   })
-                  .catch((err) => {
+                  .catch(err => {
                     this.props.unsetLoader();
                     console.log(err);
                   });

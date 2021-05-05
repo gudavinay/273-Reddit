@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import { isEmail } from "validator";
+import axios from "axios";
+import backendServer from "../../webConfig";
 import {
   Button,
   Form,
@@ -13,7 +15,8 @@ import { connect } from "react-redux";
 import { loginRedux } from "../../reduxOps/reduxActions/loginRedux";
 import { Row, Col } from "react-bootstrap";
 import "./../styles/loginStyle.css";
-const jwt_decode = require("jwt-decode");
+import { SetLocalStorage } from "../../services/ControllerUtils";
+
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -21,7 +24,9 @@ class Login extends Component {
       this.state = {
         error: "",
         formerror: "",
-        authFlag: ""
+        authFlag: "",
+        redirect: null,
+        token: ""
       };
     }
   }
@@ -65,6 +70,23 @@ class Login extends Component {
     }
   };
 
+  getUserProfile() {
+    console.log(this.props.user.userID.user_id);
+    axios
+      .get(
+        `${backendServer}/getUserProfile?ID=${this.props.user.userID.user_id}`
+      )
+      .then(response => {
+        if (response.status == 200) {
+          console.log(response.data);
+          const data = response.data[0];
+          data.token = this.props.user.token;
+          SetLocalStorage(data);
+        }
+      })
+      .catch(error => console.log("error " + error));
+  }
+
   componentDidUpdate(prevState) {
     if (prevState.user != this.props.user) {
       if (this.props.user == "UnSuccessful Login") {
@@ -78,36 +100,18 @@ class Login extends Component {
           authFlag: true,
           error: ""
         });
-        this.SetLocalStorage(JSON.stringify(this.props.user));
+        this.getUserProfile();
       }
-    }
-  }
-
-  SetLocalStorage(data) {
-    if (typeof Storage !== "undefined") {
-      localStorage.clear();
-      localStorage.setItem("userData", data);
     }
   }
 
   render() {
     let redirectVar = null;
-    if (Object.keys(this.props.user).length > 0 && this.state.authFlag) {
-      localStorage.setItem("token", this.props.user.token);
-      console.log("Came inside of login");
-      var decoded = jwt_decode(this.state.token.split(" ")[1]);
-      localStorage.setItem("user_id", decoded._id);
+    if (typeof this.props.user !== "undefined" && this.props.user.token) {
       redirectVar = <Redirect to="/home" />;
     } else {
       redirectVar = <Redirect to="/" />;
     }
-
-    console.log(redirectVar);
-
-    // if (typeof this.props.user != "undefined" && this.state.authFlag) {
-    //   console.log("Token is verified");
-    //   redirectVar = <Redirect to="/home" />;
-    // } else
     return (
       <div className="container-fluid" style={{ padding: "0" }}>
         {redirectVar}

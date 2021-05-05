@@ -11,7 +11,7 @@ app.get("/createDummyData", function (req, res, next) {
   let userProfile = new UserProfile({
     userIDSQL: "2",
     listOfTopics: ["topic1", "topic2"],
-    communityInvites: [],
+    communityInvites: []
   });
   userProfile.save();
 
@@ -21,21 +21,21 @@ app.get("/createDummyData", function (req, res, next) {
     communityDescription: "first day",
     topicSelected: [
       {
-        topic: "Art",
-      },
+        topic: "Art"
+      }
     ],
     listOfUsers: [
       {
         userID: "6089d63ea112c02c1df2914c",
         isAccepted: false,
-        isModerator: false,
-      },
+        isModerator: false
+      }
     ],
     ownerID: "6089d63ea112c02c1df2914c",
     upvotedBy: [],
     downvotedBy: [],
     createdDate: Date.now(),
-    sentInvitesTo: [],
+    sentInvitesTo: []
   });
   community.save();
 
@@ -69,16 +69,16 @@ app.get("/createDummyData", function (req, res, next) {
 app.post("/getNotificationData", (req, res) => {
   UserProfile.findOne({ _id: req.body.user_id })
     .populate("communityInvites.communityID")
-    .then((result) => {
+    .then(result => {
       let details = [];
-      result.communityInvites.forEach((element) => {
-        let inviteDetails = {
-          communityName: element.communityID.communityName,
-          communityID: element.communityID._id,
-          time: element.dateTime,
-        };
-        details.push(inviteDetails);
-      });
+      // result.communityInvites.forEach(element => {
+      //   let inviteDetails = {
+      //     communityName: element.communityID.communityName,
+      //     communityID: element.communityID._id,
+      //     time: element.dateTime
+      //   };
+      //   details.push(inviteDetails);
+      // });
       res.status(200).send(details);
     });
 });
@@ -87,7 +87,7 @@ app.post("/rejectInvite", (req, res) => {
   UserProfile.findOneAndUpdate(
     { _id: req.body.user_id },
     {
-      $pull: { communityInvites: { communityID: req.body.community_id } },
+      $pull: { communityInvites: { communityID: req.body.community_id } }
     },
     (err, result) => {
       if (err) {
@@ -96,10 +96,10 @@ app.post("/rejectInvite", (req, res) => {
         Community.updateOne(
           {
             _id: req.body.community_id,
-            "sentInvitesTo.userID": req.body.user_id,
+            "sentInvitesTo.userID": req.body.user_id
           },
           {
-            $set: { "sentInvitesTo.$.isAccepted": -1 },
+            $set: { "sentInvitesTo.$.isAccepted": -1 }
           },
           (err, result) => {
             if (err) {
@@ -117,7 +117,7 @@ app.post("/acceptInvite", (req, res) => {
   UserProfile.findOneAndUpdate(
     { _id: req.body.user_id },
     {
-      $pull: { communityInvites: { communityID: req.body.community_id } },
+      $pull: { communityInvites: { communityID: req.body.community_id } }
     },
     (err, result) => {
       if (err) {
@@ -126,10 +126,10 @@ app.post("/acceptInvite", (req, res) => {
         Community.updateOne(
           {
             _id: req.body.community_id,
-            "sentInvitesTo.userID": req.body.user_id,
+            "sentInvitesTo.userID": req.body.user_id
           },
           {
-            $set: { "sentInvitesTo.$.isAccepted": 1 },
+            $set: { "sentInvitesTo.$.isAccepted": 1 }
           },
           (err, result) => {
             if (err) {
@@ -140,9 +140,9 @@ app.post("/acceptInvite", (req, res) => {
                 {
                   $push: {
                     listOfUsers: [
-                      { userID: req.body.user_id, isAccepted: true },
-                    ],
-                  },
+                      { userID: req.body.user_id, isAccepted: true }
+                    ]
+                  }
                 },
                 (err, result) => {
                   if (err) {
@@ -158,5 +158,28 @@ app.post("/acceptInvite", (req, res) => {
       }
     }
   );
+});
+
+app.post("/createUserProfile", (req, res) => {
+  let userProfile = new UserProfile({
+    userIDSQL: req.body.sqlUserID,
+    name: req.body.name,
+    email: req.body.email
+  });
+  userProfile.save((err, result) => {
+    if (result) {
+      res.status(200).send(JSON.stringify(result));
+    } else res.status(200).send("Error occurred");
+  });
+});
+
+app.get("/getUserProfile", (req, res) => {
+  UserProfile.find({ userIDSQL: req.query.ID }).then((result, error) => {
+    if (error) {
+      res.status(500).send("Error Occureed");
+    } else {
+      if (result.length > 0) res.status(200).send(JSON.stringify(result));
+    }
+  });
 });
 module.exports = router;

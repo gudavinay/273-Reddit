@@ -23,8 +23,9 @@ app.post("/login", async (req, res, next) => {
           function (err, matchPassword) {
             if (err) return error;
             if (matchPassword) {
+              user.password = "";
               const userLogin = {
-                userID: user.user_id,
+                userID: user,
                 token: createToken(user)
               };
               return res.status(200).send(JSON.stringify(userLogin));
@@ -55,7 +56,7 @@ app.post("/signup", async (req, res) => {
       token: createToken(user)
     };
     console.log(user);
-    return res.status(200).send(userLogin);
+    return res.status(200).send(JSON.stringify(userLogin));
   } catch (error) {
     console.log(error);
   }
