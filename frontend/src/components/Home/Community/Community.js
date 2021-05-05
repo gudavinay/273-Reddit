@@ -25,8 +25,8 @@ class Community extends Component {
     super(props);
     this.state = {
       community_id: props.match.params.community_id
-        ? "6089eff68a05a7043c3f3c32"
-        : "6089eff68a05a7043c3f3c32",
+        ? "6092404e70b8163fc018816d"
+        : "6092404e70b8163fc018816d",
     };
   }
 

@@ -61,7 +61,8 @@ app.get("/communityDetails", function (req, res, next) {
 
 app.post("/createPost", function (req, res, next) {
   let data = {};
-
+  req.body.community_id = "6092404e70b8163fc018816d";
+  console.log("create post req.body = ", req.body);
   if (req.body.type == 0) {
     data = {
       communityID: req.body.community_id,
@@ -156,6 +157,7 @@ app.get("/getPostsInCommunity", (req, res) => {
   Post.find({ communityID: req.query.ID })
     .populate("userID")
     .then((result) => {
+      console.log("results in posts community = ", result);
       res.status(200).send(result);
     })
     .catch((err) => {
