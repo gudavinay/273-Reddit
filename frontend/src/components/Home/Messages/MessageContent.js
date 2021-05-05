@@ -3,18 +3,22 @@ import { Col, Row, Container, Card, Form, Button } from "react-bootstrap";
 import axios from "axios";
 import backendServer from "../../../webConfig";
 import "./message.css";
+import {
+  getSQLUserID,
+  getUserProfile,
+  getRelativeTime
+} from "../../../services/ControllerUtils";
 class MessageContent extends Component {
   constructor(props) {
     super(props);
     this.state = {
       message: [],
       messageTobeSent: "",
-      getUniqueMembers: [],
-      loggedinUser: { user_id: 3 }
+      getUniqueMembers: []
     };
   }
   getMessageFromUser(membeDetail) {
-    const user_id = 3;
+    const user_id = getSQLUserID();
     axios
       .get(
         `${backendServer}/getMessage?ID=${user_id}&chatWith=${membeDetail.user_id}`
@@ -22,19 +26,24 @@ class MessageContent extends Component {
       .then(response => {
         if (response.status == 200) {
           this.setState({
-            message: response.data
+            message: response.data,
+            messageTobeSent: ""
           });
           console.log(response.data);
         }
       })
       .catch(error => {
+        this.setState({
+          message: "",
+          messageTobeSent: ""
+        });
         console.log(error);
       });
   }
 
   sendMessage = e => {
     e.preventDefault();
-    const user_id = 3;
+    const user_id = getSQLUserID();
     console.log(this.state.messageTobeSent);
     const data = {
       message: this.state.messageTobeSent,
@@ -45,9 +54,7 @@ class MessageContent extends Component {
       .post(`${backendServer}/sendMessage`, data)
       .then(response => {
         if (response.status == 200) {
-          this.setState({
-            message: response.data
-          });
+          this.getMessageFromUser(this.props.chattedWith);
           console.log(response.data);
         }
       })
@@ -69,10 +76,16 @@ class MessageContent extends Component {
     let renderMessage = null;
     if (this.state.message.length > 0) {
       renderMessage = this.state.message.map((message, idx) => {
-        if (message.sent_by == this.state.loggedinUser.user_id)
+        if (message.sent_by == getSQLUserID())
           return (
             <div key={idx} className="text-right">
-              {message.message}
+              <label className="changePadding messageBox border">
+                {message.message}
+              </label>{" "}
+              <br />
+              <label style={{ fontSize: "10px", color: "Grey" }}>
+                {getRelativeTime(message.createdAt)}
+              </label>
             </div>
           );
         else
@@ -80,7 +93,13 @@ class MessageContent extends Component {
             <div key={idx} className="text-left">
               <strong>{this.props.chattedWith.name}</strong>
               <br />
-              {message.message}
+              <label className="changePadding messageBox border">
+                {message.message}
+              </label>{" "}
+              <br />
+              <label style={{ fontSize: "10px", color: "Grey" }}>
+                {getRelativeTime(message.createdAt)}
+              </label>
             </div>
           );
       });
@@ -92,8 +111,10 @@ class MessageContent extends Component {
         <Container>
           <Col className="changePadding">
             <Card className="changePadding">
-              <Card.Header className="text-right">Divya Mittal</Card.Header>
-              <Card.Body> {renderMessage}</Card.Body>
+              <Card.Header className="text-right">
+                {getUserProfile() != null ? getUserProfile().name : "Username"}
+              </Card.Header>
+              <Card.Body style={{ height: "60vh" }}> {renderMessage}</Card.Body>
               <Card.Footer>
                 <Form>
                   <Row>
@@ -102,6 +123,7 @@ class MessageContent extends Component {
                         type="text"
                         className="form-control"
                         style={{ align: "bottom" }}
+                        value={this.state.messageTobeSent}
                         onChange={e =>
                           this.setState({ messageTobeSent: e.target.value })
                         }
