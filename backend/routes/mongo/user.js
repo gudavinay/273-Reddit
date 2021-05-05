@@ -71,14 +71,14 @@ app.post("/getNotificationData", (req, res) => {
     .populate("communityInvites.communityID")
     .then(result => {
       let details = [];
-      // result.communityInvites.forEach(element => {
-      //   let inviteDetails = {
-      //     communityName: element.communityID.communityName,
-      //     communityID: element.communityID._id,
-      //     time: element.dateTime
-      //   };
-      //   details.push(inviteDetails);
-      // });
+      result.communityInvites.forEach((element) => {
+        let inviteDetails = {
+          communityName: element.communityID.communityName,
+          communityID: element.communityID._id,
+          time: element.dateTime,
+        };
+        details.push(inviteDetails);
+      });
       res.status(200).send(details);
     });
 });

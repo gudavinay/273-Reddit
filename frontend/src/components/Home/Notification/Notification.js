@@ -15,7 +15,7 @@ export class Notification extends Component {
     console.log("accept called");
     e.preventDefault();
     let data = {
-      user_id: "608d19875c5f547d0888b52f",
+      user_id: JSON.parse(localStorage.getItem("userData"))?._id,
       community_id: communityID,
     };
     this.props.setLoader();
@@ -34,7 +34,7 @@ export class Notification extends Component {
   rejectInvite = (communityID, e) => {
     e.preventDefault();
     let data = {
-      user_id: "608d19875c5f547d0888b52f",
+      user_id: JSON.parse(localStorage.getItem("userData"))?._id,
       community_id: communityID,
     };
     this.props.setLoader();

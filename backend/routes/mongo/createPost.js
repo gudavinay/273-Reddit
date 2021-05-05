@@ -294,4 +294,18 @@ app.post("/getCommentsWithPostID", (req, res) => {
     }
   });
 });
+
+//get all posts for dashboard
+app.post("/getAllPostsWithId", (req, res) => {
+  console.log(req.body.user_id);
+  Post.find()
+    .populate({
+      path: "communityID",
+      match: { "listOfUsers.userID": "6089d63ea112c02c1df2914c" },
+      // { "listOfUsers.userID": req.body.user_id },
+    })
+    .then((result) => {
+      res.status(200).send(result);
+    });
+});
 module.exports = router;

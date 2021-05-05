@@ -62,7 +62,7 @@ class Navigationbar extends Component {
   }
   getNotificationData = () => {
     let data = {
-      user_id: "608d19875c5f547d0888b52f"
+      user_id: JSON.parse(localStorage.getItem("userData"))?._id
     };
     this.props.setLoader();
     Axios.post(backendServer + "/getNotificationData", data)
