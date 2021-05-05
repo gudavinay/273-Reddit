@@ -4,16 +4,20 @@ const router = express.Router();
 const Vote = require("../../models/mongo/Vote");
 
 app.post("/addVote", (req, res) => {
+  console.log("add vote = req = ", req.body);
   const { userId, voteDir, entityId } = req.body;
   if (voteDir == 0) {
     console.log("delete document");
-    Vote.findOneAndDelete({ _id: entityId }, (err, result) => {
-      if (err) {
-        res.status(500).send(err);
-      } else {
-        res.status(200).send(result);
+    Vote.findOneAndDelete(
+      { entityId: entityId, userId: userId },
+      (err, result) => {
+        if (err) {
+          res.status(500).send(err);
+        } else {
+          res.status(200).send(result);
+        }
       }
-    });
+    );
   } else {
     const options = {
       upsert: true,
@@ -28,7 +32,7 @@ app.post("/addVote", (req, res) => {
       },
     };
     Vote.findOneAndUpdate(
-      { entityId: entityId, userId: userId, },
+      { entityId: entityId, userId: userId },
       query,
       options,
       (err, result) => {

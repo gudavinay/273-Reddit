@@ -19,7 +19,8 @@ class DetailedPostView extends Component {
     this.props.setLoader();
     Axios.post(backendServer + "/getCommentsWithPostID", {
       postID: this.props.data._id,
-      userId: getMongoUserID(),
+      //   userId: getMongoUserID(),
+      userId: localStorage.getItem("userId"),
     })
       .then((response) => {
         this.props.unsetLoader();
@@ -44,10 +45,29 @@ class DetailedPostView extends Component {
     this.fetchCommentsWithPostID();
   }
 
+  upVote(commentId, userVoteDir) {
+    Axios.post(backendServer + "/addVote", {
+      entityId: commentId,
+      //   userId: getMongoUserID(),
+      userId: localStorage.getItem("userId"),
+      voteDir: userVoteDir == 1 ? 0 : 1,
+    })
+      .then((response) => {
+        // this.props.unsetLoader();
+        console.log("upVOted successfull = ", response);
+        this.fetchCommentsWithPostID();
+      })
+      .catch((err) => {
+        // this.props.unsetLoader();
+        console.log(err);
+      });
+  }
+
   downVote(commentId, userVoteDir) {
     Axios.post(backendServer + "/addVote", {
       entityId: commentId,
-      userId: getMongoUserID(),
+      //   userId: getMongoUserID(),
+      userId: localStorage.getItem("userId"),
       voteDir: userVoteDir == -1 ? 0 : -1,
     })
       .then((response) => {
@@ -97,6 +117,7 @@ class DetailedPostView extends Component {
                 <i
                   style={{ cursor: "pointer" }}
                   className="icon icon-arrow-up upvote"
+                  onClick={() => this.upVote(comment._id, comment.userVoteDir)}
                 />
                 <span style={{ margin: "0 5px" }}>
                   <strong> {comment.score} </strong>

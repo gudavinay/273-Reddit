@@ -195,7 +195,8 @@ app.post("/vote", (req, res) => {
   }
 });
 app.post("/getCommentsWithPostID", (req, res) => {
-  const userId = "6089d660e18b492c2a4e5b19";
+  // const userId = "6089d660e18b492c2a4e5b19";
+  const userId = req.body.userId;
   console.log("userId =  ", userId);
   Comment.find({ postID: req.body.postID }, (err, result) => {
     if (err) {
@@ -217,7 +218,7 @@ app.post("/getCommentsWithPostID", (req, res) => {
             {
               $group: {
                 _id: "$entityId",
-                userId: { $first: "$userId" },
+                // userId: { $first: "$userId" },
                 // entityId: entityId,
                 upvoteCount: {
                   $sum: {
@@ -243,7 +244,7 @@ app.post("/getCommentsWithPostID", (req, res) => {
                           if: {
                             $eq: ["$voteDir", -1],
                           },
-                          then: 1,
+                          then: -1,
                           else: 0,
                         },
                       },
