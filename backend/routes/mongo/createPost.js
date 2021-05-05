@@ -193,6 +193,8 @@ app.post("/vote", (req, res) => {
   }
 });
 app.post("/getCommentsWithPostID", (req, res) => {
+  const userId = "6089d660e18b492c2a4e5b19";
+  console.log("userId =  ", userId);
   Comment.find({ postID: req.body.postID }, (err, result) => {
     if (err) {
       res.status(500).send("Internal server error...");
@@ -209,9 +211,11 @@ app.post("/getCommentsWithPostID", (req, res) => {
                 entityId: mongoose.Types.ObjectId(entityId),
               },
             },
+
             {
               $group: {
                 _id: "$entityId",
+                userId: { $first: "$userId" },
                 // entityId: entityId,
                 upvoteCount: {
                   $sum: {
@@ -225,6 +229,34 @@ app.post("/getCommentsWithPostID", (req, res) => {
                     $cond: { if: { $eq: ["$voteDir", -1] }, then: 1, else: 0 },
                   },
                 },
+                userVoteDir: {
+                  $sum: {
+                    $cond: {
+                      if: {
+                        $eq: ["$userId", mongoose.Types.ObjectId(userId)],
+                        // },
+                      },
+                      then: {
+                        $cond: {
+                          if: {
+                            $eq: ["$voteDir", -1],
+                          },
+                          then: 1,
+                          else: 0,
+                        },
+                      },
+                      else: {
+                        $cond: {
+                          if: {
+                            $eq: ["$voteDir", 1],
+                          },
+                          then: 1,
+                          else: 0,
+                        },
+                      },
+                    },
+                  },
+                },
               },
             },
             // {
@@ -236,15 +268,16 @@ app.post("/getCommentsWithPostID", (req, res) => {
             // }
           ],
           (err, result) => {
-            // console.log(result);
+            console.log("result = ", result);
             if (err) {
               return res.status(500).send(err);
             } else {
-              resp.score = resp.upvoteCount = resp.downvoteCount = 0;
+              resp.score = resp.upvoteCount = resp.downvoteCount = resp.userVoteDir = 0;
               if (result && result[0]) {
                 resp.score = result[0].upvoteCount - result[0].downvoteCount;
                 resp.upvoteCount = result[0].upvoteCount;
                 resp.downvoteCount = result[0].downvoteCount;
+                resp.userVoteDir = result[0].userVoteDir;
               }
             }
             if (index == responseData.length - 1) {
