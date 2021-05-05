@@ -5,3 +5,7 @@ height:80vh
     padding: 0px;
     margin: 0px
 }
+
+.messageBox{
+    border-radius: 30px;
+}
