@@ -7,7 +7,7 @@ import {
   Col,
   Container,
   Card,
-  Form,
+  Form
 } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import backendServer from "../../../webConfig";
@@ -16,6 +16,7 @@ import image1 from "../../../assets/CommunityImage1.jpeg";
 import image2 from "../../../assets/CommunityImage2.jpeg";
 import image3 from "../../../assets/CommunityImage3.jpeg";
 import { getMongoUserID } from "../../../services/ControllerUtils";
+import Pagination from "@material-ui/lab/Pagination";
 
 class MyCommunities extends Component {
   constructor(props) {
@@ -25,23 +26,29 @@ class MyCommunities extends Component {
       success: false,
       communityName: "",
       myCommunity: [],
+      page: 1,
+      size: 2,
+      count: 0
     };
   }
 
   getMyCommunities() {
-    const ownerID = getMongoUserID(); //TO DO: Take it from JWT TOKEN AFTER LOGIN
+    const ownerID = getMongoUserID();
     this.props.setLoader();
     axios
-      .get(`${backendServer}/myCommunity?ID=${ownerID}`)
-      .then((response) => {
+      .get(
+        `${backendServer}/myCommunity?ID=${ownerID}&page=${this.state.page}&size=${this.state.size}`
+      )
+      .then(response => {
         this.props.unsetLoader();
         if (response.status == 200) {
           this.setState({
             myCommunity: response.data,
+            count: response.data[0].totalRecords
           });
         }
       })
-      .catch((error) => {
+      .catch(error => {
         this.props.unsetLoader();
         console.log("error " + error);
       });
@@ -51,21 +58,36 @@ class MyCommunities extends Component {
     this.getMyCommunities();
   }
 
-  CheckIfTheCommunityCanBeCreated = (e) => {
+  CheckIfTheCommunityCanBeCreated = e => {
     e.preventDefault();
     const data = {
-      communityName: this.state.communityName,
+      communityName: this.state.communityName
     };
     axios
       .post(`${backendServer}/checkForUniqueCommunity`, data)
-      .then((response) => {
+      .then(response => {
         if (response.status == 200) {
           this.setState({
-            success: true,
+            success: true
           });
         }
       })
-      .catch((error) => console.log("error " + error));
+      .catch(error => console.log("error " + error));
+  };
+  PageSizeChange = e => {
+    console.log(e);
+    this.setState({
+      size: Number(e.target.value)
+    });
+    this.getMyCommunities();
+  };
+
+  PageChange = e => {
+    console.log(e);
+    this.setState({
+      page: Number(e.target.textContent)
+    });
+    this.getMyCommunities();
   };
 
   render() {
@@ -116,7 +138,7 @@ class MyCommunities extends Component {
               <Link
                 to={{
                   pathname: `/community/${community._id}`,
-                  state: { comm_id: community._id },
+                  state: { comm_id: community._id }
                 }}
               >
                 <Button className="createCommunity">View More Details</Button>
@@ -131,7 +153,34 @@ class MyCommunities extends Component {
         {redirectVar}
         <Container fluid>
           <Row>
-            <Col xs={8}>{myCommunities}</Col>
+            <Col xs={8}>
+              <div className="card">
+                {myCommunities}
+                <div style={{ marginRight: "10px", fontSize: "12px" }}>
+                  Rows per page:
+                </div>
+                <div>
+                  <select
+                    name="pagesize"
+                    id="pagesize"
+                    onChange={this.PageSizeChange}
+                  >
+                    <option value="2">2</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                  </select>
+                  <Pagination
+                    count={this.state.count}
+                    page={this.state.page}
+                    variant="outlined"
+                    color="primary"
+                    showFirstButton
+                    showLastButton
+                    onChange={this.PageChange}
+                  />
+                </div>
+              </div>
+            </Col>
             <Col xs={4}>
               <Card>
                 <Card.Header>Create Community</Card.Header>
@@ -145,7 +194,7 @@ class MyCommunities extends Component {
                         type="text"
                         id="name"
                         name="name"
-                        onChange={(e) =>
+                        onChange={e =>
                           this.setState({ communityName: e.target.value })
                         }
                         aria-describedby="passwordHelpBlock"

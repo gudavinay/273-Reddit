@@ -5,7 +5,7 @@ const UserProfile = require("../../models/mongo/UserProfile");
 const Community = require("../../models/mongo/Community");
 const Post = require("../../models/mongo/Post");
 const Comment = require("../../models/mongo/Comment");
-//const redisClient = require("./../../Util/redisConfig");
+const redisClient = require("./../../Util/redisConfig");
 
 app.get("/createDummyData", function (req, res, next) {
   let userProfile = new UserProfile({
@@ -179,22 +179,22 @@ app.post("/createUserProfile", (req, res) => {
 });
 
 app.get("/getUserProfile", (req, res) => {
-  // redisClient.get(req.query.ID, async (err, userProfile) => {
-  //   if (userProfile) {
-  //     res.status(200).send(userProfile);
-  //   } else {
-  UserProfile.find({ userIDSQL: req.query.ID }).then((result, error) => {
-    if (error) {
-      res.status(500).send("Error Occureed");
+  redisClient.get(req.query.ID, async (err, userProfile) => {
+    if (userProfile) {
+      res.status(200).send(userProfile);
     } else {
-      if (result.length > 0) {
-        //resdisClient.setex(req.query.ID, 36000, JSON.stringify(result));
-        res.status(200).send(JSON.stringify(result));
-      }
+      UserProfile.find({ userIDSQL: req.query.ID }).then((result, error) => {
+        if (error) {
+          res.status(500).send("Error Occureed");
+        } else {
+          if (result.length > 0) {
+            redisClient.setex(req.query.ID, 36000, JSON.stringify(result));
+          }
+          res.status(200).send(JSON.stringify(result));
+        }
+      });
     }
   });
-  //}
-  // });
 });
 
 app.post("/getListedUserDetails", async (req, res) => {
