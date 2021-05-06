@@ -13,7 +13,7 @@ import userProfileSVG from "../../assets/default_avatar.svg";
 import Axios from "axios";
 import backendServer from "../../webConfig";
 import Notification from "../Home/Notification/Notification";
-import { Redirect } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { logoutRedux } from "../../reduxOps/reduxActions/loginRedux";
 import { getUserProfile } from "../../services/ControllerUtils";
 import { getMongoUserID } from "../../services/ControllerUtils";
@@ -123,14 +123,14 @@ class Navigationbar extends Component {
             <Row style={{ display: "contents" }}>
               <Col sm={1} style={{ padding: "0" }}>
                 <Navbar.Brand
-                  href="#"
                   style={{ padding: "10px 0", margin: "0" }}
                 >
-                  <img
-                    style={{ width: "100%", height: "30px" }}
-                    alt="Reddit Logo"
-                    src={this.props.darkMode ? redditLogoDark : redditLogoLight}
-                  />
+                  <Link to="/home">
+                    <img
+                      style={{ width: "100%", height: "30px" }}
+                      alt="Reddit Logo"
+                      src={this.props.darkMode ? redditLogoDark : redditLogoLight}
+                    /></Link>
                 </Navbar.Brand>
               </Col>
               <Col sm={2} style={{ paddingRight: "0", position: "relative" }}>

@@ -1,30 +1,38 @@
 import React, { Component } from 'react';
-import Tabs from 'react-bootstrap/Tabs';
+// import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import { Button, Card, Col, Form, ListGroup, ListGroupItem, Row } from 'react-bootstrap';
+import { Button, Card, Col, Form, ListGroup, ListGroupItem, Nav, Row } from 'react-bootstrap';
 import { Input } from 'reactstrap';
 import createPostRulesSVG from '../../../assets/createPostRules.svg'
 import Axios from 'axios';
 import backendServer from '../../../webConfig';
+import { getMongoUserID } from '../../../services/ControllerUtils';
+import './CreatePost.css'
+
 
 class CreatePost extends Component {
     constructor(props) {
         super(props);
         this.state = {
             community_id: props.location.params,
-            type: "0"
+            type: "0",
+            title: null,
+            link: null,
+            description: null,
+            user_id: getMongoUserID()
         }
         console.log("PROPS AND STATE in create post", this.props, this.state);
     }
 
     render() {
-        const titleTag = (<Input type="text" className="form-control" placeholder="Title" id="title" name="post" onChange={(e) => { this.setState({ title: e.target.value }) }} />);
-        const postButton = (<Button type="submit" style={{ display: 'block', float: 'right' }} variant="light">Post</Button>);
+        const titleTag = (<Input type="text" style={{ margin: '15px 0' }} className="form-control" placeholder="Title" id="title" name="post" onChange={(e) => { this.setState({ title: e.target.value }) }} />);
+        const postButton = (<Button type="submit" style={{ display: 'block', float: 'right', margin: '10px', width: '82px', borderRadius: '50px', backgroundColor: this.state.title ? "#0266b3" : "#777", color: 'white', fontWeight: '500' }} variant="light">Post</Button>);
         return (
             <React.Fragment>
                 inside CreatePost ... {this.props.content}
                 <Row>
-                    <Col sm={8}>
+                    <Col sm={1}></Col>
+                    <Col sm={7}>
                         <Form onSubmit={(e) => {
                             e.preventDefault();
                             this.props.setLoader();
@@ -38,28 +46,70 @@ class CreatePost extends Component {
 
                         }}>
                             {JSON.stringify(this.state)}
-                            <Tabs defaultActiveKey="0" id="tabs" onSelect={(eventKey) => { this.setState({ type: eventKey }) }}>
-                                <Tab eventKey="0" title="Post">
+                            {/* <Tabs defaultActiveKey="0" id="tabs" onSelect={(eventKey) => { this.setState({ type: eventKey }) }}>
+                                <Tab eventKey="0" title="Post" style={{ padding: '3%' }}>
                                     {titleTag}
                                     <Input type="text" className="form-control" placeholder="Text (optional)" id="description" name="description" onChange={(e) => { this.setState({ description: e.target.value }) }} />
                                     {postButton}
                                 </Tab>
-                                <Tab eventKey="2" title="Images">
+                                <Tab eventKey="2" title="Images" style={{ padding: '3%' }}>
                                     {titleTag}
                                     <input type="file" className="form-control" id="files" name="files" accept="image/*" multiple></input>
                                     {postButton}
                                 </Tab>
-                                <Tab eventKey="1" title="Link">
+                                <Tab eventKey="1" title="Link" style={{ padding: '3%' }}>
                                     {titleTag}
                                     <Input type="text" className="form-control" placeholder="Url" id="link" name="link" onChange={(e) => { this.setState({ link: e.target.value }) }} />
                                     {postButton}
                                 </Tab>
-                                <Tab eventKey="poll" title="Poll" disabled>
+                                <Tab eventKey="poll" title="Poll" disabled style={{ padding: '3%' }}>
                                 </Tab>
-                            </Tabs>
+                            </Tabs> */}
+
+                            <Tab.Container id="left-tabs-example" defaultActiveKey="0" onSelect={(eventKey) => { this.setState({ type: eventKey, title: null, link: null, description: null }) }}>
+                                <Row>
+                                    <Row >
+                                        <Nav variant="tabs" className="flex-row">
+                                            <Nav.Item>
+                                                <Nav.Link className="navLinkV" eventKey="0">
+                                                    <span className="tabElement"><i className="fa fa-comment-alt" style={{ width: '15px', margin: '10px' }} />Post</span>
+                                                </Nav.Link>
+                                            </Nav.Item>
+                                            <Nav.Item>
+                                                <Nav.Link className="navLinkV" eventKey="2"><span className="tabElement"><i className="fa fa-image" style={{ width: '15px', margin: '10px' }} />Images</span></Nav.Link>
+                                            </Nav.Item>
+                                            <Nav.Item>
+                                                <Nav.Link className="navLinkV" eventKey="1"><span className="tabElement"><i className="fa fa-link" style={{ width: '15px', margin: '10px' }} />Link</span></Nav.Link>
+                                            </Nav.Item>
+                                            <Nav.Item>
+                                                <Nav.Link className="navLinkV" ventKey="3" disabled ><span className="tabElement" style={{ cursor: 'not-allowed' }}><i className="fa fa-poll" style={{ width: '15px', margin: '10px' }} />Poll</span></Nav.Link>
+                                            </Nav.Item>
+                                        </Nav>
+                                    </Row>
+                                    <Row >
+                                        <Tab.Content>
+                                            <Tab.Pane eventKey="0">
+                                                {titleTag}
+                                                <Input type="text" className="form-control" placeholder="Text (optional)" id="description" name="description" onChange={(e) => { this.setState({ description: e.target.value }) }} />
+                                                {postButton}
+                                            </Tab.Pane>
+                                            <Tab.Pane eventKey="2">
+                                                {titleTag}
+                                                <input type="file" className="form-control" id="files" name="files" accept="image/*" multiple></input>
+                                                {postButton}
+                                            </Tab.Pane>
+                                            <Tab.Pane eventKey="1">
+                                                {titleTag}
+                                                <Input type="text" className="form-control" placeholder="Url" id="link" name="link" onChange={(e) => { this.setState({ link: e.target.value }) }} />
+                                                {postButton}
+                                            </Tab.Pane>
+                                        </Tab.Content>
+                                    </Row>
+                                </Row>
+                            </Tab.Container>
                         </Form>
                     </Col>
-                    <Col sm={4}>
+                    <Col sm={3}>
                         <Row>
                             <Card className="card">
                                 <Card.Header className="cardHeader">
@@ -93,6 +143,7 @@ class CreatePost extends Component {
                             </Card>
                         </Row>
                     </Col>
+                    <Col sm={1}></Col>
                 </Row>
 
             </React.Fragment>

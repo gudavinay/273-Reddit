@@ -1,0 +1,31 @@
+.navLinkV{
+    border-bottom: 1px solid transparent!important;
+}
+
+.navLinkV.active{
+    border-bottom: 3px solid #0079D3!important;
+}
+
+
+.tabElement {
+    color: #878A8C;
+    font-weight: 400;
+}
+
+.tabElement .fa-link:hover,.tabElement .fa-image:hover,.tabElement .fa-comment-alt:hover{
+    color:#878A8C
+}
+
+.active .tabElement{
+    color: #0079D3;
+    font-weight: 700;
+}
+
+.active .tabElement .fa-link:hover,.active .tabElement .fa-image:hover,.active .tabElement .fa-comment-alt:hover{
+    color:#0079D3
+}
+
+.nav-item{
+    width: 25%;
+    text-align: center;
+}
