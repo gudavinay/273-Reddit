@@ -11,22 +11,30 @@ app.post("/sendInvite", (req, res) => {
       $push: { sentInvitesTo: [{ userID: req.body.invitedTo }] },
     },
     (err, result) => {
-      User.findByIdAndUpdate(
-        req.body.invitedTo,
-        {
-          $push: {
-            communityInvites: [
-              {
-                communityID: req.body.community_id,
-                invitedBy: req.body.invitedBy,
-              },
-            ],
+      if (err) {
+        res.status(500).send(err);
+      } else {
+        User.findByIdAndUpdate(
+          req.body.invitedTo,
+          {
+            $push: {
+              communityInvites: [
+                {
+                  communityID: req.body.community_id,
+                  invitedBy: req.body.invitedBy,
+                },
+              ],
+            },
           },
-        },
-        (err, result) => {
-          res.status(200).send(result);
-        }
-      );
+          (err, result) => {
+            if (err) {
+              res.status(500).send(err);
+            } else {
+              res.status(200).send(result);
+            }
+          }
+        );
+      }
     }
   );
 });
@@ -46,20 +54,28 @@ app.post("/showInvitationStatus", (req, res) => {
       delete data.createdAt;
       delete data.updatedAt;
       res.status(200).send(data.sentInvitesTo);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
     });
 });
 
 app.post("/getCommunitiesCreatedByMe", (req, res) => {
   Community.find({ ownerID: req.body.user_id }, (err, result) => {
-    let communities = [];
-    result.forEach((element) => {
-      let communityDetails = {
-        communityName: element.communityName,
-        communityID: element._id,
-      };
-      communities.push(communityDetails);
-    });
-    res.status(200).send(communities);
+    if (err) {
+      console.log(err);
+      res.status(500).send(err);
+    } else {
+      let communities = [];
+      result.forEach((element) => {
+        let communityDetails = {
+          communityName: element.communityName,
+          communityID: element._id,
+        };
+        communities.push(communityDetails);
+      });
+      res.status(200).send(communities);
+    }
   });
 });
 module.exports = router;

@@ -80,6 +80,9 @@ app.post("/getNotificationData", (req, res) => {
         details.push(inviteDetails);
       });
       res.status(200).send(details);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
     });
 });
 app.post("/rejectInvite", (req, res) => {
@@ -87,7 +90,7 @@ app.post("/rejectInvite", (req, res) => {
   UserProfile.findOneAndUpdate(
     { _id: req.body.user_id },
     {
-      $pull: { communityInvites: { communityID: req.body.community_id } }
+      $pull: { communityInvites: { communityID: req.body.community_id } },
     },
     (err, result) => {
       if (err) {
@@ -96,10 +99,10 @@ app.post("/rejectInvite", (req, res) => {
         Community.updateOne(
           {
             _id: req.body.community_id,
-            "sentInvitesTo.userID": req.body.user_id
+            "sentInvitesTo.userID": req.body.user_id,
           },
           {
-            $set: { "sentInvitesTo.$.isAccepted": -1 }
+            $set: { "sentInvitesTo.$.isAccepted": -1 },
           },
           (err, result) => {
             if (err) {
@@ -117,7 +120,7 @@ app.post("/acceptInvite", (req, res) => {
   UserProfile.findOneAndUpdate(
     { _id: req.body.user_id },
     {
-      $pull: { communityInvites: { communityID: req.body.community_id } }
+      $pull: { communityInvites: { communityID: req.body.community_id } },
     },
     (err, result) => {
       if (err) {
@@ -126,10 +129,10 @@ app.post("/acceptInvite", (req, res) => {
         Community.updateOne(
           {
             _id: req.body.community_id,
-            "sentInvitesTo.userID": req.body.user_id
+            "sentInvitesTo.userID": req.body.user_id,
           },
           {
-            $set: { "sentInvitesTo.$.isAccepted": 1 }
+            $set: { "sentInvitesTo.$.isAccepted": 1 },
           },
           (err, result) => {
             if (err) {
@@ -140,9 +143,9 @@ app.post("/acceptInvite", (req, res) => {
                 {
                   $push: {
                     listOfUsers: [
-                      { userID: req.body.user_id, isAccepted: true }
-                    ]
-                  }
+                      { userID: req.body.user_id, isAccepted: true },
+                    ],
+                  },
                 },
                 (err, result) => {
                   if (err) {
@@ -164,7 +167,7 @@ app.post("/createUserProfile", (req, res) => {
   let userProfile = new UserProfile({
     userIDSQL: req.body.sqlUserID,
     name: req.body.name,
-    email: req.body.email
+    email: req.body.email,
   });
   userProfile.save((err, result) => {
     if (result) {

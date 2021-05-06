@@ -20,6 +20,7 @@ app.get("/getCommunities", function (req, res, next) {
     (err, result) => {
       if (err) {
         console.log(err);
+        res.status(500).send(err);
       } else {
         console.log("result");
         let myCommunities = [];
@@ -47,7 +48,7 @@ app.get("/communityDetails", function (req, res, next) {
     },
     (err, result) => {
       if (err) {
-        console.log(err);
+        res.status(500).send(err);
       } else {
         let communityDetails = {
           communityName: result[0].communityName,
@@ -61,7 +62,6 @@ app.get("/communityDetails", function (req, res, next) {
 
 app.post("/createPost", function (req, res, next) {
   let data = {};
-  req.body.community_id = "6092404e70b8163fc018816d";
   console.log("create post req.body = ", req.body);
   if (req.body.type == 0) {
     data = {
@@ -298,14 +298,75 @@ app.post("/getCommentsWithPostID", (req, res) => {
 //get all posts for dashboard
 app.post("/getAllPostsWithId", (req, res) => {
   console.log(req.body.user_id);
-  Post.find()
-    .populate({
-      path: "communityID",
-      match: { "listOfUsers.userID": "6089d63ea112c02c1df2914c" },
-      // { "listOfUsers.userID": req.body.user_id },
-    })
+  Post.aggregate([
+    {
+      $lookup: {
+        from: "communities",
+        localField: "communityID",
+        foreignField: "_id",
+        as: "communityDetails",
+      },
+    },
+    {
+      $lookup: {
+        from: "userprofiles",
+        localField: "userID",
+        foreignField: "_id",
+        as: "userDetails",
+      },
+    },
+    {
+      $match: {
+        $or: [
+          {
+            "communityDetails.ownerID": mongoose.Types.ObjectId(
+              req.body.user_id
+            ),
+          },
+          {
+            "communityDetails.listOfUsers.userID": mongoose.Types.ObjectId(
+              req.body.user_id
+            ),
+          },
+        ],
+      },
+    },
+    {
+      $unwind: {
+        path: "$userDetails",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $unwind: {
+        path: "$communityDetails",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        type: "$type",
+        title: "$title",
+        description: { $ifNull: ["$description", ""] },
+        link: { $ifNull: ["$link", ""] },
+        postImageUrl: { $ifNull: ["$postImageUrl", ""] },
+        upvotedBy: "$upvotedBy",
+        downvotedBy: "$downvotedBy",
+        createdAt: "$createdAt",
+        userMongoID: "$userDetails._id",
+        userSQLID: "$userDetails.userIDSQL",
+        userName: "$userDetails.name", // only if needed
+        communityName: "$communityDetails.communityName",
+        communityDescription: "$communityDetails.communityDescription",
+        imageURL: "$communityDetails.imageURL",
+      },
+    },
+  ])
     .then((result) => {
       res.status(200).send(result);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
     });
 });
 module.exports = router;

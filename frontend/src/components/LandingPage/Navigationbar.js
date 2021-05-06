@@ -16,6 +16,7 @@ import Notification from "../Home/Notification/Notification";
 import { Redirect } from "react-router-dom";
 import { logoutRedux } from "../../reduxOps/reduxActions/loginRedux";
 import { getUserProfile } from "../../services/ControllerUtils";
+import { getMongoUserID } from "../../services/ControllerUtils";
 
 class Navigationbar extends Component {
   constructor(props) {
@@ -62,7 +63,7 @@ class Navigationbar extends Component {
   }
   getNotificationData = () => {
     let data = {
-      user_id: JSON.parse(localStorage.getItem("userData"))?._id
+      user_id: getMongoUserID()
     };
     this.props.setLoader();
     Axios.post(backendServer + "/getNotificationData", data)
