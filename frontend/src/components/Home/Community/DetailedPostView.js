@@ -115,7 +115,10 @@ class DetailedPostView extends Component {
               <div>{comment.description}</div>
               <div>
                 <i
-                  style={{ cursor: "pointer" }}
+                  style={{
+                    cursor: "pointer",
+                    color: comment.userVoteDir == 1 ? "#ff4500" : "",
+                  }}
                   className="icon icon-arrow-up upvote"
                   onClick={() => this.upVote(comment._id, comment.userVoteDir)}
                 />
@@ -123,7 +126,10 @@ class DetailedPostView extends Component {
                   <strong> {comment.score} </strong>
                 </span>
                 <i
-                  style={{ cursor: "pointer" }}
+                  style={{
+                    cursor: "pointer",
+                    color: comment.userVoteDir == -1 ? "#7193ff" : "",
+                  }}
                   className="icon icon-arrow-down downvote"
                   onClick={() =>
                     this.downVote(comment._id, comment.userVoteDir)
