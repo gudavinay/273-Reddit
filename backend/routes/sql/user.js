@@ -10,9 +10,9 @@ app.post("/getSearchedUser", async (req, res) => {
     attributes: ["user_id", "name"],
     where: {
       name: {
-        [Op.startsWith]: req.body.name
-      }
-    }
+        [Op.startsWith]: req.body.name,
+      },
+    },
   });
   if (findUser.length > 0) {
     return res.status(200).send(findUser);
@@ -21,17 +21,4 @@ app.post("/getSearchedUser", async (req, res) => {
   }
 });
 
-app.post("/getListedUserDetails", async (req, res) => {
-  console.log(req.body.usersList);
-  const result = await db.User.findAll({
-    attributes: ["user_id", "name", "profile_picture_url"],
-    where: { user_id: { [Op.in]: req.body.usersList } }
-  });
-  console.log(result);
-  if (result.length > 0) {
-    return res.status(200).send(result);
-  } else {
-    return res.status(400).end();
-  }
-});
 module.exports = router;

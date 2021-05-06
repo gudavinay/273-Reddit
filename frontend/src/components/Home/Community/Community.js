@@ -21,21 +21,22 @@ import backendServer from "../../../webConfig";
 // });
 class Community extends Component {
   constructor(props) {
-    // console.log(props, "COMM PROPS");
     super(props);
     this.state = {
-      community_id: props.match.params.community_id
-        ? "6092404e70b8163fc018816d"
-        : "6092404e70b8163fc018816d",
+      community_id: "",
     };
   }
 
-  componentDidMount() {
+  componentDidMount = async () => {
+    if (this.props.location.state && this.props.location.state.comm_id) {
+      await this.setState({ community_id: this.props.location.state.comm_id });
+    } else {
+      let comm_id = this.props.location.pathname.replace("/community/", "");
+      await this.setState({ community_id: comm_id });
+    }
     this.props.setLoader();
     axios
-      .get(
-        `${backendServer}/getCommunitiesForOwner?ID=${this.state.community_id}`
-      )
+      .get(`${backendServer}/getCommunityDetails?ID=${this.state.community_id}`)
       .then((response) => {
         this.props.unsetLoader();
         this.setState({ communityDetails: response.data });
@@ -50,16 +51,13 @@ class Community extends Component {
       .get(`${backendServer}/getPostsInCommunity?ID=${this.state.community_id}`)
       .then((response) => {
         this.props.unsetLoader();
-        this.setState({ posts: response.data }, () => {
-          console.log(this.state.posts);
-        });
-        console.log("in community did mount = ", response.data);
+        this.setState({ posts: response.data }, () => {});
       })
       .catch((err) => {
         this.props.unsetLoader();
         console.log(err);
       });
-  }
+  };
 
   render() {
     var postsToRender = [];
@@ -76,7 +74,7 @@ class Community extends Component {
             Community Name <Button>join</Button>{" "}
           </div> */}
           <Row>
-            <p>
+            <div>
               <Row>
                 <Col xs={8}>
                   <div className="createPostH">
@@ -146,7 +144,7 @@ class Community extends Component {
                   </Row>
                 </Col>
               </Row>
-            </p>
+            </div>
           </Row>
         </div>
       </React.Fragment>

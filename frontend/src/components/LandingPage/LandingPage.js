@@ -9,7 +9,7 @@ import "./../styles/landingPageStyle.css";
 import headerLogo from "./../../assets/Reddit_logo_full_1SVG.svg";
 import {
   Row,
-  Col
+  Col,
   // Container,
   // Navbar,
   // NavDropdown,
@@ -24,7 +24,7 @@ class LandingPage extends Component {
     super(props);
     this.state = {
       showLogin: false,
-      showSignup: false
+      showSignup: false,
     };
   }
   render() {
@@ -39,7 +39,7 @@ class LandingPage extends Component {
       >
         <Modal.Body
           style={{
-            padding: "0"
+            padding: "0",
           }}
         >
           <button
@@ -73,7 +73,7 @@ class LandingPage extends Component {
       >
         <Modal.Body
           style={{
-            padding: "0"
+            padding: "0",
           }}
         >
           <button
@@ -115,7 +115,8 @@ class LandingPage extends Component {
                 style={{
                   width: "385px",
                   height: "95px",
-                  marginLeft: "-30px"
+                  marginLeft: "-30px",
+                  marginTop: "200px",
                 }}
               ></img>
               <Row style={{ margin: "0", padding: "30px 70px" }}>

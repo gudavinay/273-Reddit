@@ -7,7 +7,7 @@ import {
   Col,
   Container,
   Card,
-  Form
+  Form,
 } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import backendServer from "../../../webConfig";
@@ -24,7 +24,7 @@ class MyCommunities extends Component {
       error: {},
       success: false,
       communityName: "",
-      myCommunity: []
+      myCommunity: [],
     };
   }
 
@@ -33,15 +33,15 @@ class MyCommunities extends Component {
     this.props.setLoader();
     axios
       .get(`${backendServer}/myCommunity?ID=${ownerID}`)
-      .then(response => {
+      .then((response) => {
         this.props.unsetLoader();
         if (response.status == 200) {
           this.setState({
-            myCommunity: response.data
+            myCommunity: response.data,
           });
         }
       })
-      .catch(error => {
+      .catch((error) => {
         this.props.unsetLoader();
         console.log("error " + error);
       });
@@ -51,21 +51,21 @@ class MyCommunities extends Component {
     this.getMyCommunities();
   }
 
-  CheckIfTheCommunityCanBeCreated = e => {
+  CheckIfTheCommunityCanBeCreated = (e) => {
     e.preventDefault();
     const data = {
-      communityName: this.state.communityName
+      communityName: this.state.communityName,
     };
     axios
       .post(`${backendServer}/checkForUniqueCommunity`, data)
-      .then(response => {
+      .then((response) => {
         if (response.status == 200) {
           this.setState({
-            success: true
+            success: true,
           });
         }
       })
-      .catch(error => console.log("error " + error));
+      .catch((error) => console.log("error " + error));
   };
 
   render() {
@@ -113,7 +113,12 @@ class MyCommunities extends Component {
               </Col>
             </Row>
             <Card.Footer className="text-right">
-              <Link to={`/community/${community._id}`}>
+              <Link
+                to={{
+                  pathname: `/community/${community._id}`,
+                  state: { comm_id: community._id },
+                }}
+              >
                 <Button className="createCommunity">View More Details</Button>
               </Link>
             </Card.Footer>
@@ -140,7 +145,7 @@ class MyCommunities extends Component {
                         type="text"
                         id="name"
                         name="name"
-                        onChange={e =>
+                        onChange={(e) =>
                           this.setState({ communityName: e.target.value })
                         }
                         aria-describedby="passwordHelpBlock"

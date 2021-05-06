@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 import axios from "axios";
 import backendServer from "../../../webConfig";
-import { Col, Row } from "reactstrap";
+import { Col, Modal, Row } from "react-bootstrap";
 import { BiSearchAlt } from "react-icons/bi";
 import "./myCommunityModeration.css";
-
+import { getMongoUserID } from "../../../services/ControllerUtils";
+import CommunityModal from "./communityModerationModals/communityModal";
+import "./../../styles/landingPageStyle.css";
+import { FiX } from "react-icons/fi";
 class MyCommunitiesModeration extends Component {
   constructor(props) {
     super(props);
@@ -14,28 +17,32 @@ class MyCommunitiesModeration extends Component {
         size: 2,
         total_pages: 0,
         total_count: 0,
+        search: "",
       },
       userPagination: {
         page: 1,
         size: 2,
         total_pages: 0,
         total_count: 0,
+        search: "",
       },
       communities: [],
       usersFromCommunities: [],
-      comm_search: "",
-      user_search: "",
+      showCommunityModal: false,
+      showUserModal: false,
+      selectedCommunity: null,
+      selectedUser: null,
     };
   }
 
   getCommunitiesCreatedByUser = async () => {
-    const ownerID = "6089d63ea112c02c1df2914c"; //TO DO: Take it from JWT TOKEN AFTER LOGIN
+    const ownerID = getMongoUserID(); //TO DO: Take it from JWT TOKEN AFTER LOGIN
     await axios
       .get(
         `${backendServer}/getCommunitiesForOwner?ID=${ownerID}&size=${
           this.state.communityPagination.size
         }&page=${this.state.communityPagination.page - 1}&search=${
-          this.state.comm_search
+          this.state.communityPagination.search
         }`
       )
       .then((response) => {
@@ -61,20 +68,28 @@ class MyCommunitiesModeration extends Component {
   };
 
   getUsersForCommunitiesCreatedByUser = async () => {
-    const ownerID = "6089d63ea112c02c1df2914c"; //TO DO: Take it from JWT TOKEN AFTER LOGIN
+    const ownerID = getMongoUserID(); //TO DO: Take it from JWT TOKEN AFTER LOGIN
     await axios
-      .get(
-        `${backendServer}/getUsersForCommunitiesForOwner?ID=${ownerID}&size=${this.state.userPagination.size}&page=${this.state.userPagination.page}&search=${this.state.user_search}`
-      )
+      .get(`${backendServer}/getUsersForCommunitiesForOwner?ID=${ownerID}`)
       .then(async (response) => {
         if (response.status == 200) {
           await axios
             .post(backendServer + "/getListedUserDetails", {
               usersList: response.data,
+              size: this.state.userPagination.size,
+              page: this.state.userPagination.page - 1,
+              search: this.state.userPagination.search,
             })
             .then((res) => {
               this.setState({
-                usersFromCommunities: res.data,
+                usersFromCommunities: res.data.users,
+                userPagination: {
+                  ...this.state.userPagination,
+                  total_pages: Math.ceil(
+                    response.data.total / this.state.userPagination.size
+                  ),
+                  total_count: response.data.total,
+                },
               });
             })
             .catch((err) => {
@@ -97,10 +112,13 @@ class MyCommunitiesModeration extends Component {
         prevState.communityPagination.page ||
       this.state.communityPagination.size !==
         prevState.communityPagination.size ||
-      this.state.comm_search !== prevState.comm_search ||
+      this.state.communityPagination.search !==
+        prevState.communityPagination.search ||
       this.state.userPagination.page !== prevState.userPagination.page ||
       this.state.userPagination.size !== prevState.userPagination.size ||
-      this.state.user_search !== prevState.user_search
+      this.state.userPagination.search !== prevState.userPagination.search ||
+      this.state.showCommunityModal !== prevState.showCommunityModal ||
+      this.state.showUserModal !== prevState.showUserModal
     ) {
       this.getCommunitiesCreatedByUser();
       this.getUsersForCommunitiesCreatedByUser();
@@ -114,6 +132,33 @@ class MyCommunitiesModeration extends Component {
     let usersList = [];
     let userCount = 1;
 
+    const renderCommunityModal = (
+      <Modal
+        show={this.state.showCommunityModal}
+        onHide={() => this.setState({ showCommunityModal: false })}
+        dialogClassName="landingDailogStyle"
+        contentClassName="landingContentStyle"
+        aria-labelledby="example-custom-modal-styling-title"
+        backdrop="static"
+      >
+        {" "}
+        <Modal.Body style={{ padding: "0" }}>
+          <button
+            type="button"
+            className="close"
+            data-dismiss="modal"
+            aria-label="Close"
+            style={{ padding: "20px", fontSize: "24px" }}
+          >
+            <FiX onClick={() => this.setState({ showCommunityModal: false })} />
+          </button>
+          <React.Fragment>
+            <CommunityModal comm_id={this.state.selectedCommunity} />
+          </React.Fragment>
+        </Modal.Body>
+      </Modal>
+    );
+
     this.state.communities
       ? this.state.communities.forEach((item) => {
           communitiesList.push(
@@ -122,7 +167,13 @@ class MyCommunitiesModeration extends Component {
               className={
                 this.props.dark_mode ? "cardrow-dark" : "cardrow-light"
               }
-              style={{ margin: "0", padding: "15px 0" }}
+              style={{ margin: "0", padding: "15px 0", cursor: "pointer" }}
+              onClick={async () => {
+                await this.setState({
+                  selectedCommunity: item._id,
+                  showCommunityModal: true,
+                });
+              }}
             >
               <Col xs={2}>{communityCount}.</Col>
               <Col
@@ -307,6 +358,7 @@ class MyCommunitiesModeration extends Component {
     return (
       <React.Fragment>
         <div style={{ height: "90vh" }}>
+          {renderCommunityModal}
           {/* <div style={{ margin: "20px" }}>
             {JSON.stringify(this.state.usersFromCommunities)}
           </div> */}
@@ -348,7 +400,14 @@ class MyCommunitiesModeration extends Component {
                       type="text"
                       style={{ border: "none", backgroundColor: "transparent" }}
                       onChange={(e) =>
-                        this.setState({ comm_search: e.target.value })
+                        // this.setState({ comm_search: e.target.value })
+                        this.setState({
+                          communityPagination: {
+                            ...this.state.communityPagination,
+                            search: e.target.value,
+                            page: 1,
+                          },
+                        })
                       }
                     />
                     <div
@@ -375,7 +434,7 @@ class MyCommunitiesModeration extends Component {
                     className="row"
                     style={{
                       margin: "0",
-                      padding: "15px 0",
+                      padding: "15px 10px",
                       borderBottom: "1px solid #ddd",
                       borderTop: "1px solid #ddd",
                       backgroundColor: "rgb(238, 238, 238)",
@@ -399,6 +458,7 @@ class MyCommunitiesModeration extends Component {
                         <select
                           name="pagesize"
                           id="pagesize"
+                          style={{ fontSize: "11px" }}
                           onChange={(e) => {
                             this.setState({
                               communityPagination: {
@@ -487,7 +547,10 @@ class MyCommunitiesModeration extends Component {
                           this.setState({
                             communityPagination: {
                               ...this.state.communityPagination,
-                              page: this.state.communityPagination.total_pages,
+                              page:
+                                this.state.communityPagination.total_pages > 0
+                                  ? this.state.communityPagination.total_pages
+                                  : 1,
                             },
                           });
                         }}
@@ -534,7 +597,14 @@ class MyCommunitiesModeration extends Component {
                       type="text"
                       style={{ border: "none", backgroundColor: "transparent" }}
                       onChange={(e) =>
-                        this.setState({ user_search: e.target.value })
+                        // this.setState({ user_search: e.target.value })
+                        this.setState({
+                          userPagination: {
+                            ...this.state.userPagination,
+                            search: e.target.value,
+                            page: 1,
+                          },
+                        })
                       }
                     />
                     <div
@@ -561,7 +631,7 @@ class MyCommunitiesModeration extends Component {
                     className="row"
                     style={{
                       margin: "0",
-                      padding: "15px 0",
+                      padding: "15px 10px",
                       borderBottom: "1px solid #ddd",
                       borderTop: "1px solid #ddd",
                       backgroundColor: "rgb(238, 238, 238)",
@@ -585,10 +655,14 @@ class MyCommunitiesModeration extends Component {
                         <select
                           name="pagesize"
                           id="pagesize"
+                          style={{ fontSize: "11px" }}
                           onChange={(e) => {
                             this.setState({
-                              size: Number(e.target.value),
-                              page: 1,
+                              userPagination: {
+                                ...this.state.userPagination,
+                                size: Number(e.target.value),
+                                page: 1,
+                              },
                             });
                           }}
                         >
@@ -622,7 +696,10 @@ class MyCommunitiesModeration extends Component {
                       <div
                         onClick={() => {
                           this.setState({
-                            page: 1,
+                            userPagination: {
+                              ...this.state.userPagination,
+                              page: 1,
+                            },
                           });
                         }}
                       >
@@ -632,7 +709,10 @@ class MyCommunitiesModeration extends Component {
                         onClick={() => {
                           if (this.state.userPagination.page > 1) {
                             this.setState({
-                              page: this.state.userPagination.page - 1,
+                              userPagination: {
+                                ...this.state.userPagination,
+                                page: this.state.userPagination.page - 1,
+                              },
                             });
                           }
                         }}
@@ -649,7 +729,10 @@ class MyCommunitiesModeration extends Component {
                             this.state.userPagination.total_pages
                           ) {
                             this.setState({
-                              page: this.state.userPagination.page + 1,
+                              userPagination: {
+                                ...this.state.userPagination,
+                                page: this.state.userPagination.page + 1,
+                              },
                             });
                           }
                         }}
@@ -659,7 +742,13 @@ class MyCommunitiesModeration extends Component {
                       <div
                         onClick={() => {
                           this.setState({
-                            page: this.state.userPagination.total_pages,
+                            userPagination: {
+                              ...this.state.userPagination,
+                              page:
+                                this.state.userPagination.total_pages > 0
+                                  ? this.state.userPagination.total_pages
+                                  : 1,
+                            },
                           });
                         }}
                       >
