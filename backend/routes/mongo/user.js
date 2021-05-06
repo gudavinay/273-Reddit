@@ -197,6 +197,12 @@ app.get("/getUserProfile", (req, res) => {
   });
 });
 
+app.get("/getUserProfileByMongoID", (req, res) => {
+  UserProfile.findOne({ _id: req.query.ID }).then((result) => {
+    res.status(200).send(result);
+  });
+});
+
 app.post("/getListedUserDetails", async (req, res) => {
   let skip = Number(req.body.page) * Number(req.body.size);
   let count = await UserProfile.countDocuments({
