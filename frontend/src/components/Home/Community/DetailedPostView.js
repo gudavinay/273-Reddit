@@ -45,7 +45,7 @@ class DetailedPostView extends Component {
     this.fetchCommentsWithPostID();
   }
 
-  upVote(commentId, userVoteDir) {
+  upVote(commentId, userVoteDir, index) {
     Axios.post(backendServer + "/addVote", {
       entityId: commentId,
       //   userId: getMongoUserID(),
@@ -55,7 +55,21 @@ class DetailedPostView extends Component {
       .then((response) => {
         // this.props.unsetLoader();
         console.log("upVOted successfull = ", response);
-        this.fetchCommentsWithPostID();
+        console.log(
+          "this.state = ",
+          this.state.parentCommentList[index].userVoteDir
+        );
+        const newComments = this.state.parentCommentList.slice();
+        newComments[index].score =
+          userVoteDir == 1
+            ? newComments[index].score - 1
+            : userVoteDir == 0
+            ? newComments[index].score + 1
+            : newComments[index].score + 2;
+        newComments[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
+        console.log("newComments = ", newComments);
+        this.setState({ parentCommentList: newComments });
+        // this.fetchCommentsWithPostID();
       })
       .catch((err) => {
         // this.props.unsetLoader();
@@ -63,17 +77,28 @@ class DetailedPostView extends Component {
       });
   }
 
-  downVote(commentId, userVoteDir) {
+  downVote(commentId, userVoteDir, index) {
     Axios.post(backendServer + "/addVote", {
       entityId: commentId,
       //   userId: getMongoUserID(),
       userId: localStorage.getItem("userId"),
       voteDir: userVoteDir == -1 ? 0 : -1,
+      // voteDir: userVoteDir == -1 ? 0 : userVoteDir == 1 ? 0 : -1,
     })
       .then((response) => {
         // this.props.unsetLoader();
         console.log("downvoted successfull = ", response);
-        this.fetchCommentsWithPostID();
+        const newComments = this.state.parentCommentList.slice();
+        newComments[index].score =
+          userVoteDir == -1
+            ? newComments[index].score + 1
+            : userVoteDir == 0
+            ? newComments[index].score - 1
+            : newComments[index].score - 2;
+        newComments[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
+        console.log("newComments = ", newComments);
+        this.setState({ parentCommentList: newComments });
+        // this.fetchCommentsWithPostID();
       })
       .catch((err) => {
         // this.props.unsetLoader();
@@ -83,8 +108,8 @@ class DetailedPostView extends Component {
   render() {
     var commentsToRender = [];
     if (this.state.parentCommentList) {
-      this.state.parentCommentList.forEach((comment) => {
-        console.log("comment = ", comment);
+      this.state.parentCommentList.forEach((comment, index) => {
+        console.log("comment = ", comment, index);
         commentsToRender.push(
           <div>
             <div style={{ marginTop: "10px" }}>
@@ -120,7 +145,9 @@ class DetailedPostView extends Component {
                     color: comment.userVoteDir == 1 ? "#ff4500" : "",
                   }}
                   className="icon icon-arrow-up upvote"
-                  onClick={() => this.upVote(comment._id, comment.userVoteDir)}
+                  onClick={() =>
+                    this.upVote(comment._id, comment.userVoteDir, index)
+                  }
                 />
                 <span style={{ margin: "0 5px" }}>
                   <strong> {comment.score} </strong>
@@ -132,7 +159,7 @@ class DetailedPostView extends Component {
                   }}
                   className="icon icon-arrow-down downvote"
                   onClick={() =>
-                    this.downVote(comment._id, comment.userVoteDir)
+                    this.downVote(comment._id, comment.userVoteDir, index)
                   }
                 />
                 <span
