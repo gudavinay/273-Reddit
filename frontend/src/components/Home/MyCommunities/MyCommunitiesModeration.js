@@ -6,6 +6,7 @@ import { BiSearchAlt } from "react-icons/bi";
 import "./myCommunityModeration.css";
 import { getMongoUserID } from "../../../services/ControllerUtils";
 import CommunityModal from "./communityModerationModals/communityModal";
+import UserModal from "./communityModerationModals/userModal";
 import "./../../styles/landingPageStyle.css";
 import { FiX } from "react-icons/fi";
 class MyCommunitiesModeration extends Component {
@@ -159,6 +160,33 @@ class MyCommunitiesModeration extends Component {
       </Modal>
     );
 
+    const renderUserModal = (
+      <Modal
+        show={this.state.showUserModal}
+        onHide={() => this.setState({ showUserModal: false })}
+        dialogClassName="landingDailogStyle"
+        contentClassName="landingContentStyle"
+        aria-labelledby="example-custom-modal-styling-title"
+        backdrop="static"
+      >
+        {" "}
+        <Modal.Body style={{ padding: "0" }}>
+          <button
+            type="button"
+            className="close"
+            data-dismiss="modal"
+            aria-label="Close"
+            style={{ padding: "20px", fontSize: "24px" }}
+          >
+            <FiX onClick={() => this.setState({ showUserModal: false })} />
+          </button>
+          <React.Fragment>
+            <UserModal user_id={this.state.selectedUser} />
+          </React.Fragment>
+        </Modal.Body>
+      </Modal>
+    );
+
     this.state.communities
       ? this.state.communities.forEach((item) => {
           communitiesList.push(
@@ -214,7 +242,13 @@ class MyCommunitiesModeration extends Component {
               className={
                 this.props.dark_mode ? "cardrow-dark" : "cardrow-light"
               }
-              style={{ margin: "0", padding: "15px 0" }}
+              style={{ margin: "0", padding: "15px 0", cursor: "pointer" }}
+              onClick={async () => {
+                await this.setState({
+                  selectedUser: item._id,
+                  showUserModal: true,
+                });
+              }}
             >
               <Col
                 xs={2}
@@ -359,6 +393,7 @@ class MyCommunitiesModeration extends Component {
       <React.Fragment>
         <div style={{ height: "90vh" }}>
           {renderCommunityModal}
+          {renderUserModal}
           {/* <div style={{ margin: "20px" }}>
             {JSON.stringify(this.state.usersFromCommunities)}
           </div> */}

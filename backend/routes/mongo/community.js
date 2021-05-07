@@ -3,6 +3,7 @@ const app = require("../../app");
 const router = express.Router();
 const Community = require("../../models/mongo/Community");
 const Post = require("../../models/mongo/Post");
+const Comment = require("../../models/mongo/Comment");
 const Promise = require("bluebird");
 
 app.post("/addCommunity", function (req, res, next) {
@@ -31,39 +32,53 @@ app.post("/addCommunity", function (req, res, next) {
   });
 });
 
-app.get("/myCommunity", async (req, res) => {
+app.get("/myCommunity", async function (req, res) {
   let data = [];
-  await Community.find({ ownerID: req.query.ID }).then((result, error) => {
-    if (error) {
-      res.status(500).send("Error Occured");
-    } else {
-      // console.log(result.length);
-      if (result.length === 0) {
-        res.status(200).send(result);
-      }
-      const findResult = JSON.parse(JSON.stringify(result));
-      findResult.map(async (community) => {
-        await Post.find({ communityID: community._id }).then(
-          (postResult, error) => {
-            // console.log(JSON.stringify(postResult.length));
-            data.push({
-              _id: community._id,
-              communityName: community.communityName,
-              communityDescription: community.communityDescription,
-              imageURL: community.communityImages,
-              listOfUsers: community.listOfUsers,
-              count: postResult.length,
-            });
-            // console.log(JSON.stringify(data));
-            if (result.length == data.length) {
-              // console.log(JSON.stringify(data));
-              res.status(200).send(JSON.stringify(data));
+  let { page, size, ID } = req.query;
+  let skip = 0;
+  page = page - 1;
+  if (page == 0) {
+    skip = 0;
+  } else {
+    skip = page * size;
+  }
+  const limit = parseInt(size);
+  const recordCount = await Community.count({ ownerID: ID });
+
+  Community.find({ ownerID: ID })
+    .sort({ createdAt: "desc" })
+    .limit(limit)
+    .skip(skip)
+    .then((result, error) => {
+      if (error) {
+        res.status(500).send("Error Occured");
+      } else {
+        if (result.length === 0) {
+          res.status(200).send(result);
+        }
+        const findResult = JSON.parse(JSON.stringify(result));
+        findResult.map((community) => {
+          Post.find({ communityID: community._id }).then(
+            (postResult, error) => {
+              console.log(JSON.stringify(postResult.length));
+              data.push({
+                _id: community._id,
+                communityName: community.communityName,
+                communityDescription: community.communityDescription,
+                imageURL: community.communityImages,
+                listOfUsers: community.listOfUsers,
+                count: postResult.length,
+                totalRecords: recordCount,
+              });
+              console.log(JSON.stringify(data));
+              if (result.length == data.length) {
+                res.status(200).send(JSON.stringify(data));
+              }
             }
-          }
-        );
-      });
-    }
-  });
+          );
+        });
+      }
+    });
 });
 
 app.get("/getCommunityDetails", async (req, res) => {
@@ -128,11 +143,11 @@ app.get("/getUsersForCommunitiesForOwner", (req, res) => {
     .then((result) => {
       let output = new Set();
       result.forEach((item) => {
-        for (let i = 0; i < item.listOfUsers.length; i++) {
-          if (item.listOfUsers[i].isAccepted) {
-            output.add(Number(item.listOfUsers[i].userID.userIDSQL));
+        item.listOfUsers.forEach((temp) => {
+          if (temp.isAccepted) {
+            output.add(Number(temp.userID.userIDSQL));
           }
-        }
+        });
       });
       res.status(200).send(Array.from(output));
     });
@@ -156,21 +171,40 @@ app.post("/acceptUsersToCommunity", (req, res) => {
   } catch (err) {
     res.status(400).end();
   }
-  // Community.update(
-  //   {
-  //     _id: req.body.communityID,
-  //     "listOfUsers.userID": { $in: req.body.userList },
-  //   },
-  //   { $set: { "listOfUsers.$.isAccepted": true } },
-  //   { multi: true },
-  //   (err, result) => {
-  //     if (err) {
-  //       res.status(404).send(err);
-  //     } else {
-  //       res.status(200).send(result);
-  //     }
-  //   }
-  // );
+});
+
+app.get("/getCommunitiesForUser", (req, res) => {
+  // console.log(req.body, req.query.ID, "********");
+  Community.find({ "listOfUsers.userID": req.query.ID }).then((result) => {
+    res.status(200).send(result);
+  });
+});
+
+app.post("/removeUserFromCommunities", (req, res) => {
+  console.log(req.body);
+  try {
+    Promise.mapSeries(req.body.commList, (item) => {
+      return Community.findOneAndUpdate(
+        {
+          _id: item,
+        },
+        { $pull: { listOfUsers: { userID: req.body.userID } } },
+        { useFindAndModify: false }
+      );
+    }).then(async () => {
+      await Post.deleteMany({
+        communityID: { $in: req.body.commList },
+        userID: req.body.userID,
+      });
+      await Comment.deleteMany({
+        communityID: { $in: req.body.commList },
+        userID: req.body.userID,
+      });
+      res.status(200).end();
+    });
+  } catch (err) {
+    res.status(400).end();
+  }
 });
 
 module.exports = router;
