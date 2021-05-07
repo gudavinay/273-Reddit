@@ -7,7 +7,7 @@ const s3 = require("./routes/awsS3");
 const app = express();
 const { frontEnd } = require("./Util/config");
 // DB connection
-require("./dbConnection");
+// require("./dbConnection");
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -28,7 +28,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     duration: 60 * 60 * 1000, // Overall duration of Session : 30 minutes : 1800 seconds
-    activeDuration: 5 * 60 * 1000
+    activeDuration: 5 * 60 * 1000,
   })
 );
 
@@ -38,7 +38,7 @@ app.set("view engine", "ejs");
 app.use(
   cors({
     origin: frontEnd,
-    credentials: true
+    credentials: true,
   })
 );
 
