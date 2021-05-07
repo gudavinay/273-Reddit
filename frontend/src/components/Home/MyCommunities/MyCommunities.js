@@ -16,7 +16,7 @@ import image1 from "../../../assets/CommunityImage1.jpeg";
 import image2 from "../../../assets/CommunityImage2.jpeg";
 import image3 from "../../../assets/CommunityImage3.jpeg";
 import { getMongoUserID } from "../../../services/ControllerUtils";
-import Pagination from "@material-ui/lab/Pagination";
+import { TablePagination } from "@material-ui/core";
 
 class MyCommunities extends Component {
   constructor(props) {
@@ -32,12 +32,15 @@ class MyCommunities extends Component {
     };
   }
 
-  getMyCommunities() {
+  getMyCommunities(page) {
     const ownerID = getMongoUserID();
     this.props.setLoader();
+    console.log(
+      `${backendServer}/myCommunity?ID=${ownerID}&page=${page}&size=${this.state.size}`
+    );
     axios
       .get(
-        `${backendServer}/myCommunity?ID=${ownerID}&page=${this.state.page}&size=${this.state.size}`
+        `${backendServer}/myCommunity?ID=${ownerID}&page=${page}&size=${this.state.size}`
       )
       .then(response => {
         this.props.unsetLoader();
@@ -55,7 +58,7 @@ class MyCommunities extends Component {
   }
 
   componentDidMount() {
-    this.getMyCommunities();
+    this.getMyCommunities(this.state.page);
   }
 
   CheckIfTheCommunityCanBeCreated = e => {
@@ -87,7 +90,7 @@ class MyCommunities extends Component {
     this.setState({
       page: Number(e.target.textContent)
     });
-    this.getMyCommunities();
+    this.getMyCommunities(Number(e.target.textContent));
   };
 
   render() {
@@ -156,7 +159,7 @@ class MyCommunities extends Component {
             <Col xs={8}>
               <div className="card">
                 {myCommunities}
-                <div style={{ marginRight: "10px", fontSize: "12px" }}>
+                {/* <div style={{ marginRight: "10px", fontSize: "12px" }}>
                   Rows per page:
                 </div>
                 <div>
@@ -168,18 +171,19 @@ class MyCommunities extends Component {
                     <option value="2">2</option>
                     <option value="5">5</option>
                     <option value="10">10</option>
-                  </select>
-                  <Pagination
-                    count={this.state.count}
-                    page={this.state.page}
-                    variant="outlined"
-                    color="primary"
-                    showFirstButton
-                    showLastButton
-                    onChange={this.PageChange}
-                  />
-                </div>
+                  </select> */}
+                <TablePagination
+                  count={this.state.count}
+                  page={this.state.page}
+                  onChangePage={this.PageChange}
+                  rowsPerPage={this.state.size}
+                  onChangeRowsPerPage={this.PageSizeChange}
+                  variant="outlined"
+                  color="primary"
+                  rowsPerPageOptions={[2, 5, 10]}
+                />
               </div>
+              {/* </div> */}
             </Col>
             <Col xs={4}>
               <Card>

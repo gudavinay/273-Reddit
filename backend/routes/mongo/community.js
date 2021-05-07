@@ -36,6 +36,7 @@ app.get("/myCommunity", async function (req, res) {
   let data = [];
   let { page, size, ID } = req.query;
   let skip = 0;
+  page = page - 1;
   if (page == 0) {
     skip = 0;
   } else {
@@ -45,6 +46,7 @@ app.get("/myCommunity", async function (req, res) {
   const recordCount = await Community.count({ ownerID: ID });
 
   Community.find({ ownerID: ID })
+    .sort({ createdAt: "desc" })
     .limit(limit)
     .skip(skip)
     .then((result, error) => {
