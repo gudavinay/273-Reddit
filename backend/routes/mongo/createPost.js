@@ -315,7 +315,7 @@ app.post("/getCommentsWithPostID", (req, res) => {
 });
 
 //get all posts for dashboard
-app.post("/getAllPostsWithId", (req, res) => {
+app.post("/getAllPostsWithUserId", (req, res) => {
   console.log(req.body.user_id);
   Post.aggregate([
     {
