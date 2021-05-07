@@ -66,4 +66,14 @@ app.get("/getMessage", async (req, res) => {
   }
 });
 
+
+app.get("/getMessageForTest", async (req, res) => {
+  const getMessage = await db.Message.findAll({ sent_by: 53 });
+  if (getMessage.length > 0) {
+    res.status(200).send(getMessage);
+  } else {
+    res.status(500).send("No message found");
+  }
+});
+
 module.exports = router;
