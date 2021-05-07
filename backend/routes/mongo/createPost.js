@@ -62,7 +62,6 @@ app.get("/communityDetails", function (req, res, next) {
 
 app.post("/createPost", function (req, res, next) {
   let data = {};
-  req.body.community_id = "6092404e70b8163fc018816d";
   console.log("create post req.body = ", req.body);
   if (req.body.type == 0) {
     data = {
@@ -70,7 +69,7 @@ app.post("/createPost", function (req, res, next) {
       type: req.body.type,
       title: req.body.title,
       description: req.body.description,
-      userID: req.body.userID,
+      userID: req.body.user_id,
     };
   } else if (req.body.type == 1) {
     data = {
@@ -78,7 +77,7 @@ app.post("/createPost", function (req, res, next) {
       type: req.body.type,
       title: req.body.title,
       link: req.body.link,
-      userID: req.body.userID,
+      userID: req.body.user_id,
     };
   } else if (req.body.type == 2) {
     data = {
@@ -86,7 +85,7 @@ app.post("/createPost", function (req, res, next) {
       type: req.body.type,
       title: req.body.title,
       postImageUrl: req.body.postImageUrl,
-      userID: req.body.userID,
+      userID: req.body.user_id,
     };
   }
   new Post(data).save((err, result) => {
