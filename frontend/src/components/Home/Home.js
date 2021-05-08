@@ -8,8 +8,37 @@ import { getMongoUserID } from "../../services/ControllerUtils";
 class Home extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      searchText:this.getSearchQueryFromLocation(),
+    };
     console.log("PROPS IN HOME", this.props);
+  }
+  getSearchQueryFromLocation = () => {
+    const qR = new URLSearchParams(this.props.location.search);
+    return qR.get("q") || "";    
+  }
+  componentDidUpdate(prevProps) {
+    if(prevProps.location.search != this.props.location.search){
+      this.setState({
+        searchText: this.getSearchQueryFromLocation()
+      },()=>{
+        let data ={
+          search : this.state.searchText,
+          user_id: getMongoUserID(),
+        }
+        this.props.setLoader();
+        Axios.post(backendServer + "/searchForPosts", data)
+          .then((result) => {
+            this.props.unsetLoader();
+            this.setState({ dataOfPosts: result.data });
+            console.log(result);
+          })
+          .catch((err) => {
+            this.props.unsetLoader();
+            console.log(err);
+          });
+      })
+    }
   }
   componentDidMount(){
     this.getDashboardData();

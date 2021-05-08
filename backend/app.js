@@ -7,7 +7,7 @@ const s3 = require("./routes/awsS3");
 const app = express();
 const { frontEnd } = require("./Util/config");
 // DB connection
-// require("./dbConnection");
+require("./dbConnection");
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));

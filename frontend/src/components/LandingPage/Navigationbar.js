@@ -43,8 +43,13 @@ class Navigationbar extends Component {
         pathname: "/communitysearch",
         search: "?" + new URLSearchParams({ q: this.state.search }).toString(),
       });
-    } else {
+    } else if(pathname === "/home") {
       // Write logic for posts search
+      this.props.history.push({
+        pathname: "/home",
+        search: "?" + new URLSearchParams({ q: this.state.search }).toString(),
+      });
+      console.log(this.state.search)
     }
   };
   hideModal = () => {
