@@ -139,10 +139,7 @@ class MyCommunities extends Component {
             </Row>
             <Card.Footer className="text-right">
               <Link
-                to={{
-                  pathname: `/community/${community._id}`,
-                  state: { comm_id: community._id }
-                }}
+                to={`/community/${community._id}`}
               >
                 <Button className="createCommunity">View More Details</Button>
               </Link>

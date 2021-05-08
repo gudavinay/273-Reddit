@@ -133,7 +133,7 @@ class Main extends Component {
             <Route path="/community/:community_id">
               <Community {...this.state} {...this.props} />
             </Route>
-            <Route path="/createPost">
+            <Route path="/createPost/:community_id">
               <CreatePost {...this.state} {...this.props} />
             </Route>
             <Route path="/communitysearch">

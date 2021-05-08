@@ -14,7 +14,7 @@ class CreatePost extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            community_id: props.location.params,
+            community_id: props.location.pathname ? this.props.location.pathname.replace("/createPost/", "") : "",
             type: "0",
             title: null,
             link: null,

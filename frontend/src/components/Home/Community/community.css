@@ -63,3 +63,49 @@
   fill: var(--newRedditTheme-actionIcon);
   margin: 3px;
 }
+
+.communityHeaderInfo{
+  background: linear-gradient(to bottom, #ff78543d, transparent);
+  padding: 0 12%;
+  padding-top: 1%;
+}
+
+@keyframes swirl-in-fwd {
+  0% {
+    transform: rotate(0deg) scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes swirl-in-bwd {
+  0% {
+    transform: rotate(0deg) scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: rotate(-360deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.upArrowRotate{
+  animation: swirl-in-fwd 0.6s ease-out both ;
+}
+
+.fa-angle-double-down:hover:hover{
+  color:#373C3F;
+  transform: scale(1.5);
+}
+
+.fa-angle-double-up:hover:hover{
+  color:#373C3F;;
+  transform: scale(1.5);
+}
+
+.downArrowRotate{
+  animation: swirl-in-bwd 0.6s ease-out both;
+}

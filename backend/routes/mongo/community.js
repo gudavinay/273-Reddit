@@ -207,4 +207,53 @@ app.post("/removeUserFromCommunities", (req, res) => {
   }
 });
 
+
+app.post("/userJoinRequestToCommunity", (req, res) => {
+  console.log(req.body);
+  try {
+    Community.findOneAndUpdate(
+      { _id: req.body.community_id },
+      {
+        $push: { listOfUsers: [{ userID: req.body.user_id }] },
+      },
+      {
+        new: true
+      },
+      (err, result) => {
+        if (err) {
+          res.status(500).send(err);
+        } else {
+          res.status(200).send(result.data);
+        }
+      }
+    );
+  } catch (err) {
+    res.status(400).end();
+  }
+});
+
+app.post("/userLeaveRequestFromCommunity", (req, res) => {
+  console.log(req.body);
+  try {
+    Community.findOneAndUpdate(
+      { _id: req.body.community_id },
+      {
+        $pop: { listOfUsers: [{ userID: req.body.user_id }] },
+      },
+      {
+        new: true
+      },
+      (err, result) => {
+        if (err) {
+          res.status(500).send(err);
+        } else {
+          res.status(200).send(result.data);
+        }
+      }
+    );
+  } catch (err) {
+    res.status(400).end();
+  }
+});
+
 module.exports = router;
