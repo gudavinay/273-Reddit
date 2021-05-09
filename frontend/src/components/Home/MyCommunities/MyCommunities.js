@@ -12,9 +12,6 @@ import {
 import { Link, Redirect } from "react-router-dom";
 import backendServer from "../../../webConfig";
 import "./mycommunity.css";
-import image1 from "../../../assets/CommunityImage1.jpeg";
-import image2 from "../../../assets/CommunityImage2.jpeg";
-import image3 from "../../../assets/CommunityImage3.jpeg";
 import {
   getMongoUserID,
   sortByTime,
@@ -22,6 +19,7 @@ import {
   sortByPost
 } from "../../../services/ControllerUtils";
 import { TablePagination } from "@material-ui/core";
+import NoImage from "../../../assets/NoImage.png";
 
 class MyCommunities extends Component {
   constructor(props) {
@@ -161,6 +159,7 @@ class MyCommunities extends Component {
   render() {
     let redirectVar = null;
     let myCommunities = null;
+    let imageCaraosel = null;
     if (this.state.success)
       redirectVar = (
         <Redirect
@@ -171,25 +170,30 @@ class MyCommunities extends Component {
       );
     if (this.state.myCommunity.length > 0) {
       myCommunities = this.state.myCommunity.map((community, idx) => {
+        if (community.imageURL.length > 0) {
+          imageCaraosel = community.imageURL.map((image, idx) => {
+            return (
+              <Carousel.Item key={idx} interval={1000}>
+                <img
+                  className="myCarasoulSize"
+                  src={image.url}
+                  alt="First slide"
+                />
+              </Carousel.Item>
+            );
+          });
+        } else {
+          imageCaraosel = (
+            <Carousel.Item interval={1000}>
+              <img className="myCarasoulSize" src={NoImage} alt="First slide" />
+            </Carousel.Item>
+          );
+        }
         return (
           <Card key={idx}>
             <Row>
               <Col xs={4}>
-                <Carousel>
-                  <Carousel.Item interval={1000}>
-                    <img
-                      className="myCarasoulSize"
-                      src={image1}
-                      alt="First slide"
-                    />
-                  </Carousel.Item>
-                  <Carousel.Item interval={1000}>
-                    <img className="myCarasoulSize" src={image2} />
-                  </Carousel.Item>
-                  <Carousel.Item interval={1000}>
-                    <img className="myCarasoulSize" src={image3} />
-                  </Carousel.Item>
-                </Carousel>
+                <Carousel>{imageCaraosel}</Carousel>
               </Col>
               <Col xs={6}>
                 <p>

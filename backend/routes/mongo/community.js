@@ -14,7 +14,6 @@ app.post("/addCommunity", function (req, res, next) {
     });
   });
   let community = new Community({
-    communityIDSQL: req.body.communityIDSQL,
     communityName: req.body.communityName,
     communityDescription: req.body.communityDescription,
     ownerID: req.body.ownerID,
@@ -64,7 +63,7 @@ app.get("/myCommunity", async function (req, res) {
                 _id: community._id,
                 communityName: community.communityName,
                 communityDescription: community.communityDescription,
-                imageURL: community.communityImages,
+                imageURL: community.imageURL,
                 listOfUsers: community.listOfUsers,
                 count: postResult.length,
                 createdAt: community.createdAt,

@@ -23,8 +23,8 @@ class CreateCommunity extends Component {
       communityName: props.location.pathname
         ? this.props.location.pathname.replace("/createCommunity/", "")
         : "",
-      //communityName: "",
       communityImages: [],
+      uploadedImage: [],
       listOfTopics: [],
       selectedTopic: [],
       communityDescription: "",
@@ -39,14 +39,24 @@ class CreateCommunity extends Component {
   OnImageUpload = e => {
     e.preventDefault();
     let data = new FormData();
-    console.log(e.target.files[0]);
-    data.append("file", e.target.files[0]);
+    this.state.communityImages.map(commImage => {
+      data.append("file", commImage);
+    });
     this.props.setLoader();
     axios
       .post(`${backendServer}/upload`, data)
       .then(response => {
         this.props.unsetLoader();
-        console.log(response);
+        const images = this.state.uploadedImage;
+        console.log(response.data);
+        response.data.map(data => {
+          images.push({ url: data.Location });
+        });
+        this.setState({
+          uploadedImage: images,
+          communityImages: []
+        });
+        console.log(images);
       })
       .catch(error => {
         this.props.unsetLoader();
@@ -61,7 +71,7 @@ class CreateCommunity extends Component {
       ownerID: ownerID,
       communityName: this.state.communityName,
       communityDescription: this.state.communityDescription,
-      communityImages: this.state.communityImages,
+      communityImages: this.state.uploadedImage,
       selectedTopic: this.state.selectedTopic,
       listOfRules: this.state.listOfRule
     };
@@ -91,7 +101,6 @@ class CreateCommunity extends Component {
         this.setState({
           listOfTopics: response.data
         });
-        console.log(this.state.listOfTopics);
       })
       .catch(error => {
         this.setState({
@@ -101,15 +110,21 @@ class CreateCommunity extends Component {
   }
 
   handleTopicSelection = topic => {
-    this.setState(prevState => ({
-      selectedTopic: [
-        ...prevState.selectedTopic,
-        {
-          topic: topic.topic,
-          topic_id: topic.topic_id
-        }
-      ]
-    }));
+    const findTopic = this.state.selectedTopic.find(
+      x => x.topic_id == topic.topic_id
+    );
+    if (typeof findTopic == "undefined") {
+      this.setState(prevState => ({
+        selectedTopic: [
+          ...prevState.selectedTopic,
+          {
+            topic: topic.topic,
+            topic_id: topic.topic_id
+          }
+        ]
+      }));
+    }
+
     console.log(this.state.selectedTopic);
   };
   handleAddRule = e => {
@@ -164,10 +179,30 @@ class CreateCommunity extends Component {
     });
   };
 
+  uploadMultipleFiles = e => {
+    console.log(e.target.files);
+    let communityImage = this.state.communityImages;
+    Array.prototype.forEach.call(e.target.files, function (file) {
+      communityImage.push(file);
+    });
+    this.setState({
+      communityImages: communityImage
+    });
+  };
+
   render() {
     let dropDownItem = null;
     let selectedTopic = null;
     let rules = null;
+    let imageUpload = null;
+    if (this.state.uploadedImage.length > 0) {
+      imageUpload = this.state.uploadedImage.map((image, idx) => {
+        console.log(image.url);
+        return (
+          <img width={80} height={60} key={idx} src={image.url} alt="..." />
+        );
+      });
+    }
     if (this.state.listOfTopics != null && this.state.listOfTopics.length > 0) {
       dropDownItem = this.state.listOfTopics.map(topic => {
         return (
@@ -285,17 +320,18 @@ class CreateCommunity extends Component {
                   ></Form.Control>
                 </Form.Group>
                 <Form.Group>
-                  <Form.Label htmlFor="uploadImage" className="community-label">
-                    Upload Image
-                  </Form.Label>
                   <Form.Control
                     className="form-control"
                     type="file"
                     id="image"
                     name="image"
                     multiple
-                    onChange={this.OnImageUpload}
+                    onChange={this.uploadMultipleFiles}
                   ></Form.Control>
+                  <Button type="btn" onClick={this.OnImageUpload}>
+                    Upload
+                  </Button>
+                  <div className="form-group multi-preview">{imageUpload}</div>
                 </Form.Group>
                 <Form.Group className="text-center">
                   <Button
