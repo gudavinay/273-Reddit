@@ -1,18 +1,9 @@
 import React, { Component } from "react";
 import backendServer from "../../webConfig";
-import {
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  FormFeedback
-} from "reactstrap";
 import axios from "axios";
-import { isEmail } from "validator";
 import { connect } from "react-redux";
 import { signupRedux } from "../../reduxOps/reduxActions/signupRedux";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Form, Button } from "react-bootstrap";
 import "./../styles/loginStyle.css";
 import { Redirect } from "react-router-dom";
 import { SetLocalStorage } from "../../services/ControllerUtils";
@@ -84,17 +75,6 @@ class Signup extends Component {
     }
   }
 
-  validateForm = () => {
-    const { userInfo } = this.state;
-    let error = {};
-    if (userInfo.name === "") error.name = "First Name should not be blank";
-    if (!isEmail(userInfo.email)) error.email = "Please enter valid mail";
-    if (userInfo.email === "") error.email = "Email should not be blank";
-    if (userInfo.password === "")
-      error.password = "Password should not be blank";
-    return error;
-  };
-
   render() {
     let redirectVar = null;
     if (typeof this.props.user !== "undefined" && this.props.user.token) {
@@ -155,57 +135,54 @@ class Signup extends Component {
                 className="signupForm"
                 style={{ width: "45%" }}
               >
-                <FormGroup>
-                  <Label for="firstname">
+                <Form.Group>
+                  <Form.Label for="firstname">
                     Hi there! My <strong>Name</strong> is
-                  </Label>
-                  <Input
+                  </Form.Label>
+                  <Form.Control
                     type="text"
                     id="name"
                     name="name"
                     placeholder="First Name"
-                    invalid={this.state.error.name ? true : false}
                     onChange={this.handleChange}
-                  ></Input>
-                  <FormFeedback>{this.state.error.name}</FormFeedback>
-                </FormGroup>
-                <FormGroup>
-                  <Label htmlFor="email">
+                    required
+                  ></Form.Control>
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label htmlFor="email">
                     Here&apos;s my <strong>email address</strong>
-                  </Label>
-                  <Input
+                  </Form.Label>
+                  <Form.Control
                     data-testid="email-input-box"
                     type="email"
                     id="email"
                     name="email"
                     placeholder="Email"
                     onChange={this.handleChange}
-                    invalid={this.state.error.email ? true : false}
-                  ></Input>
-                  <FormFeedback>{this.state.error.email}</FormFeedback>
-                </FormGroup>
+                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                    title="Invalid email address"
+                    required
+                  ></Form.Control>
+                </Form.Group>
 
-                <FormGroup>
-                  <Label htmlFor="password">
+                <Form.Group>
+                  <Form.Label htmlFor="password">
                     And here&apos;s my <strong>password</strong>
-                  </Label>
-                  <Input
+                  </Form.Label>
+                  <Form.Control
                     type="password"
                     id="password"
                     name="password"
                     placeholder="Password"
                     onChange={this.handleChange}
-                    invalid={this.state.error.password ? true : false}
-                  ></Input>
-                  <FormFeedback>{this.state.error.password}</FormFeedback>
-                </FormGroup>
-                <FormGroup row>
-                  <Col>
-                    <Button type="submit" color="btn btn-primary">
-                      Sign me up!
-                    </Button>
-                  </Col>
-                </FormGroup>
+                    required
+                  ></Form.Control>
+                </Form.Group>
+                <Form.Group>
+                  <Button type="submit" color="btn btn-primary">
+                    Sign me up!
+                  </Button>
+                </Form.Group>
               </Form>
             </Col>
           </Row>

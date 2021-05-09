@@ -22,25 +22,25 @@ class MyCommunities extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: {},
+      error: "",
       success: false,
       communityName: "",
       myCommunity: [],
-      page: 1,
+      page: 0,
       size: 2,
       count: 0
     };
   }
 
-  getMyCommunities(page) {
+  getMyCommunities(page, size) {
     const ownerID = getMongoUserID();
     this.props.setLoader();
     console.log(
-      `${backendServer}/myCommunity?ID=${ownerID}&page=${page}&size=${this.state.size}`
+      `${backendServer}/myCommunity?ID=${ownerID}&page=${page}&size=${size}`
     );
     axios
       .get(
-        `${backendServer}/myCommunity?ID=${ownerID}&page=${page}&size=${this.state.size}`
+        `${backendServer}/myCommunity?ID=${ownerID}&page=${page}&size=${size}`
       )
       .then(response => {
         this.props.unsetLoader();
@@ -58,7 +58,7 @@ class MyCommunities extends Component {
   }
 
   componentDidMount() {
-    this.getMyCommunities(this.state.page);
+    this.getMyCommunities(this.state.page, this.state.size);
   }
 
   CheckIfTheCommunityCanBeCreated = e => {
@@ -71,33 +71,73 @@ class MyCommunities extends Component {
       .then(response => {
         if (response.status == 200) {
           this.setState({
-            success: true
+            success: true,
+            error: ""
+          });
+        } else if (response.status == 400) {
+          this.setState({
+            error: "Community name is not unique"
           });
         }
       })
-      .catch(error => console.log("error " + error));
-  };
-  PageSizeChange = e => {
-    console.log(e);
-    this.setState({
-      size: Number(e.target.value)
-    });
-    this.getMyCommunities();
+      .catch(e => {
+        console.log(e);
+        this.setState({
+          error: "Community name is not unique"
+        });
+      });
   };
 
-  PageChange = e => {
-    console.log(e);
+  PageSizeChange = e => {
     this.setState({
-      page: Number(e.target.textContent)
+      size: Number(e.target.value),
+      page: 0
     });
-    this.getMyCommunities(Number(e.target.textContent));
+    this.getMyCommunities(0, Number(e.target.value));
+  };
+
+  PageChange = (e, page) => {
+    this.setState({
+      page: Number(page)
+    });
+    this.getMyCommunities(Number(page), this.state.size);
+  };
+
+  deleteCommunity = (e, community) => {
+    e.preventDefault();
+    if (confirm("Are you sure you want to delete this comment?")) {
+      const data = {
+        community_id: community._id
+      };
+      axios
+        .post(`${backendServer}/deleteCommunity`, data)
+        .then(response => {
+          if (response.status == 200) {
+            let allCommunity = this.state.myCommunity;
+            allCommunity.pop(community);
+            this.setState({
+              mycommunity: allCommunity
+            });
+            alert("Community deleted successfully");
+          }
+        })
+        .catch(error => console.log("error " + error));
+    } else {
+      console.log("Not sure to delete the community");
+    }
   };
 
   render() {
     let redirectVar = null;
     let myCommunities = null;
     if (this.state.success)
-      redirectVar = <Redirect to="/createCommunity"></Redirect>;
+      redirectVar = (
+        <Redirect
+          to={{
+            pathname: `/createCommunity/${this.state.communityName}`
+          }}
+        />
+      );
     if (this.state.myCommunity.length > 0) {
       myCommunities = this.state.myCommunity.map((community, idx) => {
         return (
@@ -138,11 +178,17 @@ class MyCommunities extends Component {
               </Col>
             </Row>
             <Card.Footer className="text-right">
-              <Link
-                to={`/community/${community._id}`}
-              >
+              <Link to={`/community/${community._id}`}>
                 <Button className="createCommunity">View More Details</Button>
               </Link>
+              <button
+                type="button"
+                className="btn"
+                title="Delete Community"
+                onClick={e => this.deleteCommunity(e, community)}
+              >
+                <i className="fa fa-trash" aria-hidden="true"></i>
+              </button>
             </Card.Footer>
           </Card>
         );
@@ -156,19 +202,6 @@ class MyCommunities extends Component {
             <Col xs={8}>
               <div className="card">
                 {myCommunities}
-                {/* <div style={{ marginRight: "10px", fontSize: "12px" }}>
-                  Rows per page:
-                </div>
-                <div>
-                  <select
-                    name="pagesize"
-                    id="pagesize"
-                    onChange={this.PageSizeChange}
-                  >
-                    <option value="2">2</option>
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                  </select> */}
                 <TablePagination
                   count={this.state.count}
                   page={this.state.page}
@@ -180,13 +213,23 @@ class MyCommunities extends Component {
                   rowsPerPageOptions={[2, 5, 10]}
                 />
               </div>
-              {/* </div> */}
             </Col>
             <Col xs={4}>
               <Card>
-                <Card.Header>Create Community</Card.Header>
-                <Card.Body>
-                  <Form className="form-stacked">
+                <Form
+                  className="form-stacked"
+                  onSubmit={this.CheckIfTheCommunityCanBeCreated}
+                >
+                  <Card.Header>Create Community</Card.Header>
+                  <Card.Body>
+                    <div
+                      id="errorLogin"
+                      hidden={this.state.error != "" ? false : true}
+                      className="alert alert-danger"
+                      role="alert"
+                    >
+                      {this.state.error}
+                    </div>
                     <Form.Group>
                       <Form.Label className="community-label" htmlFor="name">
                         Name<sup>*</sup>
@@ -200,20 +243,15 @@ class MyCommunities extends Component {
                         }
                         aria-describedby="passwordHelpBlock"
                         required
-                      ></Form.Control>
+                      />
                     </Form.Group>
-                  </Form>
-                </Card.Body>
-                <Card.Footer className="text-center">
-                  <Link to="/createCommunity">
-                    <Button
-                      className="createCommunity"
-                      onClick={this.CheckIfTheCommunityCanBeCreated}
-                    >
+                  </Card.Body>
+                  <Card.Footer className="text-center">
+                    <Button type="submit" className="createCommunity">
                       Create Community
                     </Button>
-                  </Link>
-                </Card.Footer>
+                  </Card.Footer>
+                </Form>
               </Card>
             </Col>
           </Row>

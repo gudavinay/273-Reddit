@@ -245,22 +245,4 @@ app.post("/RequestedUsersForCom", async (req, res) => {
     });
 });
 
-app.post("/createMessage", async (req, res) => {
-  for (i = 0; i < 425; i++) {
-    let userProfile = new Message({
-      message: "Message" + i,
-      sent_by: 54,
-      sent_to: 53
-    });
-    userProfile.save((err, result) => {});
-  }
-  //res.end(result);
-});
-
-app.get("/getMessageMongo", async (req, res) => {
-  Message.find({}, (err, result) => {
-    res.send(result);
-  });
-});
-
 module.exports = router;

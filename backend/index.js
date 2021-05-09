@@ -3,12 +3,12 @@ const { port } = require("./Util/config");
 
 const mongoRouter = require("./routes/mongo/router");
 const sqlRouter = require("./routes/sql/router");
-// const kafkaSqlRouter = require("./kafkaRoutes/sql/router");
+//const kafkaSqlRouter = require("./kafkaRoutes/sql/router");
 // const kafkaMongoRouter = require("./kafkaRoutes/mongo/router")
 
 app.use("/mongoRouter", mongoRouter);
 app.use("/sqlRouter", sqlRouter);
-// app.use("/kafkaSqlRouter", kafkaSqlRouter);
+//app.use("/kafkaSqlRouter", kafkaSqlRouter);
 // app.use('/kafkaMongoRouter', kafkaMongoRouter)
 
 const sqldb = require("./models/sql");

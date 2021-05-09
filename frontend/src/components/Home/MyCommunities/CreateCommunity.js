@@ -16,14 +16,14 @@ import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 import { getMongoUserID } from "../../../services/ControllerUtils";
 
-// import { getTopicFromDB } from "../../../reduxOps/reduxActions/communityRedux";
-// import { connect } from "react-redux";
-
 class CreateCommunity extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      communityName: "",
+      communityName: props.location.pathname
+        ? this.props.location.pathname.replace("/createCommunity/", "")
+        : "",
+      //communityName: "",
       communityImages: [],
       listOfTopics: [],
       selectedTopic: [],
@@ -54,13 +54,13 @@ class CreateCommunity extends Component {
       });
   };
 
-  AddCommunityDataToDB(communityData) {
+  handleSubmit = e => {
+    e.preventDefault();
     const ownerID = getMongoUserID();
     const data = {
-      communityIDSQL: communityData.community_id,
       ownerID: ownerID,
-      communityName: communityData.name,
-      communityDescription: communityData.description,
+      communityName: this.state.communityName,
+      communityDescription: this.state.communityDescription,
       communityImages: this.state.communityImages,
       selectedTopic: this.state.selectedTopic,
       listOfRules: this.state.listOfRule
@@ -78,26 +78,11 @@ class CreateCommunity extends Component {
         this.props.unsetLoader();
         console.log("error " + error);
       });
-  }
+  };
 
   componentDidMount() {
     this.getTopicFromDB();
   }
-
-  handleSubmit = e => {
-    e.preventDefault();
-    const data = {
-      communityName: this.state.communityName,
-      communityDescription: this.state.communityDescription
-    };
-    axios
-      .post(`${backendServer}/createCommunity`, data)
-      .then(response => {
-        console.log(response.data);
-        this.AddCommunityDataToDB(response.data);
-      })
-      .catch(error => console.log("error " + error));
-  };
 
   async getTopicFromDB() {
     await axios
@@ -261,6 +246,7 @@ class CreateCommunity extends Component {
                     type="text"
                     id="name"
                     name="name"
+                    value={this.state.communityName}
                     onChange={e =>
                       this.setState({ communityName: e.target.value })
                     }

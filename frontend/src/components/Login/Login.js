@@ -1,19 +1,10 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
-import { isEmail } from "validator";
 import axios from "axios";
 import backendServer from "../../webConfig";
-import {
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  FormFeedback
-} from "reactstrap";
 import { connect } from "react-redux";
 import { loginRedux } from "../../reduxOps/reduxActions/loginRedux";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Form, Button } from "react-bootstrap";
 import "./../styles/loginStyle.css";
 import { SetLocalStorage } from "../../services/ControllerUtils";
 
@@ -23,24 +14,12 @@ class Login extends Component {
     {
       this.state = {
         error: "",
-        formerror: "",
         authFlag: "",
         redirect: null,
         token: ""
       };
     }
   }
-
-  validateForm = () => {
-    const userInfo = this.state;
-    let error = {};
-
-    if (!isEmail(userInfo.email)) error.email = "Please enter valid mail";
-    if (userInfo.email === "") error.email = "Email should not be blank";
-    if (userInfo.password === "")
-      error.password = "Password should not be blank";
-    return error;
-  };
 
   emailEventHandler = e => {
     this.setState({
@@ -61,13 +40,8 @@ class Login extends Component {
       email: this.state.email,
       password: this.state.password
     };
-    const formerror = this.validateForm();
-    if (Object.keys(formerror).length == 0) {
-      this.props.loginRedux(data);
-      //set the with credentials to true
-    } else {
-      this.setState({ formerror });
-    }
+    this.props.loginRedux(data);
+    //set the with credentials to true
   };
 
   getUserProfile() {
@@ -159,46 +133,44 @@ class Login extends Component {
               style={{ width: "45%" }}
               onSubmit={this.submitForm}
             >
-              <FormGroup>
-                <Label htmlFor="email" className="Lable-align">
+              <Form.Group>
+                <Form.Label htmlFor="email" className="Lable-align">
                   Email address
-                </Label>
-                <Input
+                </Form.Label>
+                <Form.Control
                   data-testid="email-input-box"
                   type="email"
                   id="email"
                   name="email"
                   placeholder="Email"
                   onChange={this.emailEventHandler}
-                  invalid={this.state.formerror.email ? true : false}
-                ></Input>
-                <FormFeedback>{this.state.formerror.email}</FormFeedback>
-              </FormGroup>
+                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                  title="Invalid email address"
+                  required
+                ></Form.Control>
+              </Form.Group>
 
-              <FormGroup>
-                <Label htmlFor="password">Password</Label>
-                <Input
+              <Form.Group>
+                <Form.Label htmlFor="password">Password</Form.Label>
+                <Form.Control
                   type="password"
                   id="password"
                   name="password"
                   placeholder="Password"
                   onChange={this.passEventHandler}
-                  invalid={this.state.formerror.password ? true : false}
-                ></Input>
-                <FormFeedback>{this.state.formerror.password}</FormFeedback>
-              </FormGroup>
-              <FormGroup row>
-                <Col>
-                  <Button
-                    data-testid="btn-submit"
-                    type="submit"
-                    className="btn btn-Login"
-                    color="btn btn-primary"
-                  >
-                    Login
-                  </Button>
-                </Col>
-              </FormGroup>
+                  required
+                ></Form.Control>
+              </Form.Group>
+              <Form.Group>
+                <Button
+                  data-testid="btn-submit"
+                  type="submit"
+                  className="btn btn-Login"
+                  color="btn btn-primary"
+                >
+                  Login
+                </Button>
+              </Form.Group>
             </Form>
 
             <div style={{ fontSize: "13px" }}>

@@ -8,9 +8,9 @@ const Promise = require("bluebird");
 
 app.post("/addCommunity", function (req, res, next) {
   let topicList = [];
-  req.body.selectedTopic.map((topic) => {
+  req.body.selectedTopic.map(topic => {
     topicList.push({
-      topic: topic.topic,
+      topic: topic.topic
     });
   });
   let community = new Community({
@@ -20,7 +20,7 @@ app.post("/addCommunity", function (req, res, next) {
     ownerID: req.body.ownerID,
     topicSelected: topicList,
     imageURL: req.body.communityImages,
-    rules: req.body.listOfRules,
+    rules: req.body.listOfRules
   });
   community.save((error, data) => {
     if (error) {
@@ -36,7 +36,6 @@ app.get("/myCommunity", async function (req, res) {
   let data = [];
   let { page, size, ID } = req.query;
   let skip = 0;
-  page = page - 1;
   if (page == 0) {
     skip = 0;
   } else {
@@ -57,7 +56,7 @@ app.get("/myCommunity", async function (req, res) {
           res.status(200).send(result);
         }
         const findResult = JSON.parse(JSON.stringify(result));
-        findResult.map((community) => {
+        findResult.map(community => {
           Post.find({ communityID: community._id }).then(
             (postResult, error) => {
               console.log(JSON.stringify(postResult.length));
@@ -68,7 +67,7 @@ app.get("/myCommunity", async function (req, res) {
                 imageURL: community.communityImages,
                 listOfUsers: community.listOfUsers,
                 count: postResult.length,
-                totalRecords: recordCount,
+                totalRecords: recordCount
               });
               console.log(JSON.stringify(data));
               if (result.length == data.length) {
@@ -82,7 +81,7 @@ app.get("/myCommunity", async function (req, res) {
 });
 
 app.get("/getCommunityDetails", async (req, res) => {
-  await Community.findOne({ _id: req.query.ID }).then((result) => {
+  await Community.findOne({ _id: req.query.ID }).then(result => {
     res.status(200).send(result);
   });
 });
@@ -92,23 +91,23 @@ app.get("/getCommunitiesForOwner", async (req, res) => {
   let count = await Community.countDocuments({
     $and: [
       { ownerID: req.query.ID },
-      { communityName: { $regex: req.query.search } },
-    ],
+      { communityName: { $regex: req.query.search } }
+    ]
   });
   // console.log(count);
   await Community.find({
     $and: [
       { ownerID: req.query.ID },
-      { communityName: { $regex: req.query.search, $options: "i" } },
-    ],
+      { communityName: { $regex: req.query.search, $options: "i" } }
+    ]
   })
     .populate("listOfUsers.userID")
     .limit(Number(req.query.size))
     .skip(skip)
     .sort({ createdAt: 1 })
-    .then((result) => {
+    .then(result => {
       let output = [];
-      result.forEach((item) => {
+      result.forEach(item => {
         let usersIdOfSQL = [];
         let acceptedIdOfSQL = [];
         for (let i = 0; i < item.listOfUsers.length; i++) {
@@ -137,13 +136,13 @@ app.get("/getCommunitiesForOwner", async (req, res) => {
 
 app.get("/getUsersForCommunitiesForOwner", (req, res) => {
   Community.find({
-    ownerID: req.query.ID,
+    ownerID: req.query.ID
   })
     .populate("listOfUsers.userID")
-    .then((result) => {
+    .then(result => {
       let output = new Set();
-      result.forEach((item) => {
-        item.listOfUsers.forEach((temp) => {
+      result.forEach(item => {
+        item.listOfUsers.forEach(temp => {
           if (temp.isAccepted) {
             output.add(Number(temp.userID.userIDSQL));
           }
@@ -156,12 +155,12 @@ app.get("/getUsersForCommunitiesForOwner", (req, res) => {
 app.post("/acceptUsersToCommunity", (req, res) => {
   console.log(req.body);
   try {
-    Promise.mapSeries(req.body.userList, (item) => {
+    Promise.mapSeries(req.body.userList, item => {
       console.log(item);
       return Community.findOneAndUpdate(
         {
           _id: req.body.communityID,
-          "listOfUsers.userID": item,
+          "listOfUsers.userID": item
         },
         { $set: { "listOfUsers.$.isAccepted": true } }
       );
@@ -175,7 +174,7 @@ app.post("/acceptUsersToCommunity", (req, res) => {
 
 app.get("/getCommunitiesForUser", (req, res) => {
   // console.log(req.body, req.query.ID, "********");
-  Community.find({ "listOfUsers.userID": req.query.ID }).then((result) => {
+  Community.find({ "listOfUsers.userID": req.query.ID }).then(result => {
     res.status(200).send(result);
   });
 });
@@ -183,10 +182,10 @@ app.get("/getCommunitiesForUser", (req, res) => {
 app.post("/removeUserFromCommunities", (req, res) => {
   console.log(req.body);
   try {
-    Promise.mapSeries(req.body.commList, (item) => {
+    Promise.mapSeries(req.body.commList, item => {
       return Community.findOneAndUpdate(
         {
-          _id: item,
+          _id: item
         },
         { $pull: { listOfUsers: { userID: req.body.userID } } },
         { useFindAndModify: false }
@@ -194,11 +193,11 @@ app.post("/removeUserFromCommunities", (req, res) => {
     }).then(async () => {
       await Post.deleteMany({
         communityID: { $in: req.body.commList },
-        userID: req.body.userID,
+        userID: req.body.userID
       });
       await Comment.deleteMany({
         communityID: { $in: req.body.commList },
-        userID: req.body.userID,
+        userID: req.body.userID
       });
       res.status(200).end();
     });
@@ -207,14 +206,13 @@ app.post("/removeUserFromCommunities", (req, res) => {
   }
 });
 
-
 app.post("/userJoinRequestToCommunity", (req, res) => {
   console.log(req.body);
   try {
     Community.findOneAndUpdate(
       { _id: req.body.community_id },
       {
-        $push: { listOfUsers: [{ userID: req.body.user_id }] },
+        $push: { listOfUsers: [{ userID: req.body.user_id }] }
       },
       {
         new: true
@@ -238,7 +236,7 @@ app.post("/userLeaveRequestFromCommunity", (req, res) => {
     Community.findOneAndUpdate(
       { _id: req.body.community_id },
       {
-        $pop: { listOfUsers: [{ userID: req.body.user_id }] },
+        $pop: { listOfUsers: [{ userID: req.body.user_id }] }
       },
       {
         new: true
@@ -254,6 +252,36 @@ app.post("/userLeaveRequestFromCommunity", (req, res) => {
   } catch (err) {
     res.status(400).end();
   }
+});
+
+app.post("/deleteCommunity", (req, res) => {
+  try {
+    Community.findOneAndDelete({ _id: req.body.community_id }).then(
+      async () => {
+        await Post.deleteMany({ communityID: req.body.community_id });
+        await Comment.deleteMany({ communityID: req.body.community_id });
+        res.status(200).end();
+      }
+    );
+  } catch (err) {
+    res.status(400).end();
+  }
+});
+
+app.post("/checkForUniqueCommunity", async function (req, res) {
+  await Community.find({
+    communityName: req.body.communityName
+  })
+    .then(result => {
+      if (result.length > 0) {
+        res.status(400).send("Community is already registered");
+      } else {
+        res.status(200).send();
+      }
+    })
+    .catch(err => {
+      res.status(500).send(err);
+    });
 });
 
 module.exports = router;

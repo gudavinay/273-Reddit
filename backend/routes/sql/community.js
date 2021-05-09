@@ -32,17 +32,4 @@ app.post("/createCommunity", async (req, res) => {
   }
 });
 
-app.post("/checkForUniqueCommunity", async function (req, res) {
-  const findCommunity = await db.Community.findAll({
-    where: {
-      name: req.body.communityName
-    }
-  });
-  if (findCommunity.length > 0) {
-    res.status(500).send("Community is already registered");
-  } else {
-    res.status(200).send();
-  }
-});
-
 module.exports = router;

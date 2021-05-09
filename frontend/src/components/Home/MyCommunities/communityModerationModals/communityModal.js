@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { Component } from "react";
-import { Row } from "react-bootstrap";
-import { Col } from "reactstrap";
+import { Row, Col } from "react-bootstrap";
 import backendServer from "../../../../webConfig";
 
 class CommunityModal extends Component {
@@ -10,7 +9,7 @@ class CommunityModal extends Component {
     this.state = {
       communityDetails: null,
       users: null,
-      acceptedList: [],
+      acceptedList: []
     };
   }
 
@@ -19,7 +18,7 @@ class CommunityModal extends Component {
       await axios
         .post(backendServer + "/acceptUsersToCommunity", {
           communityID: this.props.comm_id,
-          userList: this.state.acceptedList,
+          userList: this.state.acceptedList
         })
         .then(() => {
           this.fetchUsers();
@@ -31,30 +30,30 @@ class CommunityModal extends Component {
     // this.props.setLoader();
     await axios
       .get(`${backendServer}/getCommunityDetails?ID=${this.props.comm_id}`)
-      .then(async (response) => {
+      .then(async response => {
         //   this.props.unsetLoader();
         this.setState({ communityDetails: response.data });
         let userList = [];
-        response.data.listOfUsers.forEach((item) => {
+        response.data.listOfUsers.forEach(item => {
           userList.push(item.userID);
         });
         console.log(userList);
         if (userList.length > 0) {
           await axios
             .post(backendServer + "/RequestedUsersForCom", {
-              usersList: userList,
+              usersList: userList
             })
-            .then((res) => {
+            .then(res => {
               console.log(res.data);
               this.setState({ users: res.data });
             })
-            .catch((err) => {
+            .catch(err => {
               // this.props.unsetLoader();
               console.log(err);
             });
         }
       })
-      .catch((err) => {
+      .catch(err => {
         //   this.props.unsetLoader();
         console.log(err);
       });
@@ -71,7 +70,7 @@ class CommunityModal extends Component {
     let acceptedUsers = [];
     let counter = 1;
     this.state.communityDetails
-      ? this.state.communityDetails.listOfUsers.forEach((item) => {
+      ? this.state.communityDetails.listOfUsers.forEach(item => {
           if (!item.isAccepted) {
             let data = this.state.users ? this.state.users[item.userID] : {};
             requestedUsers.push(
@@ -85,7 +84,7 @@ class CommunityModal extends Component {
                   style={{
                     display: "flex",
                     flexDirection: "column",
-                    justifyContent: "center",
+                    justifyContent: "center"
                   }}
                 >
                   <input
@@ -98,7 +97,7 @@ class CommunityModal extends Component {
                         arr.push(item.userID);
                       }
                       this.setState({
-                        acceptedList: arr,
+                        acceptedList: arr
                       });
                     }}
                   />
@@ -106,7 +105,7 @@ class CommunityModal extends Component {
                 <div
                   className="col"
                   style={{
-                    display: "flex",
+                    display: "flex"
                   }}
                 >
                   <div
@@ -117,7 +116,7 @@ class CommunityModal extends Component {
                       backgroundColor: "#ccc",
                       borderRadius: "5px",
                       border: "1px solid #777",
-                      margin: "0 15px",
+                      margin: "0 15px"
                     }}
                   >
                     .
@@ -126,7 +125,7 @@ class CommunityModal extends Component {
                     style={{
                       display: "flex",
                       flexDirection: "column",
-                      justifyContent: "center",
+                      justifyContent: "center"
                     }}
                   >
                     u/{data.name}
@@ -147,7 +146,7 @@ class CommunityModal extends Component {
                   style={{
                     display: "flex",
                     flexDirection: "column",
-                    justifyContent: "center",
+                    justifyContent: "center"
                   }}
                 >
                   {counter}.
@@ -155,7 +154,7 @@ class CommunityModal extends Component {
                 <div
                   className="col"
                   style={{
-                    display: "flex",
+                    display: "flex"
                   }}
                 >
                   <div
@@ -166,7 +165,7 @@ class CommunityModal extends Component {
                       backgroundColor: "#ccc",
                       borderRadius: "5px",
                       border: "1px solid #777",
-                      margin: "0 15px",
+                      margin: "0 15px"
                     }}
                   >
                     .
@@ -175,7 +174,7 @@ class CommunityModal extends Component {
                     style={{
                       display: "flex",
                       flexDirection: "column",
-                      justifyContent: "center",
+                      justifyContent: "center"
                     }}
                   >
                     u/{data.name}
@@ -197,7 +196,7 @@ class CommunityModal extends Component {
             style={{
               fontWeight: "700",
               fontSize: "24px",
-              marginBottom: "50px",
+              marginBottom: "50px"
             }}
           >
             r/
@@ -214,7 +213,7 @@ class CommunityModal extends Component {
                   padding: "10px 0",
                   border: "1px solid #ddd",
                   margin: "0 5px",
-                  borderRadius: "5px",
+                  borderRadius: "5px"
                 }}
               >
                 User requests for joining the community
@@ -227,7 +226,7 @@ class CommunityModal extends Component {
                   margin: "0 5px",
                   maxHeight: "350px",
                   height: "100%",
-                  overflow: "scroll",
+                  overflow: "scroll"
                 }}
               >
                 <div>
@@ -239,7 +238,7 @@ class CommunityModal extends Component {
                         color: "#777",
                         textAlign: "center",
                         fontSize: "14px",
-                        marginTop: "160px",
+                        marginTop: "160px"
                       }}
                     >
                       --- no data to display ---
@@ -261,7 +260,7 @@ class CommunityModal extends Component {
                   padding: "10px 0",
                   border: "1px solid #ddd",
                   borderRadius: "5px",
-                  margin: "0 5px",
+                  margin: "0 5px"
                 }}
               >
                 Users already part of the community
@@ -274,7 +273,7 @@ class CommunityModal extends Component {
                   margin: "0 5px",
                   maxHeight: "350px",
                   height: "100%",
-                  overflow: "scroll",
+                  overflow: "scroll"
                 }}
               >
                 <div>
@@ -286,7 +285,7 @@ class CommunityModal extends Component {
                         color: "#777",
                         textAlign: "center",
                         fontSize: "14px",
-                        marginTop: "160px",
+                        marginTop: "160px"
                       }}
                     >
                       --- no data to display ---
