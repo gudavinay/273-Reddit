@@ -216,6 +216,11 @@ class MyCommunities extends Component {
               <Link to={`/community/${community._id}`}>
                 <Button className="createCommunity">View More Details</Button>
               </Link>
+              <Link to={`/createCommunity?id=${community._id}`}>
+                <button type="button" className="btn" title="Edit Community">
+                  <i className="fas fa-edit"></i>
+                </button>
+              </Link>
               <button
                 type="button"
                 className="btn"
@@ -239,7 +244,7 @@ class MyCommunities extends Component {
                 <Card.Header>
                   <Row>
                     <Col xs={2}>Sort By</Col>
-                    <Col xs={3}>
+                    <Col xs={3} style={{ marginLeft: "-80px" }}>
                       <select
                         className="form-control"
                         onChange={this.SortItems}
@@ -296,10 +301,12 @@ class MyCommunities extends Component {
                         type="text"
                         id="name"
                         name="name"
+                        onKeyDown={evt =>
+                          evt.key === " " && evt.preventDefault()
+                        }
                         onChange={e =>
                           this.setState({ communityName: e.target.value })
                         }
-                        aria-describedby="passwordHelpBlock"
                         required
                       />
                     </Form.Group>

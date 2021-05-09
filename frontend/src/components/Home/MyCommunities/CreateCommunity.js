@@ -32,7 +32,8 @@ class CreateCommunity extends Component {
       title: "",
       rulesDescription: "",
       addEditButton: "Add Rule",
-      editRule: {}
+      editRule: {},
+      communityID: ""
     };
   }
 
@@ -64,18 +65,7 @@ class CreateCommunity extends Component {
       });
   };
 
-  handleSubmit = e => {
-    e.preventDefault();
-    const ownerID = getMongoUserID();
-    const data = {
-      ownerID: ownerID,
-      communityName: this.state.communityName,
-      communityDescription: this.state.communityDescription,
-      communityImages: this.state.uploadedImage,
-      selectedTopic: this.state.selectedTopic,
-      listOfRules: this.state.listOfRule
-    };
-    this.props.setLoader();
+  createCommunity(data) {
     axios
       .post(`${backendServer}/addCommunity`, data)
       .then(response => {
@@ -88,10 +78,70 @@ class CreateCommunity extends Component {
         this.props.unsetLoader();
         console.log("error " + error);
       });
+  }
+
+  editCommunity(data) {
+    data.ID = this.state.communityID;
+    axios
+      .post(`${backendServer}/editCommunity`, data)
+      .then(response => {
+        this.props.unsetLoader();
+        if (response.status == 200) {
+          alert("Community Updated successfully");
+        }
+      })
+      .catch(error => {
+        this.props.unsetLoader();
+        console.log("error " + error);
+      });
+  }
+
+  handleSubmit = e => {
+    e.preventDefault();
+    const ownerID = getMongoUserID();
+    const data = {
+      ownerID: ownerID,
+      communityName: this.state.communityName,
+      communityDescription: this.state.communityDescription,
+      communityImages: this.state.uploadedImage,
+      selectedTopic: this.state.selectedTopic,
+      listOfRules: this.state.listOfRule
+    };
+    this.props.setLoader();
+    if (this.state.communityID == "") {
+      this.createCommunity(data);
+    } else {
+      this.editCommunity(data);
+    }
   };
 
   componentDidMount() {
+    const query = new URLSearchParams(this.props.location.search);
+    const id = query.get("id");
+    if (id != null) {
+      this.setState({ communityID: id });
+      this.getCommunityDataToEdit(id);
+    }
     this.getTopicFromDB();
+  }
+
+  async getCommunityDataToEdit(id) {
+    await axios
+      .get(`${backendServer}/getCommunityDetails?ID=${id}`)
+      .then(response => {
+        this.setState({
+          communityName: response.data.communityName,
+          uploadedImage: response.data.imageURL,
+          selectedTopic: response.data.topicSelected,
+          communityDescription: response.data.communityDescription,
+          listOfRule: response.data.rules
+        });
+      })
+      .catch(error => {
+        this.setState({
+          error: error
+        });
+      });
   }
 
   async getTopicFromDB() {
@@ -271,7 +321,11 @@ class CreateCommunity extends Component {
             >
               <Form onSubmit={this.handleSubmit} className="form-stacked">
                 <Form.Label>
-                  <b>Create a community</b>
+                  <b>
+                    {this.state.communityID != ""
+                      ? "Edit a Community"
+                      : "Create a Community"}
+                  </b>
                 </Form.Label>
                 <Form.Group>
                   <Form.Label className="community-label" htmlFor="name">
@@ -281,6 +335,7 @@ class CreateCommunity extends Component {
                     type="text"
                     id="name"
                     name="name"
+                    onKeyDown={evt => evt.key === " " && evt.preventDefault()}
                     value={this.state.communityName}
                     onChange={e =>
                       this.setState({ communityName: e.target.value })
@@ -313,6 +368,7 @@ class CreateCommunity extends Component {
                     type="textarea"
                     id="description"
                     name="description"
+                    value={this.state.communityDescription}
                     onChange={e =>
                       this.setState({ communityDescription: e.target.value })
                     }
@@ -340,7 +396,9 @@ class CreateCommunity extends Component {
                     onClick={this.handleSubmit}
                     color="btn btn-primary"
                   >
-                    Create Community
+                    {this.state.communityID == ""
+                      ? " Create Community"
+                      : " Edit Community"}
                   </Button>
                 </Form.Group>
               </Form>

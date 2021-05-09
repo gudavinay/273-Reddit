@@ -31,6 +31,32 @@ app.post("/addCommunity", function (req, res, next) {
   });
 });
 
+app.post("/editCommunity", async (req, res) => {
+  let topicList = [];
+  req.body.selectedTopic.map(topic => {
+    topicList.push({
+      topic: topic.topic
+    });
+  });
+  const filter = { _id: req.body.ID };
+  const updateDoc = {
+    $set: {
+      communityName: req.body.communityName,
+      communityDescription: req.body.communityDescription,
+      topicSelected: topicList,
+      imageURL: req.body.communityImages,
+      rules: req.body.listOfRules
+    }
+  };
+  Community.updateOne(filter, updateDoc, (error, result) => {
+    if (error) {
+      res.status(500).send("Community is already registered");
+    } else {
+      res.status(200).send(result);
+    }
+  });
+});
+
 app.get("/myCommunity", async function (req, res) {
   let data = [];
   let { page, size, ID } = req.query;
@@ -58,7 +84,6 @@ app.get("/myCommunity", async function (req, res) {
         findResult.map(community => {
           Post.find({ communityID: community._id }).then(
             (postResult, error) => {
-              console.log(JSON.stringify(postResult.length));
               data.push({
                 _id: community._id,
                 communityName: community.communityName,
