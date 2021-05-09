@@ -53,14 +53,13 @@ class Community extends Component {
     this.props.setLoader();
     axios
       .get(
-        `${backendServer}/getPostsInCommunity?ID=${
-          this.state.community_id
+        `${backendServer}/getPostsInCommunity?ID=${this.state.community_id
         }&userId=${getMongoUserID()}`
       )
       .then((response) => {
         this.props.unsetLoader();
         console.log("posts = ", response.data);
-        this.setState({ posts: response.data }, () => {});
+        this.setState({ posts: response.data }, () => { });
       })
       .catch((err) => {
         this.props.unsetLoader();
@@ -86,8 +85,8 @@ class Community extends Component {
           userVoteDir == 1
             ? newPosts[index].score - 1
             : userVoteDir == 0
-            ? newPosts[index].score + 1
-            : newPosts[index].score + 2;
+              ? newPosts[index].score + 1
+              : newPosts[index].score + 2;
 
         newPosts[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
         console.log("newComments = ", newPosts);
@@ -115,8 +114,8 @@ class Community extends Component {
           userVoteDir == -1
             ? newPosts[index].score + 1
             : userVoteDir == 0
-            ? newPosts[index].score - 1
-            : newPosts[index].score - 2;
+              ? newPosts[index].score - 1
+              : newPosts[index].score - 2;
 
         // newComments[index].userVoteDir = response.data.userVoteDir;
         newPosts[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
@@ -138,7 +137,7 @@ class Community extends Component {
   };
 
   render() {
-    var postsToRender = [];
+    var postsToRender = [], usersPresentInTheCommunity = [];
     if (this.state.posts) {
       this.state.posts.forEach((post, index) => {
         postsToRender.push(
@@ -179,7 +178,7 @@ class Community extends Component {
           this.state.communityDetails.listOfUsers &&
           this.state.communityDetails.listOfUsers.length > 0
         ) {
-          userStatusInCommunity = this.state.communityDetails?.listOfUsers.find(
+          userStatusInCommunity = this.state.communityDetails.listOfUsers.find(
             (user) => user.userID == getMongoUserID()
           );
           if (userStatusInCommunity) {
@@ -190,7 +189,7 @@ class Community extends Component {
           this.state.communityDetails.sentInvitesTo &&
           this.state.communityDetails.sentInvitesTo.length > 0
         ) {
-          userStatusInCommunity = this.state.communityDetails?.listOfUsers.find(
+          userStatusInCommunity = this.state.communityDetails.listOfUsers.find(
             (user) => user.userID == getMongoUserID()
           );
           if (userStatusInCommunity) {
@@ -328,7 +327,12 @@ class Community extends Component {
           );
         }
       }
+      if (this.state.communityDetails.listOfUsers && this.state.communityDetails.listOfUsers.length > 0) {
+        usersPresentInTheCommunity = this.state.communityDetails.listOfUsers.filter(user => user.isAccepted == 1);
+      }
     }
+
+
 
     return (
       <React.Fragment>
@@ -406,33 +410,33 @@ class Community extends Component {
                   {postsToRender}
                 </Col>
                 <Col>
-                  {this.state.communityDetails?.imageURL &&
-                  this.state.communityDetails?.imageURL.length > 0 ? (
-                    <Row>
+                  {this.state.communityDetails && this.state.communityDetails.imageURL &&
+                    this.state.communityDetails.imageURL.length > 0 && (<Row>
                       <Card className="card">
                         <Card.Header className="cardHeader">
-                          r/{this.state.communityDetails?.communityName}&apos;s
+                          r/{this.state.communityDetails.communityName}&apos;s
                           images
                         </Card.Header>
                         <Card.Body>
                           <Carousel interval={1500}>
-                            {this.state.communityDetails?.imageURL.map(
+                            {this.state.communityDetails.imageURL.map(
                               (image) => {
-                                <Carousel.Item>
-                                  <img
-                                    alt={image.url}
-                                    style={{ height: "100%", width: "100%" }}
-                                  ></img>
-                                </Carousel.Item>;
+                                return (<Carousel.Item
+                                  key={image._id}>
+                                  <div style={{ textAlign: 'center', boxShadow: '10px ​5px 5px -4px white inset' }}>
+                                    <img
+                                      src={image.url}
+                                      alt=""
+                                      style={{ height: "220px", width: "320px" }}
+                                    ></img>
+                                  </div>
+                                </Carousel.Item>);
                               }
                             )}
                           </Carousel>
                         </Card.Body>
                       </Card>
-                    </Row>
-                  ) : (
-                    ""
-                  )}
+                    </Row>)}
 
                   {this.state.communityDetails &&
                     this.state.communityDetails.rules &&
@@ -494,7 +498,7 @@ class Community extends Component {
                                           {this.state.communityDetails.rules
                                             .length -
                                             1 ==
-                                          index ? (
+                                            index ? (
                                             <div
                                               className="downArrowRotate"
                                               style={{
@@ -532,7 +536,7 @@ class Community extends Component {
                       <Row>
                         <Card className="card">
                           <Card.Header className="cardHeader">
-                            r/{this.state.communityDetails?.communityName}
+                            r/{this.state.communityDetails.communityName}
                             &apos;s interested topics
                           </Card.Header>
                           <Card.Body>
@@ -584,7 +588,7 @@ class Community extends Component {
                                           {this.state.communityDetails
                                             .topicSelected.length -
                                             1 ==
-                                          index ? (
+                                            index ? (
                                             <div
                                               className="downArrowRotate"
                                               style={{
@@ -616,6 +620,95 @@ class Community extends Component {
                         </Card>
                       </Row>
                     )}
+
+                  {this.state.communityDetails && (<Row>
+                    <Card className="card">
+                      <Card.Header className="cardHeader">
+                        r/{this.state.communityDetails.communityName}&apos;s
+                          Stats
+                        </Card.Header>
+                      <Card.Body>
+                        <div><strong>Total Posts:</strong> {this.state.posts?.length}</div>
+                        <div><strong>Total Users:</strong> {usersPresentInTheCommunity.length}</div>
+                        <div><strong>List of Users:</strong></div>
+                        {usersPresentInTheCommunity.map(
+                          (user, index) => {
+                            var normalView = [],
+                              expandedView = [];
+
+                            if (index < 5) {
+                              normalView.push(
+                                <div key={user._id}>
+                                  {user.userID}
+                                </div>
+                              );
+                            } else {
+                              if (index == 5) {
+                                normalView.push(
+                                  <div
+                                    className="upArrowRotate"
+                                    style={{
+                                      display: !this.state.showMoreUsers
+                                        ? "block"
+                                        : "none",
+                                      textAlign: "center",
+                                    }}
+                                    onClick={() =>
+                                      this.setState((state) => ({
+                                        showMoreUsers: !state.showMoreUsers,
+                                      }))
+                                    }
+                                  >
+                                    <i className="fa fa-angle-double-down" />
+                                  </div>
+                                );
+                              }
+                              expandedView.push(
+                                <div key={user._id}>
+                                  {user.userID}
+                                </div>
+                              );
+                            }
+                            return (
+                              <div key="">
+                                {normalView}
+                                <Collapse in={this.state.showMoreUsers}>
+                                  <Fade>
+                                    <div>
+                                      {expandedView}
+                                      {usersPresentInTheCommunity.length -
+                                        1 ==
+                                        index ? (
+                                        <div
+                                          className="downArrowRotate"
+                                          style={{
+                                            display: this.state
+                                              .showMoreUsers
+                                              ? "block"
+                                              : "none",
+                                            textAlign: "center",
+                                          }}
+                                          onClick={() =>
+                                            this.setState((state) => ({
+                                              showMoreUsers: !state.showMoreUsers,
+                                            }))
+                                          }
+                                        >
+                                          <i className="fa fa-angle-double-up" />
+                                        </div>
+                                      ) : (
+                                        ""
+                                      )}
+                                    </div>
+                                  </Fade>
+                                </Collapse>
+                              </div>
+                            );
+                          }
+                        )}
+                      </Card.Body>
+                    </Card>
+                  </Row>)}
                 </Col>
               </Row>
             </div>
