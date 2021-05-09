@@ -22,6 +22,9 @@ class Post extends Component {
     console.log(this.props.data._id);
     this.setState({ selectedPostID: this.props.data._id, showPostModal: true });
   };
+  // setComments(commentsCount) {
+  //   this.setState({ commentsCount: commentsCount });
+  // }
   render() {
     let _modalWindow,
       postSpecificContent = null;
@@ -43,7 +46,10 @@ class Post extends Component {
               backgroundColor: this.props.darkMode ? "#1B1B1B" : "white",
             }}
           >
-            <DetailedPostView {...this.props} />
+            <DetailedPostView
+              // setCommentsCount={this.setComments}
+              {...this.props}
+            />
           </ModalBody>
         </Modal>
       );
@@ -143,7 +149,9 @@ class Post extends Component {
                 className="postFooterDiv"
               >
                 <i className="icon icon-comment"></i>
-                <span className="postFooterSpan">1.1k comments</span>
+                <span className="postFooterSpan">
+                  {this.props.data.commentsCount}
+                </span>
               </div>
               <div className="postFooterDiv">
                 <i className="icon icon-gift"></i>

@@ -156,8 +156,31 @@ app.post("/comment", (req, res) => {
 app.get("/getPostsInCommunity", (req, res) => {
   console.log("req.body posts = ", req.query);
   const userId = req.query.userId;
-  Post.find({ communityID: mongoose.Types.ObjectId(req.query.ID) })
-    .populate("userID")
+  Post.aggregate([
+    {
+      $match: {
+        communityID: mongoose.Types.ObjectId(req.query.ID),
+      },
+    },
+    {
+      $lookup: {
+        from: "comments",
+        localField: "_id",
+        foreignField: "postID",
+        as: "commentsDetails",
+      },
+    },
+    {
+      $lookup: {
+        from: "userprofiles",
+        localField: "userID",
+        foreignField: "_id",
+        as: "userDetails",
+      },
+    },
+  ])
+    // Post.find({ communityID: mongoose.Types.ObjectId(req.query.ID) })
+    // .populate("userID")
     .then((result) => {
       console.log("results in posts community = ", result);
       const responseData = JSON.parse(JSON.stringify(result));
@@ -202,7 +225,6 @@ app.get("/getPostsInCommunity", (req, res) => {
                         if: {
                           $eq: ["$userId", mongoose.Types.ObjectId(userId)],
                         },
-
                         then: {
                           $cond: {
                             if: {
@@ -228,7 +250,7 @@ app.get("/getPostsInCommunity", (req, res) => {
               },
             ],
             (err, result) => {
-              console.log("result = ", result);
+              console.log("result c = ", result);
               if (err) {
                 console.log("error = ", err);
                 return res.status(500).send(err);
@@ -238,10 +260,16 @@ app.get("/getPostsInCommunity", (req, res) => {
                   resp.score = result[0].upvoteCount - result[0].downvoteCount;
                   resp.upvoteCount = result[0].upvoteCount;
                   resp.downvoteCount = result[0].downvoteCount;
+                  console.log("resp userDetails = ", resp.userDetails[0]);
+                  resp.userID = resp.userDetails[0];
+                  resp.commentsCount = resp.commentsDetails.length;
+                  delete resp.userDetails;
+                  delete resp.commentDetails;
                   // resp.userVoteDir = result[0].userVoteDir;
                 }
               }
               if (index == responseData.length - 1) {
+                console.log("response data = ", responseData);
                 res.status(200).send(responseData);
               }
             }
@@ -480,4 +508,5 @@ app.post("/getAllPostsWithUserId", (req, res) => {
       res.status(500).send(err);
     });
 });
+
 module.exports = router;

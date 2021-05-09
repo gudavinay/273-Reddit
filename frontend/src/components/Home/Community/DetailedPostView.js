@@ -29,6 +29,7 @@ class DetailedPostView extends Component {
     })
       .then((response) => {
         this.props.unsetLoader();
+        console.log("response data comments postid = ", response.data);
         var parentCommentList = response.data.filter(
           (comment) => comment.isParentComment
         );
@@ -38,6 +39,7 @@ class DetailedPostView extends Component {
           );
           parentComment.child = child;
         });
+        // this.props.setCommentsCount(parentCommentList.length);
         this.setState({ parentCommentList: parentCommentList });
       })
       .catch((err) => {
