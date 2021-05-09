@@ -5,7 +5,6 @@ import {
   Button,
   Card,
   Col,
-  Form,
   ListGroup,
   ListGroupItem,
   Nav,
@@ -35,7 +34,7 @@ class CreatePost extends Component {
 
   render() {
     const titleTag = (
-      <Form.Control
+      <input
         type="text"
         style={{ margin: "15px 0" }}
         className="form-control"
@@ -71,7 +70,7 @@ class CreatePost extends Component {
         <Row>
           <Col sm={1}></Col>
           <Col sm={7}>
-            <Form
+            <form
               onSubmit={e => {
                 e.preventDefault();
                 this.props.setLoader();
@@ -175,8 +174,9 @@ class CreatePost extends Component {
                     <Tab.Content>
                       <Tab.Pane eventKey="0">
                         {titleTag}
-                        <Form.Control
+                        <input
                           type="text"
+                          maxLength="180"
                           className="form-control"
                           placeholder="Text (optional)"
                           id="description"
@@ -201,12 +201,13 @@ class CreatePost extends Component {
                       </Tab.Pane>
                       <Tab.Pane eventKey="1">
                         {titleTag}
-                        <Form.Control
-                          type="text"
+                        <input
+                          type="url"
                           className="form-control"
                           placeholder="Url"
                           id="link"
                           name="link"
+                          required={this.state.type == "1"}
                           onChange={e => {
                             this.setState({ link: e.target.value });
                           }}
@@ -217,7 +218,7 @@ class CreatePost extends Component {
                   </Row>
                 </Row>
               </Tab.Container>
-            </Form>
+            </form>
           </Col>
           <Col sm={3}>
             <Row>

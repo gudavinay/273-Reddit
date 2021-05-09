@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import Post from "./Post";
 import backendServer from "../../../webConfig";
 import Axios from "axios";
-import { getRelativeTime } from "../../../services/ControllerUtils";
+import { getDefaultRedditProfilePicture, getRelativeTime } from "../../../services/ControllerUtils";
 import "../../styles/voteButtonStyles.css";
 import "./DetailedPostView.css";
 import { Collapse } from "react-bootstrap";
@@ -117,7 +117,7 @@ class DetailedPostView extends Component {
                 alt=""
                 width="40px"
                 style={{ borderRadius: "20px", margin: "5px" }}
-                src="https://preview.keenthemes.com/metronic-v4/theme/assets/pages/media/profile/profile_user.jpg"
+                src={getDefaultRedditProfilePicture()}
               />
               <span
                 style={{

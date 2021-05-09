@@ -2,6 +2,9 @@ import { Button } from 'react-bootstrap';
 import React, { Component } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { Alert } from 'react-bootstrap';
+import axios from 'axios';
+import backendServer from '../../../webConfig';
+import { getDefaultRedditProfilePicture, getMongoUserID } from '../../../services/ControllerUtils';
 class UserProfile extends Component {
     constructor(props) {
         super(props);
@@ -17,6 +20,17 @@ class UserProfile extends Component {
             saveFailed: false,
             // userProfile: getUserProfile()
         }
+    }
+
+    componentDidMount() {
+        this.props.setLoader();
+        axios.get(`${backendServer}/getUserProfileByMongoID?ID=${getMongoUserID()}`).then((result) => {
+            this.props.unsetLoader();
+            console.log(result);
+        }).catch(err => {
+            this.props.unsetLoader();
+            console.log(err);
+        })
     }
 
     uploadImage = (e) => {
@@ -58,13 +72,11 @@ class UserProfile extends Component {
             <React.Fragment>
                 <Container>
                     <form name="profileForm" id="profileForm" onSubmit={this.onSubmit}>
-                        <Row>
+                        <Row style={{ paddingTop: '3%' }}>
                             <Col >
                                 <center>
                                     <h2>Your account</h2>
-                                    {/* <img src="https://png.pngtree.com/png-vector/20191023/ourlarge/pngtree-user-vector-icon-with-white-background-png-image_1849343.jpg" style={{ height: '100%', width: '100%' }} alt="profilephoto" /> */}
-                                    {/* Here's s3url: -- {this.state.s3URL} -- */}
-                                    <img src={this.state.s3URL ? this.state.s3URL : "https://splitwise-cmpe273.s3.amazonaws.com/defaultProfilePicture.png"} style={{ height: '100%', width: '100%' }} alt="profilephoto" />
+                                    <img src={this.state.s3URL ? this.state.s3URL : getDefaultRedditProfilePicture()} style={{ height: '100%', width: '100%', borderRadius: '500px', padding: '30px' }} alt="profilephoto" />
                                     <Row style={{ marginTop: '10px' }}>
                                         <Col sm={9}>
                                             <input style={{ fontSize: '12px' }} className="form-control" type="file" name="profilepicture" accept="image/*" onChange={this.uploadImage} />

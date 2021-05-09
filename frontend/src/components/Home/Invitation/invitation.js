@@ -6,7 +6,7 @@ import Axios from "axios";
 import backendServer from "../../../webConfig";
 import inviteAcceptedSVG from "../../../assets/inviteAccepted.svg";
 import inviteRejectedSVG from "../../../assets/inviteRejected.svg";
-import { getRelativeTime } from "../../../services/ControllerUtils";
+import { getDefaultRedditProfilePicture, getRelativeTime } from "../../../services/ControllerUtils";
 
 export class invitation extends Component {
   constructor(props) {
@@ -155,7 +155,7 @@ export class invitation extends Component {
                               alt=""
                               width="40px"
                               style={{ borderRadius: "20px", margin: "5px" }}
-                              src="https://preview.keenthemes.com/metronic-v4/theme/assets/pages/media/profile/profile_user.jpg"
+                              src={getDefaultRedditProfilePicture()}
                             />
                           </Col>
                           <Col xs={5}>{details.userID._id}</Col>

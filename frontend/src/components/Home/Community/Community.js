@@ -9,7 +9,7 @@ import { Row, Col, Card, Collapse, Fade, Carousel, } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import backendServer from "../../../webConfig";
-import { getMongoUserID } from "../../../services/ControllerUtils";
+import { getDefaultRedditProfilePicture, getMongoUserID } from "../../../services/ControllerUtils";
 // import { withStyles } from "@material-ui/core/styles";
 // import { useTheme } from "@material-ui/core/styles";
 
@@ -106,7 +106,7 @@ class Community extends Component {
       <React.Fragment>
         <Row className="communityHeaderInfo">
           <Col sm={1}>
-            <img width="40px" style={{ borderRadius: "20px", margin: "5px" }} src="https://preview.keenthemes.com/metronic-v4/theme/assets/pages/media/profile/profile_user.jpg" alt="" />
+            <img width="40px" style={{ borderRadius: "20px", margin: "5px" }} src={getDefaultRedditProfilePicture()} alt="" />
           </Col>
           <Col sm={7}>
             <div style={{ fontWeight: 'bold', fontSize: '15px' }}>{this.state.communityDetails?.communityName}</div>
