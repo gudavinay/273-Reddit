@@ -5,6 +5,7 @@ import { Alert } from 'react-bootstrap';
 import axios from 'axios';
 import backendServer from '../../../webConfig';
 import { getDefaultRedditProfilePicture, getMongoUserID } from '../../../services/ControllerUtils';
+import './UserProfile.css'
 class UserProfile extends Component {
     constructor(props) {
         super(props);
@@ -93,11 +94,15 @@ class UserProfile extends Component {
                         <Row style={{ paddingTop: '3%' }}>
                             <Col sm={3}>
                                 <center>
-                                    <h2>Your account</h2>
-                                    <img src={this.state.s3URL ? this.state.s3URL : this.state.getDefaultRedditProfilePicture} style={{ height: '100%', width: '100%', borderRadius: '500px', margin: "10px 0", boxShadow: '5px 10px 25px 1px #777' }} alt="profilephoto" />
+                                    <h2 style={{ marginBottom: '45px' }}>Your account</h2>
+                                    <div className="DPParent" style={{ position: 'relative' }}>
+                                        <img src={this.state.s3URL ? this.state.s3URL : this.state.getDefaultRedditProfilePicture} style={{ height: '100%', width: '100%', borderRadius: '500px', boxShadow: '5px 10px 25px 1px #777' }} alt="profilephoto" />
+                                        <div className="buttonOnDP" style={{ position: 'absolute', width: "100%", height: "100%", textAlign: "center", display: "flex", flexDirection: "column", justifyContent: "center", top: "0", }}><i className="fa fa-camera" style={{ opacity: 1, fontSize: "75px", color: 'white' }} onClick={() => {
+                                        }}><input style={{ width: '100%', height: '100%', opacity: '0.0001', position: 'absolute', top: '0' }} className="form-control" type="file" name="profilepicture" accept="image/*" onChange={this.uploadImage} /></i></div>
+                                    </div>
                                     <Row style={{ marginTop: '10px' }}>
                                         <Col sm={9}>
-                                            <input style={{ fontSize: '12px' }} className="form-control" type="file" name="profilepicture" accept="image/*" onChange={this.uploadImage} />
+
                                         </Col>
                                     </Row>
                                 </center>

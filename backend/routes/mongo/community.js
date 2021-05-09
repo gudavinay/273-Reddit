@@ -222,7 +222,7 @@ app.post("/userJoinRequestToCommunity", (req, res) => {
         if (err) {
           res.status(500).send(err);
         } else {
-          res.status(200).send(result.data);
+          res.status(200).send(result);
         }
       }
     );
@@ -237,7 +237,7 @@ app.post("/userLeaveRequestFromCommunity", (req, res) => {
     Community.findOneAndUpdate(
       { _id: req.body.community_id },
       {
-        $pop: { listOfUsers: [{ userID: req.body.user_id }] }
+        $pull: { listOfUsers: { userID: req.body.user_id } }
       },
       {
         new: true
@@ -246,7 +246,7 @@ app.post("/userLeaveRequestFromCommunity", (req, res) => {
         if (err) {
           res.status(500).send(err);
         } else {
-          res.status(200).send(result.data);
+          res.status(200).send(result);
         }
       }
     );

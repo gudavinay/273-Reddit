@@ -52,14 +52,13 @@ class Community extends Component {
     this.props.setLoader();
     axios
       .get(
-        `${backendServer}/getPostsInCommunity?ID=${
-          this.state.community_id
+        `${backendServer}/getPostsInCommunity?ID=${this.state.community_id
         }&userId=${getMongoUserID()}`
       )
       .then((response) => {
         this.props.unsetLoader();
         console.log("posts = ", response.data);
-        this.setState({ posts: response.data }, () => {});
+        this.setState({ posts: response.data }, () => { });
       })
       .catch((err) => {
         this.props.unsetLoader();
@@ -85,8 +84,8 @@ class Community extends Component {
           userVoteDir == 1
             ? newPosts[index].score - 1
             : userVoteDir == 0
-            ? newPosts[index].score + 1
-            : newPosts[index].score + 2;
+              ? newPosts[index].score + 1
+              : newPosts[index].score + 2;
 
         newPosts[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
         console.log("newComments = ", newPosts);
@@ -114,8 +113,8 @@ class Community extends Component {
           userVoteDir == -1
             ? newPosts[index].score + 1
             : userVoteDir == 0
-            ? newPosts[index].score - 1
-            : newPosts[index].score - 2;
+              ? newPosts[index].score - 1
+              : newPosts[index].score - 2;
 
         // newComments[index].userVoteDir = response.data.userVoteDir;
         newPosts[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
@@ -145,105 +144,176 @@ class Community extends Component {
       });
     }
     var participationButton = null;
-    var userStatusInCommunity = this.state.communityDetails?.listOfUsers.find(
-      (user) => user.userID == getMongoUserID()
-    );
-    if (userStatusInCommunity) {
-      if (userStatusInCommunity.isAccepted == 1) {
-        participationButton = (
-          <button
-            className="form-control"
-            style={{
-              display: "block",
-              borderRadius: "30px",
-              background: "#e17157",
-              color: "white",
-            }}
-            onClick={() => {
-              this.props.setLoader();
-              axios
-                .post(`${backendServer}/userLeaveRequestFromCommunity`, {
-                  community_id: this.state.community_id,
-                  user_id: getMongoUserID(),
-                })
-                .then((response) => {
-                  this.props.unsetLoader();
-                  this.setState({ communityDetails: response });
-                })
-                .catch((err) => {
-                  this.props.unsetLoader();
-                  console.log(err);
-                });
-            }}
-          >
-            Leave
-          </button>
-        );
-      } else if (userStatusInCommunity.isAccepted == -1) {
-        participationButton = (
-          <button
-            disabled
-            className="form-control"
-            style={{
-              display: "block",
-              borderRadius: "30px",
-              background: "#e17157",
-              color: "white",
-            }}
-          >
-            Request to join denied.
-          </button>
-        );
-      } else {
-        participationButton = (
-          <button
-            disabled
-            className="form-control"
-            style={{
-              display: "block",
-              borderRadius: "30px",
-              background: "#e17157",
-              color: "white",
-            }}
-          >
-            Request Pending
-          </button>
-        );
-      }
-    } else {
-      participationButton = (
-        <button
+    var userStatusInCommunity = null;
+    if (this.state.communityDetails) {
+      if (this.state.communityDetails.ownerID == getMongoUserID()) {
+        participationButton = (<button
           className="form-control"
+          disabled
           style={{
             display: "block",
             borderRadius: "30px",
             background: "#e17157",
             color: "white",
-          }}
-          onClick={() => {
-            this.props.setLoader();
-            axios
-              .post(`${backendServer}/userJoinRequestToCommunity`, {
-                community_id: this.state.community_id,
-                user_id: getMongoUserID(),
-              })
-              .then((response) => {
-                this.props.unsetLoader();
-                this.setState({ communityDetails: response });
-              })
-              .catch((err) => {
-                this.props.unsetLoader();
-                console.log(err);
-              });
+            cursor: 'not-allowed'
           }}
         >
-          Join
-        </button>
-      );
+          Moderator
+        </button>)
+      } else {
+        var isUserBeingInvitedByModerator = false, didUserRequestToJoin = false;
+        if (this.state.communityDetails.listOfUsers && this.state.communityDetails.listOfUsers.length > 0) {
+          userStatusInCommunity = this.state.communityDetails?.listOfUsers.find(
+            (user) => user.userID == getMongoUserID()
+          );
+          if (userStatusInCommunity) {
+            didUserRequestToJoin = true;
+          }
+        }
+        if (this.state.communityDetails.sentInvitesTo && this.state.communityDetails.sentInvitesTo.length > 0) {
+          userStatusInCommunity = this.state.communityDetails?.listOfUsers.find(
+            (user) => user.userID == getMongoUserID()
+          );
+          if (userStatusInCommunity) {
+            isUserBeingInvitedByModerator = true;
+          }
+        }
+        if (didUserRequestToJoin || isUserBeingInvitedByModerator) {
+          if (didUserRequestToJoin) {
+            if (userStatusInCommunity.isAccepted == 1) {
+              participationButton = (
+                <button
+                  className="form-control"
+                  style={{
+                    display: "block",
+                    borderRadius: "30px",
+                    background: "#e17157",
+                    color: "white",
+                  }}
+                  onClick={() => {
+                    this.props.setLoader();
+                    axios
+                      .post(`${backendServer}/userLeaveRequestFromCommunity`, {
+                        community_id: this.state.community_id,
+                        user_id: getMongoUserID(),
+                      })
+                      .then((response) => {
+                        this.props.unsetLoader();
+                        console.log(response);
+                        this.setState({ communityDetails: response.data })
+                      })
+                      .catch((err) => {
+                        this.props.unsetLoader();
+                        console.log(err);
+                      });
+                  }}
+                >
+                  Leave
+                </button>
+              );
+            } else if (userStatusInCommunity.isAccepted == -1) {
+              participationButton = (
+                <button
+                  disabled
+                  className="form-control"
+                  style={{
+                    display: "block",
+                    borderRadius: "30px",
+                    background: "#e17157",
+                    color: "white",
+                  }}
+                >
+                  Request to join denied.
+                </button>
+              );
+            } else {
+              participationButton = (
+                <button
+                  disabled
+                  className="form-control"
+                  style={{
+                    display: "block",
+                    borderRadius: "30px",
+                    background: "#e17157",
+                    color: "white",
+                  }}
+                >
+                  Request Pending
+                </button>
+              );
+            }
+          } else if (isUserBeingInvitedByModerator) {
+            participationButton = (
+              <div>
+                <button
+                  className="form-control"
+                  style={{
+                    display: "block",
+                    borderRadius: "30px",
+                    background: "#e17157",
+                    color: "white",
+                  }}
+                  onClick={() => {
+                    alert("Yet to be implemented")
+                  }}
+                >
+                  Accept
+              </button>
+                <button
+                  className="form-control"
+                  style={{
+                    display: "block",
+                    borderRadius: "30px",
+                    background: "#e17157",
+                    color: "white",
+                  }}
+                  onClick={() => {
+                    alert("Yet to be implemented")
+                  }}
+                >
+                  Reject
+              </button></div>
+            );
+          }
+        } else {
+          participationButton = (
+            <button
+              className="form-control"
+              style={{
+                display: "block",
+                borderRadius: "30px",
+                background: "#e17157",
+                color: "white",
+              }}
+              onClick={() => {
+                this.props.setLoader();
+                axios
+                  .post(`${backendServer}/userJoinRequestToCommunity`, {
+                    community_id: this.state.community_id,
+                    user_id: getMongoUserID(),
+                  })
+                  .then((response) => {
+                    this.props.unsetLoader();
+                    console.log(response);
+                    this.setState({ communityDetails: response.data });
+                  })
+                  .catch((err) => {
+                    this.props.unsetLoader();
+                    console.log(err);
+                  });
+              }}
+            >
+              Join
+            </button>
+          );
+        }
+      }
+
     }
 
     return (
       <React.Fragment>
+        <div style={{ display: 'block', height: "5%", backgroundColor: 'pink', color: 'white' }}>.</div>
         <Row className="communityHeaderInfo">
           <Col sm={1}>
             <img
@@ -309,7 +379,7 @@ class Community extends Component {
                 </Col>
                 <Col>
                   {this.state.communityDetails?.imageURL &&
-                  this.state.communityDetails?.imageURL.length > 0 ? (
+                    this.state.communityDetails?.imageURL.length > 0 ? (
                     <Row>
                       <Card className="card">
                         <Card.Header className="cardHeader">
@@ -336,14 +406,14 @@ class Community extends Component {
                     ""
                   )}
 
-                  <Row>
+                  {this.state.communityDetails && this.state.communityDetails.rules && this.state.communityDetails.rules.length > 0 && <Row>
                     <Card className="card">
                       <Card.Header className="cardHeader">
-                        r/{this.state.communityDetails?.communityName}&apos;s
+                        r/{this.state.communityDetails.communityName}&apos;s
                         Rules
                       </Card.Header>
                       <Card.Body>
-                        {this.state.communityDetails?.rules.map(
+                        {this.state.communityDetails.rules.map(
                           (rule, index) => {
                             var normalView = [],
                               expandedView = [];
@@ -355,26 +425,27 @@ class Community extends Component {
                                   {rule.description}
                                 </div>
                               );
-                            } else if (index == 5) {
-                              normalView.push(
-                                <div
-                                  className="upArrowRotate"
-                                  style={{
-                                    display: !this.state.showMoreRules
-                                      ? "block"
-                                      : "none",
-                                    textAlign: "center",
-                                  }}
-                                  onClick={() =>
-                                    this.setState((state) => ({
-                                      showMoreRules: !state.showMoreRules,
-                                    }))
-                                  }
-                                >
-                                  <i className="fa fa-angle-double-down" />
-                                </div>
-                              );
                             } else {
+                              if (index == 5) {
+                                normalView.push(
+                                  <div
+                                    className="upArrowRotate"
+                                    style={{
+                                      display: !this.state.showMoreRules
+                                        ? "block"
+                                        : "none",
+                                      textAlign: "center",
+                                    }}
+                                    onClick={() =>
+                                      this.setState((state) => ({
+                                        showMoreRules: !state.showMoreRules,
+                                      }))
+                                    }
+                                  >
+                                    <i className="fa fa-angle-double-down" />
+                                  </div>
+                                );
+                              }
                               expandedView.push(
                                 <div key={rule._id}>
                                   <strong>{rule.title}</strong>:{" "}
@@ -392,7 +463,7 @@ class Community extends Component {
                                       {this.state.communityDetails.rules
                                         .length -
                                         1 ==
-                                      index ? (
+                                        index ? (
                                         <div
                                           className="downArrowRotate"
                                           style={{
@@ -421,15 +492,15 @@ class Community extends Component {
                         )}
                       </Card.Body>
                     </Card>
-                  </Row>
-                  <Row>
+                  </Row>}
+                  {this.state.communityDetails && this.state.communityDetails.topicSelected && this.state.communityDetails.topicSelected.length > 0 && <Row>
                     <Card className="card">
                       <Card.Header className="cardHeader">
                         r/{this.state.communityDetails?.communityName}&apos;s
                         interested topics
                       </Card.Header>
                       <Card.Body>
-                        {this.state.communityDetails?.topicSelected.map(
+                        {this.state.communityDetails.topicSelected.map(
                           (topic, index) => {
                             var normalView = [],
                               expandedView = [];
@@ -440,26 +511,27 @@ class Community extends Component {
                                   <strong>{topic.topic}</strong>
                                 </div>
                               );
-                            } else if (index == 5) {
-                              normalView.push(
-                                <div
-                                  className="upArrowRotate"
-                                  style={{
-                                    display: !this.state.showMoreTopics
-                                      ? "block"
-                                      : "none",
-                                    textAlign: "center",
-                                  }}
-                                  onClick={() =>
-                                    this.setState((state) => ({
-                                      showMoreTopics: !state.showMoreTopics,
-                                    }))
-                                  }
-                                >
-                                  <i className="fa fa-angle-double-down" />
-                                </div>
-                              );
                             } else {
+                              if (index == 5) {
+                                normalView.push(
+                                  <div
+                                    className="upArrowRotate"
+                                    style={{
+                                      display: !this.state.showMoreTopics
+                                        ? "block"
+                                        : "none",
+                                      textAlign: "center",
+                                    }}
+                                    onClick={() =>
+                                      this.setState((state) => ({
+                                        showMoreTopics: !state.showMoreTopics,
+                                      }))
+                                    }
+                                  >
+                                    <i className="fa fa-angle-double-down" />
+                                  </div>
+                                );
+                              }
                               expandedView.push(
                                 <div key={topic._id}>
                                   <strong>{topic.topic}</strong>
@@ -476,7 +548,7 @@ class Community extends Component {
                                       {this.state.communityDetails.topicSelected
                                         .length -
                                         1 ==
-                                      index ? (
+                                        index ? (
                                         <div
                                           className="downArrowRotate"
                                           style={{
@@ -505,7 +577,7 @@ class Community extends Component {
                         )}
                       </Card.Body>
                     </Card>
-                  </Row>
+                  </Row>}
                 </Col>
               </Row>
             </div>
