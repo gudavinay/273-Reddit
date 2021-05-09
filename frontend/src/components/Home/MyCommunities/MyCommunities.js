@@ -15,7 +15,12 @@ import "./mycommunity.css";
 import image1 from "../../../assets/CommunityImage1.jpeg";
 import image2 from "../../../assets/CommunityImage2.jpeg";
 import image3 from "../../../assets/CommunityImage3.jpeg";
-import { getMongoUserID } from "../../../services/ControllerUtils";
+import {
+  getMongoUserID,
+  sortByTime,
+  sortByNoOfUser,
+  sortByPost
+} from "../../../services/ControllerUtils";
 import { TablePagination } from "@material-ui/core";
 
 class MyCommunities extends Component {
@@ -28,7 +33,9 @@ class MyCommunities extends Component {
       myCommunity: [],
       page: 0,
       size: 2,
-      count: 0
+      count: 0,
+      sortby: "",
+      sortType: "desc"
     };
   }
 
@@ -113,11 +120,7 @@ class MyCommunities extends Component {
         .post(`${backendServer}/deleteCommunity`, data)
         .then(response => {
           if (response.status == 200) {
-            let allCommunity = this.state.myCommunity;
-            allCommunity.pop(community);
-            this.setState({
-              mycommunity: allCommunity
-            });
+            this.getMyCommunities(this.state.page, this.state.size);
             alert("Community deleted successfully");
           }
         })
@@ -125,6 +128,34 @@ class MyCommunities extends Component {
     } else {
       console.log("Not sure to delete the community");
     }
+  };
+
+  SortType = e => {
+    this.setState({
+      sortType: e.target.value
+    });
+    this.Sorting(this.state.sortby, e.target.value);
+  };
+
+  Sorting(attribute, type) {
+    let sortValue;
+    if (attribute == "Date") {
+      sortValue = sortByTime(this.state.myCommunity, type);
+    } else if (attribute == "User") {
+      sortValue = sortByNoOfUser(this.state.myCommunity, type);
+    } else {
+      sortValue = sortByPost(this.state.myCommunity, type);
+    }
+    this.setState({
+      myCommunity: sortValue
+    });
+  }
+
+  SortItems = e => {
+    this.setState({
+      sortby: e.target.value
+    });
+    this.Sorting(e.target.value, this.state.sortType);
   };
 
   render() {
@@ -200,19 +231,42 @@ class MyCommunities extends Component {
         <Container fluid>
           <Row>
             <Col xs={8}>
-              <div className="card">
-                {myCommunities}
-                <TablePagination
-                  count={this.state.count}
-                  page={this.state.page}
-                  onChangePage={this.PageChange}
-                  rowsPerPage={this.state.size}
-                  onChangeRowsPerPage={this.PageSizeChange}
-                  variant="outlined"
-                  color="primary"
-                  rowsPerPageOptions={[2, 5, 10]}
-                />
-              </div>
+              <Card>
+                <Card.Header>
+                  <Row>
+                    <Col xs={2}>Sort By</Col>
+                    <Col xs={3}>
+                      <select
+                        className="form-control"
+                        onChange={this.SortItems}
+                      >
+                        <option value="Date">Created Date</option>
+                        <option value="Post">Post</option>
+                        <option value="User">User</option>
+                      </select>
+                    </Col>
+                    <Col xs={2}>
+                      <select className="form-control" onChange={this.SortType}>
+                        <option value="desc">Decending</option>
+                        <option value="asc">Ascending</option>
+                      </select>
+                    </Col>
+                  </Row>
+                </Card.Header>
+                <Card.Body>
+                  {myCommunities}
+                  <TablePagination
+                    count={this.state.count}
+                    page={this.state.page}
+                    onChangePage={this.PageChange}
+                    rowsPerPage={this.state.size}
+                    onChangeRowsPerPage={this.PageSizeChange}
+                    variant="outlined"
+                    color="primary"
+                    rowsPerPageOptions={[2, 5, 10]}
+                  />
+                </Card.Body>
+              </Card>
             </Col>
             <Col xs={4}>
               <Card>

@@ -18,6 +18,48 @@ export function getUserProfile() {
   if (data != null) return data;
 }
 
+export function sortByPost(array, type) {
+  let sortValue;
+  if (type == "desc") {
+    sortValue = array.sort((a, b) => {
+      return parseInt(b.count) - parseInt(a.count);
+    });
+  } else {
+    sortValue = array.sort((a, b) => {
+      return parseInt(a.count) - parseInt(b.count);
+    });
+  }
+  return sortValue;
+}
+
+export function sortByTime(array, type) {
+  let sortvalue;
+  if (type == "desc") {
+    sortvalue = array.sort((a, b) => {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+  } else {
+    sortvalue = array.sort((a, b) => {
+      return new Date(a.createdAt) - new Date(b.createdAt);
+    });
+  }
+  return sortvalue;
+}
+
+export function sortByNoOfUser(array, type) {
+  let sortValue;
+  if (type == "desc") {
+    sortValue = array.sort((a, b) => {
+      return parseInt(b.listOfUsers.length) - parseInt(a.listOfUsers.length);
+    });
+  } else {
+    sortValue = array.sort((a, b) => {
+      return parseInt(a.listOfUsers.length) - parseInt(b.listOfUsers.length);
+    });
+  }
+  return sortValue;
+}
+
 export function getToken() {
   const data = JSON.parse(localStorage.getItem("userData"));
   if (data != null) return data.token;

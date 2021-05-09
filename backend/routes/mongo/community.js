@@ -67,6 +67,7 @@ app.get("/myCommunity", async function (req, res) {
                 imageURL: community.communityImages,
                 listOfUsers: community.listOfUsers,
                 count: postResult.length,
+                createdAt: community.createdAt,
                 totalRecords: recordCount
               });
               console.log(JSON.stringify(data));

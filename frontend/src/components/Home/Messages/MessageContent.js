@@ -114,7 +114,7 @@ class MessageContent extends Component {
               <Card.Header className="text-right">
                 {getUserProfile() != null ? getUserProfile().name : "Username"}
               </Card.Header>
-              <Card.Body style={{ height: "60vh" }}> {renderMessage}</Card.Body>
+              <Card.Body className="messageBody"> {renderMessage}</Card.Body>
               <Card.Footer>
                 <Form>
                   <Row>

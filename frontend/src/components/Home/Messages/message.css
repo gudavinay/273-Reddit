@@ -9,3 +9,8 @@ height:80vh
 .messageBox{
     border-radius: 30px;
 }
+
+.messageBody{
+    height: 60vh;
+    overflow-y: auto;
+}
