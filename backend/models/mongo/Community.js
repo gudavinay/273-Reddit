@@ -8,31 +8,31 @@ const CommunitySchema = new mongoose.Schema(
     communityDescription: { type: String },
     imageURL: [
       {
-        url: { type: String }
-      }
+        url: { type: String },
+      },
     ],
     topicSelected: [
       {
-        topic: { type: String }
-      }
+        topic: { type: String },
+      },
     ],
     listOfUsers: [
       {
         userID: { type: Schema.Types.ObjectId, ref: "UserProfile" },
-        isAccepted: { type: Boolean, defaultValue: false },
-        isModerator: { type: Boolean, defaultValue: false }
-      }
+        isAccepted: { type: Number, default: 0 },
+        isModerator: { type: Boolean, defaultValue: false },
+      },
     ],
     ownerID: { type: Schema.Types.ObjectId, ref: "UserProfile" },
     upvotedBy: [
       {
-        userID: { type: Schema.Types.ObjectId, ref: "UserProfile" }
-      }
+        userID: { type: Schema.Types.ObjectId, ref: "UserProfile" },
+      },
     ],
     downvotedBy: [
       {
-        userID: { type: Schema.Types.ObjectId, ref: "UserProfile" }
-      }
+        userID: { type: Schema.Types.ObjectId, ref: "UserProfile" },
+      },
     ],
     // posts: [
     //   {
@@ -43,18 +43,18 @@ const CommunitySchema = new mongoose.Schema(
       {
         userID: { type: Schema.Types.ObjectId, ref: "UserProfile" },
         isAccepted: { type: Number, default: 0 },
-        dateTime: { type: Date, default: Date.now() }
-      }
+        dateTime: { type: Date, default: Date.now() },
+      },
     ],
     rules: [
       {
         title: { type: String },
-        description: { type: String }
-      }
-    ]
+        description: { type: String },
+      },
+    ],
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 

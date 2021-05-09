@@ -4,36 +4,52 @@ const router = express.Router();
 const Community = require("../../models/mongo/Community");
 const User = require("../../models/mongo/UserProfile");
 
-app.post("/sendInvite", (req, res) => {
+app.post("/sendInvite", async (req, res) => {
+  var members = [];
+  req.body.users.forEach((user) => {
+    const userData = {
+      userID: user,
+    };
+    members.push(userData);
+  });
+
   Community.findOneAndUpdate(
     { _id: req.body.community_id },
     {
-      $push: { sentInvitesTo: [{ userID: req.body.invitedTo }] },
+      $push: { sentInvitesTo: members },
     },
-    (err, result) => {
+    async (err, result) => {
       if (err) {
         res.status(500).send(err);
       } else {
-        User.findByIdAndUpdate(
-          req.body.invitedTo,
-          {
-            $push: {
-              communityInvites: [
+        try {
+          var r = await new Promise((resolve, reject) => {
+            members.forEach((user) => {
+              User.findByIdAndUpdate(
+                user.userID,
                 {
-                  communityID: req.body.community_id,
-                  invitedBy: req.body.invitedBy,
+                  $push: {
+                    communityInvites: [
+                      {
+                        communityID: req.body.community_id,
+                        invitedBy: req.body.invitedBy,
+                      },
+                    ],
+                  },
                 },
-              ],
-            },
-          },
-          (err, result) => {
-            if (err) {
-              res.status(500).send(err);
-            } else {
-              res.status(200).send(result);
-            }
-          }
-        );
+                (err, d) => {
+                  if (err) {
+                    reject(false);
+                  }
+                  resolve(true);
+                }
+              );
+            });
+          });
+          if (r) res.status(200).send({ msg: "Invites sent" });
+        } catch (error) {
+          res.status(500).send({ msg: "error" });
+        }
       }
     }
   );
@@ -41,19 +57,27 @@ app.post("/sendInvite", (req, res) => {
 //TO show the users who are invited and the status of invitation
 app.post("/showInvitationStatus", (req, res) => {
   Community.findOne({ _id: req.body.community_id })
-    .populate("sentInvitesTo.userID", ["userIDSQL"])
+    .populate("sentInvitesTo.userID", ["userIDSQL", "name"])
     .then(async (result) => {
-      let data = JSON.parse(JSON.stringify(result));
-      delete data.listOfUsers;
-      delete data.upvotedBy;
-      delete data.downvotedBy;
-      delete data.imageURL;
-      delete data.posts;
-      delete data.rules;
-      delete data.topicSelected;
-      delete data.createdAt;
-      delete data.updatedAt;
-      res.status(200).send(data.sentInvitesTo);
+      let data = {};
+      data.sentInvitesTo = JSON.parse(JSON.stringify(result.sentInvitesTo));
+      let users = [];
+      for (let i = 0; i < result.sentInvitesTo.length; i++) {
+        users.push(result.sentInvitesTo[i]._id);
+      }
+
+      result.sentInvitesTo.forEach((sentInvite) => {
+        users.push(sentInvite.userID._id);
+      });
+
+      result.listOfUsers.forEach((user) => {
+        users.push(user.userID._id);
+      });
+
+      data.listOfInvolvedUsers = users;
+
+      res.status(200).send(data);
+      // res.status(200).send(data.sentInvitesTo);
     })
     .catch((err) => {
       res.status(500).send(err);

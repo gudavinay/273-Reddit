@@ -15,16 +15,16 @@ app.get("/getAllCommunities", async function (req, res, next) {
     const aggregate = Community.aggregate([
       {
         $match: {
-          communityName: { $regex: searchText, $options: "i" }
-        }
+          communityName: { $regex: searchText, $options: "i" },
+        },
       },
       {
         $lookup: {
           from: "votes",
           localField: "_id",
           foreignField: "entityId",
-          as: "vote"
-        }
+          as: "vote",
+        },
       },
       { $unwind: { path: "$vote", preserveNullAndEmptyArrays: true } },
       {
@@ -39,23 +39,23 @@ app.get("/getAllCommunities", async function (req, res, next) {
           listOfUsers: { $first: "$listOfUsers" },
           upvoteCount: {
             $sum: {
-              $cond: { if: { $eq: ["$vote.voteDir", 1] }, then: 1, else: 0 }
-            }
+              $cond: { if: { $eq: ["$vote.voteDir", 1] }, then: 1, else: 0 },
+            },
           },
           downvoteCount: {
             $sum: {
-              $cond: { if: { $eq: ["$vote.voteDir", -1] }, then: 1, else: 0 }
-            }
-          }
-        }
+              $cond: { if: { $eq: ["$vote.voteDir", -1] }, then: 1, else: 0 },
+            },
+          },
+        },
       },
       {
         $lookup: {
           from: "posts",
           localField: "_id",
           foreignField: "communityID",
-          as: "posts"
-        }
+          as: "posts",
+        },
       },
       {
         $project: {
@@ -67,33 +67,33 @@ app.get("/getAllCommunities", async function (req, res, next) {
           postsLength: { $size: "$posts" },
           listOfUsersLength: { $size: "$listOfUsers" },
           upVotedLength: "$upvoteCount",
-          downVotedLength: "$downvoteCount"
-        }
+          downVotedLength: "$downvoteCount",
+        },
       },
       {
         $sort: {
           [sortKey]: sortValue.toLowerCase() === "desc" ? -1 : 1,
-          _id: -1
-        }
-      }
+          _id: -1,
+        },
+      },
     ]);
 
     const communities = await Community.aggregatePaginate(aggregate, {
       page,
-      limit
+      limit,
     });
 
     communities.docs = await Community.populate(communities.docs, "ownerID");
 
     const communitiesBySqlUserId = communities.docs.map(
-      c => c.ownerID?.userIDSQL
+      (c) => c.ownerID?.userIDSQL
     );
 
     const users = await db.User.findAll({
       where: {
-        user_id: communitiesBySqlUserId
+        user_id: communitiesBySqlUserId,
       },
-      attributes: ["user_id", "name", "email"]
+      attributes: ["user_id", "name", "email"],
     });
 
     const userById = users.reduce((acc, it) => {
@@ -101,15 +101,15 @@ app.get("/getAllCommunities", async function (req, res, next) {
       return acc;
     }, {});
 
-    communities.docs = communities.docs.map(c => {
+    communities.docs = communities.docs.map((c) => {
       return {
         ...c,
-        createdBy: userById[c.ownerID?.userIDSQL] || false
+        createdBy: userById[c.ownerID?.userIDSQL] || false,
       };
     });
 
     res.json({
-      communities
+      communities,
     });
   } catch (e) {
     res.status(500).send(e.message);
@@ -123,16 +123,16 @@ app.get("/getUserProfile/:user_id", async function (req, res, next) {
 
     const user = await db.User.findOne({
       where: {
-        user_id: user_id
+        user_id: user_id,
       },
-      attributes: { exclude: ["password"] }
+      attributes: { exclude: ["password"] },
     });
     if (!user) {
       throw new Error(`User Not Found`);
     }
 
     const mongoUser = await UserProfile.findOne({
-      userIDSQL: user_id
+      userIDSQL: user_id,
     });
     if (!mongoUser) {
       throw new Error(`Mongo User Not Found`);
@@ -142,17 +142,17 @@ app.get("/getUserProfile/:user_id", async function (req, res, next) {
       {
         $match: {
           listOfUsers: {
-            $elemMatch: { userID: mongoUser._id, isAccepted: true }
-          }
-        }
+            $elemMatch: { userID: mongoUser._id, isAccepted: true },
+          },
+        },
       },
       {
         $lookup: {
           from: "votes",
           localField: "_id",
           foreignField: "entityId",
-          as: "vote"
-        }
+          as: "vote",
+        },
       },
       { $unwind: { path: "$vote", preserveNullAndEmptyArrays: true } },
       {
@@ -167,23 +167,23 @@ app.get("/getUserProfile/:user_id", async function (req, res, next) {
           listOfUsers: { $first: "$listOfUsers" },
           upvoteCount: {
             $sum: {
-              $cond: { if: { $eq: ["$vote.voteDir", 1] }, then: 1, else: 0 }
-            }
+              $cond: { if: { $eq: ["$vote.voteDir", 1] }, then: 1, else: 0 },
+            },
           },
           downvoteCount: {
             $sum: {
-              $cond: { if: { $eq: ["$vote.voteDir", -1] }, then: 1, else: 0 }
-            }
-          }
-        }
+              $cond: { if: { $eq: ["$vote.voteDir", -1] }, then: 1, else: 0 },
+            },
+          },
+        },
       },
       {
         $lookup: {
           from: "posts",
           localField: "_id",
           foreignField: "communityID",
-          as: "posts"
-        }
+          as: "posts",
+        },
       },
       {
         $project: {
@@ -195,23 +195,23 @@ app.get("/getUserProfile/:user_id", async function (req, res, next) {
           postsLength: { $size: "$posts" },
           listOfUsersLength: { $size: "$listOfUsers" },
           upVotedLength: "$upvoteCount",
-          downVotedLength: "$downvoteCount"
-        }
+          downVotedLength: "$downvoteCount",
+        },
       },
-      { $sort: { createdAt: -1 } }
+      { $sort: { createdAt: -1 } },
     ]);
 
     user_communities = await Community.populate(user_communities, "ownerID");
 
     const communitiesBySqlUserId = user_communities.map(
-      c => c.ownerID?.userIDSQL
+      (c) => c.ownerID?.userIDSQL
     );
 
     const users = await db.User.findAll({
       where: {
-        user_id: communitiesBySqlUserId
+        user_id: communitiesBySqlUserId,
       },
-      attributes: ["user_id", "name", "email"]
+      attributes: ["user_id", "name", "email"],
     });
 
     const userById = users.reduce((acc, it) => {
@@ -219,25 +219,25 @@ app.get("/getUserProfile/:user_id", async function (req, res, next) {
       return acc;
     }, {});
 
-    user_communities = user_communities.map(c => {
+    user_communities = user_communities.map((c) => {
       return {
         ...c,
-        createdBy: userById[c.ownerID?.userIDSQL] || false
+        createdBy: userById[c.ownerID?.userIDSQL] || false,
       };
     });
 
     res.json({
       user,
       // mongoUser,
-      user_communities
+      user_communities,
     });
   } catch (e) {
     res.status(500).send(e.message);
   }
 });
 
-app.post("/searchForPosts", (req,res)=>{
-  console.log(req.body.search)
+app.post("/searchForPosts", (req, res) => {
+  console.log(req.body.search);
   Post.aggregate([
     {
       $lookup: {
@@ -257,29 +257,48 @@ app.post("/searchForPosts", (req,res)=>{
     },
     {
       $match: {
-        $or:[{$and : [{title:{$regex:req.body.search, $options:"i"}},{$or:[{
-          "communityDetails.ownerID": mongoose.Types.ObjectId(
-            req.body.user_id
-          ),
-        },
-        {
-          "communityDetails.listOfUsers.userID": mongoose.Types.ObjectId(
-            req.body.user_id
-          ),
-        },
-]}] },{$and:[{description:{$regex:req.body.search,$options:"i"}},{$or:[{
-  "communityDetails.ownerID": mongoose.Types.ObjectId(
-    req.body.user_id
-  ),
-},
-{
-  "communityDetails.listOfUsers.userID": mongoose.Types.ObjectId(
-    req.body.user_id
-  ),
-},
-]}] }]
+        $or: [
+          {
+            $and: [
+              { title: { $regex: req.body.search, $options: "i" } },
+              {
+                $or: [
+                  {
+                    "communityDetails.ownerID": mongoose.Types.ObjectId(
+                      req.body.user_id
+                    ),
+                  },
+                  {
+                    "communityDetails.listOfUsers.userID": mongoose.Types.ObjectId(
+                      req.body.user_id
+                    ),
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            $and: [
+              { description: { $regex: req.body.search, $options: "i" } },
+              {
+                $or: [
+                  {
+                    "communityDetails.ownerID": mongoose.Types.ObjectId(
+                      req.body.user_id
+                    ),
+                  },
+                  {
+                    "communityDetails.listOfUsers.userID": mongoose.Types.ObjectId(
+                      req.body.user_id
+                    ),
+                  },
+                ],
+              },
+            ],
+          },
+        ],
         // communityName: { $regex: searchText, $options: "i" }
-      }
+      },
     },
     {
       $unwind: {
@@ -310,10 +329,9 @@ app.post("/searchForPosts", (req,res)=>{
         communityDescription: "$communityDetails.communityDescription",
         imageURL: "$communityDetails.imageURL",
       },
-    }
-  ])
-  .then((result)=>{
-    res.status(200).send(result)
-  })
-})
+    },
+  ]).then((result) => {
+    res.status(200).send(result);
+  });
+});
 module.exports = router;

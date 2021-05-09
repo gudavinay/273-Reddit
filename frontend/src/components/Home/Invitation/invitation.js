@@ -1,12 +1,18 @@
 import React, { Component } from "react";
-import { Container, Card, Row, Col } from "react-bootstrap";
+import { Container, Card, Row, Col, Dropdown } from "react-bootstrap";
 import "./invitation.css";
 // import { Input } from "reactstrap";
 import Axios from "axios";
 import backendServer from "../../../webConfig";
 import inviteAcceptedSVG from "../../../assets/inviteAccepted.svg";
 import inviteRejectedSVG from "../../../assets/inviteRejected.svg";
-import { getDefaultRedditProfilePicture, getRelativeTime } from "../../../services/ControllerUtils";
+import {
+  getDefaultRedditProfilePicture,
+  getRelativeTime,
+} from "../../../services/ControllerUtils";
+import { getMongoUserID } from "../../../services/ControllerUtils";
+import Chip from "@material-ui/core/Chip";
+import Paper from "@material-ui/core/Paper";
 
 export class invitation extends Component {
   constructor(props) {
@@ -16,13 +22,15 @@ export class invitation extends Component {
       communities: [],
       communityID: "",
       invitedDetails: [],
-      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture()
+      searchedUser: [],
+      selectedUsers: [],
+      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture(),
     };
   }
   componentDidMount() {
     //user_id to be fetched from local Storage
     let data = {
-      user_id: "6089d63ea112c02c1df2914c",
+      user_id: getMongoUserID(),
     };
     this.props.setLoader();
     Axios.post(backendServer + "/getCommunitiesCreatedByMe", data)
@@ -45,8 +53,9 @@ export class invitation extends Component {
     Axios.post(backendServer + "/showInvitationStatus", data)
       .then((response) => {
         this.props.unsetLoader();
-        this.setState({ invitedDetails: response.data }, () => {
-          console.log(this.state.invitedDetails);
+        this.setState({
+          invitedDetails: response.data.sentInvitesTo,
+          listOfInvolvedUsers: response.data.listOfInvolvedUsers,
         });
       })
       .catch((err) => {
@@ -54,7 +63,80 @@ export class invitation extends Component {
         console.log(err);
       });
   };
+  searchUser = (e) => {
+    if (e.target.value.length > 1) {
+      const data = { name: e.target.value };
+      this.props.setLoader();
+      Axios.post(backendServer + "/getSearchedUserForMongo", data)
+        .then((response) => {
+          this.props.unsetLoader();
+          if (response.status == 200) {
+            this.setState({
+              searchedUser: response.data,
+            });
+          }
+        })
+        .catch((error) => {
+          this.props.unsetLoader();
+          console.log(error);
+        });
+    } else if (e.target.value.length == 0) {
+      this.setState({
+        searchedUser: [],
+      });
+    }
+  };
+  handleDelete = (e, user) => {
+    e.preventDefault();
+    let items = this.state.selectedUsers;
+    items.splice(items.indexOf(user), 1);
+    this.setState({
+      selectedUsers: items,
+    });
+  };
+  handleUsersSelection = (user) => {
+    this.setState(
+      (prevState) => ({
+        selectedUsers: [
+          ...prevState.selectedUsers,
+          {
+            name: user.name,
+            user_id: user._id,
+          },
+        ],
+      }),
+      () => {
+        console.log(this.state.selectedUsers);
+      }
+    );
+  };
   render() {
+    let searchUsers = null;
+    let selectedUsers = null;
+    if (this.state.searchedUser.length > 0) {
+      searchUsers = this.state.searchedUser.map((user) => {
+        return (
+          <Dropdown.Item
+            key={user._id}
+            onClick={() => this.handleUsersSelection(user)}
+          >
+            {user.name}
+          </Dropdown.Item>
+        );
+      });
+    }
+    if (this.state.selectedUsers.length > 0) {
+      selectedUsers = this.state.selectedUsers.map((user) => {
+        return (
+          <Chip
+            key={user.user_id}
+            label={user.name}
+            onDelete={(e) => this.handleDelete(e, user)}
+            className="chip"
+          />
+        );
+      });
+    }
     const checkStatus = (value) => {
       if (value == 1) {
         return (
@@ -132,6 +214,7 @@ export class invitation extends Component {
                     type="text"
                     placeholder="Search User"
                     className="searchbar"
+                    onChange={this.searchUser}
                   />
                   <div
                     style={{
@@ -140,10 +223,14 @@ export class invitation extends Component {
                       display: "flex",
                     }}
                   >
-                    <i className="fa fa-search"></i>
+                    <i className="fa fa-paper-plane"></i>
                   </div>
                 </div>
               </Card.Header>
+              <Dropdown>{searchUsers}</Dropdown>
+              <Paper component="ul" className="root">
+                {selectedUsers}
+              </Paper>
               <Card.Body>
                 {/* <Card.Title>Special title treatment</Card.Title> */}
                 <Card.Text>
@@ -159,7 +246,7 @@ export class invitation extends Component {
                               src={this.state.getDefaultRedditProfilePicture}
                             />
                           </Col>
-                          <Col xs={5}>{details.userID._id}</Col>
+                          <Col xs={5}>{details.userID.name}</Col>
                           <Col xs={2}>{checkStatus(details.isAccepted)}</Col>
                           <Col xs={4}>{getRelativeTime(details.dateTime)}</Col>
                         </Row>

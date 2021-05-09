@@ -12,7 +12,7 @@ app.get("/createDummyData", function (req, res, next) {
   let userProfile = new UserProfile({
     userIDSQL: "2",
     listOfTopics: ["topic1", "topic2"],
-    communityInvites: []
+    communityInvites: [],
   });
   userProfile.save();
 
@@ -22,21 +22,21 @@ app.get("/createDummyData", function (req, res, next) {
     communityDescription: "first day",
     topicSelected: [
       {
-        topic: "Art"
-      }
+        topic: "Art",
+      },
     ],
     listOfUsers: [
       {
         userID: "6089d63ea112c02c1df2914c",
         isAccepted: false,
-        isModerator: false
-      }
+        isModerator: false,
+      },
     ],
     ownerID: "6089d63ea112c02c1df2914c",
     upvotedBy: [],
     downvotedBy: [],
     createdDate: Date.now(),
-    sentInvitesTo: []
+    sentInvitesTo: [],
   });
   community.save();
 
@@ -70,21 +70,21 @@ app.get("/createDummyData", function (req, res, next) {
 app.post("/getNotificationData", (req, res) => {
   UserProfile.findOne({ _id: req.body.user_id })
     .populate("communityInvites.communityID")
-    .then(result => {
+    .then((result) => {
       let details = [];
       if (result !== null) {
-        result.communityInvites.forEach(element => {
+        result.communityInvites.forEach((element) => {
           let inviteDetails = {
             communityName: element.communityID.communityName,
             communityID: element.communityID._id,
-            time: element.dateTime
+            time: element.dateTime,
           };
           details.push(inviteDetails);
         });
       }
       res.status(200).send(details);
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send(err);
     });
 });
@@ -93,7 +93,7 @@ app.post("/rejectInvite", (req, res) => {
   UserProfile.findOneAndUpdate(
     { _id: req.body.user_id },
     {
-      $pull: { communityInvites: { communityID: req.body.community_id } }
+      $pull: { communityInvites: { communityID: req.body.community_id } },
     },
     (err, result) => {
       if (err) {
@@ -102,10 +102,10 @@ app.post("/rejectInvite", (req, res) => {
         Community.updateOne(
           {
             _id: req.body.community_id,
-            "sentInvitesTo.userID": req.body.user_id
+            "sentInvitesTo.userID": req.body.user_id,
           },
           {
-            $set: { "sentInvitesTo.$.isAccepted": -1 }
+            $set: { "sentInvitesTo.$.isAccepted": -1 },
           },
           (err, result) => {
             if (err) {
@@ -123,7 +123,7 @@ app.post("/acceptInvite", (req, res) => {
   UserProfile.findOneAndUpdate(
     { _id: req.body.user_id },
     {
-      $pull: { communityInvites: { communityID: req.body.community_id } }
+      $pull: { communityInvites: { communityID: req.body.community_id } },
     },
     (err, result) => {
       if (err) {
@@ -132,10 +132,10 @@ app.post("/acceptInvite", (req, res) => {
         Community.updateOne(
           {
             _id: req.body.community_id,
-            "sentInvitesTo.userID": req.body.user_id
+            "sentInvitesTo.userID": req.body.user_id,
           },
           {
-            $set: { "sentInvitesTo.$.isAccepted": 1 }
+            $set: { "sentInvitesTo.$.isAccepted": 1 },
           },
           (err, result) => {
             if (err) {
@@ -146,9 +146,9 @@ app.post("/acceptInvite", (req, res) => {
                 {
                   $push: {
                     listOfUsers: [
-                      { userID: req.body.user_id, isAccepted: true }
-                    ]
-                  }
+                      { userID: req.body.user_id, isAccepted: true },
+                    ],
+                  },
                 },
                 (err, result) => {
                   if (err) {
@@ -170,7 +170,7 @@ app.post("/createUserProfile", (req, res) => {
   let userProfile = new UserProfile({
     userIDSQL: req.body.sqlUserID,
     name: req.body.name,
-    email: req.body.email
+    email: req.body.email,
   });
   userProfile.save((err, result) => {
     if (result) {
@@ -199,7 +199,7 @@ app.get("/getUserProfile", (req, res) => {
 });
 
 app.get("/getUserProfileByMongoID", (req, res) => {
-  UserProfile.findOne({ _id: req.query.ID }).then(result => {
+  UserProfile.findOne({ _id: req.query.ID }).then((result) => {
     res.status(200).send(result);
   });
 });
@@ -209,20 +209,20 @@ app.post("/getListedUserDetails", async (req, res) => {
   let count = await UserProfile.countDocuments({
     $and: [
       { userIDSQL: { $in: req.body.usersList } },
-      { name: { $regex: req.body.search, $options: "i" } }
-    ]
+      { name: { $regex: req.body.search, $options: "i" } },
+    ],
   });
   await UserProfile.find({
     $and: [
       { userIDSQL: { $in: req.body.usersList } },
-      { name: { $regex: req.body.search, $options: "i" } }
-    ]
+      { name: { $regex: req.body.search, $options: "i" } },
+    ],
   })
     .select({ userIDSQL: 1, name: 1, profile_picture_url: 1 })
     .limit(Number(req.body.size))
     .skip(skip)
     .sort({ name: 1 })
-    .then(result => {
+    .then((result) => {
       res.status(200).send({ users: result, total: count });
     });
 });
@@ -230,19 +230,64 @@ app.post("/getListedUserDetails", async (req, res) => {
 app.post("/RequestedUsersForCom", async (req, res) => {
   // console.log(req.body.usersList);
   await UserProfile.find({
-    _id: { $in: req.body.usersList }
+    _id: { $in: req.body.usersList },
   })
     .select({ userIDSQL: 1, name: 1, profile_picture_url: 1 })
-    .then(result => {
+    .then((result) => {
       let output = {};
-      result.forEach(item => {
+      result.forEach((item) => {
         output[item._id] = {
           name: item.name,
-          profile_picture_url: item.profile_picture_url
+          profile_picture_url: item.profile_picture_url,
         };
       });
       res.status(200).send(output);
     });
 });
 
+app.post("/createMessage", async (req, res) => {
+  for (i = 0; i < 425; i++) {
+    let userProfile = new Message({
+      message: "Message" + i,
+      sent_by: 54,
+      sent_to: 53,
+    });
+    userProfile.save((err, result) => {});
+  }
+  //res.end(result);
+});
+
+app.get("/getMessageMongo", async (req, res) => {
+  Message.find({}, (err, result) => {
+    res.send(result);
+  });
+});
+
+app.post("/getSearchedUserForMongo", async (req, res) => {
+  UserProfile.find(
+    {
+      _id: { $nin: req.body.users },
+      name: { $regex: req.body.name, $options: "i" },
+    },
+    { name: 1, _id: 1 }
+  )
+
+    // UserProfile.aggregate([
+    //   {
+    //     $match: { _id: { $not: [{ $eq: ["60921eccb55fa20ffc8e1d43"] }] } },
+    //   },
+    //   {
+    //     $match: { name: { $regex: req.body.name, $options: "i" } },
+    //   },
+    //   {
+    //     $project: {
+    //       name: "$name",
+    //       _id: "$_id",
+    //     },
+    //   },
+    // ])
+    .then(async (result) => {
+      res.status(200).send(result);
+    });
+});
 module.exports = router;
