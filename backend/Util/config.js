@@ -9,8 +9,9 @@ module.exports = {
   SQLusername: "admin",
   SQLpassword: "redditpass",
   SQLdb: "Reddit",
-  AWSAccessKeyId: "",
-  AWSSecretKey: "",
+  AWSAccessKeyId: "AKIASA26GJPIL5JADT7I",
+  AWSSecretKey: "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",
+  AWSBucketName: "splitwiseimage",
   redisPort: 6379,
   redisHost: "54.85.111.171",
   redisPass: "secure-redis"

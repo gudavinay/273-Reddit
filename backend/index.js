@@ -1,11 +1,11 @@
 const app = require("./app");
 const { port } = require("./Util/config");
-
+const uploadImage = require("./routes/awsS3");
 const mongoRouter = require("./routes/mongo/router");
 const sqlRouter = require("./routes/sql/router");
 //const kafkaSqlRouter = require("./kafkaRoutes/sql/router");
 // const kafkaMongoRouter = require("./kafkaRoutes/mongo/router")
-
+app.use("/upload", uploadImage);
 app.use("/mongoRouter", mongoRouter);
 app.use("/sqlRouter", sqlRouter);
 //app.use("/kafkaSqlRouter", kafkaSqlRouter);

@@ -3,7 +3,6 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const express = require("express");
 const cors = require("cors");
-const s3 = require("./routes/awsS3");
 const app = express();
 const { frontEnd } = require("./Util/config");
 // DB connection
@@ -12,7 +11,6 @@ require("./dbConnection");
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
-
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
