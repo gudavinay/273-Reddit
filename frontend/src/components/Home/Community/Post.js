@@ -95,11 +95,34 @@ class Post extends Component {
               <Col xs={1}>
                 <div>
                   <i
-                    style={{ cursor: "pointer" }}
+                    style={{
+                      cursor: "pointer",
+                      color: this.props.data.userVoteDir == 1 ? "#ff4500" : "",
+                    }}
                     className="icon icon-arrow-up"
+                    onClick={() =>
+                      this.props.upVote(
+                        this.props.data._id,
+                        this.props.data.userVoteDir,
+                        this.props.index
+                      )
+                    }
                   ></i>
-                  <span>698</span>
-                  <i className="icon icon-arrow-down"></i>
+                  <span> {this.props.data.score}</span>
+                  <i
+                    style={{
+                      cursor: "pointer",
+                      color: this.props.data.userVoteDir == -1 ? "#7193ff" : "",
+                    }}
+                    className="icon icon-arrow-down"
+                    onClick={() =>
+                      this.props.downVote(
+                        this.props.data._id,
+                        this.props.data.userVoteDir,
+                        this.props.index
+                      )
+                    }
+                  ></i>
                 </div>
               </Col>
               <Col>{postSpecificContent}</Col>

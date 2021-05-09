@@ -3,7 +3,10 @@ import React, { Component } from "react";
 import Post from "./Post";
 import backendServer from "../../../webConfig";
 import Axios from "axios";
-import { getDefaultRedditProfilePicture, getRelativeTime } from "../../../services/ControllerUtils";
+import {
+  getDefaultRedditProfilePicture,
+  getRelativeTime,
+} from "../../../services/ControllerUtils";
 import "../../styles/voteButtonStyles.css";
 import "./DetailedPostView.css";
 import { Collapse } from "react-bootstrap";
@@ -13,7 +16,7 @@ class DetailedPostView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture()
+      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture(),
     };
   }
 
@@ -21,8 +24,8 @@ class DetailedPostView extends Component {
     this.props.setLoader();
     Axios.post(backendServer + "/getCommentsWithPostID", {
       postID: this.props.data._id,
-      //   userId: getMongoUserID(),
-      userId: localStorage.getItem("userId"),
+      userId: getMongoUserID(),
+      // userId: localStorage.getItem("userId"),
     })
       .then((response) => {
         this.props.unsetLoader();
@@ -50,8 +53,8 @@ class DetailedPostView extends Component {
   upVote(commentId, userVoteDir, index) {
     Axios.post(backendServer + "/addVote", {
       entityId: commentId,
-      //   userId: getMongoUserID(),
-      userId: localStorage.getItem("userId"),
+      userId: getMongoUserID(),
+      // userId: localStorage.getItem("userId"),
       voteDir: userVoteDir == 1 ? 0 : 1,
     })
       .then((response) => {
@@ -66,8 +69,11 @@ class DetailedPostView extends Component {
           userVoteDir == 1
             ? newComments[index].score - 1
             : userVoteDir == 0
-              ? newComments[index].score + 1
-              : newComments[index].score + 2;
+            ? newComments[index].score + 1
+            : newComments[index].score + 2;
+
+        // newComments[index].userVoteDir = response.data.userVoteDir;
+
         newComments[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
         console.log("newComments = ", newComments);
         this.setState({ parentCommentList: newComments });
@@ -80,10 +86,18 @@ class DetailedPostView extends Component {
   }
 
   downVote(commentId, userVoteDir, index) {
+    console.log(
+      "userid = ",
+      getMongoUserID(),
+      userVoteDir,
+      " ",
+      commentId,
+      index
+    );
     Axios.post(backendServer + "/addVote", {
       entityId: commentId,
-      //   userId: getMongoUserID(),
-      userId: localStorage.getItem("userId"),
+      userId: getMongoUserID(),
+      // userId: localStorage.getItem("userId"),
       voteDir: userVoteDir == -1 ? 0 : -1,
       // voteDir: userVoteDir == -1 ? 0 : userVoteDir == 1 ? 0 : -1,
     })
@@ -95,8 +109,10 @@ class DetailedPostView extends Component {
           userVoteDir == -1
             ? newComments[index].score + 1
             : userVoteDir == 0
-              ? newComments[index].score - 1
-              : newComments[index].score - 2;
+            ? newComments[index].score - 1
+            : newComments[index].score - 2;
+
+        // newComments[index].userVoteDir = response.data.userVoteDir;
         newComments[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
         console.log("newComments = ", newComments);
         this.setState({ parentCommentList: newComments });

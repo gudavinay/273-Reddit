@@ -155,13 +155,105 @@ app.post("/comment", (req, res) => {
 
 app.get("/getPostsInCommunity", (req, res) => {
   console.log("req.body posts = ", req.query);
+  const userId = req.query.userId;
   Post.find({ communityID: mongoose.Types.ObjectId(req.query.ID) })
     .populate("userID")
     .then((result) => {
       console.log("results in posts community = ", result);
-      res.status(200).send(result);
+      const responseData = JSON.parse(JSON.stringify(result));
+      if (responseData && responseData.length > 0) {
+        responseData.forEach((resp, index) => {
+          const entityId = resp._id;
+          console.log("searching for ", entityId);
+          Vote.aggregate(
+            [
+              {
+                $match: {
+                  entityId: mongoose.Types.ObjectId(entityId),
+                },
+              },
+
+              {
+                $group: {
+                  _id: "$entityId",
+                  upvoteCount: {
+                    $sum: {
+                      $sum: {
+                        $cond: {
+                          if: { $eq: ["$voteDir", 1] },
+                          then: 1,
+                          else: 0,
+                        },
+                      },
+                    },
+                  },
+                  downvoteCount: {
+                    $sum: {
+                      $cond: {
+                        if: { $eq: ["$voteDir", -1] },
+                        then: 1,
+                        else: 0,
+                      },
+                    },
+                  },
+                  userVoteDir: {
+                    $sum: {
+                      $cond: {
+                        if: {
+                          $eq: ["$userId", mongoose.Types.ObjectId(userId)],
+                        },
+
+                        then: {
+                          $cond: {
+                            if: {
+                              $eq: ["$voteDir", -1],
+                            },
+                            then: -1,
+                            else: {
+                              $cond: {
+                                if: {
+                                  $eq: ["$voteDir", 1],
+                                },
+                                then: 1,
+                                else: 0,
+                              },
+                            },
+                          },
+                        },
+                        else: 0,
+                      },
+                    },
+                  },
+                },
+              },
+            ],
+            (err, result) => {
+              console.log("result = ", result);
+              if (err) {
+                console.log("error = ", err);
+                return res.status(500).send(err);
+              } else {
+                resp.score = resp.upvoteCount = resp.downvoteCount = resp.userVoteDir = 0;
+                if (result && result[0]) {
+                  resp.score = result[0].upvoteCount - result[0].downvoteCount;
+                  resp.upvoteCount = result[0].upvoteCount;
+                  resp.downvoteCount = result[0].downvoteCount;
+                  // resp.userVoteDir = result[0].userVoteDir;
+                }
+              }
+              if (index == responseData.length - 1) {
+                res.status(200).send(responseData);
+              }
+            }
+          );
+        });
+      } else {
+        res.status(200).send(responseData);
+      }
+      // res.status(200).send(result);
     })
     .catch((err) => {
+      console.log("err - ", err);
       res.status(500).send(err);
     });
 });
