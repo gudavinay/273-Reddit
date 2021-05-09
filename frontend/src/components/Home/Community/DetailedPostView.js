@@ -12,7 +12,9 @@ import { getMongoUserID } from "../../../services/ControllerUtils";
 class DetailedPostView extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture()
+    };
   }
 
   fetchCommentsWithPostID() {
@@ -64,8 +66,8 @@ class DetailedPostView extends Component {
           userVoteDir == 1
             ? newComments[index].score - 1
             : userVoteDir == 0
-            ? newComments[index].score + 1
-            : newComments[index].score + 2;
+              ? newComments[index].score + 1
+              : newComments[index].score + 2;
         newComments[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
         console.log("newComments = ", newComments);
         this.setState({ parentCommentList: newComments });
@@ -93,8 +95,8 @@ class DetailedPostView extends Component {
           userVoteDir == -1
             ? newComments[index].score + 1
             : userVoteDir == 0
-            ? newComments[index].score - 1
-            : newComments[index].score - 2;
+              ? newComments[index].score - 1
+              : newComments[index].score - 2;
         newComments[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
         console.log("newComments = ", newComments);
         this.setState({ parentCommentList: newComments });
@@ -117,7 +119,7 @@ class DetailedPostView extends Component {
                 alt=""
                 width="40px"
                 style={{ borderRadius: "20px", margin: "5px" }}
-                src={getDefaultRedditProfilePicture()}
+                src={this.state.getDefaultRedditProfilePicture}
               />
               <span
                 style={{

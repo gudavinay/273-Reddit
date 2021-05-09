@@ -9,13 +9,13 @@ import { BsFillCaretDownFill } from "react-icons/bs";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
 import { BiBell } from "react-icons/bi";
 import "./navigationbar.css";
-import userProfileSVG from "../../assets/default_avatar.svg";
+// import userProfileSVG from "../../assets/default_avatar.svg";
 import Axios from "axios";
 import backendServer from "../../webConfig";
 import Notification from "../Home/Notification/Notification";
 import { Link, Redirect } from "react-router-dom";
 import { logoutRedux } from "../../reduxOps/reduxActions/loginRedux";
-import { getUserProfile } from "../../services/ControllerUtils";
+import { getDefaultRedditProfilePicture, getUserProfile } from "../../services/ControllerUtils";
 import { getMongoUserID } from "../../services/ControllerUtils";
 
 class Navigationbar extends Component {
@@ -27,7 +27,8 @@ class Navigationbar extends Component {
       leftDropdown: "Home",
       showNotificationModal: false,
       notificationData: [],
-      redirectToLanding: null
+      redirectToLanding: null,
+      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture()
     };
   }
   onSubmitSearch = e => {
@@ -43,7 +44,7 @@ class Navigationbar extends Component {
         pathname: "/communitysearch",
         search: "?" + new URLSearchParams({ q: this.state.search }).toString()
       });
-    } else if(pathname === "/home") {
+    } else if (pathname === "/home") {
       // Write logic for posts search
       this.props.history.push({
         pathname: "/home",
@@ -362,7 +363,7 @@ class Navigationbar extends Component {
                   >
                     <div>
                       <img
-                        src={userProfileSVG}
+                        src={this.state.getDefaultRedditProfilePicture}
                         style={{
                           width: "25px",
                           borderRadius: "3px",

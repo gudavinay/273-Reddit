@@ -18,7 +18,7 @@ class UserProfile extends Component {
             // s3URL: getProfilePicture(),
             saveSuccess: false,
             saveFailed: false,
-            // userProfile: getUserProfile()
+            getDefaultRedditProfilePicture: getDefaultRedditProfilePicture()
         }
     }
 
@@ -76,7 +76,7 @@ class UserProfile extends Component {
                             <Col >
                                 <center>
                                     <h2>Your account</h2>
-                                    <img src={this.state.s3URL ? this.state.s3URL : getDefaultRedditProfilePicture()} style={{ height: '100%', width: '100%', borderRadius: '500px', padding: '30px' }} alt="profilephoto" />
+                                    <img src={this.state.s3URL ? this.state.s3URL : this.state.getDefaultRedditProfilePicture} style={{ height: '100%', width: '100%', borderRadius: '500px', padding: '30px' }} alt="profilephoto" />
                                     <Row style={{ marginTop: '10px' }}>
                                         <Col sm={9}>
                                             <input style={{ fontSize: '12px' }} className="form-control" type="file" name="profilepicture" accept="image/*" onChange={this.uploadImage} />

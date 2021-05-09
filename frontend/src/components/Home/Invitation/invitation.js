@@ -16,6 +16,7 @@ export class invitation extends Component {
       communities: [],
       communityID: "",
       invitedDetails: [],
+      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture()
     };
   }
   componentDidMount() {
@@ -155,7 +156,7 @@ export class invitation extends Component {
                               alt=""
                               width="40px"
                               style={{ borderRadius: "20px", margin: "5px" }}
-                              src={getDefaultRedditProfilePicture()}
+                              src={this.state.getDefaultRedditProfilePicture}
                             />
                           </Col>
                           <Col xs={5}>{details.userID._id}</Col>

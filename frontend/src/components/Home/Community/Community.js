@@ -25,6 +25,7 @@ class Community extends Component {
     super(props);
     this.state = {
       community_id: props.location.pathname ? this.props.location.pathname.replace("/community/", "") : "",
+      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture()
     };
   }
 
@@ -106,7 +107,7 @@ class Community extends Component {
       <React.Fragment>
         <Row className="communityHeaderInfo">
           <Col sm={1}>
-            <img width="40px" style={{ borderRadius: "20px", margin: "5px" }} src={getDefaultRedditProfilePicture()} alt="" />
+            <img width="40px" style={{ borderRadius: "20px", margin: "5px" }} src={this.state.getDefaultRedditProfilePicture} alt="" />
           </Col>
           <Col sm={7}>
             <div style={{ fontWeight: 'bold', fontSize: '15px' }}>{this.state.communityDetails?.communityName}</div>

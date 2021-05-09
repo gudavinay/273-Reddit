@@ -12,6 +12,9 @@ import { getMongoUserID } from "../../../services/ControllerUtils";
 export class Notification extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture()
+    }
   }
   acceptInvite = (communityID, e) => {
     console.log("accept called");
@@ -68,7 +71,7 @@ export class Notification extends Component {
                       alt=""
                       width="40px"
                       style={{ borderRadius: "20px", margin: "5px" }}
-                      src={getDefaultRedditProfilePicture()}
+                      src={this.state.getDefaultRedditProfilePicture}
                     />
                   </Col>
                   <Col xs={4}>{details.communityName}</Col>
