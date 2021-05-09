@@ -285,7 +285,7 @@ class DetailedPostView extends Component {
                   alt=""
                   width="30px"
                   style={{ borderRadius: "15px", margin: "2px" }}
-                  src="https://pixinvent.com/materialize-material-design-admin-template/app-assets/images/user/12.jpg"
+                  src={this.state.getDefaultRedditProfilePicture}
                 />
                 <span
                   style={{
