@@ -34,6 +34,7 @@ class Community extends Component {
     };
     this.upVote = this.upVote.bind(this);
     this.downVote = this.downVote.bind(this);
+    this.setComments = this.setComments.bind(this);
   }
 
   componentDidMount = async () => {
@@ -52,13 +53,14 @@ class Community extends Component {
     this.props.setLoader();
     axios
       .get(
-        `${backendServer}/getPostsInCommunity?ID=${this.state.community_id
+        `${backendServer}/getPostsInCommunity?ID=${
+          this.state.community_id
         }&userId=${getMongoUserID()}`
       )
       .then((response) => {
         this.props.unsetLoader();
         console.log("posts = ", response.data);
-        this.setState({ posts: response.data }, () => { });
+        this.setState({ posts: response.data }, () => {});
       })
       .catch((err) => {
         this.props.unsetLoader();
@@ -84,8 +86,8 @@ class Community extends Component {
           userVoteDir == 1
             ? newPosts[index].score - 1
             : userVoteDir == 0
-              ? newPosts[index].score + 1
-              : newPosts[index].score + 2;
+            ? newPosts[index].score + 1
+            : newPosts[index].score + 2;
 
         newPosts[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
         console.log("newComments = ", newPosts);
@@ -113,8 +115,8 @@ class Community extends Component {
           userVoteDir == -1
             ? newPosts[index].score + 1
             : userVoteDir == 0
-              ? newPosts[index].score - 1
-              : newPosts[index].score - 2;
+            ? newPosts[index].score - 1
+            : newPosts[index].score - 2;
 
         // newComments[index].userVoteDir = response.data.userVoteDir;
         newPosts[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
@@ -127,6 +129,13 @@ class Community extends Component {
         console.log(err);
       });
   }
+  setComments = (commentsCount, index) => {
+    console.log("set comments in community = ", commentsCount, index);
+    const newPosts = this.state.posts.slice();
+    newPosts[index].commentsCount = commentsCount;
+    this.setState({ parentCommentList: newPosts });
+    // this.setState({ commentsCount: commentsCount });
+  };
 
   render() {
     var postsToRender = [];
@@ -137,6 +146,7 @@ class Community extends Component {
             upVote={this.upVote}
             downVote={this.downVote}
             index={index}
+            setCommentsCount={this.setComments}
             data={post}
             {...this.props}
           ></Post>
@@ -147,22 +157,28 @@ class Community extends Component {
     var userStatusInCommunity = null;
     if (this.state.communityDetails) {
       if (this.state.communityDetails.ownerID == getMongoUserID()) {
-        participationButton = (<button
-          className="form-control"
-          disabled
-          style={{
-            display: "block",
-            borderRadius: "30px",
-            background: "#e17157",
-            color: "white",
-            cursor: 'not-allowed'
-          }}
-        >
-          Moderator
-        </button>)
+        participationButton = (
+          <button
+            className="form-control"
+            disabled
+            style={{
+              display: "block",
+              borderRadius: "30px",
+              background: "#e17157",
+              color: "white",
+              cursor: "not-allowed",
+            }}
+          >
+            Moderator
+          </button>
+        );
       } else {
-        var isUserBeingInvitedByModerator = false, didUserRequestToJoin = false;
-        if (this.state.communityDetails.listOfUsers && this.state.communityDetails.listOfUsers.length > 0) {
+        var isUserBeingInvitedByModerator = false,
+          didUserRequestToJoin = false;
+        if (
+          this.state.communityDetails.listOfUsers &&
+          this.state.communityDetails.listOfUsers.length > 0
+        ) {
           userStatusInCommunity = this.state.communityDetails?.listOfUsers.find(
             (user) => user.userID == getMongoUserID()
           );
@@ -170,7 +186,10 @@ class Community extends Component {
             didUserRequestToJoin = true;
           }
         }
-        if (this.state.communityDetails.sentInvitesTo && this.state.communityDetails.sentInvitesTo.length > 0) {
+        if (
+          this.state.communityDetails.sentInvitesTo &&
+          this.state.communityDetails.sentInvitesTo.length > 0
+        ) {
           userStatusInCommunity = this.state.communityDetails?.listOfUsers.find(
             (user) => user.userID == getMongoUserID()
           );
@@ -200,7 +219,7 @@ class Community extends Component {
                       .then((response) => {
                         this.props.unsetLoader();
                         console.log(response);
-                        this.setState({ communityDetails: response.data })
+                        this.setState({ communityDetails: response.data });
                       })
                       .catch((err) => {
                         this.props.unsetLoader();
@@ -254,11 +273,11 @@ class Community extends Component {
                     color: "white",
                   }}
                   onClick={() => {
-                    alert("Yet to be implemented")
+                    alert("Yet to be implemented");
                   }}
                 >
                   Accept
-              </button>
+                </button>
                 <button
                   className="form-control"
                   style={{
@@ -268,11 +287,12 @@ class Community extends Component {
                     color: "white",
                   }}
                   onClick={() => {
-                    alert("Yet to be implemented")
+                    alert("Yet to be implemented");
                   }}
                 >
                   Reject
-              </button></div>
+                </button>
+              </div>
             );
           }
         } else {
@@ -308,12 +328,20 @@ class Community extends Component {
           );
         }
       }
-
     }
 
     return (
       <React.Fragment>
-        <div style={{ display: 'block', height: "5%", backgroundColor: 'pink', color: 'white' }}>.</div>
+        <div
+          style={{
+            display: "block",
+            height: "5%",
+            backgroundColor: "pink",
+            color: "white",
+          }}
+        >
+          .
+        </div>
         <Row className="communityHeaderInfo">
           <Col sm={1}>
             <img
@@ -379,7 +407,7 @@ class Community extends Component {
                 </Col>
                 <Col>
                   {this.state.communityDetails?.imageURL &&
-                    this.state.communityDetails?.imageURL.length > 0 ? (
+                  this.state.communityDetails?.imageURL.length > 0 ? (
                     <Row>
                       <Card className="card">
                         <Card.Header className="cardHeader">
@@ -406,178 +434,188 @@ class Community extends Component {
                     ""
                   )}
 
-                  {this.state.communityDetails && this.state.communityDetails.rules && this.state.communityDetails.rules.length > 0 && <Row>
-                    <Card className="card">
-                      <Card.Header className="cardHeader">
-                        r/{this.state.communityDetails.communityName}&apos;s
-                        Rules
-                      </Card.Header>
-                      <Card.Body>
-                        {this.state.communityDetails.rules.map(
-                          (rule, index) => {
-                            var normalView = [],
-                              expandedView = [];
+                  {this.state.communityDetails &&
+                    this.state.communityDetails.rules &&
+                    this.state.communityDetails.rules.length > 0 && (
+                      <Row>
+                        <Card className="card">
+                          <Card.Header className="cardHeader">
+                            r/{this.state.communityDetails.communityName}&apos;s
+                            Rules
+                          </Card.Header>
+                          <Card.Body>
+                            {this.state.communityDetails.rules.map(
+                              (rule, index) => {
+                                var normalView = [],
+                                  expandedView = [];
 
-                            if (index < 5) {
-                              normalView.push(
-                                <div key={rule._id}>
-                                  <strong>{rule.title}</strong>:{" "}
-                                  {rule.description}
-                                </div>
-                              );
-                            } else {
-                              if (index == 5) {
-                                normalView.push(
-                                  <div
-                                    className="upArrowRotate"
-                                    style={{
-                                      display: !this.state.showMoreRules
-                                        ? "block"
-                                        : "none",
-                                      textAlign: "center",
-                                    }}
-                                    onClick={() =>
-                                      this.setState((state) => ({
-                                        showMoreRules: !state.showMoreRules,
-                                      }))
-                                    }
-                                  >
-                                    <i className="fa fa-angle-double-down" />
+                                if (index < 5) {
+                                  normalView.push(
+                                    <div key={rule._id}>
+                                      <strong>{rule.title}</strong>:{" "}
+                                      {rule.description}
+                                    </div>
+                                  );
+                                } else {
+                                  if (index == 5) {
+                                    normalView.push(
+                                      <div
+                                        className="upArrowRotate"
+                                        style={{
+                                          display: !this.state.showMoreRules
+                                            ? "block"
+                                            : "none",
+                                          textAlign: "center",
+                                        }}
+                                        onClick={() =>
+                                          this.setState((state) => ({
+                                            showMoreRules: !state.showMoreRules,
+                                          }))
+                                        }
+                                      >
+                                        <i className="fa fa-angle-double-down" />
+                                      </div>
+                                    );
+                                  }
+                                  expandedView.push(
+                                    <div key={rule._id}>
+                                      <strong>{rule.title}</strong>:{" "}
+                                      {rule.description}
+                                    </div>
+                                  );
+                                }
+                                return (
+                                  <div key="">
+                                    {normalView}
+                                    <Collapse in={this.state.showMoreRules}>
+                                      <Fade>
+                                        <div>
+                                          {expandedView}
+                                          {this.state.communityDetails.rules
+                                            .length -
+                                            1 ==
+                                          index ? (
+                                            <div
+                                              className="downArrowRotate"
+                                              style={{
+                                                display: this.state
+                                                  .showMoreRules
+                                                  ? "block"
+                                                  : "none",
+                                                textAlign: "center",
+                                              }}
+                                              onClick={() =>
+                                                this.setState((state) => ({
+                                                  showMoreRules: !state.showMoreRules,
+                                                }))
+                                              }
+                                            >
+                                              <i className="fa fa-angle-double-up" />
+                                            </div>
+                                          ) : (
+                                            ""
+                                          )}
+                                        </div>
+                                      </Fade>
+                                    </Collapse>
                                   </div>
                                 );
                               }
-                              expandedView.push(
-                                <div key={rule._id}>
-                                  <strong>{rule.title}</strong>:{" "}
-                                  {rule.description}
-                                </div>
-                              );
-                            }
-                            return (
-                              <div key="">
-                                {normalView}
-                                <Collapse in={this.state.showMoreRules}>
-                                  <Fade>
-                                    <div>
-                                      {expandedView}
-                                      {this.state.communityDetails.rules
-                                        .length -
-                                        1 ==
-                                        index ? (
-                                        <div
-                                          className="downArrowRotate"
-                                          style={{
-                                            display: this.state.showMoreRules
-                                              ? "block"
-                                              : "none",
-                                            textAlign: "center",
-                                          }}
-                                          onClick={() =>
-                                            this.setState((state) => ({
-                                              showMoreRules: !state.showMoreRules,
-                                            }))
-                                          }
-                                        >
-                                          <i className="fa fa-angle-double-up" />
-                                        </div>
-                                      ) : (
-                                        ""
-                                      )}
-                                    </div>
-                                  </Fade>
-                                </Collapse>
-                              </div>
-                            );
-                          }
-                        )}
-                      </Card.Body>
-                    </Card>
-                  </Row>}
-                  {this.state.communityDetails && this.state.communityDetails.topicSelected && this.state.communityDetails.topicSelected.length > 0 && <Row>
-                    <Card className="card">
-                      <Card.Header className="cardHeader">
-                        r/{this.state.communityDetails?.communityName}&apos;s
-                        interested topics
-                      </Card.Header>
-                      <Card.Body>
-                        {this.state.communityDetails.topicSelected.map(
-                          (topic, index) => {
-                            var normalView = [],
-                              expandedView = [];
+                            )}
+                          </Card.Body>
+                        </Card>
+                      </Row>
+                    )}
+                  {this.state.communityDetails &&
+                    this.state.communityDetails.topicSelected &&
+                    this.state.communityDetails.topicSelected.length > 0 && (
+                      <Row>
+                        <Card className="card">
+                          <Card.Header className="cardHeader">
+                            r/{this.state.communityDetails?.communityName}
+                            &apos;s interested topics
+                          </Card.Header>
+                          <Card.Body>
+                            {this.state.communityDetails.topicSelected.map(
+                              (topic, index) => {
+                                var normalView = [],
+                                  expandedView = [];
 
-                            if (index < 5) {
-                              normalView.push(
-                                <div key={topic._id}>
-                                  <strong>{topic.topic}</strong>
-                                </div>
-                              );
-                            } else {
-                              if (index == 5) {
-                                normalView.push(
-                                  <div
-                                    className="upArrowRotate"
-                                    style={{
-                                      display: !this.state.showMoreTopics
-                                        ? "block"
-                                        : "none",
-                                      textAlign: "center",
-                                    }}
-                                    onClick={() =>
-                                      this.setState((state) => ({
-                                        showMoreTopics: !state.showMoreTopics,
-                                      }))
-                                    }
-                                  >
-                                    <i className="fa fa-angle-double-down" />
+                                if (index < 5) {
+                                  normalView.push(
+                                    <div key={topic._id}>
+                                      <strong>{topic.topic}</strong>
+                                    </div>
+                                  );
+                                } else {
+                                  if (index == 5) {
+                                    normalView.push(
+                                      <div
+                                        className="upArrowRotate"
+                                        style={{
+                                          display: !this.state.showMoreTopics
+                                            ? "block"
+                                            : "none",
+                                          textAlign: "center",
+                                        }}
+                                        onClick={() =>
+                                          this.setState((state) => ({
+                                            showMoreTopics: !state.showMoreTopics,
+                                          }))
+                                        }
+                                      >
+                                        <i className="fa fa-angle-double-down" />
+                                      </div>
+                                    );
+                                  }
+                                  expandedView.push(
+                                    <div key={topic._id}>
+                                      <strong>{topic.topic}</strong>
+                                    </div>
+                                  );
+                                }
+                                return (
+                                  <div key="">
+                                    {normalView}
+                                    <Collapse in={this.state.showMoreTopics}>
+                                      <Fade>
+                                        <div>
+                                          {expandedView}
+                                          {this.state.communityDetails
+                                            .topicSelected.length -
+                                            1 ==
+                                          index ? (
+                                            <div
+                                              className="downArrowRotate"
+                                              style={{
+                                                display: this.state
+                                                  .showMoreTopics
+                                                  ? "block"
+                                                  : "none",
+                                                textAlign: "center",
+                                              }}
+                                              onClick={() =>
+                                                this.setState((state) => ({
+                                                  showMoreTopics: !state.showMoreTopics,
+                                                }))
+                                              }
+                                            >
+                                              <i className="fa fa-angle-double-up" />
+                                            </div>
+                                          ) : (
+                                            ""
+                                          )}
+                                        </div>
+                                      </Fade>
+                                    </Collapse>
                                   </div>
                                 );
                               }
-                              expandedView.push(
-                                <div key={topic._id}>
-                                  <strong>{topic.topic}</strong>
-                                </div>
-                              );
-                            }
-                            return (
-                              <div key="">
-                                {normalView}
-                                <Collapse in={this.state.showMoreTopics}>
-                                  <Fade>
-                                    <div>
-                                      {expandedView}
-                                      {this.state.communityDetails.topicSelected
-                                        .length -
-                                        1 ==
-                                        index ? (
-                                        <div
-                                          className="downArrowRotate"
-                                          style={{
-                                            display: this.state.showMoreTopics
-                                              ? "block"
-                                              : "none",
-                                            textAlign: "center",
-                                          }}
-                                          onClick={() =>
-                                            this.setState((state) => ({
-                                              showMoreTopics: !state.showMoreTopics,
-                                            }))
-                                          }
-                                        >
-                                          <i className="fa fa-angle-double-up" />
-                                        </div>
-                                      ) : (
-                                        ""
-                                      )}
-                                    </div>
-                                  </Fade>
-                                </Collapse>
-                              </div>
-                            );
-                          }
-                        )}
-                      </Card.Body>
-                    </Card>
-                  </Row>}
+                            )}
+                          </Card.Body>
+                        </Card>
+                      </Row>
+                    )}
                 </Col>
               </Row>
             </div>

@@ -12,6 +12,7 @@ class Post extends Component {
       showPostModal: false,
     };
     this.postClicked = this.postClicked.bind(this);
+    // this.setComments = this.setComments.bind(this);
   }
 
   // componentDidMount() {
@@ -22,9 +23,9 @@ class Post extends Component {
     console.log(this.props.data._id);
     this.setState({ selectedPostID: this.props.data._id, showPostModal: true });
   };
-  // setComments(commentsCount) {
+  // setComments = (commentsCount) => {
   //   this.setState({ commentsCount: commentsCount });
-  // }
+  // };
   render() {
     let _modalWindow,
       postSpecificContent = null;

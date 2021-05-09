@@ -49,6 +49,7 @@ class DetailedPostView extends Component {
   }
 
   componentDidMount() {
+    console.log("this.props in detailed posts  = ", this.props);
     this.fetchCommentsWithPostID();
   }
 
@@ -258,6 +259,9 @@ class DetailedPostView extends Component {
                           obj[key] = "";
                           this.setState(obj);
                           this.fetchCommentsWithPostID();
+
+                          // this.props.data.commentsCount =
+                          //   this.props.data.commentsCount + 1;
                         })
                         .catch((err) => {
                           this.props.unsetLoader();
@@ -381,6 +385,10 @@ class DetailedPostView extends Component {
                     console.log(response);
                     document.getElementById("primaryComment").value = "";
                     this.setState({ primaryComment: null });
+                    this.props.setCommentsCount(
+                      this.props.data.commentsCount + 1,
+                      this.props.index
+                    );
                     this.fetchCommentsWithPostID();
                   })
                   .catch((err) => {
