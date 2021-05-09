@@ -20,9 +20,8 @@ class CreateCommunity extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      communityName: props.location.pathname
-        ? this.props.location.pathname.replace("/createCommunity/", "")
-        : "",
+      communityName: "",
+      error: "",
       communityImages: [],
       uploadedImage: [],
       listOfTopics: [],
@@ -71,6 +70,7 @@ class CreateCommunity extends Component {
       .then(response => {
         this.props.unsetLoader();
         if (response.status == 200) {
+          this.setState({ error: "" });
           alert("Community created successfully");
         }
       })
@@ -87,12 +87,16 @@ class CreateCommunity extends Component {
       .then(response => {
         this.props.unsetLoader();
         if (response.status == 200) {
+          this.setState({ error: "" });
           alert("Community Updated successfully");
         }
       })
       .catch(error => {
+        console.log(error);
         this.props.unsetLoader();
-        console.log("error " + error);
+        this.setState({
+          error: "Community name is not unique"
+        });
       });
   }
 
@@ -117,10 +121,15 @@ class CreateCommunity extends Component {
 
   componentDidMount() {
     const query = new URLSearchParams(this.props.location.search);
+    const communityName = this.props.location.pathname
+      ? this.props.location.pathname.replace("/createCommunity/", "")
+      : "";
     const id = query.get("id");
     if (id != null) {
       this.setState({ communityID: id });
       this.getCommunityDataToEdit(id);
+    } else {
+      this.setState({ communityName });
     }
     this.getTopicFromDB();
   }
@@ -320,6 +329,14 @@ class CreateCommunity extends Component {
               style={{ padding: "50px", borderRight: "1px solid #ddd" }}
             >
               <Form onSubmit={this.handleSubmit} className="form-stacked">
+                <div
+                  id="errorLogin"
+                  hidden={this.state.error != "" ? false : true}
+                  className="alert alert-danger"
+                  role="alert"
+                >
+                  {this.state.error}
+                </div>
                 <Form.Label>
                   <b>
                     {this.state.communityID != ""
@@ -413,13 +430,14 @@ class CreateCommunity extends Component {
                   Rules
                 </Form.Label>
                 <br />
-                <form noValidate autoComplete="off">
+                <Form onSubmit={this.handleAddRule}>
                   <TextField
                     className="rulesTextbox"
                     id="outlined-basic"
                     label="Title"
                     variant="outlined"
                     value={this.state.title}
+                    required
                     onChange={e => this.setState({ title: e.target.value })}
                   />
 
@@ -430,19 +448,20 @@ class CreateCommunity extends Component {
                     label="Description"
                     variant="outlined"
                     value={this.state.rulesDescription}
+                    required
                     onChange={e =>
                       this.setState({ rulesDescription: e.target.value })
                     }
                   />
-                </form>
-                <Button
-                  style={{ marginTop: "10px" }}
-                  className="createCommunity"
-                  onClick={this.handleAddRule}
-                  color="btn btn-primary"
-                >
-                  {this.state.addEditButton}
-                </Button>
+                  <Button
+                    type="submit"
+                    style={{ marginTop: "10px" }}
+                    className="createCommunity"
+                    color="btn btn-primary"
+                  >
+                    {this.state.addEditButton}
+                  </Button>
+                </Form>
               </Form.Group>
               <Form.Group>
                 <Form.Label>
