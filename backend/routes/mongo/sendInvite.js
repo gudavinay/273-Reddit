@@ -8,11 +8,11 @@ app.post("/sendInvite", async (req, res) => {
   var members = [];
   req.body.users.forEach((user) => {
     const userData = {
-      userID: user,
+      userID: user.user_id,
     };
     members.push(userData);
   });
-
+  console.log(members);
   Community.findOneAndUpdate(
     { _id: req.body.community_id },
     {
@@ -62,9 +62,6 @@ app.post("/showInvitationStatus", (req, res) => {
       let data = {};
       data.sentInvitesTo = JSON.parse(JSON.stringify(result.sentInvitesTo));
       let users = [];
-      for (let i = 0; i < result.sentInvitesTo.length; i++) {
-        users.push(result.sentInvitesTo[i]._id);
-      }
 
       result.sentInvitesTo.forEach((sentInvite) => {
         users.push(sentInvite.userID._id);

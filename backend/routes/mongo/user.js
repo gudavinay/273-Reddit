@@ -135,7 +135,10 @@ app.post("/acceptInvite", (req, res) => {
             "sentInvitesTo.userID": req.body.user_id,
           },
           {
-            $set: { "sentInvitesTo.$.isAccepted": 1 },
+            $set: {
+              "sentInvitesTo.$.isAccepted": 1,
+              "sentInvitesTo.$.dateTime": Date.now(),
+            },
           },
           (err, result) => {
             if (err) {
@@ -271,21 +274,7 @@ app.post("/getSearchedUserForMongo", async (req, res) => {
     },
     { name: 1, _id: 1 }
   )
-
-    // UserProfile.aggregate([
-    //   {
-    //     $match: { _id: { $not: [{ $eq: ["60921eccb55fa20ffc8e1d43"] }] } },
-    //   },
-    //   {
-    //     $match: { name: { $regex: req.body.name, $options: "i" } },
-    //   },
-    //   {
-    //     $project: {
-    //       name: "$name",
-    //       _id: "$_id",
-    //     },
-    //   },
-    // ])
+    .limit(5)
     .then(async (result) => {
       res.status(200).send(result);
     });

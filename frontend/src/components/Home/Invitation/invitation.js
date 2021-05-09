@@ -25,6 +25,7 @@ export class invitation extends Component {
       searchedUser: [],
       selectedUsers: [],
       getDefaultRedditProfilePicture: getDefaultRedditProfilePicture(),
+      searchForUser: true,
     };
   }
   componentDidMount() {
@@ -46,6 +47,7 @@ export class invitation extends Component {
   }
 
   getCommunityInvitationStatus = (communityID) => {
+    this.setState({ searchForUser: false });
     let data = {
       community_id: communityID,
     };
@@ -56,6 +58,8 @@ export class invitation extends Component {
         this.setState({
           invitedDetails: response.data.sentInvitesTo,
           listOfInvolvedUsers: response.data.listOfInvolvedUsers,
+          selectedUsers: [], //to clear the suggestions and selected users
+          searchedUser: [],
         });
       })
       .catch((err) => {
@@ -65,7 +69,10 @@ export class invitation extends Component {
   };
   searchUser = (e) => {
     if (e.target.value.length > 1) {
-      const data = { name: e.target.value };
+      const data = {
+        name: e.target.value,
+        users: this.state.listOfInvolvedUsers,
+      };
       this.props.setLoader();
       Axios.post(backendServer + "/getSearchedUserForMongo", data)
         .then((response) => {
@@ -109,6 +116,38 @@ export class invitation extends Component {
         console.log(this.state.selectedUsers);
       }
     );
+  };
+  sendInvites = (e) => {
+    e.preventDefault();
+
+    if (this.state.selectedUsers.length > 0) {
+      let inviteData = {
+        community_id: this.state.communityID,
+        users: this.state.selectedUsers,
+        invitedBy: getMongoUserID(),
+      };
+      console.log(inviteData);
+
+      this.props.setLoader();
+      Axios.post(backendServer + "/sendInvite", inviteData)
+        .then((response) => {
+          this.props.unsetLoader();
+          this.setState({
+            selectedUsers: [],
+            searchedUser: [],
+          });
+          console.log(response);
+          this.getCommunityInvitationStatus(this.state.communityID);
+        })
+        .catch((error) => {
+          this.props.unsetLoader();
+          this.setState({
+            selectedUsers: [],
+            searchedUser: [],
+          });
+          console.log(error);
+        });
+    }
   };
   render() {
     let searchUsers = null;
@@ -198,6 +237,7 @@ export class invitation extends Component {
                   Approved Users
                 </div>
                 <div
+                  hidden={this.state.searchForUser}
                   style={{
                     display: "flex",
                     border: "1px solid #777",
@@ -206,6 +246,7 @@ export class invitation extends Component {
                   }}
                 >
                   <input
+                    hidden={this.state.searchForUser}
                     style={{
                       border: "0",
                       backgroundColor: "transparent",
@@ -222,8 +263,12 @@ export class invitation extends Component {
                       flexDirection: "column",
                       display: "flex",
                     }}
+                    onClick={(e) => this.sendInvites(e)}
                   >
-                    <i className="fa fa-paper-plane"></i>
+                    <i
+                      hidden={this.state.searchForUser}
+                      className="fa fa-paper-plane"
+                    ></i>
                   </div>
                 </div>
               </Card.Header>
