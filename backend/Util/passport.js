@@ -3,6 +3,7 @@ var JwtStrategy = require("passport-jwt").Strategy;
 var ExtractJwt = require("passport-jwt").ExtractJwt;
 const passport = require("passport");
 var { secret } = require("./config");
+var kafka = require('../kafka/client');
 // const db = require("../models/sql");
 
 // Setup work and export for the JWT passport strategy

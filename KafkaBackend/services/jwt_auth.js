@@ -3,20 +3,15 @@ const db = require("./../models/sql");
 const jwtAuthHandler = async (msg, callback) => {
   res = {};
   try {
-    db.User.findByPk(msg.datauser_id, (err, results) => {
-      if (err) {
-        res.status = 404;
-        res.data = err;
-        return callback(null, res);
-      }
-      if (results) {
-        res.status = 200;
-        res.data = results;
-        callback(null, res);
-      } else {
-        res.status = 500;
-        callback(null, res);
-      }
+    console.log(msg, "msg");
+    db.User.findOne({ where: { user_id: msg.user_id } }).then(result => {
+      res.status = 200;
+      res.data = result;
+      callback(null, res);
+    }).catch(err => {
+      res.status = 404;
+      res.data = err;
+      callback(null, res);
     });
   } catch (err) {
     res.status = 500;

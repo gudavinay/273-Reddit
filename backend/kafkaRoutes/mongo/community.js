@@ -4,7 +4,7 @@ const app = require("../../app");
 const kafka = require("../../kafka/client");
 const { checkAuth } = require("./../../Util/passport");
 
-app.get("/getCommunitiesForOwner", async (req, res) => {
+app.get("/getCommunitiesForOwner", checkAuth, async (req, res) => {
   console.log(req.query);
   req.body.path = "Get-Communities-For-Owner";
   req.body.ID = req.query.ID;
@@ -20,7 +20,7 @@ app.get("/getCommunitiesForOwner", async (req, res) => {
   });
 });
 
-app.get("/getUsersForCommunitiesForOwner", (req, res) => {
+app.get("/getUsersForCommunitiesForOwner", checkAuth, (req, res) => {
   req.body.ID = req.query.ID;
   req.body.path = "Get-Users-For-Communities-For-Owner";
   kafka.make_request("mongo_community", req.body, (error, result) => {
