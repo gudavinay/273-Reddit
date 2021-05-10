@@ -1,16 +1,17 @@
 const db = require("../../models/sql");
 
 const sendMessage = async (msg, callback) => {
-  try {
-    let message = await db.Message.create({
-      message: msg.message,
-      sent_by: msg.sent_by,
-      sent_to: msg.sent_to
+  db.Message.create({
+    message: msg.message,
+    sent_by: msg.sent_by,
+    sent_to: msg.sent_to
+  })
+    .then(result => {
+      callback(null, result);
+    })
+    .catch(error => {
+      callback(error, null);
     });
-    callback(null, message);
-  } catch (error) {
-    callback(error, null);
-  }
 };
 
 exports.sendMessage = sendMessage;

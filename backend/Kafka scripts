@@ -16,6 +16,7 @@ kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partit
 kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic mongo_community
 kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic mongo_user
 kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic sql_user_auth
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic user_info
 
 
 

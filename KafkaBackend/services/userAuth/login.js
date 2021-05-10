@@ -1,14 +1,14 @@
-const db = require("./../models/sql");
+const db = require("../../models/sql");
 const bcrypt = require("bcrypt");
 
 const login = async (msg, callback) => {
   res = {};
   db.User.findOne({
     where: {
-      email: msg.email,
-    },
+      email: msg.email
+    }
   })
-    .then((user) => {
+    .then(user => {
       if (user === null) {
         res.status = 404;
         callback(null, res);
@@ -31,16 +31,10 @@ const login = async (msg, callback) => {
         );
       }
     })
-    .catch((err) => {
+    .catch(err => {
       res.status = 500;
       callback(null, res);
     });
 };
 
-handle_request = (msg, callback) => {
-  if (msg.path === "Login") {
-    login(msg, callback);
-  }
-};
-
-exports.handle_request = handle_request;
+exports.login = login;

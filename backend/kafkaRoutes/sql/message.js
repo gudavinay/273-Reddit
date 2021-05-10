@@ -30,7 +30,7 @@ app.post("/sendMessage", checkAuth, async (req, res) => {
   req.body.path = "Send-Message";
   kafka.make_request("sql_message", req.body, (error, result) => {
     console.log(result);
-    if (result.status === 200) {
+    if (result) {
       return res.status(200).send(result);
     }
     return res.status(500).send("No message found");

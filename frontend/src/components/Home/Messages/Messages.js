@@ -70,6 +70,7 @@ class Messages extends Component {
     if (e.target.value.length > 1) {
       const data = { name: e.target.value };
       this.props.setLoader();
+      axios.defaults.headers.common["authorization"] = getToken();
       axios
         .post(`${backendServer}/getSearchedUser`, data)
         .then(response => {

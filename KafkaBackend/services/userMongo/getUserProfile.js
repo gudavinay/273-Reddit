@@ -1,5 +1,5 @@
-const redisClient = require("./../Util/redisConfig");
-const UserProfile = require("./../models/mongo/UserProfile");
+const redisClient = require("../../Util/redisConfig");
+const UserProfile = require("../../models/mongo/UserProfile");
 
 const getUserProfile = async (msg, callback) => {
   let res = {};
@@ -27,10 +27,4 @@ const getUserProfile = async (msg, callback) => {
   });
 };
 
-handle_request = (msg, callback) => {
-  if (msg.path === "Get-User-Profile") {
-    getUserProfile(msg, callback);
-  }
-};
-
-exports.handle_request = handle_request;
+exports.getUserProfile = getUserProfile;
