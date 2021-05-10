@@ -43,12 +43,12 @@ class Home extends Component {
       );
     }
   }
-  componentDidMount() {
+  async componentDidMount() {
     this.getDashboardData();
   }
   getDashboardData = async () => {
     let data = {
-      user_id: await getMongoUserID(),
+      user_id: getMongoUserID(),
     };
     console.log(data);
     this.props.setLoader();

@@ -255,7 +255,11 @@ app.get("/getPostsInCommunity", (req, res) => {
                 console.log("error = ", err);
                 return res.status(500).send(err);
               } else {
-                resp.score = resp.upvoteCount = resp.downvoteCount = resp.userVoteDir = 0;
+                resp.score =
+                  resp.upvoteCount =
+                  resp.downvoteCount =
+                  resp.userVoteDir =
+                    0;
                 if (result && result[0]) {
                   resp.score = result[0].upvoteCount - result[0].downvoteCount;
                   resp.upvoteCount = result[0].upvoteCount;
@@ -423,7 +427,11 @@ app.post("/getCommentsWithPostID", (req, res) => {
             if (err) {
               return res.status(500).send(err);
             } else {
-              resp.score = resp.upvoteCount = resp.downvoteCount = resp.userVoteDir = 0;
+              resp.score =
+                resp.upvoteCount =
+                resp.downvoteCount =
+                resp.userVoteDir =
+                  0;
               if (result && result[0]) {
                 resp.score = result[0].upvoteCount - result[0].downvoteCount;
                 resp.upvoteCount = result[0].upvoteCount;
@@ -480,10 +488,12 @@ app.post("/getAllPostsWithUserId", (req, res) => {
             ),
           },
           {
-            "communityDetails.listOfUsers.userID": mongoose.Types.ObjectId(
-              req.body.user_id
-            ),
-            "communityDetails.listOFUsers.isAccepted": 1,
+            "communityDetails.listOfUsers": {
+              $elemMatch: {
+                userID: mongoose.Types.ObjectId(req.body.user_id),
+                isAccepted: 1,
+              },
+            },
           },
         ],
       },
@@ -523,6 +533,7 @@ app.post("/getAllPostsWithUserId", (req, res) => {
       res.status(200).send(result);
     })
     .catch((err) => {
+      console.log(err);
       res.status(500).send(err);
     });
 });

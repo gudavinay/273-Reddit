@@ -190,9 +190,8 @@ class Navigationbar extends Component {
                       padding: "0 15px",
                     }}
                     onClick={() => {
-                      let classListLeft = document.getElementById(
-                        "expandLeftDropDown"
-                      ).classList;
+                      let classListLeft =
+                        document.getElementById("expandLeftDropDown").classList;
                       let classListRight = document.getElementById(
                         "expandRightDropDown"
                       ).classList;
@@ -232,23 +231,27 @@ class Navigationbar extends Component {
                     >
                       Home
                     </div>
+                    {this.state.NotshowInvitation ? (
+                      ""
+                    ) : (
+                      <div
+                        className={
+                          this.props.darkMode
+                            ? "NavLinks backGround_dark"
+                            : "NavLinks backGround_light"
+                        }
+                        onClick={() => {
+                          this.setState({ leftDropdown: "Send Invitation" });
+                          document
+                            .getElementById("expandLeftDropDown")
+                            .classList.add("hidden");
+                          this.props.history.push("/invitation");
+                        }}
+                      >
+                        Invitation
+                      </div>
+                    )}
 
-                    <div
-                      className={
-                        this.props.darkMode
-                          ? "NavLinks backGround_dark"
-                          : "NavLinks backGround_light"
-                      }
-                      onClick={() => {
-                        this.setState({ leftDropdown: "Send Invitation" });
-                        document
-                          .getElementById("expandLeftDropDown")
-                          .classList.add("hidden");
-                        this.props.history.push("/invitation");
-                      }}
-                    >
-                      Invitation
-                    </div>
                     <div
                       className={
                         this.props.darkMode
@@ -340,24 +343,6 @@ class Navigationbar extends Component {
                     >
                       community Analytics
                     </div>
-                    <div
-                      className={
-                        this.props.darkMode
-                          ? "NavLinks backGround_dark"
-                          : "NavLinks backGround_light"
-                      }
-                      onClick={() => {
-                        this.setState({
-                          leftDropdown: "Invite users",
-                        });
-                        document
-                          .getElementById("expandLeftDropDown")
-                          .classList.add("hidden");
-                        this.props.history.push("/invitation");
-                      }}
-                    >
-                      Invite users
-                    </div>
                   </div>
                 </div>
               </Col>
@@ -426,9 +411,8 @@ class Navigationbar extends Component {
                       padding: "0 15px",
                     }}
                     onClick={() => {
-                      let classListLeft = document.getElementById(
-                        "expandLeftDropDown"
-                      ).classList;
+                      let classListLeft =
+                        document.getElementById("expandLeftDropDown").classList;
                       let classListRight = document.getElementById(
                         "expandRightDropDown"
                       ).classList;
