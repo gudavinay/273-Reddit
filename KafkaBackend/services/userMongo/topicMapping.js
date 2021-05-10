@@ -1,6 +1,7 @@
 "use strict";
 const { createUser } = require("./createUser");
 const { getUserProfile } = require("./getUserProfile");
+const { getUserDetailsById } = require("./getUserDetails");
 
 let handle_request = (msg, callback) => {
   switch (msg.path) {
@@ -9,6 +10,9 @@ let handle_request = (msg, callback) => {
       break;
     case "Create-User-Profile":
       createUser(msg, callback);
+      break;
+    case "GET-USER-DETAILS-BY-ID":
+      getUserDetailsById(msg, callback);
       break;
   }
 };
