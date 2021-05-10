@@ -1,9 +1,5 @@
 const db = require("./../models/sql");
 const bcrypt = require("bcrypt");
-const { secret } = require("./../Util/config");
-const { auth } = require("./../Util/passport");
-const jwt = require("jsonwebtoken");
-auth();
 
 const login = async (msg, callback) => {
   res = {};
@@ -23,14 +19,9 @@ const login = async (msg, callback) => {
           function (err, matchPassword) {
             if (err) return error;
             if (matchPassword) {
-              //   console.log("here");
               user.password = "";
-              const userLogin = {
-                userID: user,
-                token: createToken(user),
-              };
               res.status = 200;
-              res.data = JSON.stringify(userLogin);
+              res.data = user;
               callback(null, res);
             } else {
               res.status = 401;
@@ -45,14 +36,6 @@ const login = async (msg, callback) => {
       callback(null, res);
     });
 };
-
-function createToken(user) {
-  const payload = { id: user.user_id };
-  const token = jwt.sign(payload, secret, {
-    expiresIn: 1008000,
-  });
-  return "JWT " + token;
-}
 
 handle_request = (msg, callback) => {
   if (msg.path === "Login") {
