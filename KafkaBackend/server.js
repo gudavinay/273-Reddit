@@ -5,6 +5,7 @@ const jwt_auth = require("./services/jwt_auth");
 const community_mongo = require("./services/community_mongo");
 const user_mongo = require("./services/user_mongo");
 const userAuth_sql = require("./services/userAuth_sql");
+const search_mongo = require("./services/search_mongo");
 
 require("./dbConnection");
 const sqldb = require("./models/sql");
@@ -45,3 +46,4 @@ handleTopicRequest("JWT_auth", jwt_auth);
 handleTopicRequest("mongo_community", community_mongo);
 handleTopicRequest("mongo_user", user_mongo);
 handleTopicRequest("sql_user_auth", userAuth_sql);
+handleTopicRequest("search_mongo", search_mongo);

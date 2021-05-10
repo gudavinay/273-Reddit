@@ -20,7 +20,7 @@ class SearchResult extends Component {
             downVotedLength,
             postsLength,
             createdAt,
-            createdBy
+            ownerID
         } = data || {};
         return (
             <React.Fragment>
@@ -76,7 +76,7 @@ class SearchResult extends Component {
                                         </div>
                                         <div style={{ marginLeft: "10px" }}>
                                             <i className="icon icon-user"></i>
-                                            <span style={{ marginLeft: "4px" }}> Created By <Link to={"/user/".concat(createdBy.user_id)}>{createdBy?.name}</Link> {getRelativeTime(createdAt)}</span>
+                                            <span style={{ marginLeft: "4px" }}> Created By <Link to={"/user/".concat(ownerID?.userIDSQL)}>{ownerID?.name}</Link> {getRelativeTime(createdAt)}</span>
                                         </div>
                                     </div>
                                 </Row>
