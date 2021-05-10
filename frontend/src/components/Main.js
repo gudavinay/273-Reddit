@@ -90,7 +90,7 @@ class Main extends Component {
       darkMode: false,
       loading: false,
       setLoader: this.setLoader,
-      unsetLoader: this.unsetLoader
+      unsetLoader: this.unsetLoader,
     };
   }
   themeToggler = () => {

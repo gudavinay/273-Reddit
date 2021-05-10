@@ -4,7 +4,10 @@ import backendServer from "../../../webConfig";
 import { Col, Modal, Row } from "react-bootstrap";
 import { BiSearchAlt } from "react-icons/bi";
 import "./myCommunityModeration.css";
-import { getMongoUserID } from "../../../services/ControllerUtils";
+import {
+  getDefaultRedditProfilePicture,
+  getMongoUserID,
+} from "../../../services/ControllerUtils";
 import CommunityModal from "./communityModerationModals/communityModal";
 import UserModal from "./communityModerationModals/userModal";
 import "./../../styles/landingPageStyle.css";
@@ -33,11 +36,13 @@ class MyCommunitiesModeration extends Component {
       showUserModal: false,
       selectedCommunity: null,
       selectedUser: null,
+      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture(),
     };
   }
 
   getCommunitiesCreatedByUser = async () => {
     const ownerID = getMongoUserID(); //TO DO: Take it from JWT TOKEN AFTER LOGIN
+    console.log(ownerID);
     await axios
       .get(
         `${backendServer}/getCommunitiesForOwner?ID=${ownerID}&size=${
@@ -128,6 +133,7 @@ class MyCommunitiesModeration extends Component {
 
   render() {
     console.log(this.state);
+    console.log(this.props);
     let communitiesList = [];
     let communityCount = 1;
     let usersList = [];
@@ -282,12 +288,21 @@ class MyCommunitiesModeration extends Component {
                     display: "block",
                     width: "40px",
                     height: "40px",
-                    backgroundColor: "#ccc",
-                    borderRadius: "5px",
-                    border: "1px solid #777",
+                    borderRadius: "25px",
+                    overflow: "hidden",
+                    // backgroundColor: "#ccc",
+
+                    // border: "1px solid #777",
                   }}
                 >
-                  .
+                  <img
+                    src={this.state.getDefaultRedditProfilePicture}
+                    alt=""
+                    style={{
+                      height: "40px",
+                      width: "40px",
+                    }}
+                  />
                 </div>
               </Col>
             </Row>
