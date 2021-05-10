@@ -50,12 +50,7 @@ class Signup extends Component {
     //prevent page from refresh
     e.preventDefault();
     const { userInfo } = this.state;
-    const error = this.validateForm();
-    if (Object.keys(error).length == 0) {
-      this.props.signupRedux(userInfo);
-    } else {
-      this.setState({ error });
-    }
+    this.props.signupRedux(userInfo);
   };
 
   componentDidUpdate(prevState) {
