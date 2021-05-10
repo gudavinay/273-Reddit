@@ -437,7 +437,10 @@ app.post("/getCommentsWithPostID", (req, res) => {
               }
             }
             if (index == responseData.length - 1) {
-              res.status(200).send(responseData);
+              const resul = responseData.sort(
+                (a, b) => b.upvoteCount - a.upvoteCount
+              );
+              res.status(200).send(resul);
             }
           }
         );

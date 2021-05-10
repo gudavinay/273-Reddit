@@ -53,7 +53,7 @@ class DetailedPostView extends Component {
     this.fetchCommentsWithPostID();
   }
 
-  upVote(commentId, userVoteDir, index) {
+  upVote(commentId, userVoteDir, index, isParentComment, childIndex) {
     Axios.post(backendServer + "/addVote", {
       entityId: commentId,
       userId: getMongoUserID(),
@@ -67,20 +67,30 @@ class DetailedPostView extends Component {
           "this.state = ",
           this.state.parentCommentList[index].userVoteDir
         );
-        const newComments = this.state.parentCommentList.slice();
-        newComments[index].score =
-          userVoteDir == 1
-            ? newComments[index].score - 1
-            : userVoteDir == 0
-            ? newComments[index].score + 1
-            : newComments[index].score + 2;
-
-        // newComments[index].userVoteDir = response.data.userVoteDir;
-
-        newComments[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
-        console.log("newComments = ", newComments);
-        this.setState({ parentCommentList: newComments });
-        // this.fetchCommentsWithPostID();
+        if (isParentComment) {
+          const newComments = this.state.parentCommentList.slice();
+          newComments[index].score =
+            userVoteDir == 1
+              ? newComments[index].score - 1
+              : userVoteDir == 0
+              ? newComments[index].score + 1
+              : newComments[index].score + 2;
+          newComments[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
+          console.log("newComments = ", newComments);
+          this.setState({ parentCommentList: newComments });
+        } else {
+          const newComments = this.state.parentCommentList.slice();
+          newComments[index].child[childIndex].score =
+            userVoteDir == 1
+              ? newComments[index].child[childIndex].score - 1
+              : userVoteDir == 0
+              ? newComments[index].child[childIndex].score + 1
+              : newComments[index].child[childIndex].score + 2;
+          newComments[index].child[childIndex].userVoteDir =
+            userVoteDir == 1 ? 0 : 1;
+          console.log("newComments = ", newComments);
+          this.setState({ parentCommentList: newComments });
+        }
       })
       .catch((err) => {
         // this.props.unsetLoader();
@@ -88,7 +98,7 @@ class DetailedPostView extends Component {
       });
   }
 
-  downVote(commentId, userVoteDir, index) {
+  downVote(commentId, userVoteDir, index, isParentComment, childIndex) {
     console.log(
       "userid = ",
       getMongoUserID(),
@@ -107,19 +117,31 @@ class DetailedPostView extends Component {
       .then((response) => {
         // this.props.unsetLoader();
         console.log("downvoted successfull = ", response);
-        const newComments = this.state.parentCommentList.slice();
-        newComments[index].score =
-          userVoteDir == -1
-            ? newComments[index].score + 1
-            : userVoteDir == 0
-            ? newComments[index].score - 1
-            : newComments[index].score - 2;
-
-        // newComments[index].userVoteDir = response.data.userVoteDir;
-        newComments[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
-        console.log("newComments = ", newComments);
-        this.setState({ parentCommentList: newComments });
-        // this.fetchCommentsWithPostID();
+        if (isParentComment) {
+          const newComments = this.state.parentCommentList.slice();
+          newComments[index].score =
+            userVoteDir == -1
+              ? newComments[index].score + 1
+              : userVoteDir == 0
+              ? newComments[index].score - 1
+              : newComments[index].score - 2;
+          newComments[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
+          console.log("newComments = ", newComments);
+          this.setState({ parentCommentList: newComments });
+        } else {
+          const newComments = this.state.parentCommentList.slice();
+          console.log("newComments = ", newComments);
+          newComments[index].child[childIndex].score =
+            userVoteDir == -1
+              ? newComments[index].child[childIndex].score + 1
+              : userVoteDir == 0
+              ? newComments[index].child[childIndex].score - 1
+              : newComments[index].child[childIndex].score - 2;
+          newComments[index].child[childIndex].userVoteDir =
+            userVoteDir == -1 ? 0 : -1;
+          console.log("newComments = ", newComments);
+          this.setState({ parentCommentList: newComments });
+        }
       })
       .catch((err) => {
         // this.props.unsetLoader();
@@ -167,7 +189,13 @@ class DetailedPostView extends Component {
                   }}
                   className="icon icon-arrow-up upvote"
                   onClick={() =>
-                    this.upVote(comment._id, comment.userVoteDir, index)
+                    this.upVote(
+                      comment._id,
+                      comment.userVoteDir,
+                      index,
+                      true,
+                      0
+                    )
                   }
                 />
                 <span style={{ margin: "0 5px" }}>
@@ -180,7 +208,13 @@ class DetailedPostView extends Component {
                   }}
                   className="icon icon-arrow-down downvote"
                   onClick={() =>
-                    this.downVote(comment._id, comment.userVoteDir, index)
+                    this.downVote(
+                      comment._id,
+                      comment.userVoteDir,
+                      index,
+                      true,
+                      0
+                    )
                   }
                 />
                 <span
@@ -276,7 +310,7 @@ class DetailedPostView extends Component {
             </div>
           </div>
         );
-        comment.child.forEach((childComment) => {
+        comment.child.forEach((childComment, childIndex) => {
           commentsToRender.push(
             <div
               style={{
@@ -315,15 +349,39 @@ class DetailedPostView extends Component {
                 <div>{childComment.description}</div>
                 <div>
                   <i
-                    style={{ cursor: "pointer" }}
+                    style={{
+                      cursor: "pointer",
+                      color: childComment.userVoteDir == 1 ? "#ff4500" : "",
+                    }}
                     className="icon icon-arrow-up upvote"
+                    onClick={() =>
+                      this.upVote(
+                        childComment._id,
+                        childComment.userVoteDir,
+                        index,
+                        false,
+                        childIndex
+                      )
+                    }
                   />
                   <span style={{ margin: "0 5px" }}>
                     <strong> {childComment.score} </strong>
                   </span>
                   <i
-                    style={{ cursor: "pointer" }}
+                    style={{
+                      cursor: "pointer",
+                      color: childComment.userVoteDir == -1 ? "#7193ff" : "",
+                    }}
                     className="icon icon-arrow-down downvote"
+                    onClick={() =>
+                      this.downVote(
+                        childComment._id,
+                        childComment.userVoteDir,
+                        index,
+                        false,
+                        childIndex
+                      )
+                    }
                   />
                 </div>
               </div>

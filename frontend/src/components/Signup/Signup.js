@@ -14,16 +14,16 @@ class Signup extends Component {
       userInfo: {},
       error: {},
       loginError: "",
-      auth: true
+      auth: true,
     };
   }
 
-  handleChange = e => {
+  handleChange = (e) => {
     this.setState({
       userInfo: {
         ...this.state.userInfo,
-        [e.target.name]: e.target.value
-      }
+        [e.target.name]: e.target.value,
+      },
     });
   };
 
@@ -31,11 +31,11 @@ class Signup extends Component {
     const data = {
       email: this.state.userInfo.email,
       name: this.state.userInfo.name,
-      sqlUserID: user_id
+      sqlUserID: user_id,
     };
     axios
       .post(`${backendServer}/createUserProfile`, data)
-      .then(response => {
+      .then((response) => {
         if (response.status == 200) {
           console.log(response.data);
           const data = response.data;
@@ -43,10 +43,10 @@ class Signup extends Component {
           SetLocalStorage(data);
         }
       })
-      .catch(error => console.log("error " + error));
+      .catch((error) => console.log("error " + error));
   }
 
-  submitForm = e => {
+  submitForm = (e) => {
     //prevent page from refresh
     e.preventDefault();
     const { userInfo } = this.state;
@@ -64,12 +64,12 @@ class Signup extends Component {
         this.setState({
           authFlag: false,
           formerror: {},
-          loginError: "User is already registered"
+          loginError: "User is already registered",
         });
       } else {
         this.CreateUserProfile(this.props.user.userID);
         this.setState({
-          authFlag: true
+          authFlag: true,
         });
       }
     }
@@ -108,7 +108,7 @@ class Signup extends Component {
                 style={{
                   fontSize: "24px",
                   fontWeight: "500",
-                  marginTop: "35px"
+                  marginTop: "35px",
                 }}
               >
                 Sign up
@@ -191,9 +191,9 @@ class Signup extends Component {
     );
   }
 }
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    user: state.login.user
+    user: state.login.user,
   };
 };
 
