@@ -1,5 +1,6 @@
 var connection = new require("./kafka/connection");
-const messageSQL = require("./services/message_sql");
+//const messageSQL = require("./services/Message/message_sql");
+const message = require("./services/Message/topicMapping");
 const jwt_auth = require("./services/jwt_auth");
 const community_mongo = require("./services/community_mongo");
 const user_mongo = require("./services/user_mongo");
@@ -26,10 +27,10 @@ function handleTopicRequest(topic_name, fname) {
           topic: data.replyTo,
           messages: JSON.stringify({
             correlationId: data.correlationId,
-            data: res,
+            data: res
           }),
-          partition: 0,
-        },
+          partition: 0
+        }
       ];
       producer.send(payloads, function (err, data) {
         console.log("payload sent:", data);
@@ -39,7 +40,7 @@ function handleTopicRequest(topic_name, fname) {
   });
 }
 
-handleTopicRequest("sql_message", messageSQL);
+handleTopicRequest("sql_message", message);
 handleTopicRequest("JWT_auth", jwt_auth);
 handleTopicRequest("mongo_community", community_mongo);
 handleTopicRequest("mongo_user", user_mongo);
