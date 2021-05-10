@@ -55,8 +55,27 @@ app.post("/sendInvite", async (req, res) => {
   );
 });
 //TO show the users who are invited and the status of invitation
-app.post("/showInvitationStatus", (req, res) => {
-  Community.findOne({ _id: req.body.community_id })
+app.post("/showInvitationStatus", async (req, res) => {
+  let { page, size } = req.body;
+  let skip = 0;
+  if (page == 0) {
+    skip = 0;
+  } else {
+    skip = page * size;
+  }
+  const limit = parseInt(size);
+  const recordCount = await new Promise((resolve, reject) => {
+    Community.findOne({ _id: req.body.community_id }).then((result) => {
+      resolve(Object.keys(result.sentInvitesTo).length);
+    });
+  });
+  console.log(limit);
+  console.log(skip);
+
+  Community.findOne(
+    { _id: req.body.community_id },
+    { sentInvitesTo: { $slice: [skip, limit] } }
+  )
     .populate("sentInvitesTo.userID", ["userIDSQL", "name"])
     .then(async (result) => {
       let data = {};
@@ -72,7 +91,7 @@ app.post("/showInvitationStatus", (req, res) => {
       });
 
       data.listOfInvolvedUsers = users;
-
+      data.totalRecords = recordCount;
       res.status(200).send(data);
       // res.status(200).send(data.sentInvitesTo);
     })

@@ -13,6 +13,7 @@ import {
 import { getMongoUserID } from "../../../services/ControllerUtils";
 import Chip from "@material-ui/core/Chip";
 import Paper from "@material-ui/core/Paper";
+import { TablePagination } from "@material-ui/core";
 
 export class invitation extends Component {
   constructor(props) {
@@ -26,6 +27,9 @@ export class invitation extends Component {
       selectedUsers: [],
       getDefaultRedditProfilePicture: getDefaultRedditProfilePicture(),
       searchForUser: true,
+      page: 0,
+      size: 2,
+      count: 0,
     };
   }
   componentDidMount() {
@@ -46,11 +50,14 @@ export class invitation extends Component {
       });
   }
 
-  getCommunityInvitationStatus = (communityID) => {
+  getCommunityInvitationStatus = (communityID, page, size) => {
     this.setState({ searchForUser: false });
     let data = {
       community_id: communityID,
+      page: page,
+      size: size,
     };
+    console.log(data);
     this.props.setLoader();
     Axios.post(backendServer + "/showInvitationStatus", data)
       .then((response) => {
@@ -58,9 +65,11 @@ export class invitation extends Component {
         this.setState({
           invitedDetails: response.data.sentInvitesTo,
           listOfInvolvedUsers: response.data.listOfInvolvedUsers,
+          count: response.data.totalRecords,
           selectedUsers: [], //to clear the suggestions and selected users
           searchedUser: [],
         });
+        console.log(this.state.count);
       })
       .catch((err) => {
         this.props.unsetLoader();
@@ -100,6 +109,16 @@ export class invitation extends Component {
     this.setState({
       selectedUsers: items,
     });
+
+    let userToAddBackInSearchedUsers = {
+      name: user.name,
+      _id: user.user_id,
+    };
+    this.state.searchedUser.push(userToAddBackInSearchedUsers);
+    this.setState({
+      searchedUser: this.state.searchedUser,
+    });
+    console.log(this.state.searchedUser);
   };
   handleUsersSelection = (user) => {
     this.setState(
@@ -116,6 +135,13 @@ export class invitation extends Component {
         console.log(this.state.selectedUsers);
       }
     );
+    //remove the user from searchedUser array which is selected to send invite
+    var filteredArray = this.state.searchedUser.filter((filterUser) => {
+      return filterUser._id != user._id;
+    });
+    this.setState({
+      searchedUser: filteredArray,
+    });
   };
   sendInvites = (e) => {
     e.preventDefault();
@@ -148,6 +174,28 @@ export class invitation extends Component {
           console.log(error);
         });
     }
+  };
+  PageSizeChange = (e) => {
+    this.setState({
+      size: Number(e.target.value),
+      page: 0,
+    });
+    this.getCommunityInvitationStatus(
+      this.state.communityID,
+      0,
+      Number(e.target.value)
+    );
+  };
+
+  PageChange = (e, page) => {
+    this.setState({
+      page: Number(page),
+    });
+    this.getCommunityInvitationStatus(
+      this.state.communityID,
+      Number(page),
+      this.state.size
+    );
   };
   render() {
     let searchUsers = null;
@@ -209,7 +257,11 @@ export class invitation extends Component {
                   id="community"
                   onChange={(e) => {
                     this.setState({ communityID: e.target.value });
-                    this.getCommunityInvitationStatus(e.target.value);
+                    this.getCommunityInvitationStatus(
+                      e.target.value,
+                      this.state.page,
+                      this.state.size
+                    );
                   }}
                   value={this.state.communityID}
                 >
@@ -277,7 +329,6 @@ export class invitation extends Component {
                 {selectedUsers}
               </Paper>
               <Card.Body>
-                {/* <Card.Title>Special title treatment</Card.Title> */}
                 <Card.Text>
                   {this.state.invitedDetails &&
                     this.state.invitedDetails.map((details, index) => (
@@ -298,6 +349,16 @@ export class invitation extends Component {
                       </div>
                     ))}
                 </Card.Text>
+                <TablePagination
+                  count={this.state.count}
+                  page={this.state.page}
+                  onChangePage={this.PageChange}
+                  rowsPerPage={this.state.size}
+                  onChangeRowsPerPage={this.PageSizeChange}
+                  variant="outlined"
+                  color="primary"
+                  rowsPerPageOptions={[2, 5, 10]}
+                />
               </Card.Body>
             </Card>
           </Container>

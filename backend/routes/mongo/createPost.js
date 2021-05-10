@@ -480,6 +480,7 @@ app.post("/getAllPostsWithUserId", (req, res) => {
             "communityDetails.listOfUsers.userID": mongoose.Types.ObjectId(
               req.body.user_id
             ),
+            "communityDetails.listOFUsers.isAccepted": 1,
           },
         ],
       },

@@ -67,14 +67,39 @@ class Navigationbar extends Component {
     });
   };
   async componentDidMount() {
-    await this.getNotificationData();
+    this.getNotificationData();
+    this.checkIfUserIsModerator();
   }
+  checkIfUserIsModerator = () => {
+    let user_id = getMongoUserID();
+
+    Axios.get(backendServer + "/checkUserIsModerator/" + user_id)
+      .then((result) => {
+        console.log(result);
+        this.props.unsetLoader();
+        if (result.data.length > 0) {
+          console.log("true");
+          this.setState({
+            NotshowInvitation: false,
+          });
+        } else {
+          console.log("false");
+          this.setState({
+            NotshowInvitation: true,
+          });
+        }
+      })
+      .catch((err) => {
+        this.props.unsetLoader();
+        console.log(err);
+      });
+  };
   getNotificationData = async () => {
     let data = {
       user_id: getMongoUserID(),
     };
     this.props.setLoader();
-    await Axios.post(backendServer + "/getNotificationData", data)
+    Axios.post(backendServer + "/getNotificationData", data)
       .then((result) => {
         this.props.unsetLoader();
         this.setState({ notificationData: result.data });
@@ -207,6 +232,7 @@ class Navigationbar extends Component {
                     >
                       Home
                     </div>
+
                     <div
                       className={
                         this.props.darkMode
