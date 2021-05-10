@@ -71,6 +71,15 @@ class UserProfile extends Component {
       });
   };
 
+  handleDelete = (e, topic) => {
+    e.preventDefault();
+    let items = this.state.selectedTopic;
+    items.splice(items.indexOf(topic), 1);
+    this.setState({
+      selectedTopic: items
+    });
+  };
+
   handleTopicSelection = topic => {
     const findTopic = this.state.selectedTopic.find(
       x => x.topic_id == topic.topic_id
@@ -183,7 +192,7 @@ class UserProfile extends Component {
                       <i
                         className="fa fa-camera"
                         style={{ opacity: 1, fontSize: "75px", color: "white" }}
-                        onClick={() => {}}
+                        onClick={() => { }}
                       >
                         <input
                           style={{
@@ -256,7 +265,7 @@ class UserProfile extends Component {
                     type="password"
                     className="form-control"
                     onChange={e =>
-                      this.setState({ description: e.target.value })
+                      this.setState({ password: e.target.value })
                     }
                     name="password"
                     id="password"
@@ -287,8 +296,7 @@ class UserProfile extends Component {
                   </ButtonGroup>
                 </Row>
                 <Row>
-                  {" "}
-                  <Dropdown>
+                  <Dropdown style={{ marginTop: '25px', marginBottom: '20px' }}>
                     <Dropdown.Toggle>Select topic</Dropdown.Toggle>
                     <Dropdown.Menu>{dropDownItem}</Dropdown.Menu>
                   </Dropdown>
@@ -296,20 +304,18 @@ class UserProfile extends Component {
                     {selectedTopic}
                   </Paper>
                 </Row>
-                <Row>selector comes here</Row>
-                <Row>selected bubbles come here</Row>
-                <Row>Description</Row>
+                <Row style={{ marginTop: '10px' }}>Bio</Row>
                 <Row>
                   <textarea
                     type="text"
                     className="form-control"
                     onChange={e =>
-                      this.setState({ description: e.target.value })
+                      this.setState({ bio: e.target.value })
                     }
-                    name="description"
-                    id="description"
-                    title="Please enter valid description"
-                    value={this.state.description}
+                    name="bio"
+                    id="bio"
+                    title="Please enter valid bio"
+                    value={this.state.bio}
                   />
                 </Row>
               </Col>

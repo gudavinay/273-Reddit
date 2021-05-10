@@ -256,7 +256,7 @@ class Community extends Component {
                     color: "white",
                   }}
                 >
-                  Request Pending
+                  Waiting for approval.
                 </button>
               );
             }
@@ -385,7 +385,11 @@ class Community extends Component {
                         src={userSvg}
                       />
                     </a>{" "}
-                    <Link to={`/createPost/${this.state.community_id}`}>
+                    <Link to={{
+                      pathname: `/createPost/${this.state.community_id}`,
+                      rules: this.state.communityDetails?.rules,
+                      communityName: this.state.communityDetails?.communityName
+                    }}>
                       <input
                         className="createPostInput"
                         placeholder="Create Post"
@@ -713,6 +717,24 @@ class Community extends Component {
               </Row>
             </div>
           </Row>
+          <div style={{
+            textAlign: "right",
+            position: "fixed",
+            left: "0",
+            bottom: "0",
+            height: "60px",
+            width: "100%"
+          }}>
+            <div style={{
+              display: "block",
+              padding: "20px",
+              height: "60px",
+              width: "100%"
+            }}>
+              <span >Top ^ Yet to be impl</span>
+            </div>
+
+          </div>
         </div>
       </React.Fragment>
     );

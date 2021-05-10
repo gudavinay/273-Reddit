@@ -5,8 +5,6 @@ import {
   Button,
   Card,
   Col,
-  ListGroup,
-  ListGroupItem,
   Nav,
   Row
 } from "react-bootstrap";
@@ -15,6 +13,7 @@ import Axios from "axios";
 import backendServer from "../../../webConfig";
 import { getMongoUserID } from "../../../services/ControllerUtils";
 import "./CreatePost.css";
+import { Collapse, Fade } from "react-bootstrap";
 
 class CreatePost extends Component {
   constructor(props) {
@@ -66,8 +65,8 @@ class CreatePost extends Component {
     );
     return (
       <React.Fragment>
-        inside CreatePost ... {this.props.content}
-        <Row>
+        {/* inside CreatePost ... {this.props.content} */}
+        <Row style={{ padding: '30px' }}>
           <Col sm={1}></Col>
           <Col sm={7}>
             <form
@@ -85,7 +84,7 @@ class CreatePost extends Component {
                   });
               }}
             >
-              {JSON.stringify(this.state)}
+              {/* {JSON.stringify(this.state)} */}
               {/* <Tabs defaultActiveKey="0" id="tabs" onSelect={(eventKey) => { this.setState({ type: eventKey }) }}>
                                 <Tab eventKey="0" title="Post" style={{ padding: '3%' }}>
                                     {titleTag}
@@ -221,23 +220,99 @@ class CreatePost extends Component {
             </form>
           </Col>
           <Col sm={3}>
-            <Row>
-              <Card className="card">
-                <Card.Header className="cardHeader">
-                  <img alt="" height="40px" src={createPostRulesSVG} /> SELECTED
-                  COMM NAME
-                </Card.Header>
-                <Card.Body>
-                  <ListGroup>
-                    <ListGroupItem>SELECTED COMM RULES</ListGroupItem>
-                    {/* <ListGroupItem>Behave like you would in real life</ListGroupItem>
-                                        <ListGroupItem>Look for the original source of content</ListGroupItem>
-                                        <ListGroupItem>Search for duplicates before posting</ListGroupItem>
-                                        <ListGroupItem>Read the community’s rules</ListGroupItem> */}
-                  </ListGroup>
-                </Card.Body>
-              </Card>
-            </Row>
+            {this.props.location &&
+              this.props.location.rules &&
+              this.props.location.rules.length > 0 && (
+                <Row>
+                  <Card className="card">
+                    <Card.Header className="cardHeader">
+                      <img alt="" height="40px" src={createPostRulesSVG} /> r/{this.props.location?.communityName}&apos;s
+                            Rules
+                          </Card.Header>
+                    <Card.Body>
+                      {this.props.location.rules.map(
+                        (rule, index) => {
+                          var normalView = [],
+                            expandedView = [];
+
+                          if (index < 5) {
+                            normalView.push(
+                              <div key={rule._id}>
+                                <strong>{rule.title}</strong>:{" "}
+                                {rule.description}
+                              </div>
+                            );
+                          } else {
+                            if (index == 5) {
+                              normalView.push(
+                                <div
+                                  className="upArrowRotate"
+                                  style={{
+                                    display: !this.state.showMoreRules
+                                      ? "block"
+                                      : "none",
+                                    textAlign: "center",
+                                  }}
+                                  onClick={() =>
+                                    this.setState((state) => ({
+                                      showMoreRules: !state.showMoreRules,
+                                    }))
+                                  }
+                                >
+                                  <i className="fa fa-angle-double-down" />
+                                </div>
+                              );
+                            }
+                            expandedView.push(
+                              <div key={rule._id}>
+                                <strong>{rule.title}</strong>:{" "}
+                                {rule.description}
+                              </div>
+                            );
+                          }
+                          return (
+                            <div key="">
+                              {normalView}
+                              <Collapse in={this.state.showMoreRules}>
+                                <Fade>
+                                  <div>
+                                    {expandedView}
+                                    {this.props.location.rules
+                                      .length -
+                                      1 ==
+                                      index ? (
+                                      <div
+                                        className="downArrowRotate"
+                                        style={{
+                                          display: this.state
+                                            .showMoreRules
+                                            ? "block"
+                                            : "none",
+                                          textAlign: "center",
+                                        }}
+                                        onClick={() =>
+                                          this.setState((state) => ({
+                                            showMoreRules: !state.showMoreRules,
+                                          }))
+                                        }
+                                      >
+                                        <i className="fa fa-angle-double-up" />
+                                      </div>
+                                    ) : (
+                                      ""
+                                    )}
+                                  </div>
+                                </Fade>
+                              </Collapse>
+                            </div>
+                          );
+                        }
+                      )}
+                    </Card.Body>
+                  </Card>
+                </Row>
+              )}
+
             <Row>
               <Card className="card">
                 <Card.Header className="cardHeader">
@@ -245,19 +320,13 @@ class CreatePost extends Component {
                   to Reddit
                 </Card.Header>
                 <Card.Body>
-                  <ListGroup>
-                    <ListGroupItem>Remember the human</ListGroupItem>
-                    <ListGroupItem>
-                      Behave like you would in real life
-                    </ListGroupItem>
-                    <ListGroupItem>
-                      Look for the original source of content
-                    </ListGroupItem>
-                    <ListGroupItem>
-                      Search for duplicates before posting
-                    </ListGroupItem>
-                    <ListGroupItem>Read the community’s rules</ListGroupItem>
-                  </ListGroup>
+                  <ol>
+                    <li>Remember the human</li>
+                    <li>Behave like you would in real life</li>
+                    <li>Look for the original source of content</li>
+                    <li>Search for duplicates before posting</li>
+                    <li>Read the community’s rules</li>
+                  </ol>
                 </Card.Body>
               </Card>
             </Row>
