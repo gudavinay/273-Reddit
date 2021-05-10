@@ -8,6 +8,7 @@ import MessageContent from "./MessageContent";
 import {
   getSQLUserID,
   getUserProfile,
+  getToken
 } from "../../../services/ControllerUtils";
 class Messages extends Component {
   constructor(props) {
@@ -18,16 +19,16 @@ class Messages extends Component {
       selectedUser: [],
       users: [],
       getUniqueMembers: [],
-      component: null,
+      component: null
     };
   }
 
-  handleUsersSelected = (user) => {
+  handleUsersSelected = user => {
     this.setState({ startNewChatModel: false });
     const userList = this.state.getUniqueMembers;
     userList.push({ user_id: user.user_id, name: user.name });
     this.setState({
-      getUniqueMembers: userList,
+      getUniqueMembers: userList
     });
     console.log(userList);
   };
@@ -35,70 +36,72 @@ class Messages extends Component {
   getUniqueUsers(users) {
     const user_id = getSQLUserID();
     let userNameList = [];
-    users.forEach((user) => {
+    users.forEach(user => {
       let keyB = user.sentByUser.user_id;
       if (keyB != user_id) userNameList[keyB] = user.sentByUser;
       let keyT = user.sentToUser.user_id;
       if (keyT != user_id) userNameList[keyT] = user.sentToUser;
     });
     this.setState({
-      getUniqueMembers: userNameList,
+      getUniqueMembers: userNameList
     });
   }
 
   getUsers() {
     const user_id = getSQLUserID();
+    axios.defaults.headers.common["authorization"] = getToken();
     axios
       .get(`${backendServer}/getMessageUserNames?ID=${user_id}`)
-      .then((response) => {
+      .then(response => {
         if (response.status == 200) {
           this.setState({
-            message: response.data,
+            message: response.data
           });
           this.getUniqueUsers(response.data);
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   }
 
-  searchUser = (e) => {
+  searchUser = e => {
     console.log(e);
     if (e.target.value.length > 1) {
       const data = { name: e.target.value };
       this.props.setLoader();
+      axios.defaults.headers.common["authorization"] = getToken();
       axios
         .post(`${backendServer}/getSearchedUser`, data)
-        .then((response) => {
+        .then(response => {
           this.props.unsetLoader();
           if (response.status == 200) {
             this.setState({
-              searchedUser: response.data,
+              searchedUser: response.data
             });
             console.log(this.state.searchedUser);
           }
         })
-        .catch((error) => {
+        .catch(error => {
           this.props.unsetLoader();
           console.log(error);
         });
     }
   };
 
-  startChat = (e) => {
+  startChat = e => {
     console.log(e);
     this.setState({
-      startNewChatModel: true,
+      startNewChatModel: true
     });
   };
   componentDidMount() {
     this.getUsers();
   }
 
-  showMessage = (member) => {
+  showMessage = member => {
     this.setState({
-      component: <MessageContent chattedWith={member} />,
+      component: <MessageContent chattedWith={member} />
     });
   };
 
@@ -121,7 +124,7 @@ class Messages extends Component {
       );
     }
     if (this.state.searchedUser.length > 0) {
-      selectedUser = this.state.searchedUser.map((user) => {
+      selectedUser = this.state.searchedUser.map(user => {
         console.log(user);
         return (
           <Dropdown.Item
@@ -164,7 +167,7 @@ class Messages extends Component {
         <Modal.Body
           style={{
             padding: "0",
-            height: "400px",
+            height: "400px"
           }}
         >
           <Container>

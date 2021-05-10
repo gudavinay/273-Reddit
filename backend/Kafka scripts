@@ -11,7 +11,14 @@ kafka-topics --list --zookeeper localhost:2181
 
 
 kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic response_topic
-kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic msgSQL
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic sql_message
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic JWT_auth
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic mongo_community
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic mongo_user
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic sql_user_auth
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic search_mongo
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic user_info
+
 
 
 export CONFLUENT_HOME=/home/ec2-user/confluent-6.1.1

@@ -279,4 +279,15 @@ app.post("/getSearchedUserForMongo", async (req, res) => {
       res.status(200).send(result);
     });
 });
+
+app.get("/checkUserIsModerator/:id", (req, res) => {
+  console.log("checking user is moderator");
+  user_id = req.params.id;
+  Community.find({ ownerID: user_id }).then((result) => {
+    let Communities = {
+      length: result.length,
+    };
+    res.status(200).send(Communities);
+  });
+});
 module.exports = router;

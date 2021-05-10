@@ -9,56 +9,60 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchText:this.getSearchQueryFromLocation(),
+      searchText: this.getSearchQueryFromLocation(),
     };
     console.log("PROPS IN HOME", this.props);
   }
   getSearchQueryFromLocation = () => {
     const qR = new URLSearchParams(this.props.location.search);
-    return qR.get("q") || "";    
-  }
+    return qR.get("q") || "";
+  };
   componentDidUpdate(prevProps) {
-    if(prevProps.location.search != this.props.location.search){
-      this.setState({
-        searchText: this.getSearchQueryFromLocation()
-      },()=>{
-        let data ={
-          search : this.state.searchText,
-          user_id: getMongoUserID(),
+    if (prevProps.location.search != this.props.location.search) {
+      this.setState(
+        {
+          searchText: this.getSearchQueryFromLocation(),
+        },
+        () => {
+          let data = {
+            search: this.state.searchText,
+            user_id: getMongoUserID(),
+          };
+          this.props.setLoader();
+          Axios.post(backendServer + "/searchForPosts", data)
+            .then((result) => {
+              this.props.unsetLoader();
+              this.setState({ dataOfPosts: result.data });
+              console.log(result);
+            })
+            .catch((err) => {
+              this.props.unsetLoader();
+              console.log(err);
+            });
         }
-        this.props.setLoader();
-        Axios.post(backendServer + "/searchForPosts", data)
-          .then((result) => {
-            this.props.unsetLoader();
-            this.setState({ dataOfPosts: result.data });
-            console.log(result);
-          })
-          .catch((err) => {
-            this.props.unsetLoader();
-            console.log(err);
-          });
-      })
+      );
     }
   }
-  componentDidMount(){
+  componentDidMount() {
     this.getDashboardData();
   }
-  getDashboardData =()=>{
+  getDashboardData = async () => {
     let data = {
-      user_id: getMongoUserID(),
+      user_id: await getMongoUserID(),
     };
+    console.log(data);
     this.props.setLoader();
     Axios.post(backendServer + "/getAllPostsWithUserId", data)
       .then((result) => {
         this.props.unsetLoader();
         this.setState({ dataOfPosts: result.data });
-        console.log(this.state.dataOfPosts)
+        console.log(this.state.dataOfPosts);
       })
       .catch((err) => {
         this.props.unsetLoader();
         console.log(err);
       });
-  }
+  };
   render() {
     var postsToRender = [];
     if (this.state.dataOfPosts) {
@@ -71,7 +75,7 @@ class Home extends Component {
         <Row
           style={{
             paddingTop: "70px",
-            background: this.props.darkMode ? "black" : "#DAE0E6"
+            background: this.props.darkMode ? "black" : "#DAE0E6",
           }}
         >
           <Col sm={8}>

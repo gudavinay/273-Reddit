@@ -104,7 +104,7 @@ class CommunitySearch extends Component {
     if (newQuery) {
       this.processSearch(true);
     }
-    if (window.innerHeight > document.body.clientHeight && this.state.hasMoreItems) {
+    if (window.innerHeight >= document.body.clientHeight && this.state.hasMoreItems) {
       this.processSearch();
     }
   }

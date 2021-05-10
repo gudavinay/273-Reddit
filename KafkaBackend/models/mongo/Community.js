@@ -1,14 +1,9 @@
 const mongoose = require("mongoose");
-const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2');
+const mongooseAggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
 const Schema = mongoose.Schema;
 const CommunitySchema = new mongoose.Schema(
   {
-    communityIDSQL: {
-      type: String,
-      required: true,
-      unique: true,
-    },
     communityName: { type: String, required: true, unique: true },
     communityDescription: { type: String },
     imageURL: [
@@ -24,7 +19,7 @@ const CommunitySchema = new mongoose.Schema(
     listOfUsers: [
       {
         userID: { type: Schema.Types.ObjectId, ref: "UserProfile" },
-        isAccepted: { type: Boolean, defaultValue: false },
+        isAccepted: { type: Number, default: 0 },
         isModerator: { type: Boolean, defaultValue: false },
       },
     ],

@@ -30,7 +30,7 @@ class User extends Component {
 
             this.props.setLoader();
             const { data: { user, user_communities } } = await axios.get(
-                backendServer + "/getUserProfile/" + (this.props.match.params.user_id || user_id[user_id.length - 1])
+                backendServer + "/getUserDetails/" + (this.props.match.params.user_id || user_id[user_id.length - 1])
             );
             this.props.unsetLoader();
             this.setState({
@@ -163,7 +163,7 @@ class UserCommunity extends Component {
             downVotedLength,
             postsLength,
             createdAt,
-            createdBy
+            ownerID
         } = data || {};
         return (
             <React.Fragment>
@@ -219,7 +219,7 @@ class UserCommunity extends Component {
                                         </div>
                                         <div style={{ marginLeft: "10px" }}>
                                             <i className="icon icon-user"></i>
-                                            <span style={{ marginLeft: "4px" }}> Created By <Link to={"/user/".concat(createdBy.user_id)}>{createdBy?.name}</Link> {getRelativeTime(createdAt)}</span>
+                                            <span style={{ marginLeft: "4px" }}> Created By <Link to={"/user/".concat(ownerID?.user_id)}>{ownerID?.name}</Link> {getRelativeTime(createdAt)}</span>
                                         </div>
                                     </div>
                                 </Row>

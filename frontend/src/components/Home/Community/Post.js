@@ -65,7 +65,9 @@ class Post extends Component {
         }}
       >
         <Row className="postHeader">
-          posted by {this.props.data?.createBy}{" "}
+          {this.props.data.communityName &&
+            "r/" + this.props.data?.communityName + " "}
+          posted by {this.props.data?.userName}{" "}
           {getRelativeTime(this.props.data?.createdAt)}
         </Row>
         <Row style={{ paddingLeft: "0px" }}>

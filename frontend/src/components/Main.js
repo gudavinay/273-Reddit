@@ -90,7 +90,7 @@ class Main extends Component {
       darkMode: false,
       loading: false,
       setLoader: this.setLoader,
-      unsetLoader: this.unsetLoader
+      unsetLoader: this.unsetLoader,
     };
   }
   themeToggler = () => {
@@ -142,7 +142,7 @@ class Main extends Component {
             <Route path="/dashboard">
               <Dashboard {...this.state} {...this.props} />
             </Route>
-            <Route path="/community/communityanalytics">
+            <Route path="/communityanalytics">
               <CommunityAnalytics {...this.state} {...this.props} />
             </Route>
             <Route path="/mycommunities">

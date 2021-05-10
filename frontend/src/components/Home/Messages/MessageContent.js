@@ -6,7 +6,8 @@ import "./message.css";
 import {
   getSQLUserID,
   getUserProfile,
-  getRelativeTime
+  getRelativeTime,
+  getToken
 } from "../../../services/ControllerUtils";
 class MessageContent extends Component {
   constructor(props) {
@@ -19,6 +20,7 @@ class MessageContent extends Component {
   }
   getMessageFromUser(membeDetail) {
     const user_id = getSQLUserID();
+    axios.defaults.headers.common["authorization"] = getToken();
     axios
       .get(
         `${backendServer}/getMessage?ID=${user_id}&chatWith=${membeDetail.user_id}`
@@ -50,6 +52,7 @@ class MessageContent extends Component {
       sent_by: user_id,
       sent_to: this.props.chattedWith.user_id
     };
+    axios.defaults.headers.common["authorization"] = getToken();
     axios
       .post(`${backendServer}/sendMessage`, data)
       .then(response => {
