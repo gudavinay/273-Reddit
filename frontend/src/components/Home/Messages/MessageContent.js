@@ -52,6 +52,7 @@ class MessageContent extends Component {
       sent_by: user_id,
       sent_to: this.props.chattedWith.user_id
     };
+    axios.defaults.headers.common["authorization"] = getToken();
     axios
       .post(`${backendServer}/sendMessage`, data)
       .then(response => {
