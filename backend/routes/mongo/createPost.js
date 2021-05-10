@@ -266,6 +266,15 @@ app.get("/getPostsInCommunity", (req, res) => {
                   delete resp.userDetails;
                   delete resp.commentDetails;
                   // resp.userVoteDir = result[0].userVoteDir;
+                } else {
+                  resp.score = 0;
+                  resp.upvoteCount = 0;
+                  resp.downvoteCount = 0;
+                  // console.log("resp userDetails = ", resp.userDetails[0]);
+                  resp.userID = resp.userDetails[0];
+                  resp.commentsCount = resp.commentsDetails.length;
+                  delete resp.userDetails;
+                  delete resp.commentDetails;
                 }
               }
               if (index == responseData.length - 1) {
@@ -420,6 +429,11 @@ app.post("/getCommentsWithPostID", (req, res) => {
                 resp.upvoteCount = result[0].upvoteCount;
                 resp.downvoteCount = result[0].downvoteCount;
                 resp.userVoteDir = result[0].userVoteDir;
+              } else {
+                resp.score = 0;
+                resp.upvoteCount = 0;
+                resp.downvoteCount = 0;
+                resp.userVoteDir = 0;
               }
             }
             if (index == responseData.length - 1) {
