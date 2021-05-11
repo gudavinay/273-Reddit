@@ -88,86 +88,86 @@ app.get("/createDummyData", function (req, res, next) {
 //       res.status(500).send(err);
 //     });
 // });
-app.post("/rejectInvite", (req, res) => {
-  console.log("reject");
-  UserProfile.findOneAndUpdate(
-    { _id: req.body.user_id },
-    {
-      $pull: { communityInvites: { communityID: req.body.community_id } },
-    },
-    (err, result) => {
-      if (err) {
-        res.status(404).send(err);
-      } else {
-        Community.updateOne(
-          {
-            _id: req.body.community_id,
-            "sentInvitesTo.userID": req.body.user_id,
-          },
-          {
-            $set: { "sentInvitesTo.$.isAccepted": -1 },
-          },
-          (err, result) => {
-            if (err) {
-              res.status(404).send(err);
-            } else {
-              res.status(200).send(result);
-            }
-          }
-        );
-      }
-    }
-  );
-});
-app.post("/acceptInvite", (req, res) => {
-  UserProfile.findOneAndUpdate(
-    { _id: req.body.user_id },
-    {
-      $pull: { communityInvites: { communityID: req.body.community_id } },
-    },
-    (err, result) => {
-      if (err) {
-        res.status(404).send(err);
-      } else {
-        Community.updateOne(
-          {
-            _id: req.body.community_id,
-            "sentInvitesTo.userID": req.body.user_id,
-          },
-          {
-            $set: {
-              "sentInvitesTo.$.isAccepted": 1,
-              "sentInvitesTo.$.dateTime": Date.now(),
-            },
-          },
-          (err, result) => {
-            if (err) {
-              res.status(404).send(err);
-            } else {
-              Community.updateOne(
-                { _id: req.body.community_id },
-                {
-                  $push: {
-                    listOfUsers: [
-                      { userID: req.body.user_id, isAccepted: true },
-                    ],
-                  },
-                },
-                (err, result) => {
-                  if (err) {
-                    res.status(404).send(err);
-                  } else {
-                    res.status(200).send(result);
-                  }
-                }
-              );
-            }
-          }
-        );
-      }
-    }
-  );
-});
+// app.post("/rejectInvite", (req, res) => {
+//   console.log("reject");
+//   UserProfile.findOneAndUpdate(
+//     { _id: req.body.user_id },
+//     {
+//       $pull: { communityInvites: { communityID: req.body.community_id } },
+//     },
+//     (err, result) => {
+//       if (err) {
+//         res.status(404).send(err);
+//       } else {
+//         Community.updateOne(
+//           {
+//             _id: req.body.community_id,
+//             "sentInvitesTo.userID": req.body.user_id,
+//           },
+//           {
+//             $set: { "sentInvitesTo.$.isAccepted": -1 },
+//           },
+//           (err, result) => {
+//             if (err) {
+//               res.status(404).send(err);
+//             } else {
+//               res.status(200).send(result);
+//             }
+//           }
+//         );
+//       }
+//     }
+//   );
+// });
+// app.post("/acceptInvite", (req, res) => {
+//   UserProfile.findOneAndUpdate(
+//     { _id: req.body.user_id },
+//     {
+//       $pull: { communityInvites: { communityID: req.body.community_id } },
+//     },
+//     (err, result) => {
+//       if (err) {
+//         res.status(404).send(err);
+//       } else {
+//         Community.updateOne(
+//           {
+//             _id: req.body.community_id,
+//             "sentInvitesTo.userID": req.body.user_id,
+//           },
+//           {
+//             $set: {
+//               "sentInvitesTo.$.isAccepted": 1,
+//               "sentInvitesTo.$.dateTime": Date.now(),
+//             },
+//           },
+//           (err, result) => {
+//             if (err) {
+//               res.status(404).send(err);
+//             } else {
+//               Community.updateOne(
+//                 { _id: req.body.community_id },
+//                 {
+//                   $push: {
+//                     listOfUsers: [
+//                       { userID: req.body.user_id, isAccepted: true },
+//                     ],
+//                   },
+//                 },
+//                 (err, result) => {
+//                   if (err) {
+//                     res.status(404).send(err);
+//                   } else {
+//                     res.status(200).send(result);
+//                   }
+//                 }
+//               );
+//             }
+//           }
+//         );
+//       }
+//     }
+//   );
+// });
 
 app.post("/createUserProfile", (req, res) => {
   let userProfile = new UserProfile({

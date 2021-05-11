@@ -4,6 +4,8 @@ const { getUserProfile } = require("./getUserProfile");
 const { getUserDetailsById } = require("./getUserDetails");
 const { getSearchedUserForMongo } = require("./getSearchedUserForMongo");
 const { getNotificationData } = require("./getNotificationData");
+const { acceptInvite } = require("./acceptInvite");
+const { rejectInvite } = require("./rejectInvite");
 
 let handle_request = (msg, callback) => {
   switch (msg.path) {
@@ -21,6 +23,10 @@ let handle_request = (msg, callback) => {
       break;
     case "Get-Notification-Data":
       getNotificationData(msg, callback);
+    case "Accept-Invite-As-User":
+      acceptInvite(msg, callback);
+    case "Reject-Invite-As-User":
+      rejectInvite(msg, callback);
   }
 };
 exports.handle_request = handle_request;

@@ -163,7 +163,11 @@ export class invitation extends Component {
             searchedUser: [],
           });
           console.log(response);
-          this.getCommunityInvitationStatus(this.state.communityID);
+          this.getCommunityInvitationStatus(
+            this.state.communityID,
+            this.state.page,
+            this.state.size
+          );
         })
         .catch((error) => {
           this.props.unsetLoader();

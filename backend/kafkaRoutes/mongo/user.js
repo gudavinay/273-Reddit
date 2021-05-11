@@ -74,4 +74,34 @@ app.post("/getNotificationData", (req, res) => {
     return res.status(500).send(error);
   });
 });
+
+app.post("/acceptInvite", (req, res) => {
+  (req.body.user_id = req.body.user_id),
+    (req.body.community_id = req.body.community_id);
+  req.body.path = "Accept-Invite-As-User";
+
+  kafka.make_request("mongo_user", req.body, (error, result) => {
+    console.log(result);
+    if (result) {
+      return res.status(200).send(result);
+    }
+    return res.status(500).send(error);
+  });
+});
+
+app.post("/rejectInvite", (req, res) => {
+  console.log("reject");
+  (req.body.user_id = req.body.user_id),
+    (req.body.community_id = req.body.community_id);
+  req.body.path = "Reject-Invite-As-User";
+
+  kafka.make_request("mongo_user", req.body, (error, result) => {
+    console.log(result);
+    if (result) {
+      return res.status(200).send(result);
+    }
+    return res.status(500).send(error);
+  });
+});
+
 module.exports = router;
