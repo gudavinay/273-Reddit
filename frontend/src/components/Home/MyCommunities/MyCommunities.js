@@ -200,8 +200,8 @@ class MyCommunities extends Component {
               <Col xs={4}>
                 <Carousel>{imageCaraosel}</Carousel>
               </Col>
-              <Col xs={6}>
-                <p>
+              <Col>
+                <div className="bodyOverflow">
                   <strong>Community Name:</strong>
                   {community.communityName}
                   <br />
@@ -214,7 +214,7 @@ class MyCommunities extends Component {
                   <strong>No of Post:</strong>
                   {community.NoOfPost}
                   <br />
-                </p>
+                </div>
               </Col>
             </Row>
             <Card.Footer className="text-right">
