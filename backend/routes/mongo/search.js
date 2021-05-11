@@ -236,102 +236,102 @@ app.get("/getUserProfile/:user_id", async function (req, res, next) {
   }
 });
 
-app.post("/searchForPosts", (req, res) => {
-  console.log(req.body.search);
-  Post.aggregate([
-    {
-      $lookup: {
-        from: "communities",
-        localField: "communityID",
-        foreignField: "_id",
-        as: "communityDetails",
-      },
-    },
-    {
-      $lookup: {
-        from: "userprofiles",
-        localField: "userID",
-        foreignField: "_id",
-        as: "userDetails",
-      },
-    },
-    {
-      $match: {
-        $or: [
-          {
-            $and: [
-              { title: { $regex: req.body.search, $options: "i" } },
-              {
-                $or: [
-                  {
-                    "communityDetails.ownerID": mongoose.Types.ObjectId(
-                      req.body.user_id
-                    ),
-                  },
-                  {
-                    "communityDetails.listOfUsers.userID": mongoose.Types.ObjectId(
-                      req.body.user_id
-                    ),
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            $and: [
-              { description: { $regex: req.body.search, $options: "i" } },
-              {
-                $or: [
-                  {
-                    "communityDetails.ownerID": mongoose.Types.ObjectId(
-                      req.body.user_id
-                    ),
-                  },
-                  {
-                    "communityDetails.listOfUsers.userID": mongoose.Types.ObjectId(
-                      req.body.user_id
-                    ),
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-        // communityName: { $regex: searchText, $options: "i" }
-      },
-    },
-    {
-      $unwind: {
-        path: "$userDetails",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $unwind: {
-        path: "$communityDetails",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $project: {
-        type: "$type",
-        title: "$title",
-        description: { $ifNull: ["$description", ""] },
-        link: { $ifNull: ["$link", ""] },
-        postImageUrl: { $ifNull: ["$postImageUrl", ""] },
-        upvotedBy: "$upvotedBy",
-        downvotedBy: "$downvotedBy",
-        createdAt: "$createdAt",
-        userMongoID: "$userDetails._id",
-        userSQLID: "$userDetails.userIDSQL",
-        userName: "$userDetails.name", // only if needed
-        communityName: "$communityDetails.communityName",
-        communityDescription: "$communityDetails.communityDescription",
-        imageURL: "$communityDetails.imageURL",
-      },
-    },
-  ]).then((result) => {
-    res.status(200).send(result);
-  });
-});
+// app.post("/searchForPosts", (req, res) => {
+//   console.log(req.body.search);
+//   Post.aggregate([
+//     {
+//       $lookup: {
+//         from: "communities",
+//         localField: "communityID",
+//         foreignField: "_id",
+//         as: "communityDetails",
+//       },
+//     },
+//     {
+//       $lookup: {
+//         from: "userprofiles",
+//         localField: "userID",
+//         foreignField: "_id",
+//         as: "userDetails",
+//       },
+//     },
+//     {
+//       $match: {
+//         $or: [
+//           {
+//             $and: [
+//               { title: { $regex: req.body.search, $options: "i" } },
+//               {
+//                 $or: [
+//                   {
+//                     "communityDetails.ownerID": mongoose.Types.ObjectId(
+//                       req.body.user_id
+//                     ),
+//                   },
+//                   {
+//                     "communityDetails.listOfUsers.userID": mongoose.Types.ObjectId(
+//                       req.body.user_id
+//                     ),
+//                   },
+//                 ],
+//               },
+//             ],
+//           },
+//           {
+//             $and: [
+//               { description: { $regex: req.body.search, $options: "i" } },
+//               {
+//                 $or: [
+//                   {
+//                     "communityDetails.ownerID": mongoose.Types.ObjectId(
+//                       req.body.user_id
+//                     ),
+//                   },
+//                   {
+//                     "communityDetails.listOfUsers.userID": mongoose.Types.ObjectId(
+//                       req.body.user_id
+//                     ),
+//                   },
+//                 ],
+//               },
+//             ],
+//           },
+//         ],
+//         // communityName: { $regex: searchText, $options: "i" }
+//       },
+//     },
+//     {
+//       $unwind: {
+//         path: "$userDetails",
+//         preserveNullAndEmptyArrays: true,
+//       },
+//     },
+//     {
+//       $unwind: {
+//         path: "$communityDetails",
+//         preserveNullAndEmptyArrays: true,
+//       },
+//     },
+//     {
+//       $project: {
+//         type: "$type",
+//         title: "$title",
+//         description: { $ifNull: ["$description", ""] },
+//         link: { $ifNull: ["$link", ""] },
+//         postImageUrl: { $ifNull: ["$postImageUrl", ""] },
+//         upvotedBy: "$upvotedBy",
+//         downvotedBy: "$downvotedBy",
+//         createdAt: "$createdAt",
+//         userMongoID: "$userDetails._id",
+//         userSQLID: "$userDetails.userIDSQL",
+//         userName: "$userDetails.name", // only if needed
+//         communityName: "$communityDetails.communityName",
+//         communityDescription: "$communityDetails.communityDescription",
+//         imageURL: "$communityDetails.imageURL",
+//       },
+//     },
+//   ]).then((result) => {
+//     res.status(200).send(result);
+//   });
+// });
 module.exports = router;
