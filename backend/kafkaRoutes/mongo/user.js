@@ -20,15 +20,19 @@ app.get("/getUserDetails/:user_id", checkAuth, (req, res) => {
   try {
     const { user_id } = req.params;
 
-    kafka.make_request("mongo_user", {
-      user_id,
-      path: "GET-USER-DETAILS-BY-ID"
-    }, (error, result) => {
-      if (result?.status === 200) {
-        return res.status(200).send(result.data);
+    kafka.make_request(
+      "mongo_user",
+      {
+        user_id,
+        path: "GET-USER-DETAILS-BY-ID",
+      },
+      (error, result) => {
+        if (result?.status === 200) {
+          return res.status(200).send(result.data);
+        }
+        return res.status(500).send(error?.message || result.message);
       }
-      return res.status(500).send(error?.message || result.message);
-    });
+    );
   } catch (e) {
     res.status(500).send(e.message);
   }
@@ -45,4 +49,29 @@ app.post("/createUserProfile", (req, res) => {
   });
 });
 
+app.post("/getSearchedUserForMongo", async (req, res) => {
+  req.body.path = "Get-Searched-User-For-Mongo";
+  req.body.name = req.body.name;
+  req.body.users = req.body.users;
+  kafka.make_request("mongo_user", req.body, (error, result) => {
+    console.log(result);
+    if (result) {
+      return res.status(200).send(result);
+    }
+    return res.status(500).send(error);
+  });
+});
+
+app.post("/getNotificationData", (req, res) => {
+  req.body.path = "Get-Notification-Data";
+  req.body.user_id = req.body.user_id;
+
+  kafka.make_request("mongo_user", req.body, (error, result) => {
+    console.log(result);
+    if (result) {
+      return res.status(200).send(result);
+    }
+    return res.status(500).send(error);
+  });
+});
 module.exports = router;
