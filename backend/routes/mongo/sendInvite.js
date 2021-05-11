@@ -100,22 +100,22 @@ app.post("/showInvitationStatus", async (req, res) => {
     });
 });
 
-app.post("/getCommunitiesCreatedByMe", (req, res) => {
-  Community.find({ ownerID: req.body.user_id }, (err, result) => {
-    if (err) {
-      console.log(err);
-      res.status(500).send(err);
-    } else {
-      let communities = [];
-      result.forEach((element) => {
-        let communityDetails = {
-          communityName: element.communityName,
-          communityID: element._id,
-        };
-        communities.push(communityDetails);
-      });
-      res.status(200).send(communities);
-    }
-  });
-});
+// app.post("/getCommunitiesCreatedByMe", (req, res) => {
+//   Community.find({ ownerID: req.body.user_id }, (err, result) => {
+//     if (err) {
+//       console.log(err);
+//       res.status(500).send(err);
+//     } else {
+//       let communities = [];
+//       result.forEach((element) => {
+//         let communityDetails = {
+//           communityName: element.communityName,
+//           communityID: element._id,
+//         };
+//         communities.push(communityDetails);
+//       });
+//       res.status(200).send(communities);
+//     }
+//   });
+// });
 module.exports = router;

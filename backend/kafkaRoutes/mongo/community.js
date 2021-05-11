@@ -95,4 +95,18 @@ app.get("/communityAnalystics", checkAuth, async function (req, res) {
   });
 });
 
+app.post("/getCommunitiesCreatedByMe", (req, res) => {
+  req.body.user_id = req.body.user_id;
+  req.body.path = "Get-Communities-Created-By-Me";
+  console.log(req.body);
+  kafka.make_request("mongo_community", req.body, (error, result) => {
+    console.log(result);
+    if (result) {
+      return res.status(200).send(result);
+    }
+    console.log(error);
+    return res.status(500).send(error);
+  });
+});
+
 module.exports = router;
