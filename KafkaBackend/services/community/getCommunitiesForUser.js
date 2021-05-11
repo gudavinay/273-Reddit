@@ -1,17 +1,17 @@
 const Community = require("../../models/mongo/Community");
 
-const getCommunityDetails = async (msg, callback) => {
+const getCommunitiesForUser = async (msg, callback) => {
   let res = {};
-  await Community.findOne({ _id: msg.query.ID })
+  Community.find({ "listOfUsers.userID": msg.query.ID })
     .then((result) => {
-      res.data = result;
       res.status = 200;
+      res.data = result;
       callback(null, res);
     })
     .catch((err) => {
-      res.status = 500;
+      res.status = 400;
       callback(null, res);
     });
 };
 
-exports.getCommunityDetails = getCommunityDetails;
+exports.getCommunitiesForUser = getCommunitiesForUser;

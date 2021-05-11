@@ -139,7 +139,7 @@ app.post("/sendInvite", checkAuth, async (req, res) => {
     (req.body.invitedBy = req.body.invitedBy);
   req.body.path = "Send-Invite";
 
-  kafka.make_request("mongo_community", checkAuth, req.body, (error, result) => {
+  kafka.make_request("mongo_community", req.body, (error, result) => {
     console.log(result);
     if (result) {
       return res.status(200).send(result);
@@ -150,7 +150,7 @@ app.post("/sendInvite", checkAuth, async (req, res) => {
 });
 
 app.get("/getCommunities", checkAuth, function (req, res, next) {
-  req.body.path = "getCommunities"
+  req.body.path = "getCommunities";
   kafka.make_request("mongo_community", req.body, (error, result) => {
     console.log(result);
     if (result) {
@@ -162,7 +162,7 @@ app.get("/getCommunities", checkAuth, function (req, res, next) {
 });
 
 app.get("/communityDetails", checkAuth, function (req, res, next) {
-  req.body.path = "communityDetails"
+  req.body.path = "communityDetails";
   kafka.make_request("mongo_community", req.body, (error, result) => {
     console.log(result);
     if (result) {
@@ -174,7 +174,7 @@ app.get("/communityDetails", checkAuth, function (req, res, next) {
 });
 
 app.get("/getCommunityDetails", async (req, res) => {
-  req.body.path = "getCommunityDetails"
+  req.body.path = "getCommunityDetails";
   req.body.query = req.query;
   kafka.make_request("mongo_community", req.body, (error, result) => {
     console.log(result);
@@ -186,5 +186,49 @@ app.get("/getCommunityDetails", async (req, res) => {
   });
 });
 
+app.post("/acceptUsersToCommunity", checkAuth, (req, res) => {
+  req.body.path = "Accept-Users-To-Community";
+  kafka.make_request("mongo_community", req.body, (error, result) => {
+    if (result) {
+      return res.status(200).send({});
+    }
+    console.log(error);
+    return res.status(400).send({});
+  });
+});
+
+app.post("/rejectUsersForCommunity", checkAuth, (req, res) => {
+  req.body.path = "Reject-Users-For-Community";
+  kafka.make_request("mongo_community", req.body, (error, result) => {
+    if (result) {
+      return res.status(200).send({});
+    }
+    console.log(error);
+    return res.status(400).send({});
+  });
+});
+
+app.get("/getCommunitiesForUser", checkAuth, (req, res) => {
+  req.body.path = "Get-Communities-For-User";
+  req.body.query = req.query;
+  kafka.make_request("mongo_community", req.body, (error, result) => {
+    if (result) {
+      return res.status(200).send(result.data);
+    }
+    console.log(error);
+    return res.status(400).send(error);
+  });
+});
+
+app.post("/removeUserFromCommunities", checkAuth, (req, res) => {
+  req.body.path = "Remove-User-From-Communities";
+  kafka.make_request("mongo_community", req.body, (error, result) => {
+    if (result) {
+      return res.status(200).send({});
+    }
+    console.log(error);
+    return res.status(400).send({});
+  });
+});
 
 module.exports = router;

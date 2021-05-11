@@ -4,12 +4,16 @@ const { showInvitationStatus } = require("./showInvitationStatus");
 const { sendInvite } = require("./sendInvite");
 const { getCommunitiesCreatedByMe } = require("./getCommunitiesCreatedByMe");
 const { checkModerator } = require("./checkModerator");
-const { getCommunities } = require('./getCommunities');
-const { communityDetails } = require('./communityDetails');
-const { getCommunityDetails } = require('./getCommunityDetails');
+const { getCommunities } = require("./getCommunities");
+const { communityDetails } = require("./communityDetails");
+const { getCommunityDetails } = require("./getCommunityDetails");
 const {
   getUsersForCommunitiesForOwner,
 } = require("./getUserForCommunityOwner");
+const { acceptUsersToCommunity } = require("./acceptUsersToCommunity");
+const { rejectUsersForCommunity } = require("./rejectUsersForCommunity");
+const { getCommunitiesForUser } = require("./getCommunitiesForUser");
+const { removeUserFromCommunities } = require("./removeUserFromCommunities");
 
 let handle_request = (msg, callback) => {
   if (msg.path === "Get-Communities-For-Owner") {
@@ -30,6 +34,14 @@ let handle_request = (msg, callback) => {
     communityDetails(msg, callback);
   } else if (msg.path === "getCommunityDetails") {
     getCommunityDetails(msg, callback);
+  } else if (msg.path === "Accept-Users-To-Community") {
+    acceptUsersToCommunity(msg, callback);
+  } else if (msg.path === "Reject-Users-For-Community") {
+    rejectUsersForCommunity(msg, callback);
+  } else if (msg.path === "Get-Communities-For-User") {
+    getCommunitiesForUser(msg, callback);
+  } else if (msg.path === "Remove-User-From-Communities") {
+    removeUserFromCommunities(msg, callback);
   }
 };
 
