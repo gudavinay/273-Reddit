@@ -4,12 +4,14 @@ import Post from "./Community/Post";
 import Axios from "axios";
 import backendServer from "../../webConfig";
 import { getMongoUserID } from "../../services/ControllerUtils";
+import HomeSearchResults from "./HomeSearchResults";
 
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
       searchText: this.getSearchQueryFromLocation(),
+      searchResults: [],
     };
     console.log("PROPS IN HOME", this.props);
   }
@@ -32,8 +34,11 @@ class Home extends Component {
           Axios.post(backendServer + "/searchForPosts", data)
             .then((result) => {
               this.props.unsetLoader();
-              this.setState({ dataOfPosts: result.data });
-              console.log(result);
+              let searchRes = [];
+              result.data.forEach((post) => {
+                searchRes.push(<Post data={post} {...this.props}></Post>);
+              });
+              this.setState({ searchResults: searchRes });
             })
             .catch((err) => {
               this.props.unsetLoader();
@@ -50,13 +55,12 @@ class Home extends Component {
     let data = {
       user_id: getMongoUserID(),
     };
-    console.log(data);
+    // console.log(data);
     this.props.setLoader();
     Axios.post(backendServer + "/getAllPostsWithUserId", data)
       .then((result) => {
         this.props.unsetLoader();
         this.setState({ dataOfPosts: result.data });
-        console.log(this.state.dataOfPosts);
       })
       .catch((err) => {
         this.props.unsetLoader();
@@ -88,7 +92,14 @@ class Home extends Component {
                   UNSET LOADER
                 </button>
               </Alert>
-              {postsToRender}
+              {this.state.searchResults.length ? (
+                <HomeSearchResults
+                  data={this.state.searchResults}
+                ></HomeSearchResults>
+              ) : (
+                postsToRender
+              )}
+
               {/* <Post content="post 1" />
               <Post content="post 2" />
               <Post content="post 3" />
