@@ -1,7 +1,8 @@
 "use strict";
 const { getCommunitiesForOwner } = require("./getCommunityForOwner");
+const { checkModerator } = require("./checkModerator");
 const {
-  getUsersForCommunitiesForOwner
+  getUsersForCommunitiesForOwner,
 } = require("./getUserForCommunityOwner");
 
 let handle_request = (msg, callback) => {
@@ -9,6 +10,8 @@ let handle_request = (msg, callback) => {
     getCommunitiesForOwner(msg, callback);
   } else if (msg.path === "Get-Users-For-Communities-For-Owner") {
     getUsersForCommunitiesForOwner(msg, callback);
+  } else if (msg.path === "Check-Moderator") {
+    checkModerator(msg, callback);
   }
 };
 
