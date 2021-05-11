@@ -1,25 +1,27 @@
-const Community = require("./../models/mongo/Community");
+const Community = require("../../models/mongo/Community");
+const Post = require("../../models/mongo/Post");
 
 const getCommunitiesForOwner = async (msg, callback) => {
   res = {};
   console.log(msg);
   let skip = Number(msg.page) * Number(msg.size);
   let count = await Community.countDocuments({
-    $and: [{ ownerID: msg.ID }, { communityName: { $regex: msg.search } }],
+    $and: [{ ownerID: msg.ID }, { communityName: { $regex: msg.search } }]
   });
+
   await Community.find({
     $and: [
       { ownerID: msg.ID },
-      { communityName: { $regex: msg.search, $options: "i" } },
-    ],
+      { communityName: { $regex: msg.search, $options: "i" } }
+    ]
   })
     .populate("listOfUsers.userID")
     .limit(Number(msg.size))
     .skip(skip)
     .sort({ createdAt: 1 })
-    .then((result) => {
+    .then(result => {
       let output = [];
-      result.forEach((item) => {
+      result.forEach(item => {
         let usersIdOfSQL = [];
         let acceptedIdOfSQL = [];
         for (let i = 0; i < item.listOfUsers.length; i++) {
@@ -50,35 +52,4 @@ const getCommunitiesForOwner = async (msg, callback) => {
   callback(null, res);
 };
 
-const getUsersForCommunitiesForOwner = async (msg, callback) => {
-  res = {};
-  Community.find({
-    ownerID: msg.ID,
-  })
-    .populate("listOfUsers.userID")
-    .then((result) => {
-      let output = new Set();
-      result.forEach((item) => {
-        item.listOfUsers.forEach((temp) => {
-          if (temp.isAccepted) {
-            output.add(Number(temp.userID.userIDSQL));
-          }
-        });
-      });
-      res.data = Array.from(output);
-      res.status = 200;
-      callback(null, res);
-    });
-  res.status = 500;
-  callback(null, res);
-};
-
-handle_request = (msg, callback) => {
-  if (msg.path === "Get-Communities-For-Owner") {
-    getCommunitiesForOwner(msg, callback);
-  } else if (msg.path === "Get-Users-For-Communities-For-Owner") {
-    getUsersForCommunitiesForOwner(msg, callback);
-  }
-};
-
-exports.handle_request = handle_request;
+exports.getCommunitiesForOwner = getCommunitiesForOwner;

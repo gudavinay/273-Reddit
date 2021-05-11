@@ -16,7 +16,8 @@ import {
   getMongoUserID,
   sortByTime,
   sortByNoOfUser,
-  sortByPost
+  sortByPost,
+  getToken
 } from "../../../services/ControllerUtils";
 import { TablePagination } from "@material-ui/core";
 import NoImage from "../../../assets/NoImage.png";
@@ -40,16 +41,18 @@ class MyCommunities extends Component {
   getMyCommunities(page, size) {
     const ownerID = getMongoUserID();
     this.props.setLoader();
-    console.log(
-      `${backendServer}/myCommunity?ID=${ownerID}&page=${page}&size=${size}`
-    );
+    // console.log(
+    //   `${backendServer}/myCommunity?ID=${ownerID}&page=${page}&size=${size}`
+    // );
+    axios.defaults.headers.common["authorization"] = getToken();
     axios
       .get(
-        `${backendServer}/myCommunity?ID=${ownerID}&page=${page}&size=${size}`
+        `${backendServer}/getCommunitiesForOwner?ID=${ownerID}&page=${page}&size=${size}&search=${""}`
       )
       .then(response => {
         this.props.unsetLoader();
         if (response.status == 200) {
+          console.log(response.data);
           this.setState({
             myCommunity: response.data,
             count: response.data[0].totalRecords

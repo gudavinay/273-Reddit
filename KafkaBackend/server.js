@@ -1,7 +1,7 @@
 var connection = new require("./kafka/connection");
 //const messageSQL = require("./services/Message/message_sql");
-const message = require("./services/message/topicMapping");
-const user_info = require("./services/userSQL/topicMapping");
+const message = require("./services/message/topicMaping");
+const user_info = require("./services/userSQL/topicMaping");
 const jwt_auth = require("./services/jwt_auth");
 const community_mongo = require("./services/community_mongo");
 
