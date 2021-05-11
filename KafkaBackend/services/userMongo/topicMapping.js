@@ -2,6 +2,8 @@
 const { createUser } = require("./createUser");
 const { getUserProfile } = require("./getUserProfile");
 const { getUserDetailsById } = require("./getUserDetails");
+const { getSearchedUserForMongo } = require("./getSearchedUserForMongo");
+const { getNotificationData } = require("./getNotificationData");
 
 let handle_request = (msg, callback) => {
   switch (msg.path) {
@@ -14,6 +16,11 @@ let handle_request = (msg, callback) => {
     case "GET-USER-DETAILS-BY-ID":
       getUserDetailsById(msg, callback);
       break;
+    case "Get-Searched-User-For-Mongo":
+      getSearchedUserForMongo(msg, callback);
+      break;
+    case "Get-Notification-Data":
+      getNotificationData(msg, callback);
   }
 };
 exports.handle_request = handle_request;

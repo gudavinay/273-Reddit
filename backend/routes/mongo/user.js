@@ -67,27 +67,27 @@ app.get("/createDummyData", function (req, res, next) {
   res.send("inserted the dummy records");
 });
 
-app.post("/getNotificationData", (req, res) => {
-  UserProfile.findOne({ _id: req.body.user_id })
-    .populate("communityInvites.communityID")
-    .then((result) => {
-      let details = [];
-      if (result !== null) {
-        result.communityInvites.forEach((element) => {
-          let inviteDetails = {
-            communityName: element.communityID.communityName,
-            communityID: element.communityID._id,
-            time: element.dateTime,
-          };
-          details.push(inviteDetails);
-        });
-      }
-      res.status(200).send(details);
-    })
-    .catch((err) => {
-      res.status(500).send(err);
-    });
-});
+// app.post("/getNotificationData", (req, res) => {
+//   UserProfile.findOne({ _id: req.body.user_id })
+//     .populate("communityInvites.communityID")
+//     .then((result) => {
+//       let details = [];
+//       if (result !== null) {
+//         result.communityInvites.forEach((element) => {
+//           let inviteDetails = {
+//             communityName: element.communityID.communityName,
+//             communityID: element.communityID._id,
+//             time: element.dateTime,
+//           };
+//           details.push(inviteDetails);
+//         });
+//       }
+//       res.status(200).send(details);
+//     })
+//     .catch((err) => {
+//       res.status(500).send(err);
+//     });
+// });
 app.post("/rejectInvite", (req, res) => {
   console.log("reject");
   UserProfile.findOneAndUpdate(
@@ -266,28 +266,28 @@ app.get("/getMessageMongo", async (req, res) => {
   });
 });
 
-app.post("/getSearchedUserForMongo", async (req, res) => {
-  UserProfile.find(
-    {
-      _id: { $nin: req.body.users },
-      name: { $regex: req.body.name, $options: "i" },
-    },
-    { name: 1, _id: 1 }
-  )
-    .limit(5)
-    .then(async (result) => {
-      res.status(200).send(result);
-    });
-});
+// app.post("/getSearchedUserForMongo", async (req, res) => {
+//   UserProfile.find(
+//     {
+//       _id: { $nin: req.body.users },
+//       name: { $regex: req.body.name, $options: "i" },
+//     },
+//     { name: 1, _id: 1 }
+//   )
+//     .limit(5)
+//     .then(async (result) => {
+//       res.status(200).send(result);
+//     });
+// });
 
-app.get("/checkUserIsModerator/:id", (req, res) => {
-  console.log("checking user is moderator");
-  user_id = req.params.id;
-  Community.find({ ownerID: user_id }).then((result) => {
-    let Communities = {
-      length: result.length,
-    };
-    res.status(200).send(Communities);
-  });
-});
+// app.get("/checkUserIsModerator/:id", (req, res) => {
+//   console.log("checking user is moderator");
+//   user_id = req.params.id;
+//   Community.find({ ownerID: user_id }).then((result) => {
+//     let Communities = {
+//       length: result.length,
+//     };
+//     res.status(200).send(Communities);
+//   });
+// });
 module.exports = router;

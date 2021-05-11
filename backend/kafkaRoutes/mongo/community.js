@@ -31,4 +31,25 @@ app.get("/getUsersForCommunitiesForOwner", checkAuth, (req, res) => {
   });
 });
 
+app.get("/checkUserIsModerator/:id", (req, res) => {
+  console.log("checking user is moderator");
+  req.body.user_id = req.params.id;
+  req.body.path = "Check-Moderator";
+
+  kafka.make_request("mongo_community", req.body, (error, result) => {
+    console.log(result);
+    if (result) {
+      return res.status(200).send(result);
+    }
+    console.log(error);
+    return res.status(500).send(error);
+  });
+
+  // Community.find({ ownerID: user_id }).then((result) => {
+  //   let Communities = {
+  //     length: result.length,
+  //   };
+  //   res.status(200).send(Communities);
+  // });
+});
 module.exports = router;
