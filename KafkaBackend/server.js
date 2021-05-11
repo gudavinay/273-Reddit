@@ -9,7 +9,9 @@ const search_mongo = require("./services/search_mongo");
 const user_mongo = require("./services/userMongo/topicMapping");
 const userAuth_sql = require("./services/userAuth/topicMapping");
 const vote_mongo = require("./services/Vote/topicMapping");
-const community_mongo = require("./services/community/topicMapping");
+const manage_community = require("./services/community/manageCommunity/topicMapping");
+const community_analytics = require("./services/community/communityAnalytics/topicMapping");
+const getTopic = require("./services/getTopic");
 
 require("./dbConnection");
 const sqldb = require("./models/sql");
@@ -32,10 +34,10 @@ function handleTopicRequest(topic_name, fname) {
           topic: data.replyTo,
           messages: JSON.stringify({
             correlationId: data.correlationId,
-            data: res,
+            data: res
           }),
-          partition: 0,
-        },
+          partition: 0
+        }
       ];
       producer.send(payloads, function (err, data) {
         console.log("payload sent:", data);
@@ -50,6 +52,9 @@ handleTopicRequest("JWT_auth", jwt_auth);
 handleTopicRequest("mongo_user", user_mongo);
 handleTopicRequest("sql_user_auth", userAuth_sql);
 handleTopicRequest("search_mongo", search_mongo);
-handleTopicRequest("mongo_community", community_mongo);
+//handleTopicRequest("mongo_community", community_mongo);
 handleTopicRequest("user_info", user_info);
+handleTopicRequest("manage_community", manage_community);
+handleTopicRequest("community_analytics", community_analytics);
+handleTopicRequest("get_topic", getTopic);
 // handleTopicRequest("vote_mongo", vote_mongo);

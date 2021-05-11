@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Plot from "react-plotly.js";
 import backendServer from "../../../webConfig";
 import axios from "axios";
-import { getMongoUserID } from "../../../services/ControllerUtils";
+import { getMongoUserID, getToken } from "../../../services/ControllerUtils";
 class CommunityAnalytics extends Component {
   constructor(props) {
     super(props);
@@ -41,6 +41,7 @@ class CommunityAnalytics extends Component {
   GetNoOfPostPerCommunity() {
     const ID = getMongoUserID();
     console.log(`${backendServer}/communityAnalystics?ID=${ID}`);
+    axios.defaults.headers.common["authorization"] = getToken();
     axios
       .get(`${backendServer}/communityAnalystics?ID=${ID}`)
       .then(response => {

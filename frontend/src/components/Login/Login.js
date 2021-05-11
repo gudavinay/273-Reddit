@@ -15,7 +15,7 @@ class Login extends Component {
       this.state = {
         error: "",
         authFlag: "",
-        redirect: null,
+        redirect: <Redirect to="/" />,
         token: ""
       };
     }
@@ -56,6 +56,9 @@ class Login extends Component {
           const data = response.data[0];
           data.token = this.props.user.token;
           SetLocalStorage(data);
+          this.setState({
+            redirect: <Redirect to="/home" />
+          });
         }
       })
       .catch(error => console.log("error " + error));
@@ -80,15 +83,9 @@ class Login extends Component {
   }
 
   render() {
-    let redirectVar = null;
-    if (typeof this.props.user !== "undefined" && this.props.user.token) {
-      redirectVar = <Redirect to="/home" />;
-    } else {
-      redirectVar = <Redirect to="/" />;
-    }
     return (
       <div className="container-fluid" style={{ padding: "0" }}>
-        {redirectVar}
+        {this.state.redirect}
         <Row style={{ padding: "0", margin: "0" }}>
           <Col className="col-2" style={{ padding: "0", height: "648px" }}>
             <img

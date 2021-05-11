@@ -14,7 +14,7 @@ import "./mycommunity.css";
 import Chip from "@material-ui/core/Chip";
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
-import { getMongoUserID } from "../../../services/ControllerUtils";
+import { getMongoUserID, getToken } from "../../../services/ControllerUtils";
 
 class CreateCommunity extends Component {
   constructor(props) {
@@ -65,6 +65,7 @@ class CreateCommunity extends Component {
   };
 
   createCommunity(data) {
+    axios.defaults.headers.common["authorization"] = getToken();
     axios
       .post(`${backendServer}/addCommunity`, data)
       .then(response => {
@@ -81,6 +82,7 @@ class CreateCommunity extends Component {
   }
 
   editCommunity(data) {
+    axios.defaults.headers.common["authorization"] = getToken();
     data.ID = this.state.communityID;
     axios
       .post(`${backendServer}/editCommunity`, data)
@@ -135,6 +137,7 @@ class CreateCommunity extends Component {
   }
 
   async getCommunityDataToEdit(id) {
+    axios.defaults.headers.common["authorization"] = getToken();
     await axios
       .get(`${backendServer}/getCommunityDetails?ID=${id}`)
       .then(response => {
@@ -154,6 +157,7 @@ class CreateCommunity extends Component {
   }
 
   async getTopicFromDB() {
+    axios.defaults.headers.common["authorization"] = getToken();
     await axios
       .get(`${backendServer}/getTopic`)
       .then(response => {

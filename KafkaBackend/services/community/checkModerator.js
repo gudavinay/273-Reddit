@@ -2,13 +2,13 @@ const Community = require("../../models/mongo/Community");
 
 const checkModerator = async (msg, callback) => {
   Community.find({ ownerID: msg.user_id })
-    .then((result) => {
+    .then(result => {
       let Communities = {
-        length: result.length,
+        length: result.length
       };
       callback(null, Communities);
     })
-    .catch((error) => {
+    .catch(error => {
       callback(error, null);
     });
 };

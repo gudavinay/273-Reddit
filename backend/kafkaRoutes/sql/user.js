@@ -15,4 +15,14 @@ app.post("/getSearchedUser", checkAuth, async (req, res) => {
   });
 });
 
+app.get("/getTopic", checkAuth, async (req, res) => {
+  kafka.make_request("get_topic", req.query, (error, result) => {
+    console.log(result);
+    if (result) {
+      return res.status(200).send(result);
+    }
+    return res.status(500).send(error);
+  });
+});
+
 module.exports = router;

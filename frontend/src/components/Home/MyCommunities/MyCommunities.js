@@ -74,6 +74,7 @@ class MyCommunities extends Component {
     const data = {
       communityName: this.state.communityName
     };
+    axios.defaults.headers.common["authorization"] = getToken();
     axios
       .post(`${backendServer}/checkForUniqueCommunity`, data)
       .then(response => {
@@ -117,6 +118,7 @@ class MyCommunities extends Component {
       const data = {
         community_id: community._id
       };
+      axios.defaults.headers.common["authorization"] = getToken();
       axios
         .post(`${backendServer}/deleteCommunity`, data)
         .then(response => {
