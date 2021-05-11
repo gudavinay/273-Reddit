@@ -11,6 +11,7 @@ const createCommunity = async (msg, callback) => {
     communityName: msg.communityName,
     communityDescription: msg.communityDescription,
     ownerID: msg.ownerID,
+    NoOfPost: 0,
     topicSelected: topicList,
     imageURL: msg.communityImages,
     rules: msg.listOfRules

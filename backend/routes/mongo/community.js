@@ -1,10 +1,10 @@
-var express = require("express");
-const app = require("../../app");
-const router = express.Router();
-const Community = require("../../models/mongo/Community");
-const Post = require("../../models/mongo/Post");
-const Comment = require("../../models/mongo/Comment");
-const Promise = require("bluebird");
+// var express = require("express");
+// const app = require("../../app");
+// const router = express.Router();
+// const Community = require("../../models/mongo/Community");
+// const Post = require("../../models/mongo/Post");
+// const Comment = require("../../models/mongo/Comment");
+// const Promise = require("bluebird");
 //const redisClient = require("./../../Util/redisConfig");
 
 // app.post("/addCommunity", function (req, res, next) {
@@ -60,53 +60,53 @@ const Promise = require("bluebird");
 //   });
 // });
 
-app.get("/myCommunity", async function (req, res) {
-  let data = [];
-  let { page, size, ID } = req.query;
-  let skip = 0;
-  if (page == 0) {
-    skip = 0;
-  } else {
-    skip = page * size;
-  }
-  const limit = parseInt(size);
-  const recordCount = await Community.count({ ownerID: ID });
+// app.get("/myCommunity", async function (req, res) {
+//   let data = [];
+//   let { page, size, ID } = req.query;
+//   let skip = 0;
+//   if (page == 0) {
+//     skip = 0;
+//   } else {
+//     skip = page * size;
+//   }
+//   const limit = parseInt(size);
+//   const recordCount = await Community.count({ ownerID: ID });
 
-  Community.find({ ownerID: ID })
-    .sort({ createdAt: "desc" })
-    .limit(limit)
-    .skip(skip)
-    .then((result, error) => {
-      if (error) {
-        res.status(500).send("Error Occured");
-      } else {
-        if (result.length === 0) {
-          res.status(200).send(result);
-        }
-        const findResult = JSON.parse(JSON.stringify(result));
-        findResult.map((community) => {
-          Post.find({ communityID: community._id }).then(
-            (postResult, error) => {
-              data.push({
-                _id: community._id,
-                communityName: community.communityName,
-                communityDescription: community.communityDescription,
-                imageURL: community.imageURL,
-                listOfUsers: community.listOfUsers,
-                count: postResult.length,
-                createdAt: community.createdAt,
-                totalRecords: recordCount,
-              });
-              console.log(JSON.stringify(data));
-              if (result.length == data.length) {
-                res.status(200).send(JSON.stringify(data));
-              }
-            }
-          );
-        });
-      }
-    });
-});
+//   Community.find({ ownerID: ID })
+//     .sort({ createdAt: "desc" })
+//     .limit(limit)
+//     .skip(skip)
+//     .then((result, error) => {
+//       if (error) {
+//         res.status(500).send("Error Occured");
+//       } else {
+//         if (result.length === 0) {
+//           res.status(200).send(result);
+//         }
+//         const findResult = JSON.parse(JSON.stringify(result));
+//         findResult.map((community) => {
+//           Post.find({ communityID: community._id }).then(
+//             (postResult, error) => {
+//               data.push({
+//                 _id: community._id,
+//                 communityName: community.communityName,
+//                 communityDescription: community.communityDescription,
+//                 imageURL: community.imageURL,
+//                 listOfUsers: community.listOfUsers,
+//                 count: postResult.length,
+//                 createdAt: community.createdAt,
+//                 totalRecords: recordCount,
+//               });
+//               console.log(JSON.stringify(data));
+//               if (result.length == data.length) {
+//                 res.status(200).send(JSON.stringify(data));
+//               }
+//             }
+//           );
+//         });
+//       }
+//     });
+// });
 
 // app.get("/communityAnalystics", async function (req, res) {
 //   let data = [];
@@ -277,53 +277,53 @@ app.get("/myCommunity", async function (req, res) {
 //   }
 // });
 
-app.post("/userJoinRequestToCommunity", (req, res) => {
-  console.log(req.body);
-  try {
-    Community.findOneAndUpdate(
-      { _id: req.body.community_id },
-      {
-        $push: { listOfUsers: [{ userID: req.body.user_id }] },
-      },
-      {
-        new: true,
-      },
-      (err, result) => {
-        if (err) {
-          res.status(500).send(err);
-        } else {
-          res.status(200).send(result);
-        }
-      }
-    );
-  } catch (err) {
-    res.status(400).end();
-  }
-});
+// app.post("/userJoinRequestToCommunity", (req, res) => {
+//   console.log(req.body);
+//   try {
+//     Community.findOneAndUpdate(
+//       { _id: req.body.community_id },
+//       {
+//         $push: { listOfUsers: [{ userID: req.body.user_id }] }
+//       },
+//       {
+//         new: true
+//       },
+//       (err, result) => {
+//         if (err) {
+//           res.status(500).send(err);
+//         } else {
+//           res.status(200).send(result);
+//         }
+//       }
+//     );
+//   } catch (err) {
+//     res.status(400).end();
+//   }
+// });
 
-app.post("/userLeaveRequestFromCommunity", (req, res) => {
-  console.log(req.body);
-  try {
-    Community.findOneAndUpdate(
-      { _id: req.body.community_id },
-      {
-        $pull: { listOfUsers: { userID: req.body.user_id } },
-      },
-      {
-        new: true,
-      },
-      (err, result) => {
-        if (err) {
-          res.status(500).send(err);
-        } else {
-          res.status(200).send(result);
-        }
-      }
-    );
-  } catch (err) {
-    res.status(400).end();
-  }
-});
+// app.post("/userLeaveRequestFromCommunity", (req, res) => {
+//   console.log(req.body);
+//   try {
+//     Community.findOneAndUpdate(
+//       { _id: req.body.community_id },
+//       {
+//         $pull: { listOfUsers: { userID: req.body.user_id } }
+//       },
+//       {
+//         new: true
+//       },
+//       (err, result) => {
+//         if (err) {
+//           res.status(500).send(err);
+//         } else {
+//           res.status(200).send(result);
+//         }
+//       }
+//     );
+//   } catch (err) {
+//     res.status(400).end();
+//   }
+// });
 
 // app.post("/deleteCommunity", (req, res) => {
 //   try {
@@ -339,20 +339,20 @@ app.post("/userLeaveRequestFromCommunity", (req, res) => {
 //   }
 // });
 
-app.post("/checkForUniqueCommunity", async function (req, res) {
-  await Community.find({
-    communityName: req.body.communityName,
-  })
-    .then((result) => {
-      if (result.length > 0) {
-        res.status(400).send("Community is already registered");
-      } else {
-        res.status(200).send();
-      }
-    })
-    .catch((err) => {
-      res.status(500).send(err);
-    });
-});
+// app.post("/checkForUniqueCommunity", async function (req, res) {
+//   await Community.find({
+//     communityName: req.body.communityName
+//   })
+//     .then(result => {
+//       if (result.length > 0) {
+//         res.status(400).send("Community is already registered");
+//       } else {
+//         res.status(200).send();
+//       }
+//     })
+//     .catch(err => {
+//       res.status(500).send(err);
+//     });
+// });
 
 module.exports = router;

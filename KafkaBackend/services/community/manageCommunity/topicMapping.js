@@ -2,6 +2,7 @@
 const { createCommunity } = require("./createCommunity");
 const { editCommunity } = require("./editCommunity");
 const { deleteCommunity } = require("./deleteCommunity");
+const { uniqueCommunity } = require("./checkForUniqueCommunity");
 
 let handle_request = (msg, callback) => {
   if (msg.path === "Create-Community") {
@@ -10,6 +11,8 @@ let handle_request = (msg, callback) => {
     editCommunity(msg, callback);
   } else if (msg.path === "Delete-Community") {
     deleteCommunity(msg, callback);
+  } else if (msg.path === "Unique-Community") {
+    uniqueCommunity(msg, callback);
   }
 };
 

@@ -34,12 +34,11 @@ const getCommunitiesForOwner = async (msg, callback) => {
         let data = JSON.parse(JSON.stringify(item));
         data.requestedUserSQLIds = usersIdOfSQL;
         data.acceptedUsersSQLIds = acceptedIdOfSQL;
+        data.NoOfPost = item.NoOfPost;
         delete data.listOfUsers;
         delete data.upvotedBy;
         delete data.downvotedBy;
         delete data.sentInvitesTo;
-        delete data.imageURL;
-        delete data.posts;
         delete data.rules;
         delete data.topicSelected;
         output.push(data);

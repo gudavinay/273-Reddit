@@ -54,8 +54,8 @@ class MyCommunities extends Component {
         if (response.status == 200) {
           console.log(response.data);
           this.setState({
-            myCommunity: response.data,
-            count: response.data[0].totalRecords
+            myCommunity: response.data.com,
+            count: response.data.total
           });
         }
       })
@@ -209,10 +209,10 @@ class MyCommunities extends Component {
                   {community.communityDescription}
                   <br />
                   <strong>Total Users:</strong>
-                  {community.listOfUsers.length + 1}
+                  {community.acceptedUsersSQLIds.length + 1}
                   <br />
                   <strong>No of Post:</strong>
-                  {community.count}
+                  {community.NoOfPost}
                   <br />
                 </p>
               </Col>

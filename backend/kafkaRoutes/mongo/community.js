@@ -46,6 +46,18 @@ app.get("/checkUserIsModerator/:id", (req, res) => {
   });
 });
 
+app.post("/checkForUniqueCommunity", checkAuth, async function (req, res) {
+  req.body.path = "Unique-Community";
+  kafka.make_request("manage_community", req.body, (error, result) => {
+    console.log(result);
+    if (result) {
+      return res.status(200).send(result);
+    }
+    console.log(error);
+    return res.status(500).send(error);
+  });
+});
+
 app.post("/addCommunity", checkAuth, function (req, res) {
   req.body.path = "Create-Community";
   kafka.make_request("manage_community", req.body, (error, result) => {
@@ -127,9 +139,9 @@ app.post("/showInvitationStatus", checkAuth, async (req, res) => {
 
 app.post("/sendInvite", checkAuth, async (req, res) => {
   var members = [];
-  req.body.users.forEach((user) => {
+  req.body.users.forEach(user => {
     const userData = {
-      userID: user.user_id,
+      userID: user.user_id
     };
     members.push(userData);
   });
@@ -231,4 +243,27 @@ app.post("/removeUserFromCommunities", checkAuth, (req, res) => {
   });
 });
 
+app.post("/userJoinRequestToCommunity", (req, res) => {
+  console.log(req.body);
+  req.body.path = "User-Join-Request-To-Community";
+  kafka.make_request("community_user", req.body, (error, result) => {
+    if (result) {
+      return res.status(200).send({});
+    }
+    console.log(error);
+    return res.status(400).send({});
+  });
+});
+
+app.post("/userLeaveRequestFromCommunity", (req, res) => {
+  console.log(req.body);
+  req.body.path = "User-Leave-Request-To-Community";
+  kafka.make_request("community_user", req.body, (error, result) => {
+    if (result) {
+      return res.status(200).send({});
+    }
+    console.log(error);
+    return res.status(400).send({});
+  });
+});
 module.exports = router;
