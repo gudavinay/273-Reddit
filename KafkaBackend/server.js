@@ -1,9 +1,8 @@
 var connection = new require("./kafka/connection");
 //const messageSQL = require("./services/Message/message_sql");
-const message = require("./services/message/topicMaping");
-const user_info = require("./services/userSQL/topicMaping");
+const message = require("./services/message/topicMapping");
+const user_info = require("./services/userSQL/topicMapping");
 const jwt_auth = require("./services/jwt_auth");
-const community_mongo = require("./services/community_mongo");
 
 const search_mongo = require("./services/search_mongo");
 
@@ -46,7 +45,6 @@ function handleTopicRequest(topic_name, fname) {
 
 handleTopicRequest("sql_message", message);
 handleTopicRequest("JWT_auth", jwt_auth);
-handleTopicRequest("mongo_community", community_mongo);
 handleTopicRequest("mongo_user", user_mongo);
 handleTopicRequest("sql_user_auth", userAuth_sql);
 handleTopicRequest("search_mongo", search_mongo);
