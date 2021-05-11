@@ -109,4 +109,43 @@ app.post("/getCommunitiesCreatedByMe", (req, res) => {
   });
 });
 
+app.post("/showInvitationStatus", async (req, res) => {
+  req.body.page = req.body.page;
+  req.body.size = req.body.size;
+  req.body.path = "Show-Invitation-Status";
+  req.body.community_id = req.body.community_id;
+
+  kafka.make_request("mongo_community", req.body, (error, result) => {
+    console.log(result);
+    if (result) {
+      return res.status(200).send(result);
+    }
+    console.log(error);
+    return res.status(500).send(error);
+  });
+});
+
+app.post("/sendInvite", async (req, res) => {
+  var members = [];
+  req.body.users.forEach((user) => {
+    const userData = {
+      userID: user.user_id,
+    };
+    members.push(userData);
+  });
+  console.log(members);
+  (req.body.community_id = req.body.community_id),
+    (req.body.members = members),
+    (req.body.invitedBy = req.body.invitedBy);
+  req.body.path = "Send-Invite";
+
+  kafka.make_request("mongo_community", req.body, (error, result) => {
+    console.log(result);
+    if (result) {
+      return res.status(200).send(result);
+    }
+    console.log(error);
+    return res.status(500).send(error);
+  });
+});
 module.exports = router;
