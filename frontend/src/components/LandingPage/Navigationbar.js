@@ -17,6 +17,7 @@ import { Link, Redirect } from "react-router-dom";
 import { logoutRedux } from "../../reduxOps/reduxActions/loginRedux";
 import {
   getDefaultRedditProfilePicture,
+  getToken,
   getUserProfile,
 } from "../../services/ControllerUtils";
 import { getMongoUserID } from "../../services/ControllerUtils";
@@ -73,6 +74,7 @@ class Navigationbar extends Component {
   checkIfUserIsModerator = () => {
     let user_id = getMongoUserID();
 
+    Axios.defaults.headers.common["authorization"] = getToken();
     Axios.get(backendServer + "/checkUserIsModerator/" + user_id)
       .then((result) => {
         console.log(result);
@@ -99,6 +101,7 @@ class Navigationbar extends Component {
       user_id: getMongoUserID(),
     };
     this.props.setLoader();
+    Axios.defaults.headers.common["authorization"] = getToken();
     Axios.post(backendServer + "/getNotificationData", data)
       .then((result) => {
         this.props.unsetLoader();

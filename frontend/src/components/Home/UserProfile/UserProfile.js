@@ -8,7 +8,8 @@ import axios from "axios";
 import backendServer from "../../../webConfig";
 import {
   getDefaultRedditProfilePicture,
-  getMongoUserID
+  getMongoUserID,
+  getToken
 } from "../../../services/ControllerUtils";
 import "./UserProfile.css";
 class UserProfile extends Component {
@@ -39,6 +40,7 @@ class UserProfile extends Component {
 
   componentDidMount() {
     this.props.setLoader();
+    axios.defaults.headers.common["authorization"] = getToken();
     axios
       .get(`${backendServer}/getUserProfileByMongoID?ID=${getMongoUserID()}`)
       .then(result => {
@@ -50,6 +52,7 @@ class UserProfile extends Component {
         console.log(err);
       });
 
+    axios.defaults.headers.common["authorization"] = getToken();
     axios
       .get(`${backendServer}/getTopic`)
       .then(result => {

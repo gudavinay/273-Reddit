@@ -133,11 +133,11 @@ app.get("/myCommunity", async function (req, res) {
 //   });
 // });
 
-app.get("/getCommunityDetails", async (req, res) => {
-  await Community.findOne({ _id: req.query.ID }).then(result => {
-    res.status(200).send(result);
-  });
-});
+// app.get("/getCommunityDetails", async (req, res) => {
+//   await Community.findOne({ _id: req.query.ID }).then(result => {
+//     res.status(200).send(result);
+//   });
+// });
 
 app.get("/getCommunitiesForOwner", async (req, res) => {
   let skip = Number(req.query.page) * Number(req.query.size);

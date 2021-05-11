@@ -1,6 +1,7 @@
 const Post = require("../../models/mongo/Post");
+const mongoose = require('mongoose');
 
-const getPostsInCommunity = async (msg, callback) => {
+const getAllPostsWithUserId = async (msg, callback) => {
   let res = {};
   console.log(msg.user_id);
   Post.aggregate([
@@ -82,4 +83,4 @@ const getPostsInCommunity = async (msg, callback) => {
     });
 };
 
-exports.getPostsInCommunity = getPostsInCommunity;
+exports.getAllPostsWithUserId = getAllPostsWithUserId;

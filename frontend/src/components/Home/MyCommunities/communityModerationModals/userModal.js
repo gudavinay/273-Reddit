@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { Component } from "react";
+import { getToken } from "../../../../services/ControllerUtils";
 // import { Row } from "react-bootstrap";
 // import { Col } from "reactstrap";
 import backendServer from "../../../../webConfig";
@@ -16,6 +17,7 @@ class UserModal extends Component {
 
   removeFomCommunity = async () => {
     if (this.state.removedList && this.state.removedList.length > 0) {
+      axios.defaults.headers.common["authorization"] = getToken();
       await axios
         .post(backendServer + "/removeUserFromCommunities", {
           userID: this.props.user_id,
@@ -28,6 +30,7 @@ class UserModal extends Component {
   };
 
   getCommunitiesForUser = async () => {
+    axios.defaults.headers.common["authorization"] = getToken();
     await axios
       .get(`${backendServer}/getCommunitiesForUser?ID=${this.props.user_id}`)
       .then((result) => {
@@ -36,6 +39,7 @@ class UserModal extends Component {
   };
 
   getUserDetails = async () => {
+    axios.defaults.headers.common["authorization"] = getToken();
     await axios
       .get(`${backendServer}/getUserProfileByMongoID?ID=${this.props.user_id}`)
       .then((result) => {
@@ -53,48 +57,48 @@ class UserModal extends Component {
     let communitiesList = [];
     this.state.communities
       ? this.state.communities.forEach((item) => {
-          communitiesList.push(
-            <div className="row" key={item._id} style={{ margin: "30px" }}>
+        communitiesList.push(
+          <div className="row" key={item._id} style={{ margin: "30px" }}>
+            <div
+              className="col-1"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              <input
+                type="checkbox"
+                onChange={() => {
+                  let arr = this.state.removedList;
+                  if (arr.includes(item._id)) {
+                    arr.pop(item._id);
+                  } else {
+                    arr.push(item._id);
+                  }
+                  this.setState({
+                    removedList: arr,
+                  });
+                }}
+              />
+            </div>
+            <div className="col">
               <div
-                className="col-1"
                 style={{
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
+                  fontSize: "18px",
+                  fontWeight: "500",
+                  paddingLeft: "15px",
                 }}
               >
-                <input
-                  type="checkbox"
-                  onChange={() => {
-                    let arr = this.state.removedList;
-                    if (arr.includes(item._id)) {
-                      arr.pop(item._id);
-                    } else {
-                      arr.push(item._id);
-                    }
-                    this.setState({
-                      removedList: arr,
-                    });
-                  }}
-                />
-              </div>
-              <div className="col">
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    fontSize: "18px",
-                    fontWeight: "500",
-                    paddingLeft: "15px",
-                  }}
-                >
-                  r/{item.communityName}
-                </div>
+                r/{item.communityName}
               </div>
             </div>
-          );
-        })
+          </div>
+        );
+      })
       : null;
     console.log(this.state);
     return (

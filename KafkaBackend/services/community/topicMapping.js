@@ -6,6 +6,7 @@ const { getCommunitiesCreatedByMe } = require("./getCommunitiesCreatedByMe");
 const { checkModerator } = require("./checkModerator");
 const { getCommunities } = require('./getCommunities');
 const { communityDetails } = require('./communityDetails');
+const { getCommunityDetails } = require('./getCommunityDetails');
 const {
   getUsersForCommunitiesForOwner,
 } = require("./getUserForCommunityOwner");
@@ -27,6 +28,8 @@ let handle_request = (msg, callback) => {
     getCommunities(msg, callback);
   } else if (msg.path === "communityDetails") {
     communityDetails(msg, callback);
+  } else if (msg.path === "getCommunityDetails") {
+    getCommunityDetails(msg, callback);
   }
 };
 

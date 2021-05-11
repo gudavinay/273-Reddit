@@ -1,4 +1,6 @@
 const Post = require("../../models/mongo/Post");
+const Vote = require("../../models/mongo/vote")
+const mongoose = require('mongoose');
 
 const getPostsInCommunity = async (msg, callback) => {
     let res = {};

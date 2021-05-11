@@ -12,6 +12,7 @@ import backendServer from "../../../webConfig";
 import {
   getDefaultRedditProfilePicture,
   getMongoUserID,
+  getToken,
 } from "../../../services/ControllerUtils";
 // import { withStyles } from "@material-ui/core/styles";
 // import { useTheme } from "@material-ui/core/styles";
@@ -39,6 +40,7 @@ class Community extends Component {
 
   componentDidMount = async () => {
     this.props.setLoader();
+    axios.defaults.headers.common["authorization"] = getToken();
     axios
       .get(`${backendServer}/getCommunityDetails?ID=${this.state.community_id}`)
       .then((response) => {
@@ -51,6 +53,7 @@ class Community extends Component {
       });
 
     this.props.setLoader();
+    axios.defaults.headers.common["authorization"] = getToken();
     axios
       .get(
         `${backendServer}/getPostsInCommunity?ID=${this.state.community_id
@@ -69,6 +72,7 @@ class Community extends Component {
 
   upVote(postId, userVoteDir, index) {
     console.log("upvote req  = ", postId, " ", userVoteDir, " ", index);
+    axios.defaults.headers.common["authorization"] = getToken();
     axios
       .post(backendServer + "/addVote", {
         entityId: postId,
@@ -100,6 +104,7 @@ class Community extends Component {
   }
 
   downVote(postId, userVoteDir, index) {
+    axios.defaults.headers.common["authorization"] = getToken();
     axios
       .post(backendServer + "/addVote", {
         entityId: postId,
@@ -210,6 +215,7 @@ class Community extends Component {
                   }}
                   onClick={() => {
                     this.props.setLoader();
+                    axios.defaults.headers.common["authorization"] = getToken();
                     axios
                       .post(`${backendServer}/userLeaveRequestFromCommunity`, {
                         community_id: this.state.community_id,
@@ -306,6 +312,7 @@ class Community extends Component {
               }}
               onClick={() => {
                 this.props.setLoader();
+                axios.defaults.headers.common["authorization"] = getToken();
                 axios
                   .post(`${backendServer}/userJoinRequestToCommunity`, {
                     community_id: this.state.community_id,

@@ -9,6 +9,7 @@ import inviteRejectedSVG from "../../../assets/inviteRejected.svg";
 import {
   getDefaultRedditProfilePicture,
   getRelativeTime,
+  getToken,
 } from "../../../services/ControllerUtils";
 import { getMongoUserID } from "../../../services/ControllerUtils";
 import Chip from "@material-ui/core/Chip";
@@ -38,6 +39,7 @@ export class invitation extends Component {
       user_id: getMongoUserID(),
     };
     this.props.setLoader();
+    Axios.defaults.headers.common["authorization"] = getToken();
     Axios.post(backendServer + "/getCommunitiesCreatedByMe", data)
       .then((response) => {
         this.props.unsetLoader();
@@ -59,6 +61,7 @@ export class invitation extends Component {
     };
     console.log(data);
     this.props.setLoader();
+    Axios.defaults.headers.common["authorization"] = getToken();
     Axios.post(backendServer + "/showInvitationStatus", data)
       .then((response) => {
         this.props.unsetLoader();
@@ -83,6 +86,7 @@ export class invitation extends Component {
         users: this.state.listOfInvolvedUsers,
       };
       this.props.setLoader();
+      Axios.defaults.headers.common["authorization"] = getToken();
       Axios.post(backendServer + "/getSearchedUserForMongo", data)
         .then((response) => {
           this.props.unsetLoader();
@@ -155,6 +159,7 @@ export class invitation extends Component {
       console.log(inviteData);
 
       this.props.setLoader();
+      Axios.defaults.headers.common["authorization"] = getToken();
       Axios.post(backendServer + "/sendInvite", inviteData)
         .then((response) => {
           this.props.unsetLoader();

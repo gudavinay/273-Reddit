@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { Component } from "react";
 import { Row, Col } from "react-bootstrap";
+import { getToken } from "../../../../services/ControllerUtils";
 import backendServer from "../../../../webConfig";
 
 class CommunityModal extends Component {
@@ -15,6 +16,7 @@ class CommunityModal extends Component {
 
   acceptUsers = async () => {
     if (this.state.userList && this.state.userList.length > 0) {
+      axios.defaults.headers.common["authorization"] = getToken();
       await axios
         .post(backendServer + "/acceptUsersToCommunity", {
           communityID: this.props.comm_id,
@@ -28,6 +30,7 @@ class CommunityModal extends Component {
 
   rejectUsers = async () => {
     if (this.state.userList && this.state.userList.length > 0) {
+      axios.defaults.headers.common["authorization"] = getToken();
       await axios
         .post(backendServer + "/rejectUsersForCommunity", {
           communityID: this.props.comm_id,
@@ -41,6 +44,7 @@ class CommunityModal extends Component {
 
   fetchUsers = async () => {
     // this.props.setLoader();
+    axios.defaults.headers.common["authorization"] = getToken();
     await axios
       .get(`${backendServer}/getCommunityDetails?ID=${this.props.comm_id}`)
       .then(async (response) => {
@@ -52,6 +56,7 @@ class CommunityModal extends Component {
         });
         console.log(userList);
         if (userList.length > 0) {
+          axios.defaults.headers.common["authorization"] = getToken();
           await axios
             .post(backendServer + "/RequestedUsersForCom", {
               usersList: userList,
@@ -84,120 +89,120 @@ class CommunityModal extends Component {
     let counter = 1;
     this.state.communityDetails
       ? this.state.communityDetails.listOfUsers.forEach((item) => {
-          if (!item.isAccepted) {
-            let data = this.state.users ? this.state.users[item.userID] : {};
-            requestedUsers.push(
+        if (!item.isAccepted) {
+          let data = this.state.users ? this.state.users[item.userID] : {};
+          requestedUsers.push(
+            <div
+              key={item.userID}
+              className="row"
+              style={{ padding: "15px 30px" }}
+            >
               <div
-                key={item.userID}
-                className="row"
-                style={{ padding: "15px 30px" }}
+                className="col-1"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  onChange={() => {
+                    let arr = this.state.userList;
+                    if (arr.includes(item.userID)) {
+                      arr.pop(item.userID);
+                    } else {
+                      arr.push(item.userID);
+                    }
+                    this.setState({
+                      userList: arr,
+                    });
+                  }}
+                />
+              </div>
+              <div
+                className="col"
+                style={{
+                  display: "flex",
+                }}
               >
                 <div
-                  className="col-1"
+                  style={{
+                    display: "block",
+                    width: "40px",
+                    height: "40px",
+                    backgroundColor: "#ccc",
+                    borderRadius: "5px",
+                    border: "1px solid #777",
+                    margin: "0 15px",
+                  }}
+                >
+                  .
+                  </div>
+                <div
                   style={{
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
                   }}
                 >
-                  <input
-                    type="checkbox"
-                    onChange={() => {
-                      let arr = this.state.userList;
-                      if (arr.includes(item.userID)) {
-                        arr.pop(item.userID);
-                      } else {
-                        arr.push(item.userID);
-                      }
-                      this.setState({
-                        userList: arr,
-                      });
-                    }}
-                  />
-                </div>
-                <div
-                  className="col"
-                  style={{
-                    display: "flex",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "block",
-                      width: "40px",
-                      height: "40px",
-                      backgroundColor: "#ccc",
-                      borderRadius: "5px",
-                      border: "1px solid #777",
-                      margin: "0 15px",
-                    }}
-                  >
-                    .
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                    }}
-                  >
-                    u/{data.name}
-                  </div>
+                  u/{data.name}
                 </div>
               </div>
-            );
-          } else {
-            let data = this.state.users ? this.state.users[item.userID] : {};
-            acceptedUsers.push(
+            </div>
+          );
+        } else {
+          let data = this.state.users ? this.state.users[item.userID] : {};
+          acceptedUsers.push(
+            <div
+              key={item.userID}
+              className="row"
+              style={{ padding: "15px" }}
+            >
               <div
-                key={item.userID}
-                className="row"
-                style={{ padding: "15px" }}
+                className="col-1"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                {counter}.
+                </div>
+              <div
+                className="col"
+                style={{
+                  display: "flex",
+                }}
               >
                 <div
-                  className="col-1"
+                  style={{
+                    display: "block",
+                    width: "40px",
+                    height: "40px",
+                    backgroundColor: "#ccc",
+                    borderRadius: "5px",
+                    border: "1px solid #777",
+                    margin: "0 15px",
+                  }}
+                >
+                  .
+                  </div>
+                <div
                   style={{
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
                   }}
                 >
-                  {counter}.
-                </div>
-                <div
-                  className="col"
-                  style={{
-                    display: "flex",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "block",
-                      width: "40px",
-                      height: "40px",
-                      backgroundColor: "#ccc",
-                      borderRadius: "5px",
-                      border: "1px solid #777",
-                      margin: "0 15px",
-                    }}
-                  >
-                    .
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                    }}
-                  >
-                    u/{data.name}
-                  </div>
+                  u/{data.name}
                 </div>
               </div>
-            );
-            counter++;
-          }
-        })
+            </div>
+          );
+          counter++;
+        }
+      })
       : [];
     return (
       <>

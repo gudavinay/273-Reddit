@@ -3,7 +3,7 @@ import { Alert, Col, Row } from "react-bootstrap";
 import Post from "./Community/Post";
 import Axios from "axios";
 import backendServer from "../../webConfig";
-import { getMongoUserID } from "../../services/ControllerUtils";
+import { getMongoUserID, getToken } from "../../services/ControllerUtils";
 import HomeSearchResults from "./HomeSearchResults";
 
 class Home extends Component {
@@ -31,6 +31,7 @@ class Home extends Component {
             user_id: getMongoUserID(),
           };
           this.props.setLoader();
+          Axios.defaults.headers.common["authorization"] = getToken();
           Axios.post(backendServer + "/searchForPosts", data)
             .then((result) => {
               this.props.unsetLoader();
@@ -57,6 +58,7 @@ class Home extends Component {
     };
     // console.log(data);
     this.props.setLoader();
+    Axios.defaults.headers.common["authorization"] = getToken();
     Axios.post(backendServer + "/getAllPostsWithUserId", data)
       .then((result) => {
         this.props.unsetLoader();

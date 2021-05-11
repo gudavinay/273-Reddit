@@ -10,7 +10,7 @@ app.post("/comment", checkAuth, (req, res) => {
     kafka.make_request("comment", req.body, (error, result) => {
         console.log(result);
         if (result) {
-            return res.status(200).send(result);
+            return res.status(200).send(result.data);
         }
         console.log(error);
         return res.status(500).send(error);
@@ -22,7 +22,7 @@ app.post("/getCommentsWithPostID", checkAuth, (req, res) => {
     kafka.make_request("comment", req.body, (error, result) => {
         console.log(result);
         if (result) {
-            return res.status(200).send(result);
+            return res.status(200).send(result.data);
         }
         console.log(error);
         return res.status(500).send(error);

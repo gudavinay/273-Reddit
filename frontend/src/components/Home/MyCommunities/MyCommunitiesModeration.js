@@ -80,6 +80,7 @@ class MyCommunitiesModeration extends Component {
       .get(`${backendServer}/getUsersForCommunitiesForOwner?ID=${ownerID}`)
       .then(async (response) => {
         if (response.status == 200) {
+          axios.defaults.headers.common["authorization"] = getToken();
           await axios
             .post(backendServer + "/getListedUserDetails", {
               usersList: response.data,

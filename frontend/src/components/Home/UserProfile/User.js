@@ -3,7 +3,7 @@ import axios from "axios";
 import { Row, Col, Card } from "react-bootstrap";
 import { Link } from 'react-router-dom';
 
-import { getRelativeTime, nFormatter } from "../../../services/ControllerUtils";
+import { getRelativeTime, getToken, nFormatter } from "../../../services/ControllerUtils";
 import DefaultCardText from "../../../assets/communityIcons/card-text.svg";
 import backendServer from "../../../webConfig";
 
@@ -29,6 +29,7 @@ class User extends Component {
             const user_id = pathname.split("/");
 
             this.props.setLoader();
+            axios.defaults.headers.common["authorization"] = getToken();
             const { data: { user, user_communities } } = await axios.get(
                 backendServer + "/getUserDetails/" + (this.props.match.params.user_id || user_id[user_id.length - 1])
             );
@@ -41,11 +42,13 @@ class User extends Component {
     }
     vote = async ({ community_id, voting }) => {
         try {
+            axios.defaults.headers.common["authorization"] = getToken();
             await axios.post(`${backendServer}/addVote`, {
                 "userId": this.props.login?.user?.userID || "6089d660e18b492c2a4e5b19", // for temp purpose until login completes
                 "entityId": community_id,
                 "voteDir": voting
             });
+            axios.defaults.headers.common["authorization"] = getToken();
             const { data: { upvoteCount, downvoteCount, entityId } } = await axios.get(`${backendServer}/getVote?entityId=${community_id}`);
 
             const { communities } = this.state;

@@ -5,6 +5,7 @@ import { Row, Col, Form } from 'react-bootstrap';
 
 import backendServer from "../../../webConfig";
 import SearchResult from "./SearchResult";
+import { getToken } from "../../../services/ControllerUtils";
 
 const options = {
   sortKey: {
@@ -71,6 +72,7 @@ class CommunitySearch extends Component {
 
           this.props.setLoader();
 
+          axios.defaults.headers.common["authorization"] = getToken();
           const { data } = await axios.get(`${backendServer}/getAllCommunities?${queryParams}`);
 
           this.props.unsetLoader();
@@ -110,11 +112,13 @@ class CommunitySearch extends Component {
   }
   vote = async ({ community_id, voting }) => {
     try {
+      axios.defaults.headers.common["authorization"] = getToken();
       await axios.post(`${backendServer}/addVote`, {
         "userId": this.props.login?.user?.userID || "6089d660e18b492c2a4e5b19", // for temp purpose until login completes
         "entityId": community_id,
         "voteDir": voting
       });
+      axios.defaults.headers.common["authorization"] = getToken();
       const { data: { upvoteCount, downvoteCount, entityId } } = await axios.get(`${backendServer}/getVote?entityId=${community_id}`);
 
       const { communities } = this.state;

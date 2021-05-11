@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import inviteAcceptedSVG from "../../../assets/inviteAccepted.svg";
 import inviteRejectedSVG from "../../../assets/inviteRejected.svg";
-import { getDefaultRedditProfilePicture, getRelativeTime } from "../../../services/ControllerUtils";
+import { getDefaultRedditProfilePicture, getRelativeTime, getToken } from "../../../services/ControllerUtils";
 import { Row, Col, Modal, Button } from "react-bootstrap";
 import "./Notification.css";
 import Axios from "axios";
@@ -24,6 +24,7 @@ export class Notification extends Component {
       community_id: communityID,
     };
     this.props.setLoader();
+    Axios.defaults.headers.common["authorization"] = getToken();
     Axios.post(backendServer + "/acceptInvite", data)
       .then((result) => {
         this.props.unsetLoader();
@@ -43,6 +44,7 @@ export class Notification extends Component {
       community_id: communityID,
     };
     this.props.setLoader();
+    Axios.defaults.headers.common["authorization"] = getToken();
     Axios.post(backendServer + "/rejectInvite", data)
       .then((result) => {
         this.props.unsetLoader();
@@ -62,7 +64,7 @@ export class Notification extends Component {
           <Modal.Title>Notification</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {this.props.notificationData &&
+          {this.props.notificationData && this.props.notificationData.length > 0 &&
             this.props.notificationData.map((details, index) => (
               <div key={index}>
                 <Row>

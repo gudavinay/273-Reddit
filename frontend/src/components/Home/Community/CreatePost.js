@@ -11,7 +11,7 @@ import {
 import createPostRulesSVG from "../../../assets/createPostRules.svg";
 import Axios from "axios";
 import backendServer from "../../../webConfig";
-import { getMongoUserID } from "../../../services/ControllerUtils";
+import { getMongoUserID, getToken } from "../../../services/ControllerUtils";
 import "./CreatePost.css";
 import { Collapse, Fade } from "react-bootstrap";
 
@@ -73,6 +73,7 @@ class CreatePost extends Component {
               onSubmit={e => {
                 e.preventDefault();
                 this.props.setLoader();
+                Axios.defaults.headers.common["authorization"] = getToken();
                 Axios.post(backendServer + "/createPost", this.state)
                   .then(result => {
                     this.props.unsetLoader();
