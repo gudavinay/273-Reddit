@@ -13,6 +13,8 @@ const community_mongo = require("./services/community/topicMapping");
 const manage_community = require("./services/community/manageCommunity/topicMapping");
 const community_analytics = require("./services/community/communityAnalytics/topicMapping");
 const getTopic = require("./services/getTopic");
+const post = require('./services/post/topicMapping');
+const comment = require('./services/comment/topicMapping');
 
 require("./dbConnection");
 const sqldb = require("./models/sql");
@@ -58,4 +60,6 @@ handleTopicRequest("user_info", user_info);
 handleTopicRequest("manage_community", manage_community);
 handleTopicRequest("community_analytics", community_analytics);
 handleTopicRequest("get_topic", getTopic);
+handleTopicRequest("post", post);
+handleTopicRequest("comment", comment);
 // handleTopicRequest("vote_mongo", vote_mongo);

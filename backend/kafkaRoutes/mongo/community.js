@@ -95,7 +95,7 @@ app.get("/communityAnalystics", checkAuth, async function (req, res) {
   });
 });
 
-app.post("/getCommunitiesCreatedByMe", (req, res) => {
+app.post("/getCommunitiesCreatedByMe", checkAuth, (req, res) => {
   req.body.user_id = req.body.user_id;
   req.body.path = "Get-Communities-Created-By-Me";
   console.log(req.body);
@@ -109,7 +109,7 @@ app.post("/getCommunitiesCreatedByMe", (req, res) => {
   });
 });
 
-app.post("/showInvitationStatus", async (req, res) => {
+app.post("/showInvitationStatus", checkAuth, async (req, res) => {
   req.body.page = req.body.page;
   req.body.size = req.body.size;
   req.body.path = "Show-Invitation-Status";
@@ -125,7 +125,7 @@ app.post("/showInvitationStatus", async (req, res) => {
   });
 });
 
-app.post("/sendInvite", async (req, res) => {
+app.post("/sendInvite", checkAuth, async (req, res) => {
   var members = [];
   req.body.users.forEach((user) => {
     const userData = {
@@ -139,6 +139,18 @@ app.post("/sendInvite", async (req, res) => {
     (req.body.invitedBy = req.body.invitedBy);
   req.body.path = "Send-Invite";
 
+  kafka.make_request("mongo_community", checkAuth, req.body, (error, result) => {
+    console.log(result);
+    if (result) {
+      return res.status(200).send(result);
+    }
+    console.log(error);
+    return res.status(500).send(error);
+  });
+});
+
+app.get("/getCommunities", checkAuth, function (req, res, next) {
+  req.body.path = "getCommunities"
   kafka.make_request("mongo_community", req.body, (error, result) => {
     console.log(result);
     if (result) {
@@ -148,4 +160,18 @@ app.post("/sendInvite", async (req, res) => {
     return res.status(500).send(error);
   });
 });
+
+app.get("/communityDetails", checkAuth, function (req, res, next) {
+  req.body.path = "communityDetails"
+  kafka.make_request("mongo_community", req.body, (error, result) => {
+    console.log(result);
+    if (result) {
+      return res.status(200).send(result);
+    }
+    console.log(error);
+    return res.status(500).send(error);
+  });
+});
+
+
 module.exports = router;

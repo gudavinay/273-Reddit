@@ -4,6 +4,8 @@ const { showInvitationStatus } = require("./showInvitationStatus");
 const { sendInvite } = require("./sendInvite");
 const { getCommunitiesCreatedByMe } = require("./getCommunitiesCreatedByMe");
 const { checkModerator } = require("./checkModerator");
+const { getCommunities } = require('./getCommunities');
+const { communityDetails } = require('./communityDetails');
 const {
   getUsersForCommunitiesForOwner,
 } = require("./getUserForCommunityOwner");
@@ -21,6 +23,10 @@ let handle_request = (msg, callback) => {
     showInvitationStatus(msg, callback);
   } else if (msg.path === "Send-Invite") {
     sendInvite(msg, callback);
+  } else if (msg.path === "getCommunities") {
+    getCommunities(msg, callback);
+  } else if (msg.path === "communityDetails") {
+    communityDetails(msg, callback);
   }
 };
 

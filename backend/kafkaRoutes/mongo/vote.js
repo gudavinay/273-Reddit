@@ -13,7 +13,7 @@ app.post("/addVote", checkAuth, (req, res) => {
     if (result.status === 200) {
       return res.status(200).send(result.data);
     }
-    return res.status(500).send("No communities found");
+    return res.status(500).send("Internal Server Error");
   });
 });
 
@@ -27,7 +27,19 @@ app.get("/getVote", checkAuth, (req, res) => {
     if (result.status === 200) {
       return res.status(200).send(result.data);
     }
-    return res.status(500).send("No communities found");
+    return res.status(500).send("Internal Server Error");
+  });
+});
+
+
+app.post("/vote", checkAuth, (req, res) => {
+  req.body.path = "vote";
+  kafka.make_request("mongo_vote", req.body, (error, result) => {
+    console.log(result);
+    if (result.status === 200) {
+      return res.status(200).send(result.data);
+    }
+    return res.status(500).send("Internal Server Error");
   });
 });
 
