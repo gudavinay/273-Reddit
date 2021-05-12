@@ -23,11 +23,74 @@ class Home extends Component {
       sortType: "desc",
     };
     console.log("PROPS IN HOME", this.props);
+    this.upVote = this.upVote.bind(this);
+    this.downVote = this.downVote.bind(this);
   }
   getSearchQueryFromLocation = () => {
     const qR = new URLSearchParams(this.props.location.search);
     return qR.get("q") || "";
   };
+  upVote(postId, userVoteDir, index) {
+    console.log("upvote req  = ", postId, " ", userVoteDir, " ", index);
+    Axios.defaults.headers.common["authorization"] = getToken();
+    Axios.post(backendServer + "/addVote", {
+      entityId: postId,
+      userId: getMongoUserID(),
+      voteDir: userVoteDir == 1 ? 0 : 1,
+    })
+      .then((response) => {
+        // this.props.unsetLoader();
+        console.log("upVOted successfull = ", response);
+        console.log("this.state = ", this.state);
+        console.log("this.state = ", this.state.dataOfPosts[index].userVoteDir);
+        const newPosts = this.state.dataOfPosts.slice();
+        newPosts[index].score =
+          userVoteDir == 1
+            ? newPosts[index].score - 1
+            : userVoteDir == 0
+            ? newPosts[index].score + 1
+            : newPosts[index].score + 2;
+
+        newPosts[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
+        console.log("newComments = ", newPosts);
+        this.setState({ dataOfPosts: newPosts });
+        // this.fetchCommentsWithPostID();
+      })
+      .catch((err) => {
+        // this.props.unsetLoader();
+        console.log(err);
+      });
+  }
+
+  downVote(postId, userVoteDir, index) {
+    Axios.defaults.headers.common["authorization"] = getToken();
+    Axios.post(backendServer + "/addVote", {
+      entityId: postId,
+      userId: getMongoUserID(),
+      voteDir: userVoteDir == -1 ? 0 : -1,
+    })
+      .then((response) => {
+        // this.props.unsetLoader();
+        console.log("downvoted successfull = ", response);
+        const newPosts = this.state.dataOfPosts.slice();
+        newPosts[index].score =
+          userVoteDir == -1
+            ? newPosts[index].score + 1
+            : userVoteDir == 0
+            ? newPosts[index].score - 1
+            : newPosts[index].score - 2;
+
+        // newComments[index].userVoteDir = response.data.userVoteDir;
+        newPosts[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
+        console.log("newComments = ", newPosts);
+        this.setState({ dataOfPosts: newPosts });
+        // this.fetchCommentsWithPostID();
+      })
+      .catch((err) => {
+        // this.props.unsetLoader();
+        console.log(err);
+      });
+  }
   componentDidUpdate(prevProps) {
     if (prevProps.location.search != this.props.location.search) {
       this.setState(
@@ -45,8 +108,16 @@ class Home extends Component {
             .then((result) => {
               this.props.unsetLoader();
               let searchRes = [];
-              result.data.forEach((post) => {
-                searchRes.push(<Post data={post} {...this.props}></Post>);
+              result.data.forEach((post, index) => {
+                searchRes.push(
+                  <Post
+                    upVote={this.upVote}
+                    downVote={this.downVote}
+                    index={index}
+                    data={post}
+                    {...this.props}
+                  ></Post>
+                );
               });
               this.setState({ searchResults: searchRes });
             })
@@ -119,8 +190,16 @@ class Home extends Component {
   render() {
     var postsToRender = [];
     if (this.state.dataOfPosts) {
-      this.state.dataOfPosts.forEach((post) => {
-        postsToRender.push(<Post data={post} {...this.props}></Post>);
+      this.state.dataOfPosts.forEach((post, index) => {
+        postsToRender.push(
+          <Post
+            upVote={this.upVote}
+            downVote={this.downVote}
+            index={index}
+            data={post}
+            {...this.props}
+          ></Post>
+        );
       });
     }
     return (
@@ -129,11 +208,11 @@ class Home extends Component {
           style={{
             paddingTop: "70px",
             background: this.props.darkMode ? "black" : "#DAE0E6",
-            boxShadow: 'rgb(119 119 119) 0px 0px 5px'
+            boxShadow: "rgb(119 119 119) 0px 0px 5px",
           }}
         >
           <Col sm={8}>
-            <div style={{ float: "right", padding: "1rem", width: '100%' }}>
+            <div style={{ float: "right", padding: "1rem", width: "100%" }}>
               {/* <Alert variant="danger">
                 <button onClick={() => this.props.setLoader()}>
                   SET LOADER
@@ -184,7 +263,7 @@ class Home extends Component {
               <Post content="post 7" /> */}
             </div>
           </Col>
-          <Col sm={4} style={{ padding: '1% 5% 1% 1%' }}>
+          <Col sm={4} style={{ padding: "1% 5% 1% 1%" }}>
             <Row>
               <Card className="card">
                 <Card.Header className="cardHeader">
