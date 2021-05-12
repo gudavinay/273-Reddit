@@ -65,9 +65,14 @@
 }
 
 .communityHeaderInfo{
-  background: linear-gradient(to bottom, #ff78543d, transparent);
+  background: linear-gradient(to top, #88888888, transparent);
+  box-shadow: 10px 10px 4px -6px #88888888;
   padding: 0 12%;
   padding-top: 1%;
+}
+
+.gradientShade{
+  background: linear-gradient(to bottom,#88888888, transparent);
 }
 
 @keyframes swirl-in-fwd {

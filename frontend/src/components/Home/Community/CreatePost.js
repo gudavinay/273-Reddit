@@ -72,17 +72,20 @@ class CreatePost extends Component {
             <form
               onSubmit={e => {
                 e.preventDefault();
-                this.props.setLoader();
-                Axios.defaults.headers.common["authorization"] = getToken();
-                Axios.post(backendServer + "/createPost", this.state)
-                  .then(result => {
-                    this.props.unsetLoader();
-                    console.log(result);
-                  })
-                  .catch(err => {
-                    this.props.unsetLoader();
-                    console.log(err);
-                  });
+                if (this.state.title) {
+                  this.props.setLoader();
+                  Axios.defaults.headers.common["authorization"] = getToken();
+                  Axios.post(backendServer + "/createPost", this.state)
+                    .then(result => {
+                      this.props.unsetLoader();
+                      console.log(result);
+                    })
+                    .catch(err => {
+                      this.props.unsetLoader();
+                      console.log(err);
+                    });
+                }
+
               }}
             >
               {/* {JSON.stringify(this.state)} */}

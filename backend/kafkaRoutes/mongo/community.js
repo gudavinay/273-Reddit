@@ -205,7 +205,7 @@ app.post("/acceptUsersToCommunity", checkAuth, (req, res) => {
       return res.status(200).send({});
     }
     console.log(error);
-    return res.status(400).send({});
+    return res.status(400).send("Internal Server error");
   });
 });
 
@@ -216,7 +216,7 @@ app.post("/rejectUsersForCommunity", checkAuth, (req, res) => {
       return res.status(200).send({});
     }
     console.log(error);
-    return res.status(400).send({});
+    return res.status(400).send("Internal Server error");
   });
 });
 
@@ -236,34 +236,34 @@ app.post("/removeUserFromCommunities", checkAuth, (req, res) => {
   req.body.path = "Remove-User-From-Communities";
   kafka.make_request("mongo_community", req.body, (error, result) => {
     if (result) {
-      return res.status(200).send({});
+      return res.status(200).send(result);
     }
     console.log(error);
-    return res.status(400).send({});
+    return res.status(400).send("Internal Server error");
   });
 });
 
 app.post("/userJoinRequestToCommunity", (req, res) => {
   console.log(req.body);
-  req.body.path = "User-Join-Request-To-Community";
+  req.body.path = "userJoinRequestToCommunity";
   kafka.make_request("community_user", req.body, (error, result) => {
     if (result) {
-      return res.status(200).send({});
+      return res.status(200).send(result);
     }
     console.log(error);
-    return res.status(400).send({});
+    return res.status(400).send("Internal Server error");
   });
 });
 
 app.post("/userLeaveRequestFromCommunity", (req, res) => {
   console.log(req.body);
-  req.body.path = "User-Leave-Request-To-Community";
+  req.body.path = "userLeaveRequestFromCommunity";
   kafka.make_request("community_user", req.body, (error, result) => {
     if (result) {
-      return res.status(200).send({});
+      return res.status(200).send(result);
     }
     console.log(error);
-    return res.status(400).send({});
+    return res.status(400).send("Internal Server error");
   });
 });
 module.exports = router;

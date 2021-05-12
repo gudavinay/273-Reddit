@@ -315,7 +315,8 @@ class DetailedPostView extends Component {
             </div>
           </div>
         );
-        comment.child.forEach((childComment, childIndex) => {
+        // comment.child.forEach((childComment, childIndex) => {
+        comment.child.forEach((childComment) => {
           commentsToRender.push(
             <div
               style={{
@@ -352,7 +353,7 @@ class DetailedPostView extends Component {
                 }}
               >
                 <div>{childComment.description}</div>
-                <div>
+                {/* <div>
                   <i
                     style={{
                       cursor: "pointer",
@@ -388,7 +389,7 @@ class DetailedPostView extends Component {
                       )
                     }
                   />
-                </div>
+                </div> */}
               </div>
             </div>
           );

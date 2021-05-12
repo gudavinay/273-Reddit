@@ -128,6 +128,7 @@ class Home extends Component {
           style={{
             paddingTop: "70px",
             background: this.props.darkMode ? "black" : "#DAE0E6",
+            boxShadow: 'rgb(119 119 119) 0px 0px 5px'
           }}
         >
           <Col sm={8}>
