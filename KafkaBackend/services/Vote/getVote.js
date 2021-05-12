@@ -2,7 +2,7 @@ const Vote = require("../../models/mongo/vote");
 
 const getVote = async (msg, callback) => {
   res = {};
-  const entityId = msg.body.entityId;
+  const entityId = msg.entityId;
 
   Vote.aggregate(
     [

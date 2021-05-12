@@ -3,9 +3,8 @@ const Vote = require("../../models/mongo/vote");
 const addVote = async (msg, callback) => {
   res = {};
   console.log(msg);
-
-  console.log("add vote = req = ", msg.body);
-  const { userId, voteDir, entityId } = msg.body;
+  console.log("add vote = req = ", msg);
+  const { userId, voteDir, entityId } = msg;
   if (voteDir == 0) {
     console.log("delete document");
     Vote.findOneAndDelete(
@@ -19,7 +18,6 @@ const addVote = async (msg, callback) => {
           res.data = result;
           res.status = 200;
           callback(null, res);
-          res.status(200).send(result);
         }
       }
     );
