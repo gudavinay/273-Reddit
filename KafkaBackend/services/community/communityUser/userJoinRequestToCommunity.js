@@ -9,15 +9,13 @@ const userJoinRequestToCommunity = async (msg, callback) => {
       },
       {
         new: true
-      },
-      (err, result) => {
-        if (err) {
-          callback(err, null);
-        } else {
-          callback(null, result);
-        }
-      }
-    );
+      })
+      .populate("listOfUsers.userID")
+      .then(result => {
+        callback(null, result);
+      }).catch(err => {
+        callback(err, null);
+      });
   } catch (err) {
     callback(err, null);
   }

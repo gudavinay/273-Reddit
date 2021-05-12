@@ -15,6 +15,7 @@ const community_analytics = require("./services/community/communityAnalytics/top
 const getTopic = require("./services/getTopic");
 const post = require("./services/post/topicMapping");
 const comment = require("./services/comment/topicMapping");
+const community_user = require("./services/Community/communityUser/topicMapping");
 
 require("./dbConnection");
 const sqldb = require("./models/sql");
@@ -62,4 +63,5 @@ handleTopicRequest("community_analytics", community_analytics);
 handleTopicRequest("get_topic", getTopic);
 handleTopicRequest("post", post);
 handleTopicRequest("comment", comment);
+handleTopicRequest("community_user", community_user);
 // handleTopicRequest("vote_mongo", vote_mongo);

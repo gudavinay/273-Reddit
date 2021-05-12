@@ -5,9 +5,9 @@ const {
 } = require("./userLeaveRequestFromCommunity");
 
 let handle_request = (msg, callback) => {
-  if (msg.path === "Create-Community") {
+  if (msg.path === "userJoinRequestToCommunity") {
     userJoinRequestToCommunity(msg, callback);
-  } else if (msg.path === "Edit-Community") {
+  } else if (msg.path === "userLeaveRequestFromCommunity") {
     userLeaveRequestFromCommunity(msg, callback);
   }
 };

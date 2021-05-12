@@ -1,5 +1,4 @@
 const Community = require("../../models/mongo/Community");
-const Post = require("../../models/mongo/Post");
 
 const getCommunitiesForOwner = async (msg, callback) => {
   res = {};

@@ -1,4 +1,5 @@
 const Vote = require("../../models/mongo/vote");
+const Comment = require('../../models/mongo/Comment')
 
 const vote = async (msg, callback) => {
     let res = {};
