@@ -2,7 +2,7 @@
 const { postUserAnalytics } = require("./postUserAnalytics");
 
 let handle_request = (msg, callback) => {
-  if (msg.path === "Post-Analytics") {
+  if (msg.path === "Community-Analytics") {
     postUserAnalytics(msg, callback);
   }
 };

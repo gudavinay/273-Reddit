@@ -13,8 +13,8 @@ const community_mongo = require("./services/community/topicMapping");
 const manage_community = require("./services/community/manageCommunity/topicMapping");
 const community_analytics = require("./services/community/communityAnalytics/topicMapping");
 const getTopic = require("./services/getTopic");
-const post = require('./services/post/topicMapping');
-const comment = require('./services/comment/topicMapping');
+const post = require("./services/post/topicMapping");
+const comment = require("./services/comment/topicMapping");
 
 require("./dbConnection");
 const sqldb = require("./models/sql");
@@ -37,10 +37,10 @@ function handleTopicRequest(topic_name, fname) {
           topic: data.replyTo,
           messages: JSON.stringify({
             correlationId: data.correlationId,
-            data: res,
+            data: res
           }),
-          partition: 0,
-        },
+          partition: 0
+        }
       ];
       producer.send(payloads, function (err, data) {
         console.log("payload sent:", data);

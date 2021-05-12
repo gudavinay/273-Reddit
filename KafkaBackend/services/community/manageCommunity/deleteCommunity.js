@@ -1,4 +1,6 @@
 const Community = require("../../../models/mongo/Community");
+const Post = require("../../../models/mongo/Post");
+const Comment = require("../../../models/mongo/Comment");
 
 const deleteCommunity = async (msg, callback) => {
   try {

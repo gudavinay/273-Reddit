@@ -94,7 +94,7 @@ app.post("/deleteCommunity", checkAuth, (req, res) => {
   });
 });
 
-app.get("/communityAnalystics", checkAuth, async function (req, res) {
+app.get("/communityAnalytics", checkAuth, async function (req, res) {
   req.body.path = "Community-Analytics";
   req.body.ID = req.query.ID;
   kafka.make_request("community_analytics", req.body, (error, result) => {

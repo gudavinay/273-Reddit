@@ -115,6 +115,7 @@ class MyCommunities extends Component {
   deleteCommunity = (e, community) => {
     e.preventDefault();
     if (confirm("Are you sure you want to delete this comment?")) {
+      this.props.setLoader();
       const data = {
         community_id: community._id
       };
@@ -122,12 +123,16 @@ class MyCommunities extends Component {
       axios
         .post(`${backendServer}/deleteCommunity`, data)
         .then(response => {
+          this.props.unsetLoader();
           if (response.status == 200) {
             this.getMyCommunities(this.state.page, this.state.size);
             alert("Community deleted successfully");
           }
         })
-        .catch(error => console.log("error " + error));
+        .catch(error => {
+          this.props.unsetLoader();
+          console.log("error " + error);
+        });
     } else {
       console.log("Not sure to delete the community");
     }
