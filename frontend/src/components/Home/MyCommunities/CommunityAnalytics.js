@@ -16,7 +16,7 @@ class CommunityAnalytics extends Component {
       communityData: [],
       dataToPlot: [],
       dataForPost: [],
-      layout: {
+      layoutForBar: {
         height: 400,
         width: 500,
         title: "Community wise Analytics",
@@ -38,9 +38,6 @@ class CommunityAnalytics extends Component {
             }
           }
         }
-      },
-      layoutPie: {
-        title: "Top 5 Community With Max No of Post"
       }
     };
   }
@@ -161,7 +158,7 @@ class CommunityAnalytics extends Component {
               <Plot
                 name="noOfPost"
                 data={this.state.dataToPlot}
-                layout={this.state.layout}
+                layout={this.state.layoutForBar}
                 onInitialized={figure => this.setState(figure)}
                 onUpdate={figure => this.setState(figure)}
               />
@@ -169,7 +166,6 @@ class CommunityAnalytics extends Component {
             <Col>
               <Plot
                 name="noOfUser"
-                layout={this.state.layoutPie}
                 data={this.state.dataForPost}
                 onInitialized={figure => this.setState(figure)}
                 onUpdate={figure => this.setState(figure)}
