@@ -10,17 +10,11 @@ class CommunityAnalytics extends Component {
     super(props);
     this.state = {
       communityData: [],
-      data: [],
-      dataForUser: [],
+      dataToPlot: [],
       layout: {
         height: 400,
         width: 500,
-        title: "No of post per Community"
-      },
-      layoutUser: {
-        height: 400,
-        width: 500,
-        title: "No of user per Community"
+        title: "No of post v/s User per Community"
       }
     };
   }
@@ -28,19 +22,28 @@ class CommunityAnalytics extends Component {
   calculateValues(communityData) {
     let label = [];
     let yAxis = [];
+    let yAxisUser = [];
     if (communityData.length > 0) {
       communityData.map(community => {
         label.push(community.communityName);
         yAxis.push(community.NoOfPost);
+        yAxisUser.push(community.acceptedUsersSQLIds.length + 1);
       });
       console.log(yAxis);
     }
     this.setState({
-      data: [
+      dataToPlot: [
         {
           y: yAxis,
           x: label,
-          type: "bar"
+          type: "bar",
+          name: "Post"
+        },
+        {
+          y: yAxisUser,
+          x: label,
+          type: "bar",
+          name: "User"
         }
       ]
     });
@@ -68,7 +71,6 @@ class CommunityAnalytics extends Component {
           });
           console.log(response.data);
           this.calculateValues(response.data);
-          this.PlotNumberOfUserGraph(response.data);
         }
       })
       .catch(e => {
@@ -77,29 +79,6 @@ class CommunityAnalytics extends Component {
           error: "Community name is not unique"
         });
       });
-  }
-
-  PlotNumberOfUserGraph(communityData) {
-    let label = [];
-    let yAxis = [];
-    if (communityData.length > 0) {
-      communityData.map(community => {
-        label.push(community.communityName);
-        yAxis.push(community.acceptedUsersSQLIds.length + 1);
-      });
-      console.log(yAxis);
-    }
-    this.setState({
-      dataForUser: [
-        {
-          y: yAxis,
-          x: label,
-          type: "bar"
-        }
-      ]
-    });
-    // var graphDiv = document.getElementById("noOfUser");
-    // Plotly.newPlot(graphDiv, this.state.data, this.state.layout);
   }
 
   componentDidMount() {
@@ -116,20 +95,20 @@ class CommunityAnalytics extends Component {
             <Col>
               <Plot
                 name="noOfPost"
-                data={this.state.data}
+                data={this.state.dataToPlot}
                 layout={this.state.layout}
                 onInitialized={figure => this.setState(figure)}
                 onUpdate={figure => this.setState(figure)}
               />
             </Col>
             <Col>
-              <Plot
+              {/* <Plot
                 name="noOfUser"
                 data={this.state.dataForUser}
                 layout={this.state.layoutUser}
                 onInitialized={figure => this.setState(figure)}
                 onUpdate={figure => this.setState(figure)}
-              />
+              /> */}
             </Col>
           </Row>
         </Container>
