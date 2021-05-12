@@ -11,6 +11,7 @@ import {
   sortByComments,
 } from "../../services/ControllerUtils";
 import HomeSearchResults from "./HomeSearchResults";
+import createPostRulesSVG from "../../assets/createPostRules.svg";
 
 class Home extends Component {
   constructor(props) {
@@ -132,7 +133,7 @@ class Home extends Component {
           }}
         >
           <Col sm={8}>
-            <div style={{ float: "right", padding: "1rem" }}>
+            <div style={{ float: "right", padding: "1rem", width: '100%' }}>
               {/* <Alert variant="danger">
                 <button onClick={() => this.props.setLoader()}>
                   SET LOADER
@@ -183,17 +184,24 @@ class Home extends Component {
               <Post content="post 7" /> */}
             </div>
           </Col>
-          <Col sm={4}>
-            <div style={{ padding: "1rem" }}>
-              widget1
-              <br />
-              widget2
-              <br />
-              widget3
-              <br />
-              widget4
-              <br />
-            </div>
+          <Col sm={4} style={{ padding: '1% 5% 1% 1%' }}>
+            <Row>
+              <Card className="card">
+                <Card.Header className="cardHeader">
+                  <img alt="" height="40px" src={createPostRulesSVG} /> Welcome
+                  to Reddit
+                </Card.Header>
+                <Card.Body>
+                  <ol>
+                    <li>Remember the human</li>
+                    <li>Behave like you would in real life</li>
+                    <li>Look for the original source of content</li>
+                    <li>Search for duplicates before posting</li>
+                    <li>Follow the other rules</li>
+                  </ol>
+                </Card.Body>
+              </Card>
+            </Row>
           </Col>
         </Row>
       </React.Fragment>
