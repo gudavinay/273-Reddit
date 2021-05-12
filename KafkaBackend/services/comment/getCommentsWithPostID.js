@@ -1,4 +1,6 @@
 const Comment = require("../../models/mongo/Comment");
+const Vote = require("../../models/mongo/vote");
+const mongoose = require("mongoose");
 
 const getCommentsWithPostID = async (msg, callback) => {
   let res = {};
@@ -7,7 +9,7 @@ const getCommentsWithPostID = async (msg, callback) => {
   Comment.find({ postID: msg.postID }, (err, result) => {
     if (err) {
       res.status = 500;
-      res.data = "Internal Server Error"
+      res.data = "Internal Server Error";
       callback(null, res);
     }
     const responseData = JSON.parse(JSON.stringify(result));
@@ -106,7 +108,7 @@ const getCommentsWithPostID = async (msg, callback) => {
                 resp.upvoteCount =
                 resp.downvoteCount =
                 resp.userVoteDir =
-                0;
+                  0;
               if (result && result[0]) {
                 resp.score = result[0].upvoteCount - result[0].downvoteCount;
                 resp.upvoteCount = result[0].upvoteCount;

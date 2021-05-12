@@ -11,6 +11,7 @@ const PostSchema = new mongoose.Schema(
     link: { type: String }, // if post type is link, save link otherwise save url of image if post type is image
     postImageUrl: { type: String },
     description: { type: String },
+    NoOfComments: { type: Number },
     title: { type: String, required: true },
     upvotedBy: [
       {

@@ -1,5 +1,5 @@
 const Post = require("../../models/mongo/Post");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const getAllPostsWithUserId = async (msg, callback) => {
   let res = {};
@@ -25,9 +25,7 @@ const getAllPostsWithUserId = async (msg, callback) => {
       $match: {
         $or: [
           {
-            "communityDetails.ownerID": mongoose.Types.ObjectId(
-              msg.user_id
-            ),
+            "communityDetails.ownerID": mongoose.Types.ObjectId(msg.user_id),
           },
           {
             "communityDetails.listOfUsers": {
@@ -56,6 +54,7 @@ const getAllPostsWithUserId = async (msg, callback) => {
       $project: {
         type: "$type",
         title: "$title",
+        NoOfComments: { $ifNull: ["$NoOfComments", 0] },
         description: { $ifNull: ["$description", ""] },
         link: { $ifNull: ["$link", ""] },
         postImageUrl: { $ifNull: ["$postImageUrl", ""] },
@@ -68,9 +67,17 @@ const getAllPostsWithUserId = async (msg, callback) => {
         communityName: "$communityDetails.communityName",
         communityDescription: "$communityDetails.communityDescription",
         imageURL: "$communityDetails.imageURL",
+        acceptedUsersSQLIds: {
+          $filter: {
+            input: "$communityDetails.listOfUsers",
+            as: "user",
+            cond: { $eq: ["$$user.isAccepted", 1] },
+          },
+        },
       },
     },
   ])
+    .sort({ createdAt: -1 })
     .then((result) => {
       res.data = result;
       res.status = 200;

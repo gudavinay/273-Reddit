@@ -1,9 +1,15 @@
 import React, { Component } from "react";
-import { Alert, Col, Row } from "react-bootstrap";
+import { Card, Col, Row } from "react-bootstrap";
 import Post from "./Community/Post";
 import Axios from "axios";
 import backendServer from "../../webConfig";
-import { getMongoUserID, getToken } from "../../services/ControllerUtils";
+import {
+  getMongoUserID,
+  getToken,
+  sortByNoOfUser,
+  sortByTime,
+  sortByComments,
+} from "../../services/ControllerUtils";
 import HomeSearchResults from "./HomeSearchResults";
 
 class Home extends Component {
@@ -12,6 +18,8 @@ class Home extends Component {
     this.state = {
       searchText: this.getSearchQueryFromLocation(),
       searchResults: [],
+      sortby: "Date",
+      sortType: "desc",
     };
     console.log("PROPS IN HOME", this.props);
   }
@@ -61,6 +69,7 @@ class Home extends Component {
     Axios.defaults.headers.common["authorization"] = getToken();
     Axios.post(backendServer + "/getAllPostsWithUserId", data)
       .then((result) => {
+        console.log(result.data);
         this.props.unsetLoader();
         this.setState({ dataOfPosts: result.data });
       })
@@ -68,6 +77,43 @@ class Home extends Component {
         this.props.unsetLoader();
         console.log(err);
       });
+  };
+  SortType = (e) => {
+    this.setState(
+      {
+        sortType: e.target.value,
+      },
+      () => {
+        console.log(this.state.sortType);
+        console.log(this.state.sortby);
+      }
+    );
+    this.Sorting(this.state.sortby, e.target.value);
+  };
+
+  async Sorting(attribute, type) {
+    let sortValue;
+    if (attribute == "Date") {
+      console.log("sorting by date and type " + type);
+      sortValue = await sortByTime(this.state.dataOfPosts, type);
+    } else if (attribute == "User") {
+      console.log("sorting by User and type " + type);
+      sortValue = await sortByNoOfUser(this.state.dataOfPosts, type);
+    } else if (attribute == "Comments") {
+      console.log("sorting by Comments and type " + type);
+      sortValue = sortByComments(this.state.dataOfPosts, type);
+    }
+    console.log(sortValue);
+    this.setState({
+      dataOfPosts: sortValue,
+    });
+  }
+
+  SortItems = (e) => {
+    this.setState({
+      sortby: e.target.value,
+    });
+    this.Sorting(e.target.value, this.state.sortType);
   };
   render() {
     var postsToRender = [];
@@ -86,21 +132,46 @@ class Home extends Component {
         >
           <Col sm={8}>
             <div style={{ float: "right", padding: "1rem" }}>
-              <Alert variant="danger">
+              {/* <Alert variant="danger">
                 <button onClick={() => this.props.setLoader()}>
                   SET LOADER
                 </button>
                 <button onClick={() => this.props.unsetLoader()}>
                   UNSET LOADER
                 </button>
-              </Alert>
-              {this.state.searchResults.length ? (
-                <HomeSearchResults
-                  data={this.state.searchResults}
-                ></HomeSearchResults>
-              ) : (
-                postsToRender
-              )}
+              </Alert> */}
+              <Card>
+                <Card.Header>
+                  <Row>
+                    <Col xs={2}>Sort By</Col>
+                    <Col xs={3} style={{ marginLeft: "-80px" }}>
+                      <select
+                        className="form-control"
+                        onChange={this.SortItems}
+                      >
+                        <option value="Date">Created Date</option>
+                        <option value="Comments">Comments</option>
+                        <option value="User">User</option>
+                      </select>
+                    </Col>
+                    <Col xs={2}>
+                      <select className="form-control" onChange={this.SortType}>
+                        <option value="desc">Decending</option>
+                        <option value="asc">Ascending</option>
+                      </select>
+                    </Col>
+                  </Row>
+                </Card.Header>
+                <Card.Body>
+                  {this.state.searchResults.length ? (
+                    <HomeSearchResults
+                      data={this.state.searchResults}
+                    ></HomeSearchResults>
+                  ) : (
+                    postsToRender
+                  )}
+                </Card.Body>
+              </Card>
 
               {/* <Post content="post 1" />
               <Post content="post 2" />

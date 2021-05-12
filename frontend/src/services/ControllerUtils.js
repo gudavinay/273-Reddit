@@ -10,7 +10,7 @@ const months = [
   "SEP",
   "OCT",
   "NOV",
-  "DEC"
+  "DEC",
 ];
 
 const randomColors = [
@@ -38,7 +38,7 @@ const randomColors = [
   "FF66AC",
   "DB0064",
   "EA0027",
-  "FF585B"
+  "FF585B",
 ];
 const avatarStyle = [
   "01",
@@ -60,7 +60,7 @@ const avatarStyle = [
   "17",
   "18",
   "19",
-  "20"
+  "20",
 ];
 
 export function getUserProfile() {
@@ -96,6 +96,19 @@ export function sortByTime(array, type) {
   return sortvalue;
 }
 
+export function sortByComments(array, type) {
+  let sortValue;
+  if (type == "desc") {
+    sortValue = array.sort((a, b) => {
+      return new Date(b.NoOfComments) - new Date(a.NoOfComments);
+    });
+  } else {
+    sortValue = array.sort((a, b) => {
+      return new Date(a.NoOfComments) - new Date(b.NoOfComments);
+    });
+  }
+  return sortValue;
+}
 export function sortByNoOfUser(array, type) {
   let sortValue;
   if (type == "desc") {
@@ -193,7 +206,7 @@ export function nFormatter(num, digits) {
     { value: 1e9, symbol: "G" },
     { value: 1e12, symbol: "T" },
     { value: 1e15, symbol: "P" },
-    { value: 1e18, symbol: "E" }
+    { value: 1e18, symbol: "E" },
   ];
   const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
   let i;
