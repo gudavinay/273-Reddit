@@ -171,6 +171,9 @@ class MyCommunities extends Component {
     let redirectVar = null;
     let myCommunities = null;
     let imageCaraosel = null;
+    if (getToken() == null) {
+      redirectVar = <Redirect to="/" />;
+    }
     if (this.state.success)
       redirectVar = (
         <Redirect
@@ -249,6 +252,10 @@ class MyCommunities extends Component {
           </Card>
         );
       });
+    } else {
+      myCommunities = (
+        <div style={{ color: "GrayText" }}>No Community Found</div>
+      );
     }
     return (
       <React.Fragment>
