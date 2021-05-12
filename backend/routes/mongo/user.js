@@ -169,102 +169,102 @@ app.get("/createDummyData", function (req, res, next) {
 //   );
 // });
 
-app.post("/createUserProfile", (req, res) => {
-  let userProfile = new UserProfile({
-    userIDSQL: req.body.sqlUserID,
-    name: req.body.name,
-    email: req.body.email,
-  });
-  userProfile.save((err, result) => {
-    if (result) {
-      res.status(200).send(JSON.stringify(result));
-    } else res.status(200).send("Error occurred");
-  });
-});
+// app.post("/createUserProfile", (req, res) => {
+//   let userProfile = new UserProfile({
+//     userIDSQL: req.body.sqlUserID,
+//     name: req.body.name,
+//     email: req.body.email,
+//   });
+//   userProfile.save((err, result) => {
+//     if (result) {
+//       res.status(200).send(JSON.stringify(result));
+//     } else res.status(200).send("Error occurred");
+//   });
+// });
 
-app.get("/getUserProfile", (req, res) => {
-  redisClient.get(req.query.ID, async (err, userProfile) => {
-    if (userProfile) {
-      res.status(200).send(userProfile);
-    } else {
-      UserProfile.find({ userIDSQL: req.query.ID }).then((result, error) => {
-        if (error) {
-          res.status(500).send("Error Occureed");
-        } else {
-          if (result.length > 0) {
-            redisClient.setex(req.query.ID, 36000, JSON.stringify(result));
-          }
-          res.status(200).send(JSON.stringify(result));
-        }
-      });
-    }
-  });
-});
+// app.get("/getUserProfile", (req, res) => {
+//   redisClient.get(req.query.ID, async (err, userProfile) => {
+//     if (userProfile) {
+//       res.status(200).send(userProfile);
+//     } else {
+//       UserProfile.find({ userIDSQL: req.query.ID }).then((result, error) => {
+//         if (error) {
+//           res.status(500).send("Error Occureed");
+//         } else {
+//           if (result.length > 0) {
+//             redisClient.setex(req.query.ID, 36000, JSON.stringify(result));
+//           }
+//           res.status(200).send(JSON.stringify(result));
+//         }
+//       });
+//     }
+//   });
+// });
 
-app.get("/getUserProfileByMongoID", (req, res) => {
-  UserProfile.findOne({ _id: req.query.ID }).then((result) => {
-    res.status(200).send(result);
-  });
-});
+// app.get("/getUserProfileByMongoID", (req, res) => {
+//   UserProfile.findOne({ _id: req.query.ID }).then((result) => {
+//     res.status(200).send(result);
+//   });
+// });
 
-app.post("/getListedUserDetails", async (req, res) => {
-  let skip = Number(req.body.page) * Number(req.body.size);
-  let count = await UserProfile.countDocuments({
-    $and: [
-      { userIDSQL: { $in: req.body.usersList } },
-      { name: { $regex: req.body.search, $options: "i" } },
-    ],
-  });
-  await UserProfile.find({
-    $and: [
-      { userIDSQL: { $in: req.body.usersList } },
-      { name: { $regex: req.body.search, $options: "i" } },
-    ],
-  })
-    .select({ userIDSQL: 1, name: 1, profile_picture_url: 1 })
-    .limit(Number(req.body.size))
-    .skip(skip)
-    .sort({ name: 1 })
-    .then((result) => {
-      res.status(200).send({ users: result, total: count });
-    });
-});
+// app.post("/getListedUserDetails", async (req, res) => {
+//   let skip = Number(req.body.page) * Number(req.body.size);
+//   let count = await UserProfile.countDocuments({
+//     $and: [
+//       { userIDSQL: { $in: req.body.usersList } },
+//       { name: { $regex: req.body.search, $options: "i" } },
+//     ],
+//   });
+//   await UserProfile.find({
+//     $and: [
+//       { userIDSQL: { $in: req.body.usersList } },
+//       { name: { $regex: req.body.search, $options: "i" } },
+//     ],
+//   })
+//     .select({ userIDSQL: 1, name: 1, profile_picture_url: 1 })
+//     .limit(Number(req.body.size))
+//     .skip(skip)
+//     .sort({ name: 1 })
+//     .then((result) => {
+//       res.status(200).send({ users: result, total: count });
+//     });
+// });
 
-app.post("/RequestedUsersForCom", async (req, res) => {
-  // console.log(req.body.usersList);
-  await UserProfile.find({
-    _id: { $in: req.body.usersList },
-  })
-    .select({ userIDSQL: 1, name: 1, profile_picture_url: 1 })
-    .then((result) => {
-      let output = {};
-      result.forEach((item) => {
-        output[item._id] = {
-          name: item.name,
-          profile_picture_url: item.profile_picture_url,
-        };
-      });
-      res.status(200).send(output);
-    });
-});
+// app.post("/RequestedUsersForCom", async (req, res) => {
+//   // console.log(req.body.usersList);
+//   await UserProfile.find({
+//     _id: { $in: req.body.usersList },
+//   })
+//     .select({ userIDSQL: 1, name: 1, profile_picture_url: 1 })
+//     .then((result) => {
+//       let output = {};
+//       result.forEach((item) => {
+//         output[item._id] = {
+//           name: item.name,
+//           profile_picture_url: item.profile_picture_url,
+//         };
+//       });
+//       res.status(200).send(output);
+//     });
+// });
 
-app.post("/createMessage", async (req, res) => {
-  for (i = 0; i < 425; i++) {
-    let userProfile = new Message({
-      message: "Message" + i,
-      sent_by: 54,
-      sent_to: 53,
-    });
-    userProfile.save((err, result) => {});
-  }
-  //res.end(result);
-});
+// app.post("/createMessage", async (req, res) => {
+//   for (i = 0; i < 425; i++) {
+//     let userProfile = new Message({
+//       message: "Message" + i,
+//       sent_by: 54,
+//       sent_to: 53,
+//     });
+//     userProfile.save((err, result) => {});
+//   }
+//   //res.end(result);
+// });
 
-app.get("/getMessageMongo", async (req, res) => {
-  Message.find({}, (err, result) => {
-    res.send(result);
-  });
-});
+// app.get("/getMessageMongo", async (req, res) => {
+//   Message.find({}, (err, result) => {
+//     res.send(result);
+//   });
+// });
 
 // app.post("/getSearchedUserForMongo", async (req, res) => {
 //   UserProfile.find(

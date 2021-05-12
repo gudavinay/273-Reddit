@@ -69,6 +69,7 @@ app.post("/getNotificationData", (req, res) => {
   kafka.make_request("mongo_user", req.body, (error, result) => {
     console.log(result);
     if (result) {
+      console.log(result);
       return res.status(200).send(result);
     }
     return res.status(500).send(error);
@@ -90,7 +91,7 @@ app.post("/acceptInvite", (req, res) => {
 });
 
 app.post("/rejectInvite", (req, res) => {
-  console.log("reject");
+  console.log("reject called backend");
   (req.body.user_id = req.body.user_id),
     (req.body.community_id = req.body.community_id);
   req.body.path = "Reject-Invite-As-User";
@@ -104,4 +105,46 @@ app.post("/rejectInvite", (req, res) => {
   });
 });
 
+app.get("/getUserProfileByMongoID", (req, res) => {
+  req.body.ID = req.query.ID;
+  req.body.path = "Get-User-Profile-By-MongoID";
+
+  kafka.make_request("mongo_user", req.body, (error, result) => {
+    console.log(result);
+    if (result) {
+      return res.status(200).send(result);
+    }
+    return res.status(500).send(error);
+  });
+});
+
+app.post("/RequestedUsersForCom", async (req, res) => {
+  // console.log(req.body.usersList);
+  req.body.path = "Requested-Users-For-Com";
+  req.body.userList = req.body.userList;
+
+  kafka.make_request("mongo_user", req.body, (error, result) => {
+    console.log(result);
+    if (result) {
+      return res.status(200).send(result);
+    }
+    return res.status(500).send(error);
+  });
+});
+
+app.post("/getListedUserDetails", async (req, res) => {
+  req.body.page = req.body.page;
+  req.body.size = req.body.size;
+  req.body.usersList = req.body.usersList;
+  req.body.search = req.body.search;
+  req.body.path = "Get-Listed-User-Details";
+
+  kafka.make_request("mongo_user", req.body, (error, result) => {
+    console.log(result);
+    if (result) {
+      return res.status(200).send(result);
+    }
+    return res.status(500).send(error);
+  });
+});
 module.exports = router;

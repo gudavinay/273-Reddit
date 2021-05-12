@@ -2,6 +2,7 @@ const UserProfile = require("../../models/mongo/UserProfile");
 const Community = require("../../models/mongo/Community");
 
 const acceptInvite = async (msg, callback) => {
+  console.log("Accept invite Kafka");
   UserProfile.findOneAndUpdate(
     { _id: msg.user_id },
     {
@@ -32,7 +33,7 @@ const acceptInvite = async (msg, callback) => {
                 { _id: msg.community_id },
                 {
                   $push: {
-                    listOfUsers: [{ userID: msg.user_id, isAccepted: true }],
+                    listOfUsers: [{ userID: msg.user_id, isAccepted: 1 }],
                   },
                 },
                 (err, result) => {
@@ -40,7 +41,7 @@ const acceptInvite = async (msg, callback) => {
                     console.log(err);
                     callback(err, null);
                   } else {
-                    callback(null, result);
+                    callback(null, "Accepted Invite");
                   }
                 }
               );
