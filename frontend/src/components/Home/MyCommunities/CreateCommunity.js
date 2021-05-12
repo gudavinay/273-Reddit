@@ -9,7 +9,6 @@ import {
   Button
   // ListGroup
 } from "react-bootstrap";
-import { Redirect } from "react-router-dom";
 import backendServer from "../../../webConfig";
 import "./mycommunity.css";
 import Chip from "@material-ui/core/Chip";
@@ -256,13 +255,9 @@ class CreateCommunity extends Component {
 
   render() {
     let dropDownItem = null;
-    let redirectVar = null;
     let selectedTopic = null;
     let rules = null;
     let imageUpload = null;
-    if (getToken() == null) {
-      redirectVar = <Redirect to="/" />;
-    }
     if (this.state.uploadedImage.length > 0) {
       imageUpload = this.state.uploadedImage.map((image, idx) => {
         console.log(image.url);
@@ -333,7 +328,6 @@ class CreateCommunity extends Component {
     }
     return (
       <React.Fragment>
-        {redirectVar}
         <Container fluid>
           <Row>
             <Col xs={1}>
