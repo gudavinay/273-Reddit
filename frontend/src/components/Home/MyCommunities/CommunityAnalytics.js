@@ -3,7 +3,11 @@ import Plot from "react-plotly.js";
 //import Plotly from "plotly.js";
 import backendServer from "../../../webConfig";
 import axios from "axios";
-import { getMongoUserID, getToken } from "../../../services/ControllerUtils";
+import {
+  getMongoUserID,
+  getToken,
+  sortByPost
+} from "../../../services/ControllerUtils";
 import { Row, Col, Container } from "react-bootstrap";
 class CommunityAnalytics extends Component {
   constructor(props) {
@@ -11,10 +15,32 @@ class CommunityAnalytics extends Component {
     this.state = {
       communityData: [],
       dataToPlot: [],
+      dataForPost: [],
       layout: {
         height: 400,
         width: 500,
-        title: "No of post v/s User per Community"
+        title: "Community wise Analytics",
+        xaxis: {
+          title: {
+            text: "Name of Community",
+            font: {
+              size: 18,
+              color: "#7f7f7f"
+            }
+          }
+        },
+        yaxis: {
+          title: {
+            text: "No Of Post vs No of User ",
+            font: {
+              size: 18,
+              color: "#7f7f7f"
+            }
+          }
+        }
+      },
+      layoutPie: {
+        title: "Top 5 Community With Max No of Post"
       }
     };
   }
@@ -58,6 +84,44 @@ class CommunityAnalytics extends Component {
     // });
   }
 
+  CommunityWithMaximumPost(communityData) {
+    const data = sortByPost(communityData);
+    let label = [];
+    let yAxis = [];
+    if (data.length > 0) {
+      data.map((community, idx) => {
+        if (data.length > 5) {
+          if (idx == 5) {
+            this.setState({
+              dataForPost: [
+                {
+                  values: yAxis,
+                  labels: label,
+                  type: "pie",
+                  name: "Post"
+                }
+              ]
+            });
+            return;
+          }
+        }
+        label.push(community.communityName);
+        yAxis.push(community.NoOfPost);
+      });
+      this.setState({
+        dataForPost: [
+          {
+            values: yAxis,
+            labels: label,
+            type: "pie",
+            name: "Post"
+          }
+        ]
+      });
+      console.log(yAxis);
+    }
+  }
+
   GetNoOfPostPerCommunity() {
     const ID = getMongoUserID();
     console.log(`${backendServer}/communityAnalytics?ID=${ID}`);
@@ -71,6 +135,7 @@ class CommunityAnalytics extends Component {
           });
           console.log(response.data);
           this.calculateValues(response.data);
+          this.CommunityWithMaximumPost(response.data);
         }
       })
       .catch(e => {
@@ -102,13 +167,13 @@ class CommunityAnalytics extends Component {
               />
             </Col>
             <Col>
-              {/* <Plot
+              <Plot
                 name="noOfUser"
-                data={this.state.dataForUser}
-                layout={this.state.layoutUser}
+                layout={this.state.layoutPie}
+                data={this.state.dataForPost}
                 onInitialized={figure => this.setState(figure)}
                 onUpdate={figure => this.setState(figure)}
-              /> */}
+              />
             </Col>
           </Row>
         </Container>
