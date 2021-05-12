@@ -1,0 +1,33 @@
+.postHeader {
+  color: rgb(120, 124, 126);
+  font-size: 12px;
+}
+
+.postBodyContent {
+  font-size: 1.17em;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+}
+
+.postFooter {
+  display: flex;
+  flex-direction: row;
+  color: #878a8c;
+  fill: #878a8c;
+  font-size: 13px;
+}
+
+.postFooterDiv {
+  margin-left: 30px;
+  cursor: not-allowed;
+}
+
+.postFooterSpan {
+  margin-left: 4px;
+}
+
+.pointerCursor {
+  cursor: pointer;
+}

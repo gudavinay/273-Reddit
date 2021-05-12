@@ -1,0 +1,4 @@
+.searchbar:focus {
+  outline: none;
+  border: none;
+}

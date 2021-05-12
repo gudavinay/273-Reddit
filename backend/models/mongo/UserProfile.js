@@ -6,6 +6,26 @@ const UserProfileSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  name: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  gender: {
+    type: String
+  },
+  location: {
+    type: String
+  },
+  bio: {
+    type: String
+  },
+  profile_picture_url: {
+    type: String
+  },
   listOfTopics: [{ type: String }],
   communityInvites: [
     {
@@ -20,7 +40,8 @@ const UserProfileSchema = new mongoose.Schema({
       invitedBy: {
         type: Schema.Types.ObjectId,
         ref: "UserProfile"
-      }
+      },
+      dateTime: { type: Date, default: Date.now() }
     }
   ]
 });

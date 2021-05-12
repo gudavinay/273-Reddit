@@ -1,0 +1,16 @@
+.colheight{
+height:80vh
+}
+.changePadding{
+    padding: 0px;
+    margin: 0px
+}
+
+.messageBox{
+    border-radius: 30px;
+}
+
+.messageBody{
+    height: 60vh;
+    overflow-y: auto;
+}

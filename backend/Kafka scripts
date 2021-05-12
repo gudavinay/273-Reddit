@@ -1,0 +1,31 @@
+Kafka scripts
+
+zookeeper-server-start /usr/local/etc/kafka/zookeeper.properties
+kafka-server-start /usr/local/etc/kafka/server.properties   
+kafka-console-producer --broker-list localhost:9092 --topic post_book
+kafka-console-consumer --bootstrap-server localhost:9092 --topic post_book --from-beginning
+
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic <TOPIC>
+
+kafka-topics --list --zookeeper localhost:2181 
+
+
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic response_topic
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic sql_message
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic JWT_auth
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic mongo_community
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic mongo_user
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic sql_user_auth
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic search_mongo
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic user_info
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic manage_community
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic community_analytics
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic get_topic
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic post
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic community_user
+
+export CONFLUENT_HOME=/home/ec2-user/confluent-6.1.1
+export PATH=$PATH:$CONFLUENT_HOME/bin
+
+
+http://34.250.22.6:3000/

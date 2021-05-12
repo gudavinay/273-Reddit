@@ -1,0 +1,13 @@
+.buttonOnDP{
+    opacity: 0;
+    background-color: #888;
+    border-radius: 500px;
+}
+
+.DPParent:hover .buttonOnDP{
+opacity: 0.6;
+}
+
+.fa-camera:hover{
+    transform: scale(1);
+}

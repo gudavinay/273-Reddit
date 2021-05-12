@@ -1,39 +1,25 @@
 import React, { Component } from "react";
-// import { Redirect } from "react-router-dom";
-import { isEmail } from "validator";
-import {
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  FormFeedback
-} from "reactstrap";
+import { Redirect } from "react-router-dom";
+import axios from "axios";
+import backendServer from "../../webConfig";
 import { connect } from "react-redux";
 import { loginRedux } from "../../reduxOps/reduxActions/loginRedux";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Form, Button } from "react-bootstrap";
+import "./../styles/loginStyle.css";
+import { SetLocalStorage } from "../../services/ControllerUtils";
+
 class Login extends Component {
   constructor(props) {
     super(props);
     {
       this.state = {
         error: "",
-        formerror: "",
-        authFlag: ""
+        authFlag: "",
+        redirect: <Redirect to="/" />,
+        token: ""
       };
     }
   }
-
-  validateForm = () => {
-    const userInfo = this.state;
-    let error = {};
-
-    if (!isEmail(userInfo.email)) error.email = "Please enter valid mail";
-    if (userInfo.email === "") error.email = "Email should not be blank";
-    if (userInfo.password === "")
-      error.password = "Password should not be blank";
-    return error;
-  };
 
   emailEventHandler = e => {
     this.setState({
@@ -54,14 +40,29 @@ class Login extends Component {
       email: this.state.email,
       password: this.state.password
     };
-    const formerror = this.validateForm();
-    if (Object.keys(formerror).length == 0) {
-      this.props.loginRedux(data);
-      //set the with credentials to true
-    } else {
-      this.setState({ formerror });
-    }
+    this.props.loginRedux(data);
+    //set the with credentials to true
   };
+
+  getUserProfile() {
+    console.log(this.props.user.userID.user_id);
+    axios
+      .get(
+        `${backendServer}/getUserProfile?ID=${this.props.user.userID.user_id}`
+      )
+      .then(response => {
+        if (response.status == 200) {
+          console.log(response.data);
+          const data = response.data[0];
+          data.token = this.props.user.token;
+          SetLocalStorage(data);
+          this.setState({
+            redirect: <Redirect to="/home" />
+          });
+        }
+      })
+      .catch(error => console.log("error " + error));
+  }
 
   componentDidUpdate(prevState) {
     if (prevState.user != this.props.user) {
@@ -76,40 +77,25 @@ class Login extends Component {
           authFlag: true,
           error: ""
         });
-        this.SetLocalStorage(JSON.stringify(this.props.user));
+        this.getUserProfile();
       }
     }
   }
 
-  SetLocalStorage(data) {
-    if (typeof Storage !== "undefined") {
-      localStorage.clear();
-      localStorage.setItem("userData", data);
-    }
-  }
-
   render() {
-    let redirectVar = null;
-    //typeof this.props.user.token != "undefined" &&
-
-    // TODO: Need to implement based on JWT
-
-    // if (typeof this.props.user != "undefined" && this.state.authFlag) {
-    //   console.log("Token is verified");
-    //   redirectVar = <Redirect to="/home" />;
-    // } else redirectVar = <Redirect to="/login" />;
     return (
-      <div className="container-fluid">
-        {redirectVar}
-        <Row>
-          <Col>
+      <div className="container-fluid" style={{ padding: "0" }}>
+        {this.state.redirect}
+        <Row style={{ padding: "0", margin: "0" }}>
+          <Col className="col-2" style={{ padding: "0", height: "648px" }}>
             <img
               className="reddit-login"
               alt="Reddit Background"
               src="https://www.redditstatic.com/accountmanager/bbb584033aa89e39bad69436c504c9bd.png"
+              style={{ height: "100%", width: "100%" }}
             />
           </Col>
-          <Col className="login-form">
+          <Col className="login-form" style={{ paddingLeft: "30px" }}>
             <div
               id="errorLogin"
               hidden={this.state.error.length > 0 ? false : true}
@@ -118,50 +104,88 @@ class Login extends Component {
             >
               {this.state.error}
             </div>
-            <h4>Login</h4>
-            <Form className="loginForm">
-              <FormGroup>
-                <Label htmlFor="email" className="Lable-align">
+            <div
+              style={{ fontSize: "24px", fontWeight: "500", marginTop: "35px" }}
+            >
+              Login
+            </div>
+            <span style={{ fontSize: "12px" }}>
+              By continuing, you agree to our User Agreement and Privacy Policy.
+            </span>
+            <div style={{ width: "45%", marginTop: "50px" }}>
+              <div className="Sso__button Sso__googleIdButton">
+                Continue with Google
+              </div>
+              <div className="Sso__button Sso__appleIdContainer">
+                Continue with Apple
+              </div>
+              <div className="Sso__divider">
+                <span className="Sso__dividerLine"></span>
+                <span className="Sso__dividerText">or</span>
+                <span className="Sso__dividerLine"></span>
+              </div>
+            </div>
+            <Form
+              className="loginForm"
+              style={{ width: "45%" }}
+              onSubmit={this.submitForm}
+            >
+              <Form.Group>
+                <Form.Label htmlFor="email" className="Lable-align">
                   Email address
-                </Label>
-                <Input
+                </Form.Label>
+                <Form.Control
                   data-testid="email-input-box"
                   type="email"
                   id="email"
                   name="email"
                   placeholder="Email"
                   onChange={this.emailEventHandler}
-                  invalid={this.state.formerror.email ? true : false}
-                ></Input>
-                <FormFeedback>{this.state.formerror.email}</FormFeedback>
-              </FormGroup>
+                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                  title="Invalid email address"
+                  required
+                ></Form.Control>
+              </Form.Group>
 
-              <FormGroup>
-                <Label htmlFor="password">Password</Label>
-                <Input
+              <Form.Group>
+                <Form.Label htmlFor="password">Password</Form.Label>
+                <Form.Control
                   type="password"
                   id="password"
                   name="password"
                   placeholder="Password"
                   onChange={this.passEventHandler}
-                  invalid={this.state.formerror.password ? true : false}
-                ></Input>
-                <FormFeedback>{this.state.formerror.password}</FormFeedback>
-              </FormGroup>
-              <FormGroup row>
-                <Col>
-                  <Button
-                    data-testid="btn-submit"
-                    type="submit"
-                    className="btn btn-Login"
-                    onClick={this.submitForm}
-                    color="btn btn-primary"
-                  >
-                    Login
-                  </Button>
-                </Col>
-              </FormGroup>
+                  required
+                ></Form.Control>
+              </Form.Group>
+              <Form.Group>
+                <Button
+                  data-testid="btn-submit"
+                  type="submit"
+                  className="btn btn-Login"
+                  color="btn btn-primary"
+                >
+                  Login
+                </Button>
+              </Form.Group>
             </Form>
+
+            <div style={{ fontSize: "13px" }}>
+              New to Reddit?{" "}
+              <div
+                style={{
+                  color: "rgb(0, 121, 211)",
+                  cursor: "pointer",
+                  display: "inline-block",
+                  fontWeight: "700"
+                }}
+                onClick={() => {
+                  this.props.signup();
+                }}
+              >
+                SIGN UP
+              </div>
+            </div>
           </Col>
         </Row>
       </div>

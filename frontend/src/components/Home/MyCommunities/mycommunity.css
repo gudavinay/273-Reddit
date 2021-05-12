@@ -1,0 +1,49 @@
+.createCommunity {
+    font-family: Noto Sans, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: unset;
+    line-height: 17px;
+    text-transform: unset;
+    min-height: 32px;
+    min-width: 20px;
+    padding: 4px 16px;
+    background-color:royalblue;
+    border-radius: 30px;
+  }
+
+  .community-label{
+    font-size:15px;
+  }
+ 
+  .root{
+    display: block;  
+    justify-content:'center';
+    list-style: none;
+    padding: 1px;
+    justify-content: center;
+    margin: 1px;
+  }
+
+  .chip {
+    margin: 3px;
+    display: inline-block;
+    justify-content: center;
+  }
+  
+  .rulesForm{
+    margin-left: 5px;
+    margin-top: 50px;
+  }
+
+  .myCarasoulSize{
+    width:230px;
+    height:150px;
+  }
+
+  .bodyOverflow{
+    height: 20vh;
+    overflow-y: auto;
+}
+
+  
