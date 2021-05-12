@@ -33,8 +33,8 @@ class MyCommunities extends Component {
       page: 0,
       size: 2,
       count: 0,
-      sortby: "",
-      sortType: "desc"
+      sortby: "Date",
+      sortType: "asc"
     };
   }
 
@@ -57,6 +57,7 @@ class MyCommunities extends Component {
             myCommunity: response.data.com,
             count: response.data.total
           });
+          this.Sorting(this.state.sortby, this.state.sortType);
         }
       })
       .catch(error => {
@@ -266,8 +267,8 @@ class MyCommunities extends Component {
                     </Col>
                     <Col xs={2}>
                       <select className="form-control" onChange={this.SortType}>
-                        <option value="desc">Decending</option>
                         <option value="asc">Ascending</option>
+                        <option value="desc">Decending</option>
                       </select>
                     </Col>
                   </Row>
