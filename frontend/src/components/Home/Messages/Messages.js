@@ -23,14 +23,18 @@ class Messages extends Component {
     };
   }
 
-  handleUsersSelected = user => {
+  handleUsersSelected = newUser => {
     this.setState({ startNewChatModel: false });
     const userList = this.state.getUniqueMembers;
-    userList.push({ user_id: user.user_id, name: user.name });
-    this.setState({
-      getUniqueMembers: userList
-    });
-    console.log(userList);
+    const user = userList.filter(user => user.user_id === newUser.user_id);
+    if (user.length == 0) {
+      userList.push({ user_id: newUser.user_id, name: newUser.name });
+      this.setState({
+        getUniqueMembers: userList
+      });
+    } else {
+      this.showMessage(newUser);
+    }
   };
 
   getUniqueUsers(users) {
@@ -76,6 +80,12 @@ class Messages extends Component {
         .then(response => {
           this.props.unsetLoader();
           if (response.status == 200) {
+            const user_id = getSQLUserID();
+            const findUser = response.data.find(
+              user => user.user_id == user_id
+            );
+            if (typeof findUser != "undefined")
+              response.data.splice(response.data.indexOf(findUser), 1);
             this.setState({
               searchedUser: response.data
             });
