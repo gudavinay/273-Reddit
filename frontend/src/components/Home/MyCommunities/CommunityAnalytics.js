@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Plot from "react-plotly.js";
+// import Plot from "react-plotly.js";
 import backendServer from "../../../webConfig";
 import axios from "axios";
 import { getMongoUserID, getToken } from "../../../services/ControllerUtils";
@@ -12,8 +12,8 @@ class CommunityAnalytics extends Component {
       layout: {
         height: 400,
         width: 500,
-        title: "Number of Post Per Community"
-      }
+        title: "Number of Post Per Community",
+      },
     };
   }
 
@@ -21,7 +21,7 @@ class CommunityAnalytics extends Component {
     let label = [];
     let yAxis = [];
     if (communityData.length > 0) {
-      communityData.map(community => {
+      communityData.map((community) => {
         label.push(community.name);
         yAxis.push(community.count);
       });
@@ -32,9 +32,9 @@ class CommunityAnalytics extends Component {
         {
           values: yAxis,
           labels: label,
-          type: "pie"
-        }
-      ]
+          type: "pie",
+        },
+      ],
     });
   }
 
@@ -44,18 +44,18 @@ class CommunityAnalytics extends Component {
     axios.defaults.headers.common["authorization"] = getToken();
     axios
       .get(`${backendServer}/communityAnalystics?ID=${ID}`)
-      .then(response => {
+      .then((response) => {
         if (response.status == 200) {
           this.setState({
-            communityData: response.data
+            communityData: response.data,
           });
           this.calculateValues(response.data);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
         this.setState({
-          error: "Community name is not unique"
+          error: "Community name is not unique",
         });
       });
   }
@@ -68,12 +68,12 @@ class CommunityAnalytics extends Component {
     return (
       <React.Fragment>
         <div style={{ width: "100%", height: "100%" }}>
-          <Plot
+          {/* <Plot
             data={this.state.data}
             layout={this.state.layout}
             onInitialized={figure => this.setState(figure)}
             onUpdate={figure => this.setState(figure)}
-          />
+          /> */}
         </div>
         {/* <Plot
           data={[

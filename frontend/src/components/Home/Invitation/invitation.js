@@ -91,8 +91,15 @@ export class invitation extends Component {
         .then((response) => {
           this.props.unsetLoader();
           if (response.status == 200) {
+            let results = [];
+            let current_user = getMongoUserID();
+            response.data.forEach((user) => {
+              if (user._id != current_user) {
+                results.push(user);
+              }
+            });
             this.setState({
-              searchedUser: response.data,
+              searchedUser: results,
             });
           }
         })
