@@ -301,6 +301,9 @@ class CreateCommunity extends Component {
               <Col xs={3}>
                 <button
                   className="btn"
+                  style={{
+                    color: this.props.darkMode ? "#DAE0E6" : "black"
+                  }}
                   onClick={e => this.handleEditRules(e, rule)}
                 >
                   <i className="fa fa-pencil" aria-hidden="true"></i>
@@ -309,7 +312,13 @@ class CreateCommunity extends Component {
                   className="btn"
                   onClick={e => this.handleRuleDelete(e, rule)}
                 >
-                  <i className="fa fa-trash" aria-hidden="true"></i>
+                  <i
+                    className="fa fa-trash"
+                    style={{
+                      color: this.props.darkMode ? "#DAE0E6" : "black"
+                    }}
+                    aria-hidden="true"
+                  ></i>
                 </button>
               </Col>
             </Row>
@@ -446,7 +455,10 @@ class CreateCommunity extends Component {
                   />
 
                   <TextField
-                    style={{ width: "300px", marginLeft: "5px" }}
+                    style={{
+                      width: "300px",
+                      marginLeft: "5px"
+                    }}
                     className="rulesTextbox"
                     id="outlined-basic"
                     label="Description"

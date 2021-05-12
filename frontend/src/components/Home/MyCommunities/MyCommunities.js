@@ -207,7 +207,12 @@ class MyCommunities extends Component {
                 <Carousel>{imageCaraosel}</Carousel>
               </Col>
               <Col>
-                <div className="bodyOverflow">
+                <div
+                  className="bodyOverflow"
+                  style={{
+                    color: "black"
+                  }}
+                >
                   <strong>Community Name:</strong>
                   {community.communityName}
                   <br />
@@ -305,7 +310,13 @@ class MyCommunities extends Component {
                       {this.state.error}
                     </div>
                     <Form.Group>
-                      <Form.Label className="community-label" htmlFor="name">
+                      <Form.Label
+                        className="community-label"
+                        style={{
+                          color: "black"
+                        }}
+                        htmlFor="name"
+                      >
                         Name<sup>*</sup>
                       </Form.Label>
                       <Form.Control

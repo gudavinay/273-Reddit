@@ -82,7 +82,12 @@ class MessageContent extends Component {
         if (message.sent_by == getSQLUserID())
           return (
             <div key={idx} className="text-right">
-              <label className="changePadding messageBox border">
+              <label
+                className="changePadding messageBox border"
+                style={{
+                  color: this.props.darkMode ? "#DAE0E6" : "black"
+                }}
+              >
                 {message.message}
               </label>{" "}
               <br />

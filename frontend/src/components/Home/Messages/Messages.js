@@ -150,7 +150,13 @@ class Messages extends Component {
       peopleChattedWith = this.state.getUniqueMembers.map((member, idx) => {
         return (
           <tr key={idx} onClick={() => this.showMessage(member)}>
-            <td>{member.name}</td>
+            <td
+              style={{
+                color: this.props.darkMode ? "#DAE0E6" : "black"
+              }}
+            >
+              {member.name}
+            </td>
           </tr>
         );
       });
