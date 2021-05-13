@@ -4,10 +4,10 @@ const Promise = require("bluebird");
 const acceptUsersToCommunity = async (msg, callback) => {
   let res = {};
   try {
-    Promise.mapSeries(msg.body.userList, (item) => {
+    Promise.mapSeries(msg.userList, (item) => {
       return Community.findOneAndUpdate(
         {
-          _id: msg.body.communityID,
+          _id: msg.communityID,
           "listOfUsers.userID": item,
         },
         { $set: { "listOfUsers.$.isAccepted": true } }
