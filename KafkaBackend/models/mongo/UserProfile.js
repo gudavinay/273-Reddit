@@ -26,7 +26,11 @@ const UserProfileSchema = new mongoose.Schema({
   profile_picture_url: {
     type: String
   },
-  listOfTopics: [{ type: String }],
+  listOfTopics: [
+    {
+      topic: { type: String }
+    }
+  ],
   communityInvites: [
     {
       communityID: {

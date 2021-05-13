@@ -16,14 +16,7 @@ class UserProfile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // name: getUserName(),
-      // email: getUserEmail().toLowerCase(),
-      // phone: getUserPhone(),
-      // currency: getUserCurrencyDesc(),
-      // language: getUserLanguage(),
-      // timezone: getUserTimezone(),
-      // s3URL: getProfilePicture(),
-      selectedTopic: [],
+      listOfTopics: [],
       saveSuccess: false,
       saveFailed: false,
       getDefaultRedditProfilePicture: getDefaultRedditProfilePicture(),
@@ -32,7 +25,6 @@ class UserProfile extends Component {
         { name: "Female", value: "Female" },
         { name: "Other", value: "Other" }
       ],
-      gender: "Male",
       checked: false,
       listOfTopicsFromDB: []
     };
@@ -76,21 +68,21 @@ class UserProfile extends Component {
 
   handleDelete = (e, topic) => {
     e.preventDefault();
-    let items = this.state.selectedTopic;
+    let items = this.state.listOfTopics;
     items.splice(items.indexOf(topic), 1);
     this.setState({
-      selectedTopic: items
+      listOfTopics: items
     });
   };
 
   handleTopicSelection = topic => {
-    const findTopic = this.state.selectedTopic.find(
+    const findTopic = this.state.listOfTopics.find(
       x => x.topic_id == topic.topic_id
     );
     if (typeof findTopic == "undefined") {
       this.setState(prevState => ({
-        selectedTopic: [
-          ...prevState.selectedTopic,
+        listOfTopics: [
+          ...prevState.listOfTopics,
           {
             topic: topic.topic,
             topic_id: topic.topic_id
@@ -99,25 +91,29 @@ class UserProfile extends Component {
       }));
     }
 
-    console.log(this.state.selectedTopic);
+    console.log(this.state.listOfTopics);
   };
 
   onSubmit = async event => {
     event.preventDefault();
     const data = {
       name: this.state.name,
-      email: this.state.email.toUpperCase(),
-      currency: this.state.currency,
-      language: this.state.language,
-      timezone: this.state.timezone,
-      profilePicture: this.state.s3URL
-      // id: getUserID(),
-      // token: getUserProfile().token
+      email: this.state.email,
+      location: this.state.location,
+      profile_picture_url: this.state.profile_picture_url,
+      gender: this.state.gender,
+      listOfTopics: this.state.listOfTopics,
+      bio: this.state.bio,
+      id: getMongoUserID(),
+      token: getToken()
     };
-    console.log(this.state);
-    await this.props.updateUserProfileRedux(data);
-    localStorage.setItem("userProfile", JSON.stringify(data));
-    this.setState({ userProfile: data });
+
+    console.log(this.state, data);
+    axios.post(`${backendServer}/updateUserProfile`, data).then(response => {
+      console.log(response);
+    }).catch(err => {
+      console.log(err);
+    })
   };
 
   componentDidUpdate(prevState) {
@@ -128,7 +124,7 @@ class UserProfile extends Component {
 
   render() {
     let dropDownItem = null;
-    let selectedTopic = null;
+    let listOfTopics = null;
     if (
       this.state.listOfTopicsFromDB != null &&
       this.state.listOfTopicsFromDB.length > 0
@@ -144,8 +140,8 @@ class UserProfile extends Component {
         );
       });
     }
-    if (this.state.selectedTopic.length > 0) {
-      selectedTopic = this.state.selectedTopic.map(topic => {
+    if (this.state.listOfTopics.length > 0) {
+      listOfTopics = this.state.listOfTopics.map(topic => {
         return (
           <Chip
             key={topic.topic_id}
@@ -158,6 +154,7 @@ class UserProfile extends Component {
     }
     return (
       <React.Fragment>
+        {JSON.stringify(this.state)}
         <Container>
           <form name="profileForm" id="profileForm" onSubmit={this.onSubmit}>
             <Row style={{ paddingTop: "3%" }}>
@@ -167,8 +164,8 @@ class UserProfile extends Component {
                   <div className="DPParent" style={{ position: "relative" }}>
                     <img
                       src={
-                        this.state.s3URL
-                          ? this.state.s3URL
+                        this.state.profile_picture_url
+                          ? this.state.profile_picture_url
                           : this.state.getDefaultRedditProfilePicture
                       }
                       style={{
@@ -214,6 +211,23 @@ class UserProfile extends Component {
                       </i>
                     </div>
                   </div>
+                  <button className="form-control" disabled={!this.state.file} style={{ margin: '25px', width: '100px' }} onClick={() => {
+                    let data = new FormData();
+                    data.append("file", this.state.file);
+                    this.props.setLoader();
+                    axios
+                      .post(`${backendServer}/upload`, data)
+                      .then(response => {
+                        this.props.unsetLoader();
+                        console.log(response);
+                        if (response.data && response.data[0] && response.data[0].Location)
+                          this.setState({ profile_picture_url: response.data[0].Location })
+                      })
+                      .catch(error => {
+                        this.props.unsetLoader();
+                        console.log("error " + error);
+                      });
+                  }}>Upload</button>
                   <Row style={{ marginTop: "10px" }}>
                     <Col sm={9}></Col>
                   </Row>
@@ -304,7 +318,7 @@ class UserProfile extends Component {
                     <Dropdown.Menu>{dropDownItem}</Dropdown.Menu>
                   </Dropdown>
                   <Paper component="ul" className="root">
-                    {selectedTopic}
+                    {listOfTopics}
                   </Paper>
                 </Row>
                 <Row style={{ marginTop: '10px' }}>Bio</Row>

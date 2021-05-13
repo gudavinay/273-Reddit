@@ -9,6 +9,7 @@ const { rejectInvite } = require("./rejectInvite");
 const { getUserProfileByMongoID } = require("./getUserProfileByMongoID");
 const { requestedUserForCom } = require("./requestedUserForCom");
 const { getListedUserDetails } = require("./getListedUserDetails");
+const { updateUserProfile } = require("./updateUserProfile");
 
 let handle_request = (msg, callback) => {
   switch (msg.path) {
@@ -42,6 +43,9 @@ let handle_request = (msg, callback) => {
       break;
     case "Get-Listed-User-Details":
       getListedUserDetails(msg, callback);
+      break;
+    case "updateUserProfile":
+      updateUserProfile(msg, callback);
       break;
   }
 };
