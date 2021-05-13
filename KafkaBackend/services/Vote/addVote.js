@@ -1,5 +1,6 @@
 const Vote = require("../../models/mongo/vote");
 const Post = require("../../models/mongo/Post");
+const Comment = require("../../models/mongo/Comment");
 
 const addVote = async (msg, callback) => {
   res = {};
@@ -36,6 +37,29 @@ const addVote = async (msg, callback) => {
                     callback(null, res);
                   }
                   console.log("updated post = ", updatePost);
+                });
+              }
+            });
+          } else if (entityName == "Comment") {
+            Comment.findById(entityId, (err, cmt) => {
+              if (err) {
+                res.status = 500;
+                callback(null, res);
+              } else {
+                console.log("cmt = ", cmt);
+                cmt.score = cmt.score + relScore;
+                cmt.upvotedBy.pull(userId);
+                cmt.downvotedBy.pull(userId);
+                cmt.save((err, updateComment) => {
+                  if (err) {
+                    res.status = 500;
+                    callback(null, res);
+                  } else {
+                    res.data = result;
+                    res.status = 200;
+                    callback(null, res);
+                  }
+                  console.log("updated comment = ", updateComment);
                 });
               }
             });
@@ -92,6 +116,34 @@ const addVote = async (msg, callback) => {
                     callback(null, res);
                   }
                   console.log("updated post = ", updatePost);
+                });
+              }
+            });
+          } else if (entityName == "Comment") {
+            Comment.findById(entityId, (err, cmt) => {
+              if (err) {
+                res.status = 500;
+                callback(null, res);
+              } else {
+                console.log("cmt = ", cmt);
+                cmt.score = cmt.score + relScore;
+                if (voteDir == -1) {
+                  cmt.upvotedBy.pull(userId);
+                  cmt.downvotedBy.push(userId);
+                } else {
+                  cmt.upvotedBy.push(userId);
+                  cmt.downvotedBy.pull(userId);
+                }
+                cmt.save((err, updateComment) => {
+                  if (err) {
+                    res.status = 500;
+                    callback(null, res);
+                  } else {
+                    res.data = result;
+                    res.status = 200;
+                    callback(null, res);
+                  }
+                  console.log("updated Comment = ", updateComment);
                 });
               }
             });
