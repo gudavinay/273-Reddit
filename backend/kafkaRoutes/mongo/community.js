@@ -267,7 +267,6 @@ app.post("/userLeaveRequestFromCommunity", (req, res) => {
   });
 });
 
-
 app.get("/getAllCommunitiesListForUser", (req, res) => {
   console.log(req.body);
   req.body.path = "getAllCommunitiesListForUser";
@@ -278,6 +277,21 @@ app.get("/getAllCommunitiesListForUser", (req, res) => {
     }
     console.log(error);
     return res.status(400).send("Internal Server error");
+  });
+});
+
+app.post("/community/vote/:community_id", checkAuth, (req, res) => {
+  kafka.make_request("mongo_community", {
+    path: "Vote-Community",
+    community_id: req.params.community_id,
+    voting: req.body.voting,
+    user_id: req.body.user_id
+  }, (error, result) => {
+    if (result) {
+      return res.status(200).send(result);
+    }
+    console.log(error);
+    return res.status(500).send("Internal Server error");
   });
 });
 

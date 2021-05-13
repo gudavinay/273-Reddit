@@ -43,28 +43,24 @@ class User extends Component {
     vote = async ({ community_id, voting }) => {
         try {
             axios.defaults.headers.common["authorization"] = getToken();
-            await axios.post(`${backendServer}/addVote`, {
-                "userId": this.props.login?.user?.userID || "6089d660e18b492c2a4e5b19", // for temp purpose until login completes
-                "entityId": community_id,
-                "voteDir": voting
+            const { data: { community } } = await axios.post(`${backendServer}/community/vote/${community_id}`, {
+              "voting": Number(voting)
             });
-            axios.defaults.headers.common["authorization"] = getToken();
-            const { data: { upvoteCount, downvoteCount, entityId } } = await axios.get(`${backendServer}/getVote?entityId=${community_id}`);
-
+            if(!community) { return; }
             const { communities } = this.state;
-
+      
             let temp = communities.reduce((acc, it) => {
-                acc[it._id] = it;
-                return acc;
+              acc[it._id] = it;
+              return acc;
             }, {});
-
-            temp[entityId].upVotedLength = upvoteCount;
-            temp[entityId].downVotedLength = downvoteCount;
-
+      
+            temp[community._id].upVotedLength = community.upvotedBy.length;
+            temp[community._id].downVotedLength = community.downvotedBy.length;
+      
             this.setState({
-                communities: Object.values(temp)
+              communities: Object.values(temp)
             });
-        } catch (e) { console.log(e) }
+          } catch (e) { console.log(e) }
     }
     render() {
         const { user, communities } = this.state;

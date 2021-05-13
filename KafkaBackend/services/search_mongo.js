@@ -12,37 +12,6 @@ const getAllCommunitiesSearch = async (msg, callback) => {
             },
             {
                 $lookup: {
-                    from: "votes",
-                    localField: "_id",
-                    foreignField: "entityId",
-                    as: "vote",
-                },
-            },
-            { $unwind: { path: "$vote", preserveNullAndEmptyArrays: true } },
-            {
-                $group: {
-                    _id: "$_id",
-                    communityName: { $first: "$communityName" },
-                    communityDescription: { $first: "$communityDescription" },
-                    ownerID: { $first: "$ownerID" },
-                    imageURL: { $first: "$imageURL" },
-                    createdAt: { $first: "$createdAt" },
-                    posts: { $first: "$posts" },
-                    listOfUsers: { $first: "$listOfUsers" },
-                    upvoteCount: {
-                        $sum: {
-                            $cond: { if: { $eq: ["$vote.voteDir", 1] }, then: 1, else: 0 },
-                        },
-                    },
-                    downvoteCount: {
-                        $sum: {
-                            $cond: { if: { $eq: ["$vote.voteDir", -1] }, then: 1, else: 0 },
-                        },
-                    },
-                },
-            },
-            {
-                $lookup: {
                     from: "posts",
                     localField: "_id",
                     foreignField: "communityID",
@@ -68,10 +37,9 @@ const getAllCommunitiesSearch = async (msg, callback) => {
                     imageURL: "$imageURL",
                     createdAt: "$createdAt",
                     postsLength: { $size: "$posts" },
-                    // listOfUsers: "$listOfUsers",
                     listOfUsersLength: { "$add": ["$listOfUsersLength", 1] }, // Adding +1 means Owner
-                    upVotedLength: "$upvoteCount",
-                    downVotedLength: "$downvoteCount",
+                    upVotedLength: { $size: "$upvotedBy" },
+                    downVotedLength: { $size: "$downvotedBy" },
                 },
             },
             {
