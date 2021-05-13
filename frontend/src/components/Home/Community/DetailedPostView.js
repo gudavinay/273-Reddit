@@ -76,8 +76,8 @@ class DetailedPostView extends Component {
             userVoteDir == 1
               ? newComments[index].score - 1
               : userVoteDir == 0
-              ? newComments[index].score + 1
-              : newComments[index].score + 2;
+                ? newComments[index].score + 1
+                : newComments[index].score + 2;
           newComments[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
           console.log("newComments = ", newComments);
           this.setState({ parentCommentList: newComments });
@@ -87,8 +87,8 @@ class DetailedPostView extends Component {
             userVoteDir == 1
               ? newComments[index].child[childIndex].score - 1
               : userVoteDir == 0
-              ? newComments[index].child[childIndex].score + 1
-              : newComments[index].child[childIndex].score + 2;
+                ? newComments[index].child[childIndex].score + 1
+                : newComments[index].child[childIndex].score + 2;
           newComments[index].child[childIndex].userVoteDir =
             userVoteDir == 1 ? 0 : 1;
           console.log("newComments = ", newComments);
@@ -127,8 +127,8 @@ class DetailedPostView extends Component {
             userVoteDir == -1
               ? newComments[index].score + 1
               : userVoteDir == 0
-              ? newComments[index].score - 1
-              : newComments[index].score - 2;
+                ? newComments[index].score - 1
+                : newComments[index].score - 2;
           newComments[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
           console.log("newComments = ", newComments);
           this.setState({ parentCommentList: newComments });
@@ -139,8 +139,8 @@ class DetailedPostView extends Component {
             userVoteDir == -1
               ? newComments[index].child[childIndex].score + 1
               : userVoteDir == 0
-              ? newComments[index].child[childIndex].score - 1
-              : newComments[index].child[childIndex].score - 2;
+                ? newComments[index].child[childIndex].score - 1
+                : newComments[index].child[childIndex].score - 2;
           newComments[index].child[childIndex].userVoteDir =
             userVoteDir == -1 ? 0 : -1;
           console.log("newComments = ", newComments);
@@ -173,7 +173,7 @@ class DetailedPostView extends Component {
                   lineHeight: "16px",
                 }}
               >
-                {comment.userID} {getRelativeTime(comment.createdAt)}
+                u/<strong>{comment.userID.name}</strong> {getRelativeTime(comment.createdAt)}
               </span>
             </div>
             <div
@@ -342,7 +342,7 @@ class DetailedPostView extends Component {
                     lineHeight: "16px",
                   }}
                 >
-                  {childComment.userID}{" "}
+                  u/<strong>{childComment.userID.name}</strong>{" "}
                   {getRelativeTime(childComment.createdAt)}
                 </span>
               </div>

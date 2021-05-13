@@ -60,7 +60,7 @@ class Community extends Component {
   componentDidUpdate(prevState) {
     if (
       JSON.stringify(prevState.communityDetails) !=
-        JSON.stringify(this.state.communityDetails) &&
+      JSON.stringify(this.state.communityDetails) &&
       this.state.communityDetails &&
       this.state.communityDetails.listOfUsers &&
       this.state.communityDetails.listOfUsers.length > 0
@@ -78,8 +78,7 @@ class Community extends Component {
     axios.defaults.headers.common["authorization"] = getToken();
     axios
       .get(
-        `${backendServer}/getCommunityDetails?ID=${
-          this.state.community_id
+        `${backendServer}/getCommunityDetails?ID=${this.state.community_id
         }&requirePopulate=${true}`
       )
       .then((response) => {
@@ -97,14 +96,12 @@ class Community extends Component {
     this.props.setLoader();
     axios.defaults.headers.common["authorization"] = getToken();
     console.log(
-      `${backendServer}/getPostsInCommunity?ID=${
-        this.state.community_id
+      `${backendServer}/getPostsInCommunity?ID=${this.state.community_id
       }&userId=${getMongoUserID()}&page=${page}&size=${size}`
     );
     axios
       .get(
-        `${backendServer}/getPostsInCommunity?ID=${
-          this.state.community_id
+        `${backendServer}/getPostsInCommunity?ID=${this.state.community_id
         }&userId=${getMongoUserID()}&page=${page}&size=${size}`
       )
       .then((response) => {
@@ -112,7 +109,7 @@ class Community extends Component {
         console.log("posts = ", response.data);
         this.setState(
           { posts: response.data.post, count: response.data.count },
-          () => {}
+          () => { }
         );
       })
       .catch((err) => {
@@ -143,8 +140,8 @@ class Community extends Component {
           userVoteDir == 1
             ? newPosts[index].score - 1
             : userVoteDir == 0
-            ? newPosts[index].score + 1
-            : newPosts[index].score + 2;
+              ? newPosts[index].score + 1
+              : newPosts[index].score + 2;
 
         newPosts[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
         console.log("newComments = ", newPosts);
@@ -177,8 +174,8 @@ class Community extends Component {
           userVoteDir == -1
             ? newPosts[index].score + 1
             : userVoteDir == 0
-            ? newPosts[index].score - 1
-            : newPosts[index].score - 2;
+              ? newPosts[index].score - 1
+              : newPosts[index].score - 2;
 
         // newComments[index].userVoteDir = response.data.userVoteDir;
         newPosts[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
@@ -205,7 +202,8 @@ class Community extends Component {
     var isUserBeingInvitedByModerator = false,
       didUserRequestToJoin = false;
     var participationButton = null;
-    var userStatusInCommunity = null;
+    var userStatusInCommunityForJoinReq = null;
+    var userStatusInCommunityForSentInvite = null;
     var showPosts = true;
     if (this.state.communityDetails) {
       if (this.state.communityDetails.ownerID && this.state.communityDetails.ownerID._id == getMongoUserID()) {
@@ -229,10 +227,10 @@ class Community extends Component {
           this.state.communityDetails.listOfUsers &&
           this.state.communityDetails.listOfUsers.length > 0
         ) {
-          userStatusInCommunity = this.state.communityDetails.listOfUsers.find(
+          userStatusInCommunityForJoinReq = this.state.communityDetails.listOfUsers.find(
             (user) => user.userID._id == getMongoUserID()
           );
-          if (userStatusInCommunity) {
+          if (userStatusInCommunityForJoinReq) {
             didUserRequestToJoin = true;
           }
         }
@@ -240,16 +238,16 @@ class Community extends Component {
           this.state.communityDetails.sentInvitesTo &&
           this.state.communityDetails.sentInvitesTo.length > 0
         ) {
-          userStatusInCommunity = this.state.communityDetails.sentInvitesTo.find(
+          userStatusInCommunityForSentInvite = this.state.communityDetails.sentInvitesTo.find(
             (user) => user.userID._id == getMongoUserID()
           );
-          if (userStatusInCommunity) {
+          if (userStatusInCommunityForSentInvite) {
             isUserBeingInvitedByModerator = true;
           }
         }
         if (didUserRequestToJoin || isUserBeingInvitedByModerator) {
           if (didUserRequestToJoin) {
-            if (userStatusInCommunity.isAccepted == 1) {
+            if (userStatusInCommunityForJoinReq.isAccepted == 1) {
               participationButton = (
                 <button
                   className="form-control"
@@ -281,7 +279,7 @@ class Community extends Component {
                   Leave
                 </button>
               );
-            } else if (userStatusInCommunity.isAccepted == -1) {
+            } else if (userStatusInCommunityForJoinReq.isAccepted == -1) {
               showPosts = false;
               participationButton = (
                 <button
@@ -630,7 +628,7 @@ class Community extends Component {
                                           {this.state.communityDetails.rules
                                             .length -
                                             1 ==
-                                          index ? (
+                                            index ? (
                                             <div
                                               className="downArrowRotate"
                                               style={{
@@ -721,7 +719,7 @@ class Community extends Component {
                                           {this.state.communityDetails
                                             .topicSelected.length -
                                             1 ==
-                                          index ? (
+                                            index ? (
                                             <div
                                               className="downArrowRotate"
                                               style={{
@@ -784,9 +782,9 @@ class Community extends Component {
                                       this.state.communityDetails.ownerID
                                         .profile_picture_url
                                         ? this.state.communityDetails.ownerID
-                                            .profile_picture_url
+                                          .profile_picture_url
                                         : this.state
-                                            .getDefaultRedditProfilePicture
+                                          .getDefaultRedditProfilePicture
                                     }
                                     style={{
                                       height: "30px",
@@ -894,7 +892,7 @@ class Community extends Component {
                                               {expandedView}
                                               {usersPresentInTheCommunity.length -
                                                 1 ==
-                                              index ? (
+                                                index ? (
                                                 <div
                                                   className="downArrowRotate"
                                                   style={{

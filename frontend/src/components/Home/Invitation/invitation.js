@@ -278,7 +278,7 @@ export class invitation extends Component {
         <React.Fragment>
           <Container style={{ padding: "0 15%" }}>
             <div>
-              <Row style={{ margin: "10px" }}>
+              <Row style={{ margin: "10px", padding: '25px 0', width: '45%' }}>
                 <select
                   className="form-control"
                   name="community"
