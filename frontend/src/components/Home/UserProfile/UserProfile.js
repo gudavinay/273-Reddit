@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, ToggleButton } from "react-bootstrap";
+import { Button, ButtonGroup, Modal, ToggleButton } from "react-bootstrap";
 import React, { Component } from "react";
 import { Col, Container, Row, Dropdown } from "react-bootstrap";
 import { Alert } from "react-bootstrap";
@@ -12,6 +12,9 @@ import {
   getToken
 } from "../../../services/ControllerUtils";
 import "./UserProfile.css";
+import EditIcon from '@material-ui/icons/Edit';
+import crossSVG from '../../../assets/cross.svg';
+import CheckIcon from '@material-ui/icons/Check';
 class UserProfile extends Component {
   constructor(props) {
     super(props);
@@ -26,7 +29,8 @@ class UserProfile extends Component {
         { name: "Other", value: "Other" }
       ],
       checked: false,
-      listOfTopicsFromDB: []
+      listOfTopicsFromDB: [],
+      showAddTopicModal: false
     };
   }
 
@@ -314,7 +318,8 @@ class UserProfile extends Component {
                 </Row>
                 <Row>
                   <Dropdown style={{ marginTop: '25px', marginBottom: '20px' }}>
-                    <Dropdown.Toggle>Select topic</Dropdown.Toggle>
+                    <span style={{ paddingRight: "10px" }} onClick={() => this.setState({ showAddTopicModal: true })}><EditIcon /></span><Dropdown.Toggle>Select topic </Dropdown.Toggle>
+
                     <Dropdown.Menu>{dropDownItem}</Dropdown.Menu>
                   </Dropdown>
                   <Paper component="ul" className="root">
@@ -375,6 +380,84 @@ class UserProfile extends Component {
             </Row>
           </form>
         </Container>
+        <Modal show={this.state.showAddTopicModal} onHide={() => this.setState({ showAddTopicModal: false })}>
+          <Modal.Header closeButton>
+            <Modal.Title>Edit Topics</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <React.Fragment>
+              {/* <center> */}
+              <form onSubmit={() => {
+
+              }}>
+                <Row style={{ padding: '5px 0' }}>
+                  <Col sm={1}>
+                  </Col>
+                  <Col sm={8}>
+                    <input type="text" className="form-control" placeholder="New topic name" onChange={(e) => { this.setState({ newTopic: e.target.value }) }} />
+                  </Col>
+                  <Col sm={2}>
+                    <CheckIcon style={{ fontSize: '20px' }} onClick={() => {
+                      axios.defaults.headers.common["authorization"] = getToken();
+                      axios.post(`${backendServer}/addNewTopic`, { newTopic: this.state.newTopic })
+                        .then(result => {
+                          this.props.unsetLoader();
+                          console.log(result);
+                          this.setState({ listOfTopicsFromDB: result.data });
+                        })
+                        .catch(err => {
+                          this.props.unsetLoader();
+                          console.log(err);
+                        });
+                    }} />
+                  </Col>
+                </Row>
+                {this.state.listOfTopicsFromDB && this.state.listOfTopicsFromDB.length > 0 && <div>
+                  {this.state.listOfTopicsFromDB.map(topic => {
+                    return <Row key={topic.topic_id}>
+                      <Col sm={1}></Col>
+                      <Col sm={8}>
+                        <input style={{ margin: "4px 0" }} className="form-control" type="text" disabled={this.state.editTopic != topic.topic_id} placeholder={topic.topic} onChange={(e) => { this.setState({ editTopicValue: e.target.value }) }} />
+                        {/* {this.state.editTopic == topic.topic_id ? <div></div> : (<div sm={8}>{topic.topic}</div>)} */}
+                      </Col>
+
+                      <Col sm={1}>
+                        {this.state.editTopic == topic.topic_id ? <CheckIcon style={{ fontSize: '20px' }} onClick={() => {
+                          axios.defaults.headers.common["authorization"] = getToken();
+                          axios.post(`${backendServer}/editTopic`, { id: topic.topic_id, topic: this.state.editTopicValue })
+                            .then(result => {
+                              this.props.unsetLoader();
+                              console.log(result);
+                              this.setState({ listOfTopicsFromDB: result.data });
+                            })
+                            .catch(err => {
+                              this.props.unsetLoader();
+                              console.log(err);
+                            });
+                        }} /> :
+                          <EditIcon style={{ fontSize: '15px' }} onClick={() => { this.setState({ editTopic: topic.topic_id }) }} />}
+                      </Col>
+                      <Col sm={1}><img src={crossSVG} alt="" onClick={() => {
+                        axios.defaults.headers.common["authorization"] = getToken();
+                        axios.post(`${backendServer}/deleteTopic`, { topic: topic.topic_id })
+                          .then(result => {
+                            this.props.unsetLoader();
+                            console.log(result);
+                            this.setState({ listOfTopicsFromDB: result.data });
+                          })
+                          .catch(err => {
+                            this.props.unsetLoader();
+                            console.log(err);
+                          });
+                      }} /></Col>
+                    </Row>
+                  })}
+                </div>}
+              </form>
+              {/* </center> */}
+            </React.Fragment>
+          </Modal.Body>
+        </Modal>
       </React.Fragment>
     );
   }
