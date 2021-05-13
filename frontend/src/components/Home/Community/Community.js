@@ -14,6 +14,7 @@ import {
   getMongoUserID,
   getToken,
 } from "../../../services/ControllerUtils";
+import errorSVG from "../../../assets/404.svg";
 // import { withStyles } from "@material-ui/core/styles";
 // import { useTheme } from "@material-ui/core/styles";
 
@@ -360,7 +361,17 @@ class Community extends Component {
       }
     } else {
       postsToRender.push(
-        <div>You need to be a part of this community to see the posts.</div>
+        <div style={{ textAlign: "center", padding: "8%" }}>
+          <img alt="" width="25%" src={errorSVG} />
+          <h3>
+            r/<strong>{this.state.communityDetails?.communityName}</strong> is a
+            private community
+          </h3>
+          You need to be a part of this community to see the posts.
+          <Link to="/home">
+            <h4>Home</h4>
+          </Link>
+        </div>
       );
     }
 
@@ -400,50 +411,52 @@ class Community extends Component {
             <div>
               <Row>
                 <Col xs={8}>
-                  <div className="createPostH">
-                    <a>
-                      <img
-                        style={{
-                          height: "30px",
-                          width: "30px",
-                          border: "1px solid",
-                          borderRadius: "27px",
-                          padding: "2px",
-                          margin: "3px",
+                  {showPosts && (
+                    <div className="createPostH">
+                      <a>
+                        <img
+                          style={{
+                            height: "30px",
+                            width: "30px",
+                            border: "1px solid",
+                            borderRadius: "27px",
+                            padding: "2px",
+                            margin: "3px",
+                          }}
+                          alt="User Logo"
+                          src={userSvg}
+                        />
+                      </a>{" "}
+                      <Link
+                        to={{
+                          pathname: `/createPost/${this.state.community_id}`,
+                          rules: this.state.communityDetails?.rules,
+                          communityName: this.state.communityDetails
+                            ?.communityName,
                         }}
-                        alt="User Logo"
-                        src={userSvg}
-                      />
-                    </a>{" "}
-                    <Link
-                      to={{
-                        pathname: `/createPost/${this.state.community_id}`,
-                        rules: this.state.communityDetails?.rules,
-                        communityName: this.state.communityDetails
-                          ?.communityName,
-                      }}
-                    >
-                      <input
-                        className="createPostInput"
-                        placeholder="Create Post"
-                        type="text"
-                      />
-                    </Link>
-                    <a className="galleryAnchor">
-                      <img
-                        style={{ height: "30px", width: "22px" }}
-                        alt="Gallery Logo"
-                        src={gallerySvg}
-                      />
-                    </a>
-                    <a className="galleryAnchor">
-                      <img
-                        style={{ height: "30px", width: "22px" }}
-                        alt="Link Logo"
-                        src={linkSvg}
-                      />
-                    </a>
-                  </div>
+                      >
+                        <input
+                          className="createPostInput"
+                          placeholder="Create Post"
+                          type="text"
+                        />
+                      </Link>
+                      <a className="galleryAnchor">
+                        <img
+                          style={{ height: "30px", width: "22px" }}
+                          alt="Gallery Logo"
+                          src={gallerySvg}
+                        />
+                      </a>
+                      <a className="galleryAnchor">
+                        <img
+                          style={{ height: "30px", width: "22px" }}
+                          alt="Link Logo"
+                          src={linkSvg}
+                        />
+                      </a>
+                    </div>
+                  )}
                   {postsToRender}
                 </Col>
                 <Col>
@@ -671,7 +684,7 @@ class Community extends Component {
                       </Row>
                     )}
 
-                  {this.state.communityDetails && (
+                  {this.state.communityDetails && showPosts && (
                     <Row>
                       <Card className="card">
                         <Card.Header className="cardHeader">

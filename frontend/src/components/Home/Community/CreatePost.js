@@ -25,6 +25,25 @@ class CreatePost extends Component {
     console.log("PROPS AND STATE in create post", this.props, this.state);
   }
 
+  uploadImage = e => {
+    if (e.target.files) {
+      let data = new FormData();
+      data.append("file", e.target.files[0]);
+      this.props.setLoader();
+      Axios.post(`${backendServer}/upload`, data)
+        .then(response => {
+          this.props.unsetLoader();
+          console.log(response);
+          if (response.data && response.data[0] && response.data[0].Location)
+            this.setState({ postImageUrl: response.data[0].Location })
+        })
+        .catch(error => {
+          this.props.unsetLoader();
+          console.log("error " + error);
+        });
+    }
+  };
+
   render() {
     const titleTag = (
       <input
@@ -191,9 +210,12 @@ class CreatePost extends Component {
                           id="files"
                           name="files"
                           accept="image/*"
-                          multiple
+                          onChange={this.uploadImage}
                         ></input>
                         {postButton}
+                        <Row>
+                          <img src={this.state.postImageUrl} alt="" style={{ width: '60%', margin: 'auto', padding: '10%' }} />
+                        </Row>
                       </Tab.Pane>
                       <Tab.Pane eventKey="1">
                         {titleTag}

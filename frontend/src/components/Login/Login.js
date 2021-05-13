@@ -14,7 +14,6 @@ class Login extends Component {
     {
       this.state = {
         error: "",
-        authFlag: "",
         redirect: <Redirect to="/" />,
         token: ""
       };
@@ -66,15 +65,13 @@ class Login extends Component {
 
   componentDidUpdate(prevState) {
     if (prevState.user != this.props.user) {
-      if (this.props.user == "UnSuccessful Login") {
+      if (prevState.error != this.props.error && this.props.error.length > 0) {
         this.setState({
-          authFlag: false,
           formerror: {},
-          error: this.props.user
+          error: this.props.error
         });
       } else {
         this.setState({
-          authFlag: true,
           error: ""
         });
         this.getUserProfile();
@@ -96,14 +93,6 @@ class Login extends Component {
             />
           </Col>
           <Col className="login-form" style={{ paddingLeft: "30px" }}>
-            <div
-              id="errorLogin"
-              hidden={this.state.error.length > 0 ? false : true}
-              className="alert alert-danger"
-              role="alert"
-            >
-              {this.state.error}
-            </div>
             <div
               style={{ fontSize: "24px", fontWeight: "500", marginTop: "35px" }}
             >
@@ -130,6 +119,14 @@ class Login extends Component {
               style={{ width: "45%" }}
               onSubmit={this.submitForm}
             >
+              <div
+                id="errorLogin"
+                hidden={this.state.error.length > 0 ? false : true}
+                className="alert alert-danger"
+                role="alert"
+              >
+                {this.state.error}
+              </div>
               <Form.Group>
                 <Form.Label htmlFor="email" className="Lable-align">
                   Email address
@@ -195,7 +192,8 @@ class Login extends Component {
 
 const mapStateToProps = state => {
   return {
-    user: state.login.user
+    user: state.login.user,
+    error: state.login.error
   };
 };
 

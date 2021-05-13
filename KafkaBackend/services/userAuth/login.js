@@ -17,7 +17,7 @@ const login = async (msg, callback) => {
           msg.password,
           user.password,
           function (err, matchPassword) {
-            if (err) return error;
+            if (err) return;
             if (matchPassword) {
               user.password = "";
               res.status = 200;

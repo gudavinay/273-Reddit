@@ -34,8 +34,12 @@ const searchPost = async (msg, callback) => {
                     ),
                   },
                   {
-                    "communityDetails.listOfUsers.userID":
-                      mongoose.Types.ObjectId(msg.user_id),
+                    "communityDetails.listOfUsers": {
+                      $elemMatch: {
+                        userID: mongoose.Types.ObjectId(msg.user_id),
+                        isAccepted: 1,
+                      },
+                    },
                   },
                 ],
               },
@@ -52,8 +56,12 @@ const searchPost = async (msg, callback) => {
                     ),
                   },
                   {
-                    "communityDetails.listOfUsers.userID":
-                      mongoose.Types.ObjectId(msg.user_id),
+                    "communityDetails.listOfUsers": {
+                      $elemMatch: {
+                        userID: mongoose.Types.ObjectId(msg.user_id),
+                        isAccepted: 1,
+                      },
+                    },
                   },
                 ],
               },

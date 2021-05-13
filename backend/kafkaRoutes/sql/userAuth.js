@@ -11,19 +11,17 @@ app.post("/login", (req, res) => {
   console.log("sql", req.body);
   req.body.path = "Login";
   kafka.make_request("sql_user_auth", req.body, (error, result) => {
-    // console.log("came back", result.data);
     if (result.status === 200) {
       const userLogin = {
         userID: result.data,
-        token: createToken(result.data),
+        token: createToken(result.data)
       };
       return res.status(200).send(JSON.stringify(userLogin));
     } else if (result.status === 404) {
-      return res.status(404).send("User not found!");
+      return res.status(404).send({ message: "User not found!" });
     } else if (result.status === 401) {
-      return res.status(401).send("UnAuthorized!");
+      return res.status(401).send({ message: "Incorrect credentials!" });
     }
-    return res.status(500).send("Error Occureed");
   });
 });
 
@@ -34,7 +32,7 @@ app.post("/signup", async (req, res) => {
     if (result) {
       const userLogin = {
         userID: result.user_id,
-        token: createToken(result),
+        token: createToken(result)
       };
       return res.status(200).send(JSON.stringify(userLogin));
     }
@@ -45,7 +43,7 @@ app.post("/signup", async (req, res) => {
 function createToken(user) {
   const payload = { id: user.user_id };
   const token = jwt.sign(payload, secret, {
-    expiresIn: 1008000,
+    expiresIn: 1008000
   });
   return "JWT " + token;
 }

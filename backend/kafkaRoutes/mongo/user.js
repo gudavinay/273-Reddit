@@ -147,4 +147,15 @@ app.post("/getListedUserDetails", async (req, res) => {
     return res.status(500).send(error);
   });
 });
+
+app.post("/updateUserProfile", async (req, res) => {
+  req.body.path = "updateUserProfile";
+  kafka.make_request("mongo_user", req.body, (error, result) => {
+    console.log(result);
+    if (result) {
+      return res.status(200).send(result);
+    }
+    return res.status(500).send(error);
+  });
+});
 module.exports = router;
