@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { Component } from "react";
-import { getToken } from "../../../../services/ControllerUtils";
+import { getMongoUserID, getToken } from "../../../../services/ControllerUtils";
 // import { Row } from "react-bootstrap";
 // import { Col } from "reactstrap";
 import backendServer from "../../../../webConfig";
@@ -24,15 +24,18 @@ class UserModal extends Component {
           commList: this.state.removedList,
         })
         .then(() => {
-          this.getCommunitiesForUser();
+          this.getCommunitiesForUserPartOfOwnerCommunity();
         });
     }
   };
 
-  getCommunitiesForUser = async () => {
+  getCommunitiesForUserPartOfOwnerCommunity = async () => {
+    const ownerID = getMongoUserID();
     axios.defaults.headers.common["authorization"] = getToken();
     await axios
-      .get(`${backendServer}/getCommunitiesForUser?ID=${this.props.user_id}`)
+      .get(
+        `${backendServer}/getCommunitiesForUserPartOfOwnerCommunity?userID=${this.props.user_id}&ownerID=${ownerID}`
+      )
       .then((result) => {
         this.setState({ communities: result.data });
       });
@@ -48,57 +51,57 @@ class UserModal extends Component {
   };
 
   componentDidMount = async () => {
-    this.getCommunitiesForUser();
+    this.getCommunitiesForUserPartOfOwnerCommunity();
     this.getUserDetails();
   };
 
   render() {
-    // console.log(this.props);
+    console.log(this.state);
     let communitiesList = [];
     this.state.communities
       ? this.state.communities.forEach((item) => {
-        communitiesList.push(
-          <div className="row" key={item._id} style={{ margin: "30px" }}>
-            <div
-              className="col-1"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              <input
-                type="checkbox"
-                onChange={() => {
-                  let arr = this.state.removedList;
-                  if (arr.includes(item._id)) {
-                    arr.pop(item._id);
-                  } else {
-                    arr.push(item._id);
-                  }
-                  this.setState({
-                    removedList: arr,
-                  });
-                }}
-              />
-            </div>
-            <div className="col">
+          communitiesList.push(
+            <div className="row" key={item._id} style={{ margin: "30px" }}>
               <div
+                className="col-1"
                 style={{
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
-                  fontSize: "18px",
-                  fontWeight: "500",
-                  paddingLeft: "15px",
                 }}
               >
-                r/{item.communityName}
+                <input
+                  type="checkbox"
+                  onChange={() => {
+                    let arr = this.state.removedList;
+                    if (arr.includes(item._id)) {
+                      arr.pop(item._id);
+                    } else {
+                      arr.push(item._id);
+                    }
+                    this.setState({
+                      removedList: arr,
+                    });
+                  }}
+                />
+              </div>
+              <div className="col">
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    fontSize: "18px",
+                    fontWeight: "500",
+                    paddingLeft: "15px",
+                  }}
+                >
+                  r/{item.communityName}
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })
+          );
+        })
       : null;
     console.log(this.state);
     return (
@@ -111,7 +114,7 @@ class UserModal extends Component {
             style={{
               fontWeight: "700",
               fontSize: "24px",
-              marginBottom: "50px",
+              marginBottom: "25px",
               display: "flex",
             }}
           >
@@ -179,7 +182,7 @@ class UserModal extends Component {
                 )}
               </div>
             </div>
-            <div style={{ padding: "30px 0 0 0", textAlign: "center" }}>
+            <div style={{ padding: "20px 0 0 0", textAlign: "center" }}>
               <button
                 className="btn btn-dark"
                 onClick={this.removeFomCommunity}

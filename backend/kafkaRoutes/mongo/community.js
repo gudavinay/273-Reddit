@@ -139,9 +139,9 @@ app.post("/showInvitationStatus", checkAuth, async (req, res) => {
 
 app.post("/sendInvite", checkAuth, async (req, res) => {
   var members = [];
-  req.body.users.forEach(user => {
+  req.body.users.forEach((user) => {
     const userData = {
-      userID: user.user_id
+      userID: user.user_id,
     };
     members.push(userData);
   });
@@ -217,6 +217,18 @@ app.post("/rejectUsersForCommunity", checkAuth, (req, res) => {
     }
     console.log(error);
     return res.status(400).send("Internal Server error");
+  });
+});
+
+app.get("/getCommunitiesForUserPartOfOwnerCommunity", checkAuth, (req, res) => {
+  req.body.path = "Get-Communities-For-User-Part-Of-Owner-Community";
+  req.body.query = req.query;
+  kafka.make_request("mongo_community", req.body, (error, result) => {
+    if (result) {
+      return res.status(200).send(result.data);
+    }
+    console.log(error);
+    return res.status(400).send(error);
   });
 });
 

@@ -2,6 +2,7 @@ const Comment = require("../../models/mongo/Comment");
 const Post = require("../../models/mongo/Post");
 
 const comment = async (msg, callback) => {
+  console.log(msg);
   let comment = {},
     res = {};
   if (msg.isParentComment) {
@@ -10,7 +11,9 @@ const comment = async (msg, callback) => {
       description: msg.description,
       isParentComment: msg.isParentComment,
       userID: msg.userID,
+      communityID: msg.communityID,
     };
+    console.log(comment);
     new Comment(comment).save((err, result) => {
       if (err) {
         res.status = 500;
@@ -33,6 +36,7 @@ const comment = async (msg, callback) => {
       isParentComment: msg.isParentComment,
       userID: msg.userID,
       parentCommentID: msg.parentCommentID,
+      communityID: msg.communityID,
     };
     new Comment(comment).save((err, result) => {
       if (err) {

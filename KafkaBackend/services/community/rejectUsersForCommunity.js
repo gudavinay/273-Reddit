@@ -10,8 +10,7 @@ const rejectUsersForCommunity = async (msg, callback) => {
           _id: msg.communityID,
           "listOfUsers.userID": item,
         },
-        { $pull: { listOfUsers: { userID: item } } },
-        { useFindAndModify: false }
+        { $set: { "listOfUsers.$.isAccepted": -1 } }
       );
     }).then(async () => {
       res.status = 200;
