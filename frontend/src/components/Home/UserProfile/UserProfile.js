@@ -154,7 +154,7 @@ class UserProfile extends Component {
     }
     return (
       <React.Fragment>
-        {JSON.stringify(this.state)}
+        {/* {JSON.stringify(this.state)} */}
         <Container>
           <form name="profileForm" id="profileForm" onSubmit={this.onSubmit}>
             <Row style={{ paddingTop: "3%" }}>
@@ -211,7 +211,7 @@ class UserProfile extends Component {
                       </i>
                     </div>
                   </div>
-                  <button className="form-control" disabled={!this.state.file} style={{ margin: '25px', width: '100px' }} onClick={() => {
+                  <button className="form-control" disabled={!this.state.file} style={{ margin: '30px 0 0 0', width: '100px' }} onClick={() => {
                     let data = new FormData();
                     data.append("file", this.state.file);
                     this.props.setLoader();
@@ -339,10 +339,9 @@ class UserProfile extends Component {
               <div style={{ textAlign: "center" }}>
                 <Button
                   type="submit"
+                  className="submitbutton"
                   style={{
-                    margin: "auto",
-                    backgroundColor: "#5bc5a7",
-                    borderColor: "#5bc5a7"
+                    fontFamily: "Noto Sans, Arial, sans-serif", fontSize: "14px", fontWeight: "700", letterSpacing: "unset", lineHeight: "17px", textTransform: "unset", minHeight: "32px", minWidth: "20px", padding: "4px 16px", backgroundColor: "royalblue", borderRadius: "30px",
                   }}
                 >
                   Save
