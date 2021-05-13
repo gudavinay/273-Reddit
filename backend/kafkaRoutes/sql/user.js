@@ -39,13 +39,13 @@ app.post("/addTopic", async (req, res) => {
 
 app.post("/deleteTopic", async (req, res) => {
   req.body.path = "deleteTopic";
-  console.log("calling kafka for topic");
   kafka.make_request("manage_topic", req.body, (error, result) => {
     console.log(result);
     if (result) {
-      return res.status(200).send(result);
+      res.status(200).send({ msg: "deleted" });
+    } else {
+      res.status(500).send(error);
     }
-    return res.status(500).send(error);
   });
 });
 
