@@ -111,9 +111,15 @@ class Home extends Component {
               .then((result) => {
                 this.props.unsetLoader();
                 let searchRes = [];
-                result.data.forEach((post, id) => {
+                result.data.forEach((post, index) => {
                   searchRes.push(
-                    <Post key={id} data={post} {...this.props}></Post>
+                    <Post
+                      upVote={this.upVote}
+                      downVote={this.downVote}
+                      index={index}
+                      data={post}
+                      {...this.props}
+                    ></Post>
                   );
                 });
                 this.setState({ searchResults: searchRes });

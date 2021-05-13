@@ -68,33 +68,32 @@ class Navigationbar extends Component {
   };
   async componentDidMount() {
     this.getNotificationData();
-    this.checkIfUserIsModerator();
   }
-  checkIfUserIsModerator = () => {
-    let user_id = getMongoUserID();
-
-    Axios.defaults.headers.common["authorization"] = getToken();
-    Axios.get(backendServer + "/checkUserIsModerator/" + user_id)
-      .then((result) => {
-        console.log(result);
-        this.props.unsetLoader();
-        if (result.data.length > 0) {
-          console.log("true");
-          this.setState({
-            NotshowInvitation: false,
-          });
-        } else {
-          console.log("false");
-          this.setState({
-            NotshowInvitation: true,
-          });
-        }
-      })
-      .catch((err) => {
-        this.props.unsetLoader();
-        console.log(err);
-      });
-  };
+  // checkIfUserIsModerator = () => {
+  //   let user_id = getMongoUserID();
+  //   console.log("calling checkIfUser is moderator");
+  //   Axios.defaults.headers.common["authorization"] = getToken();
+  //   Axios.get(backendServer + "/checkUserIsModerator/" + user_id)
+  //     .then((result) => {
+  //       console.log(result);
+  //       this.props.unsetLoader();
+  //       if (result.data.length > 0) {
+  //         console.log("true");
+  //         this.setState({
+  //           NotshowInvitation: false,
+  //         });
+  //       } else {
+  //         console.log("false");
+  //         this.setState({
+  //           NotshowInvitation: true,
+  //         });
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       this.props.unsetLoader();
+  //       console.log(err);
+  //     });
+  // };
   getNotificationData = async () => {
     let data = {
       user_id: getMongoUserID(),
@@ -233,26 +232,22 @@ class Navigationbar extends Component {
                     >
                       Home
                     </div>
-                    {this.state.NotshowInvitation ? (
-                      ""
-                    ) : (
-                      <div
-                        className={
-                          this.props.darkMode
-                            ? "NavLinks backGround_dark"
-                            : "NavLinks backGround_light"
-                        }
-                        onClick={() => {
-                          this.setState({ leftDropdown: "Send Invitation" });
-                          document
-                            .getElementById("expandLeftDropDown")
-                            .classList.add("hidden");
-                          this.props.history.push("/invitation");
-                        }}
-                      >
-                        Invitation
-                      </div>
-                    )}
+                    <div
+                      className={
+                        this.props.darkMode
+                          ? "NavLinks backGround_dark"
+                          : "NavLinks backGround_light"
+                      }
+                      onClick={() => {
+                        this.setState({ leftDropdown: "Send Invitation" });
+                        document
+                          .getElementById("expandLeftDropDown")
+                          .classList.add("hidden");
+                        this.props.history.push("/invitation");
+                      }}
+                    >
+                      Invitation
+                    </div>
 
                     <div
                       className={
