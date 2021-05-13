@@ -9,8 +9,11 @@ const deleteTopic = async (msg, callback) => {
     },
   })
     .then((topic) => {
-      console.log(topic);
-      callback(null, "delete");
+      db.Topic.findAll().then(result => {
+        callback(null, result);
+      }).catch(err => {
+        callback(err, null);
+      })
     })
     .catch((err) => {
       callback(err, null);

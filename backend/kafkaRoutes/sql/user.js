@@ -27,7 +27,6 @@ app.get("/getTopic", checkAuth, async (req, res) => {
 
 app.post("/addTopic", async (req, res) => {
   req.body.path = "addTopic";
-  console.log("calling kafka for topic");
   kafka.make_request("manage_topic", req.body, (error, result) => {
     console.log(result);
     if (result) {
@@ -42,7 +41,7 @@ app.post("/deleteTopic", async (req, res) => {
   kafka.make_request("manage_topic", req.body, (error, result) => {
     console.log(result);
     if (result) {
-      res.status(200).send({ msg: "deleted" });
+      res.status(200).send(result);
     } else {
       res.status(500).send(error);
     }
@@ -51,7 +50,6 @@ app.post("/deleteTopic", async (req, res) => {
 
 app.post("/editTopic", async (req, res) => {
   req.body.path = "editTopic";
-  console.log("calling kafka for topic");
   kafka.make_request("manage_topic", req.body, (error, result) => {
     console.log(result);
     if (result) {
