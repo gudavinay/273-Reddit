@@ -5,6 +5,7 @@ const getCommunityDetails = async (msg, callback) => {
     if (msg.query.requirePopulate) {
         await Community.findOne({ _id: msg.query.ID })
             .populate("listOfUsers.userID")
+            .populate("sentInvitesTo.userID")
             .populate("ownerID")
             .then((result) => {
                 res.data = result;

@@ -229,7 +229,7 @@ class Community extends Component {
           this.state.communityDetails.sentInvitesTo &&
           this.state.communityDetails.sentInvitesTo.length > 0
         ) {
-          userStatusInCommunity = this.state.communityDetails.listOfUsers.find(
+          userStatusInCommunity = this.state.communityDetails.sentInvitesTo.find(
             user => user.userID._id == getMongoUserID()
           );
           if (userStatusInCommunity) {
@@ -306,8 +306,8 @@ class Community extends Component {
           } else if (isUserBeingInvitedByModerator) {
             showPosts = false;
             participationButton = (
-              <div>
-                <button
+              <Row>
+                <Col><button
                   className="form-control"
                   style={{
                     display: "block",
@@ -320,8 +320,8 @@ class Community extends Component {
                   }}
                 >
                   Accept
-                </button>
-                <button
+                </button></Col>
+                <Col><button
                   className="form-control"
                   style={{
                     display: "block",
@@ -334,8 +334,10 @@ class Community extends Component {
                   }}
                 >
                   Reject
-                </button>
-              </div>
+                </button></Col>
+
+
+              </Row>
             );
           }
         } else {
