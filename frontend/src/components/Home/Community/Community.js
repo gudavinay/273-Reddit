@@ -9,10 +9,11 @@ import { Row, Col, Card, Collapse, Fade, Carousel } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import backendServer from "../../../webConfig";
+import { TablePagination } from "@material-ui/core";
 import {
   getDefaultRedditProfilePicture,
   getMongoUserID,
-  getToken,
+  getToken
 } from "../../../services/ControllerUtils";
 import errorSVG from "../../../assets/404.svg";
 // import { withStyles } from "@material-ui/core/styles";
@@ -32,12 +33,30 @@ class Community extends Component {
       community_id: props.location.pathname
         ? this.props.location.pathname.replace("/community/", "")
         : "",
-      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture(),
+      page: 0,
+      size: 2,
+      count: 0,
+      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture()
     };
     this.upVote = this.upVote.bind(this);
     this.downVote = this.downVote.bind(this);
     this.setComments = this.setComments.bind(this);
   }
+
+  PageSizeChange = e => {
+    this.setState({
+      size: Number(e.target.value),
+      page: 0
+    });
+    this.getPostOfCommunity(0, Number(e.target.value));
+  };
+
+  PageChange = (e, page) => {
+    this.setState({
+      page: Number(page)
+    });
+    this.getPostOfCommunity(Number(page), this.state.size);
+  };
 
   componentDidMount = async () => {
     this.props.setLoader();
@@ -48,33 +67,44 @@ class Community extends Component {
           this.state.community_id
         }&requirePopulate=${true}`
       )
-      .then((response) => {
+      .then(response => {
         this.props.unsetLoader();
         this.setState({ communityDetails: response.data });
       })
-      .catch((err) => {
+      .catch(err => {
         this.props.unsetLoader();
         console.log(err);
       });
+    this.getPostOfCommunity(this.state.page, this.state.size);
+  };
 
+  getPostOfCommunity(page, size) {
     this.props.setLoader();
     axios.defaults.headers.common["authorization"] = getToken();
+    console.log(
+      `${backendServer}/getPostsInCommunity?ID=${
+        this.state.community_id
+      }&userId=${getMongoUserID()}&page=${page}&size=${size}`
+    );
     axios
       .get(
         `${backendServer}/getPostsInCommunity?ID=${
           this.state.community_id
-        }&userId=${getMongoUserID()}`
+        }&userId=${getMongoUserID()}&page=${page}&size=${size}`
       )
-      .then((response) => {
+      .then(response => {
         this.props.unsetLoader();
         console.log("posts = ", response.data);
-        this.setState({ posts: response.data }, () => {});
+        this.setState(
+          { posts: response.data.post, count: response.data.count },
+          () => {}
+        );
       })
-      .catch((err) => {
+      .catch(err => {
         this.props.unsetLoader();
         console.log(err);
       });
-  };
+  }
 
   upVote(postId, userVoteDir, index) {
     var relScore = userVoteDir == 1 ? -1 : userVoteDir == 0 ? 1 : 2;
@@ -85,9 +115,9 @@ class Community extends Component {
         entityId: postId,
         userId: getMongoUserID(),
         voteDir: userVoteDir == 1 ? 0 : 1,
-        relScore: relScore,
+        relScore: relScore
       })
-      .then((response) => {
+      .then(response => {
         // this.props.unsetLoader();
         console.log("upVOted successfull = ", response);
         console.log("this.state = ", this.state);
@@ -105,7 +135,7 @@ class Community extends Component {
         this.setState({ parentCommentList: newPosts });
         // this.fetchCommentsWithPostID();
       })
-      .catch((err) => {
+      .catch(err => {
         // this.props.unsetLoader();
         console.log(err);
       });
@@ -120,9 +150,9 @@ class Community extends Component {
         entityId: postId,
         userId: getMongoUserID(),
         voteDir: userVoteDir == -1 ? 0 : -1,
-        relScore: relScore,
+        relScore: relScore
       })
-      .then((response) => {
+      .then(response => {
         // this.props.unsetLoader();
         console.log("downvoted successfull = ", response);
         const newPosts = this.state.posts.slice();
@@ -139,7 +169,7 @@ class Community extends Component {
         this.setState({ parentCommentList: newPosts });
         // this.fetchCommentsWithPostID();
       })
-      .catch((err) => {
+      .catch(err => {
         // this.props.unsetLoader();
         console.log(err);
       });
@@ -171,7 +201,7 @@ class Community extends Component {
               borderRadius: "30px",
               background: "#e17157",
               color: "white",
-              cursor: "not-allowed",
+              cursor: "not-allowed"
             }}
           >
             Moderator
@@ -183,7 +213,7 @@ class Community extends Component {
           this.state.communityDetails.listOfUsers.length > 0
         ) {
           userStatusInCommunity = this.state.communityDetails.listOfUsers.find(
-            (user) => user.userID._id == getMongoUserID()
+            user => user.userID._id == getMongoUserID()
           );
           if (userStatusInCommunity) {
             didUserRequestToJoin = true;
@@ -194,7 +224,7 @@ class Community extends Component {
           this.state.communityDetails.sentInvitesTo.length > 0
         ) {
           userStatusInCommunity = this.state.communityDetails.listOfUsers.find(
-            (user) => user.userID._id == getMongoUserID()
+            user => user.userID._id == getMongoUserID()
           );
           if (userStatusInCommunity) {
             isUserBeingInvitedByModerator = true;
@@ -211,7 +241,7 @@ class Community extends Component {
                     display: "block",
                     borderRadius: "30px",
                     background: "#e17157",
-                    color: "white",
+                    color: "white"
                   }}
                   onClick={() => {
                     this.props.setLoader();
@@ -219,14 +249,14 @@ class Community extends Component {
                     axios
                       .post(`${backendServer}/userLeaveRequestFromCommunity`, {
                         community_id: this.state.community_id,
-                        user_id: getMongoUserID(),
+                        user_id: getMongoUserID()
                       })
-                      .then((response) => {
+                      .then(response => {
                         this.props.unsetLoader();
                         console.log(response);
                         this.setState({ communityDetails: response.data });
                       })
-                      .catch((err) => {
+                      .catch(err => {
                         this.props.unsetLoader();
                         console.log(err);
                       });
@@ -244,7 +274,7 @@ class Community extends Component {
                     display: "block",
                     borderRadius: "30px",
                     background: "#e17157",
-                    color: "white",
+                    color: "white"
                   }}
                 >
                   Request to join denied.
@@ -259,7 +289,7 @@ class Community extends Component {
                     display: "block",
                     borderRadius: "30px",
                     background: "#e17157",
-                    color: "white",
+                    color: "white"
                   }}
                 >
                   Waiting for approval.
@@ -275,7 +305,7 @@ class Community extends Component {
                     display: "block",
                     borderRadius: "30px",
                     background: "#e17157",
-                    color: "white",
+                    color: "white"
                   }}
                   onClick={() => {
                     alert("Yet to be implemented");
@@ -289,7 +319,7 @@ class Community extends Component {
                     display: "block",
                     borderRadius: "30px",
                     background: "#e17157",
-                    color: "white",
+                    color: "white"
                   }}
                   onClick={() => {
                     alert("Yet to be implemented");
@@ -309,7 +339,7 @@ class Community extends Component {
                 display: "block",
                 borderRadius: "30px",
                 background: "#e17157",
-                color: "white",
+                color: "white"
               }}
               onClick={() => {
                 this.props.setLoader();
@@ -317,14 +347,14 @@ class Community extends Component {
                 axios
                   .post(`${backendServer}/userJoinRequestToCommunity`, {
                     community_id: this.state.community_id,
-                    user_id: getMongoUserID(),
+                    user_id: getMongoUserID()
                   })
-                  .then((response) => {
+                  .then(response => {
                     this.props.unsetLoader();
                     console.log(response);
                     this.setState({ communityDetails: response.data });
                   })
-                  .catch((err) => {
+                  .catch(err => {
                     this.props.unsetLoader();
                     console.log(err);
                   });
@@ -339,9 +369,10 @@ class Community extends Component {
         this.state.communityDetails.listOfUsers &&
         this.state.communityDetails.listOfUsers.length > 0
       ) {
-        usersPresentInTheCommunity = this.state.communityDetails.listOfUsers.filter(
-          (user) => user.isAccepted == 1
-        );
+        usersPresentInTheCommunity =
+          this.state.communityDetails.listOfUsers.filter(
+            user => user.isAccepted == 1
+          );
       }
     }
     if (showPosts) {
@@ -349,6 +380,7 @@ class Community extends Component {
         this.state.posts.forEach((post, index) => {
           postsToRender.push(
             <Post
+              key={index}
               upVote={this.upVote}
               downVote={this.downVote}
               index={index}
@@ -381,7 +413,7 @@ class Community extends Component {
           style={{
             display: "block",
             height: "5%",
-            color: "white",
+            color: "white"
           }}
           className="gradientShade"
         >
@@ -421,7 +453,7 @@ class Community extends Component {
                             border: "1px solid",
                             borderRadius: "27px",
                             padding: "2px",
-                            margin: "3px",
+                            margin: "3px"
                           }}
                           alt="User Logo"
                           src={userSvg}
@@ -431,8 +463,8 @@ class Community extends Component {
                         to={{
                           pathname: `/createPost/${this.state.community_id}`,
                           rules: this.state.communityDetails?.rules,
-                          communityName: this.state.communityDetails
-                            ?.communityName,
+                          communityName:
+                            this.state.communityDetails?.communityName
                         }}
                       >
                         <input
@@ -458,6 +490,18 @@ class Community extends Component {
                     </div>
                   )}
                   {postsToRender}
+                  <div>
+                    {" "}
+                    <TablePagination
+                      count={this.state.count}
+                      page={this.state.page}
+                      onChangePage={this.PageChange}
+                      rowsPerPage={this.state.size}
+                      onChangeRowsPerPage={this.PageSizeChange}
+                      color="primary"
+                      rowsPerPageOptions={[2, 5, 10]}
+                    />
+                  </div>
                 </Col>
                 <Col>
                   {this.state.communityDetails &&
@@ -472,14 +516,14 @@ class Community extends Component {
                           <Card.Body>
                             <Carousel interval={1500}>
                               {this.state.communityDetails.imageURL.map(
-                                (image) => {
+                                image => {
                                   return (
                                     <Carousel.Item key={image._id}>
                                       <div
                                         style={{
                                           textAlign: "center",
                                           boxShadow:
-                                            "10px ​5px 5px -4px white inset",
+                                            "10px ​5px 5px -4px white inset"
                                         }}
                                       >
                                         <img
@@ -487,7 +531,7 @@ class Community extends Component {
                                           alt=""
                                           style={{
                                             height: "220px",
-                                            width: "320px",
+                                            width: "320px"
                                           }}
                                         ></img>
                                       </div>
@@ -518,7 +562,7 @@ class Community extends Component {
 
                                 if (index < 5) {
                                   normalView.push(
-                                    <div key={rule._id}>
+                                    <div key={index}>
                                       <strong>{rule.title}</strong>:{" "}
                                       {rule.description}
                                     </div>
@@ -527,16 +571,17 @@ class Community extends Component {
                                   if (index == 5) {
                                     normalView.push(
                                       <div
+                                        key={index}
                                         className="upArrowRotate"
                                         style={{
                                           display: !this.state.showMoreRules
                                             ? "block"
                                             : "none",
-                                          textAlign: "center",
+                                          textAlign: "center"
                                         }}
                                         onClick={() =>
-                                          this.setState((state) => ({
-                                            showMoreRules: !state.showMoreRules,
+                                          this.setState(state => ({
+                                            showMoreRules: !state.showMoreRules
                                           }))
                                         }
                                       >
@@ -552,7 +597,7 @@ class Community extends Component {
                                   );
                                 }
                                 return (
-                                  <div key="">
+                                  <div key={index}>
                                     {normalView}
                                     <Collapse in={this.state.showMoreRules}>
                                       <Fade>
@@ -569,11 +614,12 @@ class Community extends Component {
                                                   .showMoreRules
                                                   ? "block"
                                                   : "none",
-                                                textAlign: "center",
+                                                textAlign: "center"
                                               }}
                                               onClick={() =>
-                                                this.setState((state) => ({
-                                                  showMoreRules: !state.showMoreRules,
+                                                this.setState(state => ({
+                                                  showMoreRules:
+                                                    !state.showMoreRules
                                                 }))
                                               }
                                             >
@@ -618,16 +664,18 @@ class Community extends Component {
                                   if (index == 5) {
                                     normalView.push(
                                       <div
+                                        key={topic._id}
                                         className="upArrowRotate"
                                         style={{
                                           display: !this.state.showMoreTopics
                                             ? "block"
                                             : "none",
-                                          textAlign: "center",
+                                          textAlign: "center"
                                         }}
                                         onClick={() =>
-                                          this.setState((state) => ({
-                                            showMoreTopics: !state.showMoreTopics,
+                                          this.setState(state => ({
+                                            showMoreTopics:
+                                              !state.showMoreTopics
                                           }))
                                         }
                                       >
@@ -659,11 +707,12 @@ class Community extends Component {
                                                   .showMoreTopics
                                                   ? "block"
                                                   : "none",
-                                                textAlign: "center",
+                                                textAlign: "center"
                                               }}
                                               onClick={() =>
-                                                this.setState((state) => ({
-                                                  showMoreTopics: !state.showMoreTopics,
+                                                this.setState(state => ({
+                                                  showMoreTopics:
+                                                    !state.showMoreTopics
                                                 }))
                                               }
                                             >
@@ -724,11 +773,11 @@ class Community extends Component {
                                           display: !this.state.showMoreUsers
                                             ? "block"
                                             : "none",
-                                          textAlign: "center",
+                                          textAlign: "center"
                                         }}
                                         onClick={() =>
-                                          this.setState((state) => ({
-                                            showMoreUsers: !state.showMoreUsers,
+                                          this.setState(state => ({
+                                            showMoreUsers: !state.showMoreUsers
                                           }))
                                         }
                                       >
@@ -759,11 +808,12 @@ class Community extends Component {
                                                   .showMoreUsers
                                                   ? "block"
                                                   : "none",
-                                                textAlign: "center",
+                                                textAlign: "center"
                                               }}
                                               onClick={() =>
-                                                this.setState((state) => ({
-                                                  showMoreUsers: !state.showMoreUsers,
+                                                this.setState(state => ({
+                                                  showMoreUsers:
+                                                    !state.showMoreUsers
                                                 }))
                                               }
                                             >
@@ -795,7 +845,7 @@ class Community extends Component {
               left: "0",
               bottom: "0",
               height: "60px",
-              width: "100%",
+              width: "100%"
             }}
           >
             <div
@@ -803,7 +853,7 @@ class Community extends Component {
                 display: "block",
                 padding: "20px",
                 height: "60px",
-                width: "100%",
+                width: "100%"
               }}
             >
               <span>Top ^ Yet to be impl</span>

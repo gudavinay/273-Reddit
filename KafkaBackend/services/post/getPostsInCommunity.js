@@ -5,33 +5,42 @@ const mongoose = require("mongoose");
 const getPostsInCommunity = async (msg, callback) => {
   let res = {};
   console.log("msg.query posts = ", msg.query);
+  let skip = Number(msg.page) * Number(msg.size);
+  let count = await Post.countDocuments({
+    communityID: msg.query.ID
+  });
+  console.log("-------------------skip--------------", skip);
+  console.log("-------------------skip--------------", Number(msg.size));
   const userId = msg.query.userId;
   Post.aggregate([
     {
       $match: {
-        communityID: mongoose.Types.ObjectId(msg.query.ID),
-      },
+        communityID: mongoose.Types.ObjectId(msg.query.ID)
+      }
     },
     {
       $lookup: {
         from: "comments",
         localField: "_id",
         foreignField: "postID",
-        as: "commentsDetails",
-      },
+        as: "commentsDetails"
+      }
     },
     {
       $lookup: {
         from: "userprofiles",
         localField: "userID",
         foreignField: "_id",
-        as: "userDetails",
-      },
+        as: "userDetails"
+      }
     },
+    { $sort: { createdAt: -1 } },
+    { $skip: skip },
+    { $limit: Number(msg.size) }
   ])
     // Post.find({ communityID: mongoose.Types.ObjectId(msg.query.ID) })
     // .populate("userID")
-    .then((result) => {
+    .then(result => {
       console.log("results in posts community = ", result);
       const responseData = JSON.parse(JSON.stringify(result));
       if (responseData && responseData.length > 0) {
@@ -42,8 +51,8 @@ const getPostsInCommunity = async (msg, callback) => {
             [
               {
                 $match: {
-                  entityId: mongoose.Types.ObjectId(entityId),
-                },
+                  entityId: mongoose.Types.ObjectId(entityId)
+                }
               },
 
               {
@@ -55,49 +64,49 @@ const getPostsInCommunity = async (msg, callback) => {
                         $cond: {
                           if: { $eq: ["$voteDir", 1] },
                           then: 1,
-                          else: 0,
-                        },
-                      },
-                    },
+                          else: 0
+                        }
+                      }
+                    }
                   },
                   downvoteCount: {
                     $sum: {
                       $cond: {
                         if: { $eq: ["$voteDir", -1] },
                         then: 1,
-                        else: 0,
-                      },
-                    },
+                        else: 0
+                      }
+                    }
                   },
                   userVoteDir: {
                     $sum: {
                       $cond: {
                         if: {
-                          $eq: ["$userId", mongoose.Types.ObjectId(userId)],
+                          $eq: ["$userId", mongoose.Types.ObjectId(userId)]
                         },
                         then: {
                           $cond: {
                             if: {
-                              $eq: ["$voteDir", -1],
+                              $eq: ["$voteDir", -1]
                             },
                             then: -1,
                             else: {
                               $cond: {
                                 if: {
-                                  $eq: ["$voteDir", 1],
+                                  $eq: ["$voteDir", 1]
                                 },
                                 then: 1,
-                                else: 0,
-                              },
-                            },
-                          },
+                                else: 0
+                              }
+                            }
+                          }
                         },
-                        else: 0,
-                      },
-                    },
-                  },
-                },
-              },
+                        else: 0
+                      }
+                    }
+                  }
+                }
+              }
             ],
             (err, result) => {
               console.log("result c = ", result);
@@ -106,7 +115,11 @@ const getPostsInCommunity = async (msg, callback) => {
                 res.status = 500;
                 callback(null, res);
               } else {
-                resp.score = resp.upvoteCount = resp.downvoteCount = resp.userVoteDir = 0;
+                resp.score =
+                  resp.upvoteCount =
+                  resp.downvoteCount =
+                  resp.userVoteDir =
+                    0;
                 if (result && result[0]) {
                   resp.score = result[0].upvoteCount - result[0].downvoteCount;
                   resp.upvoteCount = result[0].upvoteCount;
@@ -130,7 +143,7 @@ const getPostsInCommunity = async (msg, callback) => {
               }
               if (index == responseData.length - 1) {
                 console.log("response data = ", responseData);
-                res.data = responseData;
+                res.data = { post: responseData, count: count };
                 res.status = 200;
                 callback(null, res);
               }
@@ -144,7 +157,7 @@ const getPostsInCommunity = async (msg, callback) => {
       }
       // res.status(200).send(result);
     })
-    .catch((err) => {
+    .catch(err => {
       console.log("err - ", err);
       res.status = 500;
       callback(null, res);
