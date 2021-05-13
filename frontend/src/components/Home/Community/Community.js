@@ -9,6 +9,7 @@ import { Row, Col, Card, Collapse, Fade, Carousel } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import backendServer from "../../../webConfig";
+import { TablePagination } from "@material-ui/core";
 import {
   getDefaultRedditProfilePicture,
   getMongoUserID,
@@ -32,11 +33,44 @@ class Community extends Component {
       community_id: props.location.pathname
         ? this.props.location.pathname.replace("/community/", "")
         : "",
+      page: 0,
+      size: 2,
+      count: 0,
       getDefaultRedditProfilePicture: getDefaultRedditProfilePicture(),
     };
     this.upVote = this.upVote.bind(this);
     this.downVote = this.downVote.bind(this);
     this.setComments = this.setComments.bind(this);
+  }
+
+  PageSizeChange = (e) => {
+    this.setState({
+      size: Number(e.target.value),
+      page: 0,
+    });
+    this.getPostOfCommunity(0, Number(e.target.value));
+  };
+
+  PageChange = (e, page) => {
+    this.setState({
+      page: Number(page),
+    });
+    this.getPostOfCommunity(Number(page), this.state.size);
+  };
+  componentDidUpdate(prevState) {
+    if (
+      JSON.stringify(prevState.communityDetails) !=
+        JSON.stringify(this.state.communityDetails) &&
+      this.state.communityDetails &&
+      this.state.communityDetails.listOfUsers &&
+      this.state.communityDetails.listOfUsers.length > 0
+    ) {
+      this.state.communityDetails.listOfUsers.forEach((user) => {
+        if (!user.userID.profile_picture_url) {
+          user.userID.profile_picture_url = getDefaultRedditProfilePicture();
+        }
+      });
+    }
   }
 
   componentDidMount = async () => {
@@ -56,25 +90,36 @@ class Community extends Component {
         this.props.unsetLoader();
         console.log(err);
       });
+    this.getPostOfCommunity(this.state.page, this.state.size);
+  };
 
+  getPostOfCommunity(page, size) {
     this.props.setLoader();
     axios.defaults.headers.common["authorization"] = getToken();
+    console.log(
+      `${backendServer}/getPostsInCommunity?ID=${
+        this.state.community_id
+      }&userId=${getMongoUserID()}&page=${page}&size=${size}`
+    );
     axios
       .get(
         `${backendServer}/getPostsInCommunity?ID=${
           this.state.community_id
-        }&userId=${getMongoUserID()}`
+        }&userId=${getMongoUserID()}&page=${page}&size=${size}`
       )
       .then((response) => {
         this.props.unsetLoader();
         console.log("posts = ", response.data);
-        this.setState({ posts: response.data }, () => {});
+        this.setState(
+          { posts: response.data.post, count: response.data.count },
+          () => {}
+        );
       })
       .catch((err) => {
         this.props.unsetLoader();
         console.log(err);
       });
-  };
+  }
 
   upVote(postId, userVoteDir, index) {
     var relScore = userVoteDir == 1 ? -1 : userVoteDir == 0 ? 1 : 2;
@@ -195,7 +240,7 @@ class Community extends Component {
           this.state.communityDetails.sentInvitesTo &&
           this.state.communityDetails.sentInvitesTo.length > 0
         ) {
-          userStatusInCommunity = this.state.communityDetails.listOfUsers.find(
+          userStatusInCommunity = this.state.communityDetails.sentInvitesTo.find(
             (user) => user.userID._id == getMongoUserID()
           );
           if (userStatusInCommunity) {
@@ -203,7 +248,6 @@ class Community extends Component {
           }
         }
         if (didUserRequestToJoin || isUserBeingInvitedByModerator) {
-          showPosts = false;
           if (didUserRequestToJoin) {
             if (userStatusInCommunity.isAccepted == 1) {
               participationButton = (
@@ -238,6 +282,7 @@ class Community extends Component {
                 </button>
               );
             } else if (userStatusInCommunity.isAccepted == -1) {
+              showPosts = false;
               participationButton = (
                 <button
                   disabled
@@ -253,6 +298,7 @@ class Community extends Component {
                 </button>
               );
             } else {
+              showPosts = false;
               participationButton = (
                 <button
                   disabled
@@ -269,37 +315,42 @@ class Community extends Component {
               );
             }
           } else if (isUserBeingInvitedByModerator) {
+            showPosts = false;
             participationButton = (
-              <div>
-                <button
-                  className="form-control"
-                  style={{
-                    display: "block",
-                    borderRadius: "30px",
-                    background: "#e17157",
-                    color: "white",
-                  }}
-                  onClick={() => {
-                    alert("Yet to be implemented");
-                  }}
-                >
-                  Accept
-                </button>
-                <button
-                  className="form-control"
-                  style={{
-                    display: "block",
-                    borderRadius: "30px",
-                    background: "#e17157",
-                    color: "white",
-                  }}
-                  onClick={() => {
-                    alert("Yet to be implemented");
-                  }}
-                >
-                  Reject
-                </button>
-              </div>
+              <Row>
+                <Col>
+                  <button
+                    className="form-control"
+                    style={{
+                      display: "block",
+                      borderRadius: "30px",
+                      background: "#e17157",
+                      color: "white",
+                    }}
+                    onClick={() => {
+                      alert("Yet to be implemented");
+                    }}
+                  >
+                    Accept
+                  </button>
+                </Col>
+                <Col>
+                  <button
+                    className="form-control"
+                    style={{
+                      display: "block",
+                      borderRadius: "30px",
+                      background: "#e17157",
+                      color: "white",
+                    }}
+                    onClick={() => {
+                      alert("Yet to be implemented");
+                    }}
+                  >
+                    Reject
+                  </button>
+                </Col>
+              </Row>
             );
           }
         } else {
@@ -351,6 +402,7 @@ class Community extends Component {
         this.state.posts.forEach((post, index) => {
           postsToRender.push(
             <Post
+              key={index}
               upVote={this.upVote}
               downVote={this.downVote}
               index={index}
@@ -360,6 +412,20 @@ class Community extends Component {
             ></Post>
           );
         });
+        postsToRender.push(
+          <div>
+            {" "}
+            <TablePagination
+              count={this.state.count}
+              page={this.state.page}
+              onChangePage={this.PageChange}
+              rowsPerPage={this.state.size}
+              onChangeRowsPerPage={this.PageSizeChange}
+              color="primary"
+              rowsPerPageOptions={[2, 5, 10]}
+            />
+          </div>
+        );
       }
     } else {
       postsToRender.push(
@@ -520,7 +586,7 @@ class Community extends Component {
 
                                 if (index < 5) {
                                   normalView.push(
-                                    <div key={rule._id}>
+                                    <div key={index}>
                                       <strong>{rule.title}</strong>:{" "}
                                       {rule.description}
                                     </div>
@@ -529,6 +595,7 @@ class Community extends Component {
                                   if (index == 5) {
                                     normalView.push(
                                       <div
+                                        key={index}
                                         className="upArrowRotate"
                                         style={{
                                           display: !this.state.showMoreRules
@@ -554,7 +621,7 @@ class Community extends Component {
                                   );
                                 }
                                 return (
-                                  <div key="">
+                                  <div key={index}>
                                     {normalView}
                                     <Collapse in={this.state.showMoreRules}>
                                       <Fade>
@@ -620,6 +687,7 @@ class Community extends Component {
                                   if (index == 5) {
                                     normalView.push(
                                       <div
+                                        key={topic._id}
                                         className="upArrowRotate"
                                         style={{
                                           display: !this.state.showMoreTopics
@@ -700,86 +768,161 @@ class Community extends Component {
                           </div>
                           <div>
                             <strong>Total Users:</strong>{" "}
-                            {usersPresentInTheCommunity.length}
+                            {usersPresentInTheCommunity.length + 1}
                           </div>
                           {usersPresentInTheCommunity.length > 0 && (
                             <div>
                               <div>
                                 <strong>List of Users:</strong>
                               </div>
-                              {usersPresentInTheCommunity.map((user, index) => {
-                                var normalView = [],
-                                  expandedView = [];
+                              <Row
+                                style={{ padding: "0 10px", marginTop: "10px" }}
+                              >
+                                <Col sm={2} style={{ margin: "4px 0px" }}>
+                                  <img
+                                    src={
+                                      this.state.communityDetails.ownerID
+                                        .profile_picture_url
+                                        ? this.state.communityDetails.ownerID
+                                            .profile_picture_url
+                                        : this.state
+                                            .getDefaultRedditProfilePicture
+                                    }
+                                    style={{
+                                      height: "30px",
+                                      width: "30px",
+                                      borderRadius: "15px",
+                                    }}
+                                  />
+                                  {/* {user.userID.profile_picture_url ? <img src={user.userID.profile_picture_url} style={{ height: '30px', width: '30px', borderRadius: '15px' }} /> : <img src={getDefaultRedditProfilePicture()} style={{ height: '30px', width: '30px', borderRadius: '15px' }} />} */}
+                                </Col>
+                                <Col style={{ paddingLeft: "0" }}>
+                                  u/
+                                  <strong>
+                                    {this.state.communityDetails.ownerID.name}
+                                  </strong>
+                                </Col>
+                              </Row>
+                              <div style={{ padding: "0 10px" }}>
+                                {usersPresentInTheCommunity.map(
+                                  (user, index) => {
+                                    var normalView = [],
+                                      expandedView = [];
 
-                                if (index < 5) {
-                                  normalView.push(
-                                    <div key={user.userID._id}>
-                                      {user.userID._id}
-                                    </div>
-                                  );
-                                } else {
-                                  if (index == 5) {
-                                    normalView.push(
-                                      <div
-                                        className="upArrowRotate"
-                                        style={{
-                                          display: !this.state.showMoreUsers
-                                            ? "block"
-                                            : "none",
-                                          textAlign: "center",
-                                        }}
-                                        onClick={() =>
-                                          this.setState((state) => ({
-                                            showMoreUsers: !state.showMoreUsers,
-                                          }))
-                                        }
-                                      >
-                                        <i className="fa fa-angle-double-down" />
+                                    if (index < 5) {
+                                      normalView.push(
+                                        <div key={user.userID._id}>
+                                          <Row>
+                                            <Col
+                                              sm={2}
+                                              style={{ margin: "4px 0px" }}
+                                            >
+                                              <img
+                                                src={
+                                                  user.userID
+                                                    .profile_picture_url
+                                                }
+                                                style={{
+                                                  height: "30px",
+                                                  width: "30px",
+                                                  borderRadius: "15px",
+                                                }}
+                                              />
+                                              {/* {user.userID.profile_picture_url ? <img src={user.userID.profile_picture_url} style={{ height: '30px', width: '30px', borderRadius: '15px' }} /> : <img src={getDefaultRedditProfilePicture()} style={{ height: '30px', width: '30px', borderRadius: '15px' }} />} */}
+                                            </Col>
+                                            <Col style={{ paddingLeft: "0" }}>
+                                              u/
+                                              <strong>
+                                                {user.userID.name}
+                                              </strong>
+                                            </Col>
+                                          </Row>
+                                        </div>
+                                      );
+                                    } else {
+                                      if (index == 5) {
+                                        normalView.push(
+                                          <div
+                                            className="upArrowRotate"
+                                            style={{
+                                              display: !this.state.showMoreUsers
+                                                ? "block"
+                                                : "none",
+                                              textAlign: "center",
+                                            }}
+                                            onClick={() =>
+                                              this.setState((state) => ({
+                                                showMoreUsers: !state.showMoreUsers,
+                                              }))
+                                            }
+                                          >
+                                            <i className="fa fa-angle-double-down" />
+                                          </div>
+                                        );
+                                      }
+                                      expandedView.push(
+                                        <Row>
+                                          <Col
+                                            sm={2}
+                                            style={{ margin: "2px 0px" }}
+                                          >
+                                            <img
+                                              src={
+                                                user.userID.profile_picture_url
+                                              }
+                                              style={{
+                                                height: "30px",
+                                                width: "30px",
+                                                borderRadius: "15px",
+                                              }}
+                                            />
+                                            {/* {user.userID.profile_picture_url ? <img src={user.userID.profile_picture_url} style={{ height: '30px', width: '30px', borderRadius: '15px' }} /> : <img src={getDefaultRedditProfilePicture()} style={{ height: '30px', width: '30px', borderRadius: '15px' }} />} */}
+                                          </Col>
+                                          <Col style={{ paddingLeft: "0" }}>
+                                            u/
+                                            <strong>{user.userID.name}</strong>
+                                          </Col>
+                                        </Row>
+                                      );
+                                    }
+                                    return (
+                                      <div key="">
+                                        {normalView}
+                                        <Collapse in={this.state.showMoreUsers}>
+                                          <Fade>
+                                            <div>
+                                              {expandedView}
+                                              {usersPresentInTheCommunity.length -
+                                                1 ==
+                                              index ? (
+                                                <div
+                                                  className="downArrowRotate"
+                                                  style={{
+                                                    display: this.state
+                                                      .showMoreUsers
+                                                      ? "block"
+                                                      : "none",
+                                                    textAlign: "center",
+                                                  }}
+                                                  onClick={() =>
+                                                    this.setState((state) => ({
+                                                      showMoreUsers: !state.showMoreUsers,
+                                                    }))
+                                                  }
+                                                >
+                                                  <i className="fa fa-angle-double-up" />
+                                                </div>
+                                              ) : (
+                                                ""
+                                              )}
+                                            </div>
+                                          </Fade>
+                                        </Collapse>
                                       </div>
                                     );
                                   }
-                                  expandedView.push(
-                                    <div key={user.userID._id}>
-                                      {user.userID._id}
-                                    </div>
-                                  );
-                                }
-                                return (
-                                  <div key="">
-                                    {normalView}
-                                    <Collapse in={this.state.showMoreUsers}>
-                                      <Fade>
-                                        <div>
-                                          {expandedView}
-                                          {usersPresentInTheCommunity.length -
-                                            1 ==
-                                          index ? (
-                                            <div
-                                              className="downArrowRotate"
-                                              style={{
-                                                display: this.state
-                                                  .showMoreUsers
-                                                  ? "block"
-                                                  : "none",
-                                                textAlign: "center",
-                                              }}
-                                              onClick={() =>
-                                                this.setState((state) => ({
-                                                  showMoreUsers: !state.showMoreUsers,
-                                                }))
-                                              }
-                                            >
-                                              <i className="fa fa-angle-double-up" />
-                                            </div>
-                                          ) : (
-                                            ""
-                                          )}
-                                        </div>
-                                      </Fade>
-                                    </Collapse>
-                                  </div>
-                                );
-                              })}
+                                )}
+                              </div>
                             </div>
                           )}
                         </Card.Body>
@@ -790,14 +933,14 @@ class Community extends Component {
               </Row>
             </div>
           </Row>
-          <div
+          {/* <div
             style={{
               textAlign: "right",
               position: "fixed",
               left: "0",
               bottom: "0",
               height: "60px",
-              width: "100%",
+              width: "100%"
             }}
           >
             <div
@@ -805,12 +948,12 @@ class Community extends Component {
                 display: "block",
                 padding: "20px",
                 height: "60px",
-                width: "100%",
+                width: "100%"
               }}
             >
               <span>Top ^ Yet to be impl</span>
             </div>
-          </div>
+          </div> */}
         </div>
       </React.Fragment>
     );

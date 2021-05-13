@@ -399,7 +399,7 @@ class UserProfile extends Component {
                   <Col sm={2}>
                     <CheckIcon style={{ fontSize: '20px' }} onClick={() => {
                       axios.defaults.headers.common["authorization"] = getToken();
-                      axios.post(`${backendServer}/addNewTopic`, { newTopic: this.state.newTopic })
+                      axios.post(`${backendServer}/addTopic`, { name: this.state.newTopic })
                         .then(result => {
                           this.props.unsetLoader();
                           console.log(result);
@@ -424,11 +424,11 @@ class UserProfile extends Component {
                       <Col sm={1}>
                         {this.state.editTopic == topic.topic_id ? <CheckIcon style={{ fontSize: '20px' }} onClick={() => {
                           axios.defaults.headers.common["authorization"] = getToken();
-                          axios.post(`${backendServer}/editTopic`, { id: topic.topic_id, topic: this.state.editTopicValue })
+                          axios.post(`${backendServer}/editTopic`, { topic_id: topic.topic_id, name: this.state.editTopicValue })
                             .then(result => {
                               this.props.unsetLoader();
                               console.log(result);
-                              this.setState({ listOfTopicsFromDB: result.data });
+                              this.setState({ listOfTopicsFromDB: result.data, editTopic: null, editTopicValue: null });
                             })
                             .catch(err => {
                               this.props.unsetLoader();
@@ -439,7 +439,7 @@ class UserProfile extends Component {
                       </Col>
                       <Col sm={1}><img src={crossSVG} alt="" onClick={() => {
                         axios.defaults.headers.common["authorization"] = getToken();
-                        axios.post(`${backendServer}/deleteTopic`, { topic: topic.topic_id })
+                        axios.post(`${backendServer}/deleteTopic`, { topic_id: topic.topic_id })
                           .then(result => {
                             this.props.unsetLoader();
                             console.log(result);

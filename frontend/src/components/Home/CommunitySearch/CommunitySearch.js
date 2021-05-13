@@ -19,9 +19,9 @@ const options = {
     "desc": "Descending"
   },
   perPageValues: {
+    "2": "2",
     "5": "5",
-    "10": "10",
-    "15": "15"
+    "10": "10"
   }
 }
 
@@ -34,7 +34,7 @@ class CommunitySearch extends Component {
       communities: [],
       hasMoreItems: true,
       pagingCounter: 0,
-      perPage: 5,
+      perPage: 2,
       sortKey: "createdAt",
       sortValue: "desc"
     }

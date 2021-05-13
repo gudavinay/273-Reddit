@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Card, Col, Row } from "react-bootstrap";
+import { Card, Col, Collapse, Fade, Row } from "react-bootstrap";
 import Post from "./Community/Post";
 import Axios from "axios";
 import backendServer from "../../webConfig";
@@ -9,9 +9,11 @@ import {
   sortByNoOfUser,
   sortByTime,
   sortByComments,
+  getDefaultRedditProfilePicture,
 } from "../../services/ControllerUtils";
 import HomeSearchResults from "./HomeSearchResults";
 import createPostRulesSVG from "../../assets/createPostRules.svg";
+import { Link } from "react-router-dom";
 
 class Home extends Component {
   constructor(props) {
@@ -51,8 +53,8 @@ class Home extends Component {
           userVoteDir == 1
             ? newPosts[index].score - 1
             : userVoteDir == 0
-            ? newPosts[index].score + 1
-            : newPosts[index].score + 2;
+              ? newPosts[index].score + 1
+              : newPosts[index].score + 2;
 
         newPosts[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
         console.log("newComments = ", newPosts);
@@ -83,8 +85,8 @@ class Home extends Component {
           userVoteDir == -1
             ? newPosts[index].score + 1
             : userVoteDir == 0
-            ? newPosts[index].score - 1
-            : newPosts[index].score - 2;
+              ? newPosts[index].score - 1
+              : newPosts[index].score - 2;
 
         // newComments[index].userVoteDir = response.data.userVoteDir;
         newPosts[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
@@ -160,6 +162,24 @@ class Home extends Component {
         this.props.unsetLoader();
         console.log(err);
       });
+
+    Axios.get(`${backendServer}/getAllCommunitiesListForUser?ID=${getMongoUserID()}`)
+      .then((result) => {
+        console.log(result.data);
+        this.props.unsetLoader();
+        if (result.data) {
+          result.data.forEach(comm => {
+            comm.imageURL = comm.imageURL && comm.imageURL.length > 0 ? comm.imageURL[0].url : getDefaultRedditProfilePicture();
+          });
+        }
+
+        this.setState({ communitiesListForWidget: result.data });
+      })
+      .catch((err) => {
+        this.props.unsetLoader();
+        console.log(err);
+      });
+
   };
   SortType = (e) => {
     this.setState(
@@ -292,6 +312,115 @@ class Home extends Component {
                 </Card.Body>
               </Card>
             </Row>
+
+            {this.state.communitiesListForWidget &&
+              this.state.communitiesListForWidget.length > 0 && (
+                <Row>
+                  <Card className="card">
+                    <Card.Header className="cardHeader">
+                      Communities you&apos;re part of
+                          </Card.Header>
+                    <Card.Body>
+                      {this.state.communitiesListForWidget.map(
+                        (community, index) => {
+                          var normalView = [],
+                            expandedView = [];
+
+                          if (index < 5) {
+                            normalView.push(
+                              <div key={index}>
+                                <Row>
+                                  <Col sm={2} style={{ margin: '4px 0px' }}>
+                                    <img src={community.imageURL} style={{ height: '30px', width: '30px', borderRadius: '15px' }} />
+                                  </Col>
+                                  <Col style={{ paddingLeft: "0" }}>
+                                    <Link style={{ color: 'black' }} to={"/community/".concat(community._id)}>
+                                      r/<strong>{community.communityName}</strong>
+                                    </Link>
+                                  </Col>
+                                </Row>
+                              </div>
+                            );
+                          } else {
+                            if (index == 5) {
+                              normalView.push(
+                                <div
+                                  key={index}
+                                  className="upArrowRotate"
+                                  style={{
+                                    display: !this.state.showMoreCommunities
+                                      ? "block"
+                                      : "none",
+                                    textAlign: "center"
+                                  }}
+                                  onClick={() =>
+                                    this.setState(state => ({
+                                      showMoreCommunities: !state.showMoreCommunities
+                                    }))
+                                  }
+                                >
+                                  <i className="fa fa-angle-double-down" />
+                                </div>
+                              );
+                            }
+                            expandedView.push(
+                              <div key={index}>
+                                <Row>
+                                  <Col sm={2} style={{ margin: '4px 0px' }}>
+                                    <img src={community.imageURL} style={{ height: '30px', width: '30px', borderRadius: '15px' }} />
+                                  </Col>
+                                  <Col style={{ paddingLeft: "0" }}>
+                                    <Link style={{ color: 'black' }} to={"/community/".concat(community._id)}>
+                                      r/<strong>{community.communityName}</strong>
+                                    </Link>
+                                  </Col>
+                                </Row>
+                              </div>
+                            );
+                          }
+                          return (
+                            <div key={index}>
+                              {normalView}
+                              <Collapse in={this.state.showMoreCommunities}>
+                                <Fade>
+                                  <div>
+                                    {expandedView}
+                                    {this.state.communitiesListForWidget
+                                      .length -
+                                      1 ==
+                                      index ? (
+                                      <div
+                                        className="downArrowRotate"
+                                        style={{
+                                          display: this.state
+                                            .showMoreCommunities
+                                            ? "block"
+                                            : "none",
+                                          textAlign: "center"
+                                        }}
+                                        onClick={() =>
+                                          this.setState(state => ({
+                                            showMoreCommunities:
+                                              !state.showMoreCommunities
+                                          }))
+                                        }
+                                      >
+                                        <i className="fa fa-angle-double-up" />
+                                      </div>
+                                    ) : (
+                                      ""
+                                    )}
+                                  </div>
+                                </Fade>
+                              </Collapse>
+                            </div>
+                          );
+                        }
+                      )}
+                    </Card.Body>
+                  </Card>
+                </Row>
+              )}
           </Col>
         </Row>
       </React.Fragment>

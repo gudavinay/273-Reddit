@@ -19,6 +19,8 @@ app.post("/createPost", checkAuth, function (req, res, next) {
 app.get("/getPostsInCommunity", checkAuth, (req, res) => {
   req.body.path = "getPostsInCommunity";
   req.body.query = req.query;
+  req.body.page = req.query.page;
+  req.body.size = req.query.size;
   kafka.make_request("post", req.body, (error, result) => {
     console.log(result);
     if (result) {

@@ -50,6 +50,17 @@ const getAllCommunitiesSearch = async (msg, callback) => {
                 },
             },
             {
+                "$addFields": {
+                    "listOfUsersLength": {
+                        "$reduce": {
+                            "input": "$listOfUsers",
+                            "initialValue": 0,
+                            "in": { "$add": ["$$value", "$$this.isAccepted"] }
+                        }
+                    }
+                }
+            },
+            {
                 $project: {
                     communityName: "$communityName",
                     communityDescription: "$communityDescription",
@@ -57,7 +68,8 @@ const getAllCommunitiesSearch = async (msg, callback) => {
                     imageURL: "$imageURL",
                     createdAt: "$createdAt",
                     postsLength: { $size: "$posts" },
-                    listOfUsersLength: { $size: "$listOfUsers" },
+                    // listOfUsers: "$listOfUsers",
+                    listOfUsersLength: { "$add": ["$listOfUsersLength", 1] }, // Adding +1 means Owner
                     upVotedLength: "$upvoteCount",
                     downVotedLength: "$downvoteCount",
                 },

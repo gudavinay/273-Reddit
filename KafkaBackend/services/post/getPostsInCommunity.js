@@ -5,6 +5,12 @@ const mongoose = require("mongoose");
 const getPostsInCommunity = async (msg, callback) => {
   let res = {};
   console.log("msg.query posts = ", msg.query);
+  let skip = Number(msg.page) * Number(msg.size);
+  let count = await Post.countDocuments({
+    communityID: msg.query.ID,
+  });
+  console.log("-------------------skip--------------", skip);
+  console.log("-------------------skip--------------", Number(msg.size));
   const userId = msg.query.userId;
   Post.aggregate([
     {
@@ -72,6 +78,9 @@ const getPostsInCommunity = async (msg, callback) => {
         commentsCount: { $size: "$commentsDetails" },
       },
     },
+    { $sort: { createdAt: -1 } },
+    { $skip: skip },
+    { $limit: Number(msg.size) },
   ])
     // Post.find({ communityID: mongoose.Types.ObjectId(msg.query.ID) })
     // .populate("userID")

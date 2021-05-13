@@ -452,11 +452,11 @@ class DetailedPostView extends Component {
                     console.log(response);
                     document.getElementById("primaryComment").value = "";
                     this.setState({ primaryComment: null });
+                    this.fetchCommentsWithPostID();
                     this.props.setCommentsCount(
                       this.props.data.commentsCount + 1,
                       this.props.index
                     );
-                    this.fetchCommentsWithPostID();
                   })
                   .catch((err) => {
                     this.props.unsetLoader();

@@ -7,7 +7,11 @@ const addTopic = async (msg, callback) => {
     topic: msg.name,
   })
     .then((topic) => {
-      callback(null, topic);
+      db.Topic.findAll().then(result => {
+        callback(null, result);
+      }).catch(err => {
+        callback(err, null);
+      })
     })
     .catch((err) => {
       callback(err, null);

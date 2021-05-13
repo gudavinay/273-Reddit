@@ -8,7 +8,8 @@ import backendServer from "../../../webConfig";
 import { getMongoUserID, getToken } from "../../../services/ControllerUtils";
 import "./CreatePost.css";
 import { Collapse, Fade } from "react-bootstrap";
-
+import { Link } from "react-router-dom";
+import YoutubeSearchedForIcon from '@material-ui/icons/YoutubeSearchedFor';
 class CreatePost extends Component {
   constructor(props) {
     super(props);
@@ -81,7 +82,12 @@ class CreatePost extends Component {
         {/* inside CreatePost ... {this.props.content} */}
         <Row style={{ padding: "30px" }}>
           <Col sm={1}></Col>
-          <Col sm={7}>
+          <Col sm={7} >
+
+            <Link style={{ color: 'black', padding: '0 0 15px 0', display: "block", textAlign: 'center' }} to={"/community/".concat(this.state.community_id)}>
+              Back to community <YoutubeSearchedForIcon />
+            </Link>
+
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -100,26 +106,6 @@ class CreatePost extends Component {
                 }
               }}
             >
-              {/* {JSON.stringify(this.state)} */}
-              {/* <Tabs defaultActiveKey="0" id="tabs" onSelect={(eventKey) => { this.setState({ type: eventKey }) }}>
-                                <Tab eventKey="0" title="Post" style={{ padding: '3%' }}>
-                                    {titleTag}
-                                    <Input type="text" className="form-control" placeholder="Text (optional)" id="description" name="description" onChange={(e) => { this.setState({ description: e.target.value }) }} />
-                                    {postButton}
-                                </Tab>
-                                <Tab eventKey="2" title="Images" style={{ padding: '3%' }}>
-                                    {titleTag}
-                                    <input type="file" className="form-control" id="files" name="files" accept="image/*" multiple></input>
-                                    {postButton}
-                                </Tab>
-                                <Tab eventKey="1" title="Link" style={{ padding: '3%' }}>
-                                    {titleTag}
-                                    <Input type="text" className="form-control" placeholder="Url" id="link" name="link" onChange={(e) => { this.setState({ link: e.target.value }) }} />
-                                    {postButton}
-                                </Tab>
-                                <Tab eventKey="poll" title="Poll" disabled style={{ padding: '3%' }}>
-                                </Tab>
-                            </Tabs> */}
 
               <Tab.Container
                 id="left-tabs-example"
@@ -294,7 +280,7 @@ class CreatePost extends Component {
                                 <div>
                                   {expandedView}
                                   {this.props.location.rules.length - 1 ==
-                                  index ? (
+                                    index ? (
                                     <div
                                       className="downArrowRotate"
                                       style={{
