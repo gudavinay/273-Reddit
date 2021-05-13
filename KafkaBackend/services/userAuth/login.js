@@ -2,6 +2,7 @@ const db = require("../../models/sql");
 const bcrypt = require("bcrypt");
 
 const login = async (msg, callback) => {
+  res = {};
   db.User.findOne({
     where: {
       email: msg.email
@@ -9,24 +10,30 @@ const login = async (msg, callback) => {
   })
     .then(user => {
       if (user === null) {
-        callback(null, "User not found");
+        res.status = 404;
+        callback(null, res);
       } else {
         bcrypt.compare(
           msg.password,
           user.password,
           function (err, matchPassword) {
-            if (err) callback("Username or password mismatch", null);
+            if (err) return;
             if (matchPassword) {
-              callback(null, user);
+              user.password = "";
+              res.status = 200;
+              res.data = user;
+              callback(null, res);
             } else {
-              callback(err, "Username or password mismatch");
+              res.status = 401;
+              callback(null, res);
             }
           }
         );
       }
     })
     .catch(err => {
-      callback(err, "UnSuccessful Login");
+      res.status = 500;
+      callback(null, res);
     });
 };
 

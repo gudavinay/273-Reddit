@@ -14,7 +14,6 @@ class Login extends Component {
     {
       this.state = {
         error: "",
-        authFlag: "",
         redirect: <Redirect to="/" />,
         token: ""
       };
@@ -66,15 +65,13 @@ class Login extends Component {
 
   componentDidUpdate(prevState) {
     if (prevState.user != this.props.user) {
-      if (this.props.user == "Username or password mismatch") {
+      if (prevState.error != this.props.error && this.props.error.length > 0) {
         this.setState({
-          authFlag: false,
           formerror: {},
-          error: this.props.user
+          error: this.props.error
         });
       } else {
         this.setState({
-          authFlag: true,
           error: ""
         });
         this.getUserProfile();
@@ -195,7 +192,8 @@ class Login extends Component {
 
 const mapStateToProps = state => {
   return {
-    user: state.login.user
+    user: state.login.user,
+    error: state.login.error
   };
 };
 

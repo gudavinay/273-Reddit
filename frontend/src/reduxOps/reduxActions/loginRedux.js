@@ -11,9 +11,10 @@ export const loginRedux = data => async dispatch => {
       });
     })
     .catch(error => {
+      console.log(error);
       dispatch({
         type: ERROR,
-        payload: error
+        payload: error.response.data.message
       });
     });
 };
