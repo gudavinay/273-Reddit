@@ -1,13 +1,7 @@
 import React, { Component } from "react";
 // import Tabs from 'react-bootstrap/Tabs';
 import Tab from "react-bootstrap/Tab";
-import {
-  Button,
-  Card,
-  Col,
-  Nav,
-  Row
-} from "react-bootstrap";
+import { Button, Card, Col, Nav, Row } from "react-bootstrap";
 import createPostRulesSVG from "../../../assets/createPostRules.svg";
 import Axios from "axios";
 import backendServer from "../../../webConfig";
@@ -26,7 +20,7 @@ class CreatePost extends Component {
       title: null,
       link: null,
       description: null,
-      user_id: getMongoUserID()
+      user_id: getMongoUserID(),
     };
     console.log("PROPS AND STATE in create post", this.props, this.state);
   }
@@ -40,7 +34,7 @@ class CreatePost extends Component {
         placeholder="Title"
         id="title"
         name="post"
-        onChange={e => {
+        onChange={(e) => {
           this.setState({ title: e.target.value });
         }}
       />
@@ -56,7 +50,7 @@ class CreatePost extends Component {
           borderRadius: "50px",
           backgroundColor: this.state.title ? "#0266b3" : "#777",
           color: "white",
-          fontWeight: "500"
+          fontWeight: "500",
         }}
         variant="light"
       >
@@ -66,26 +60,25 @@ class CreatePost extends Component {
     return (
       <React.Fragment>
         {/* inside CreatePost ... {this.props.content} */}
-        <Row style={{ padding: '30px' }}>
+        <Row style={{ padding: "30px" }}>
           <Col sm={1}></Col>
           <Col sm={7}>
             <form
-              onSubmit={e => {
+              onSubmit={(e) => {
                 e.preventDefault();
                 if (this.state.title) {
                   this.props.setLoader();
                   Axios.defaults.headers.common["authorization"] = getToken();
                   Axios.post(backendServer + "/createPost", this.state)
-                    .then(result => {
+                    .then((result) => {
                       this.props.unsetLoader();
                       console.log(result);
                     })
-                    .catch(err => {
+                    .catch((err) => {
                       this.props.unsetLoader();
                       console.log(err);
                     });
                 }
-
               }}
             >
               {/* {JSON.stringify(this.state)} */}
@@ -112,12 +105,12 @@ class CreatePost extends Component {
               <Tab.Container
                 id="left-tabs-example"
                 defaultActiveKey="0"
-                onSelect={eventKey => {
+                onSelect={(eventKey) => {
                   this.setState({
                     type: eventKey,
                     title: null,
                     link: null,
-                    description: null
+                    description: null,
                   });
                 }}
               >
@@ -184,7 +177,7 @@ class CreatePost extends Component {
                           placeholder="Text (optional)"
                           id="description"
                           name="description"
-                          onChange={e => {
+                          onChange={(e) => {
                             this.setState({ description: e.target.value });
                           }}
                         />
@@ -211,7 +204,7 @@ class CreatePost extends Component {
                           id="link"
                           name="link"
                           required={this.state.type == "1"}
-                          onChange={e => {
+                          onChange={(e) => {
                             this.setState({ link: e.target.value });
                           }}
                         />
@@ -230,88 +223,81 @@ class CreatePost extends Component {
                 <Row>
                   <Card className="card">
                     <Card.Header className="cardHeader">
-                      <img alt="" height="40px" src={createPostRulesSVG} /> r/{this.props.location?.communityName}&apos;s
-                            Rules
-                          </Card.Header>
+                      <img alt="" height="40px" src={createPostRulesSVG} /> r/
+                      {this.props.location?.communityName}&apos;s Rules
+                    </Card.Header>
                     <Card.Body>
-                      {this.props.location.rules.map(
-                        (rule, index) => {
-                          var normalView = [],
-                            expandedView = [];
+                      {this.props.location.rules.map((rule, index) => {
+                        var normalView = [],
+                          expandedView = [];
 
-                          if (index < 5) {
+                        if (index < 5) {
+                          normalView.push(
+                            <div key={rule._id}>
+                              <strong>{rule.title}</strong>: {rule.description}
+                            </div>
+                          );
+                        } else {
+                          if (index == 5) {
                             normalView.push(
-                              <div key={rule._id}>
-                                <strong>{rule.title}</strong>:{" "}
-                                {rule.description}
-                              </div>
-                            );
-                          } else {
-                            if (index == 5) {
-                              normalView.push(
-                                <div
-                                  className="upArrowRotate"
-                                  style={{
-                                    display: !this.state.showMoreRules
-                                      ? "block"
-                                      : "none",
-                                    textAlign: "center",
-                                  }}
-                                  onClick={() =>
-                                    this.setState((state) => ({
-                                      showMoreRules: !state.showMoreRules,
-                                    }))
-                                  }
-                                >
-                                  <i className="fa fa-angle-double-down" />
-                                </div>
-                              );
-                            }
-                            expandedView.push(
-                              <div key={rule._id}>
-                                <strong>{rule.title}</strong>:{" "}
-                                {rule.description}
+                              <div
+                                className="upArrowRotate"
+                                style={{
+                                  display: !this.state.showMoreRules
+                                    ? "block"
+                                    : "none",
+                                  textAlign: "center",
+                                }}
+                                onClick={() =>
+                                  this.setState((state) => ({
+                                    showMoreRules: !state.showMoreRules,
+                                  }))
+                                }
+                              >
+                                <i className="fa fa-angle-double-down" />
                               </div>
                             );
                           }
-                          return (
-                            <div key="">
-                              {normalView}
-                              <Collapse in={this.state.showMoreRules}>
-                                <Fade>
-                                  <div>
-                                    {expandedView}
-                                    {this.props.location.rules
-                                      .length -
-                                      1 ==
-                                      index ? (
-                                      <div
-                                        className="downArrowRotate"
-                                        style={{
-                                          display: this.state
-                                            .showMoreRules
-                                            ? "block"
-                                            : "none",
-                                          textAlign: "center",
-                                        }}
-                                        onClick={() =>
-                                          this.setState((state) => ({
-                                            showMoreRules: !state.showMoreRules,
-                                          }))
-                                        }
-                                      >
-                                        <i className="fa fa-angle-double-up" />
-                                      </div>
-                                    ) : (
-                                      ""
-                                    )}
-                                  </div>
-                                </Fade>
-                              </Collapse>
+                          expandedView.push(
+                            <div key={rule._id}>
+                              <strong>{rule.title}</strong>: {rule.description}
                             </div>
                           );
                         }
-                      )}
+                        return (
+                          <div key="">
+                            {normalView}
+                            <Collapse in={this.state.showMoreRules}>
+                              <Fade>
+                                <div>
+                                  {expandedView}
+                                  {this.props.location.rules.length - 1 ==
+                                  index ? (
+                                    <div
+                                      className="downArrowRotate"
+                                      style={{
+                                        display: this.state.showMoreRules
+                                          ? "block"
+                                          : "none",
+                                        textAlign: "center",
+                                      }}
+                                      onClick={() =>
+                                        this.setState((state) => ({
+                                          showMoreRules: !state.showMoreRules,
+                                        }))
+                                      }
+                                    >
+                                      <i className="fa fa-angle-double-up" />
+                                    </div>
+                                  ) : (
+                                    ""
+                                  )}
+                                </div>
+                              </Fade>
+                            </Collapse>
+                          </div>
+                        );
+                      })}
                     </Card.Body>
                   </Card>
                 </Row>
