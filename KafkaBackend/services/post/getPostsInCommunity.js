@@ -45,7 +45,7 @@ const getPostsInCommunity = async (msg, callback) => {
         userID: "$userDetails",
         createdAt: "$createdAt",
         updatedAt: "$updatedAt",
-        commentDetails: "$commentDetails",
+        // commentDetails: "$commentDetails",
         // voteDetails: "$voteDetails.userId",
         score: {
           $subtract: [{ $size: "$upvotedBy" }, { $size: "$downvotedBy" }],
@@ -74,7 +74,7 @@ const getPostsInCommunity = async (msg, callback) => {
             },
           },
         },
-        upvoteCount: "$upvotedBy",
+        // upvoteCount: "$upvotedBy",
         commentsCount: { $size: "$commentsDetails" },
       },
     },

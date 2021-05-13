@@ -27,6 +27,7 @@ class Home extends Component {
     console.log("PROPS IN HOME", this.props);
     this.upVote = this.upVote.bind(this);
     this.downVote = this.downVote.bind(this);
+    this.setComments = this.setComments.bind(this);
   }
   getSearchQueryFromLocation = () => {
     const qR = new URLSearchParams(this.props.location.search);
@@ -53,8 +54,8 @@ class Home extends Component {
           userVoteDir == 1
             ? newPosts[index].score - 1
             : userVoteDir == 0
-              ? newPosts[index].score + 1
-              : newPosts[index].score + 2;
+            ? newPosts[index].score + 1
+            : newPosts[index].score + 2;
 
         newPosts[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
         console.log("newComments = ", newPosts);
@@ -85,8 +86,8 @@ class Home extends Component {
           userVoteDir == -1
             ? newPosts[index].score + 1
             : userVoteDir == 0
-              ? newPosts[index].score - 1
-              : newPosts[index].score - 2;
+            ? newPosts[index].score - 1
+            : newPosts[index].score - 2;
 
         // newComments[index].userVoteDir = response.data.userVoteDir;
         newPosts[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
@@ -99,6 +100,13 @@ class Home extends Component {
         console.log(err);
       });
   }
+  setComments = (commentsCount, index) => {
+    console.log("set comments in community = ", commentsCount, index);
+    const newPosts = this.state.dataOfPosts.slice();
+    newPosts[index].commentsCount = commentsCount;
+    this.setState({ dataOfPosts: newPosts });
+    // this.setState({ commentsCount: commentsCount });
+  };
   componentDidUpdate(prevProps) {
     if (prevProps.location.search != this.props.location.search) {
       this.setState(
@@ -126,6 +134,7 @@ class Home extends Component {
                       downVote={this.downVote}
                       index={index}
                       data={post}
+                      setCommentsCount={this.setComments}
                       {...this.props}
                     ></Post>
                   );
@@ -163,13 +172,18 @@ class Home extends Component {
         console.log(err);
       });
 
-    Axios.get(`${backendServer}/getAllCommunitiesListForUser?ID=${getMongoUserID()}`)
+    Axios.get(
+      `${backendServer}/getAllCommunitiesListForUser?ID=${getMongoUserID()}`
+    )
       .then((result) => {
         console.log(result.data);
         this.props.unsetLoader();
         if (result.data) {
-          result.data.forEach(comm => {
-            comm.imageURL = comm.imageURL && comm.imageURL.length > 0 ? comm.imageURL[0].url : getDefaultRedditProfilePicture();
+          result.data.forEach((comm) => {
+            comm.imageURL =
+              comm.imageURL && comm.imageURL.length > 0
+                ? comm.imageURL[0].url
+                : getDefaultRedditProfilePicture();
           });
         }
 
@@ -179,7 +193,6 @@ class Home extends Component {
         this.props.unsetLoader();
         console.log(err);
       });
-
   };
   SortType = (e) => {
     this.setState(
@@ -227,6 +240,7 @@ class Home extends Component {
             upVote={this.upVote}
             downVote={this.downVote}
             index={index}
+            setCommentsCount={this.setComments}
             data={post}
             {...this.props}
           ></Post>
@@ -319,7 +333,7 @@ class Home extends Component {
                   <Card className="card">
                     <Card.Header className="cardHeader">
                       Communities you&apos;re part of
-                          </Card.Header>
+                    </Card.Header>
                     <Card.Body>
                       {this.state.communitiesListForWidget.map(
                         (community, index) => {
@@ -330,12 +344,23 @@ class Home extends Component {
                             normalView.push(
                               <div key={index}>
                                 <Row>
-                                  <Col sm={2} style={{ margin: '4px 0px' }}>
-                                    <img src={community.imageURL} style={{ height: '30px', width: '30px', borderRadius: '15px' }} />
+                                  <Col sm={2} style={{ margin: "4px 0px" }}>
+                                    <img
+                                      src={community.imageURL}
+                                      style={{
+                                        height: "30px",
+                                        width: "30px",
+                                        borderRadius: "15px",
+                                      }}
+                                    />
                                   </Col>
                                   <Col style={{ paddingLeft: "0" }}>
-                                    <Link style={{ color: 'black' }} to={"/community/".concat(community._id)}>
-                                      r/<strong>{community.communityName}</strong>
+                                    <Link
+                                      style={{ color: "black" }}
+                                      to={"/community/".concat(community._id)}
+                                    >
+                                      r/
+                                      <strong>{community.communityName}</strong>
                                     </Link>
                                   </Col>
                                 </Row>
@@ -351,11 +376,11 @@ class Home extends Component {
                                     display: !this.state.showMoreCommunities
                                       ? "block"
                                       : "none",
-                                    textAlign: "center"
+                                    textAlign: "center",
                                   }}
                                   onClick={() =>
-                                    this.setState(state => ({
-                                      showMoreCommunities: !state.showMoreCommunities
+                                    this.setState((state) => ({
+                                      showMoreCommunities: !state.showMoreCommunities,
                                     }))
                                   }
                                 >
@@ -366,12 +391,23 @@ class Home extends Component {
                             expandedView.push(
                               <div key={index}>
                                 <Row>
-                                  <Col sm={2} style={{ margin: '4px 0px' }}>
-                                    <img src={community.imageURL} style={{ height: '30px', width: '30px', borderRadius: '15px' }} />
+                                  <Col sm={2} style={{ margin: "4px 0px" }}>
+                                    <img
+                                      src={community.imageURL}
+                                      style={{
+                                        height: "30px",
+                                        width: "30px",
+                                        borderRadius: "15px",
+                                      }}
+                                    />
                                   </Col>
                                   <Col style={{ paddingLeft: "0" }}>
-                                    <Link style={{ color: 'black' }} to={"/community/".concat(community._id)}>
-                                      r/<strong>{community.communityName}</strong>
+                                    <Link
+                                      style={{ color: "black" }}
+                                      to={"/community/".concat(community._id)}
+                                    >
+                                      r/
+                                      <strong>{community.communityName}</strong>
                                     </Link>
                                   </Col>
                                 </Row>
@@ -388,7 +424,7 @@ class Home extends Component {
                                     {this.state.communitiesListForWidget
                                       .length -
                                       1 ==
-                                      index ? (
+                                    index ? (
                                       <div
                                         className="downArrowRotate"
                                         style={{
@@ -396,12 +432,11 @@ class Home extends Component {
                                             .showMoreCommunities
                                             ? "block"
                                             : "none",
-                                          textAlign: "center"
+                                          textAlign: "center",
                                         }}
                                         onClick={() =>
-                                          this.setState(state => ({
-                                            showMoreCommunities:
-                                              !state.showMoreCommunities
+                                          this.setState((state) => ({
+                                            showMoreCommunities: !state.showMoreCommunities,
                                           }))
                                         }
                                       >
