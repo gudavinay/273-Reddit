@@ -26,6 +26,7 @@ kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partit
 kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic vote_mongo
 kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic get_topic
 kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic comment
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic manage_topic
 
 export CONFLUENT_HOME=/home/ec2-user/confluent-6.1.1
 export PATH=$PATH:$CONFLUENT_HOME/bin

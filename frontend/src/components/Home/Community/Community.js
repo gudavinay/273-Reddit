@@ -14,6 +14,7 @@ import {
   getMongoUserID,
   getToken,
 } from "../../../services/ControllerUtils";
+import errorSVG from '../../../assets/404.svg';
 // import { withStyles } from "@material-ui/core/styles";
 // import { useTheme } from "@material-ui/core/styles";
 
@@ -342,7 +343,12 @@ class Community extends Component {
         });
       }
     } else {
-      postsToRender.push(<div>You need to be a part of this community to see the posts.</div>)
+      postsToRender.push(<div style={{ textAlign: 'center', padding: '8%' }}>
+        <img alt="" width="25%" src={errorSVG} />
+        <h3>r/<strong>{this.state.communityDetails?.communityName}</strong> is a private community</h3>
+        You need to be a part of this community to see the posts.
+        <Link to="/home"><h4>Home</h4></Link>
+      </div>)
     }
 
 
@@ -383,7 +389,7 @@ class Community extends Component {
             <div>
               <Row>
                 <Col xs={8}>
-                  <div className="createPostH">
+                  {showPosts && <div className="createPostH">
                     <a>
                       <img
                         style={{
@@ -423,7 +429,7 @@ class Community extends Component {
                         src={linkSvg}
                       />
                     </a>
-                  </div>
+                  </div>}
                   {postsToRender}
                 </Col>
                 <Col>
@@ -638,7 +644,7 @@ class Community extends Component {
                       </Row>
                     )}
 
-                  {this.state.communityDetails && (<Row>
+                  {this.state.communityDetails && showPosts && (<Row>
                     <Card className="card">
                       <Card.Header className="cardHeader">
                         r/{this.state.communityDetails.communityName}&apos;s
