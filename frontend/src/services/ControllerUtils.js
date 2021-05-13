@@ -109,6 +109,19 @@ export function sortByComments(array, type) {
   }
   return sortValue;
 }
+export function sortByVotes(array, type) {
+  let sortValue;
+  if (type == "desc") {
+    sortValue = array.sort((a, b) => {
+      return new Date(b.score) - new Date(a.score);
+    });
+  } else {
+    sortValue = array.sort((a, b) => {
+      return new Date(a.score) - new Date(b.score);
+    });
+  }
+  return sortValue;
+}
 export function sortByNoOfUser(array, type) {
   let sortValue;
   if (type == "desc") {
