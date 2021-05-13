@@ -15,15 +15,16 @@ class Signup extends Component {
       error: {},
       loginError: "",
       auth: true,
+      redirect: null
     };
   }
 
-  handleChange = (e) => {
+  handleChange = e => {
     this.setState({
       userInfo: {
         ...this.state.userInfo,
-        [e.target.name]: e.target.value,
-      },
+        [e.target.name]: e.target.value
+      }
     });
   };
 
@@ -31,22 +32,25 @@ class Signup extends Component {
     const data = {
       email: this.state.userInfo.email,
       name: this.state.userInfo.name,
-      sqlUserID: user_id,
+      sqlUserID: user_id
     };
     axios
       .post(`${backendServer}/createUserProfile`, data)
-      .then((response) => {
+      .then(response => {
         if (response.status == 200) {
           console.log(response.data);
           const data = response.data;
           data.token = this.props.user.token;
           SetLocalStorage(data);
+          this.setState({
+            redirect: <Redirect to="/home" />
+          });
         }
       })
-      .catch((error) => console.log("error " + error));
+      .catch(error => console.log("error " + error));
   }
 
-  submitForm = (e) => {
+  submitForm = e => {
     //prevent page from refresh
     e.preventDefault();
     const { userInfo } = this.state;
@@ -59,28 +63,22 @@ class Signup extends Component {
         this.setState({
           authFlag: false,
           formerror: {},
-          loginError: "User is already registered",
+          loginError: "User is already registered"
         });
       } else {
         this.CreateUserProfile(this.props.user.userID);
         this.setState({
-          authFlag: true,
+          authFlag: true
         });
       }
     }
   }
 
   render() {
-    let redirectVar = null;
-    if (typeof this.props.user !== "undefined" && this.props.user.token) {
-      redirectVar = <Redirect to="/home" />;
-    } else {
-      redirectVar = <Redirect to="/" />;
-    }
     return (
       <>
         <div className="container-fluid" style={{ padding: "0" }}>
-          {redirectVar}
+          {this.state.redirect}
           <Row style={{ padding: "0", margin: "0" }}>
             <Col className="col-2" style={{ padding: "0", height: "648px" }}>
               <img
@@ -103,7 +101,7 @@ class Signup extends Component {
                 style={{
                   fontSize: "24px",
                   fontWeight: "500",
-                  marginTop: "35px",
+                  marginTop: "35px"
                 }}
               >
                 Sign up
@@ -186,9 +184,9 @@ class Signup extends Component {
     );
   }
 }
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
-    user: state.login.user,
+    user: state.login.user
   };
 };
 

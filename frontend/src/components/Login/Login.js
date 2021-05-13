@@ -66,7 +66,7 @@ class Login extends Component {
 
   componentDidUpdate(prevState) {
     if (prevState.user != this.props.user) {
-      if (this.props.user == "UnSuccessful Login") {
+      if (this.props.user == "Username or password mismatch") {
         this.setState({
           authFlag: false,
           formerror: {},
@@ -97,14 +97,6 @@ class Login extends Component {
           </Col>
           <Col className="login-form" style={{ paddingLeft: "30px" }}>
             <div
-              id="errorLogin"
-              hidden={this.state.error.length > 0 ? false : true}
-              className="alert alert-danger"
-              role="alert"
-            >
-              {this.state.error}
-            </div>
-            <div
               style={{ fontSize: "24px", fontWeight: "500", marginTop: "35px" }}
             >
               Login
@@ -130,6 +122,14 @@ class Login extends Component {
               style={{ width: "45%" }}
               onSubmit={this.submitForm}
             >
+              <div
+                id="errorLogin"
+                hidden={this.state.error.length > 0 ? false : true}
+                className="alert alert-danger"
+                role="alert"
+              >
+                {this.state.error}
+              </div>
               <Form.Group>
                 <Form.Label htmlFor="email" className="Lable-align">
                   Email address

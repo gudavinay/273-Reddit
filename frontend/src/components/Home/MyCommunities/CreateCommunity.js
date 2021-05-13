@@ -39,6 +39,12 @@ class CreateCommunity extends Component {
   OnImageUpload = e => {
     e.preventDefault();
     let data = new FormData();
+    if (this.state.communityImages.length == 0) {
+      this.setState({
+        error: "No files selected to upload"
+      });
+      return;
+    }
     this.state.communityImages.map(commImage => {
       data.append("file", commImage);
     });
@@ -77,6 +83,9 @@ class CreateCommunity extends Component {
       })
       .catch(error => {
         this.props.unsetLoader();
+        this.setState({
+          error: "Community name is not unique"
+        });
         console.log("error " + error);
       });
   }
@@ -249,7 +258,8 @@ class CreateCommunity extends Component {
       communityImage.push(file);
     });
     this.setState({
-      communityImages: communityImage
+      communityImages: communityImage,
+      error: ""
     });
   };
 
@@ -379,7 +389,7 @@ class CreateCommunity extends Component {
                 </Form.Group>
                 <Form.Group>
                   <Form.Label className="community-label" htmlFor="topics">
-                    Topics<sup>*</sup>
+                    Topics
                   </Form.Label>
                   <Dropdown>
                     <Dropdown.Toggle>Select topic</Dropdown.Toggle>
@@ -423,7 +433,6 @@ class CreateCommunity extends Component {
                   <Button
                     type="submit"
                     className="createCommunity"
-                    onClick={this.handleSubmit}
                     color="btn btn-primary"
                   >
                     {this.state.communityID == ""
