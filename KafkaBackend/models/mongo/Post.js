@@ -12,6 +12,7 @@ const PostSchema = new mongoose.Schema(
     postImageUrl: { type: String },
     description: { type: String },
     NoOfComments: { type: Number },
+    score: { type: Number, default: 0 },
     title: { type: String, required: true },
     upvotedBy: [
       {

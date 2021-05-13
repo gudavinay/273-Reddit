@@ -31,7 +31,6 @@ class Navigationbar extends Component {
       leftDropdown: "Home",
       showNotificationModal: false,
       notificationData: [],
-      redirectToLanding: null,
       getDefaultRedditProfilePicture: getDefaultRedditProfilePicture(),
     };
   }
@@ -69,33 +68,32 @@ class Navigationbar extends Component {
   };
   async componentDidMount() {
     this.getNotificationData();
-    this.checkIfUserIsModerator();
   }
-  checkIfUserIsModerator = () => {
-    let user_id = getMongoUserID();
-
-    Axios.defaults.headers.common["authorization"] = getToken();
-    Axios.get(backendServer + "/checkUserIsModerator/" + user_id)
-      .then((result) => {
-        console.log(result);
-        this.props.unsetLoader();
-        if (result.data.length > 0) {
-          console.log("true");
-          this.setState({
-            NotshowInvitation: false,
-          });
-        } else {
-          console.log("false");
-          this.setState({
-            NotshowInvitation: true,
-          });
-        }
-      })
-      .catch((err) => {
-        this.props.unsetLoader();
-        console.log(err);
-      });
-  };
+  // checkIfUserIsModerator = () => {
+  //   let user_id = getMongoUserID();
+  //   console.log("calling checkIfUser is moderator");
+  //   Axios.defaults.headers.common["authorization"] = getToken();
+  //   Axios.get(backendServer + "/checkUserIsModerator/" + user_id)
+  //     .then((result) => {
+  //       console.log(result);
+  //       this.props.unsetLoader();
+  //       if (result.data.length > 0) {
+  //         console.log("true");
+  //         this.setState({
+  //           NotshowInvitation: false,
+  //         });
+  //       } else {
+  //         console.log("false");
+  //         this.setState({
+  //           NotshowInvitation: true,
+  //         });
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       this.props.unsetLoader();
+  //       console.log(err);
+  //     });
+  // };
   getNotificationData = async () => {
     let data = {
       user_id: getMongoUserID(),
@@ -117,10 +115,6 @@ class Navigationbar extends Component {
     if (typeof Storage !== "undefined") {
       if (localStorage.key("userData")) {
         localStorage.clear();
-
-        this.setState({
-          redirectToLanding: <Redirect to="/" />,
-        });
       }
     }
   }
@@ -131,9 +125,13 @@ class Navigationbar extends Component {
     this.props.logoutRedux();
   };
   render() {
+    let redirectVar = null;
+    if (getToken() == null) {
+      redirectVar = <Redirect to="/" />;
+    }
     return (
       <React.Fragment>
-        {this.state.redirectToLanding}
+        {redirectVar}
         {this.props.loading && (
           <LinearProgress
             color="secondary"
@@ -225,7 +223,7 @@ class Navigationbar extends Component {
                           : "NavLinks backGround_light"
                       }
                       onClick={() => {
-                        this.setState({ leftDropdown: "Home" });
+                        this.setState({ leftDropdown: "Home", search: "" });
                         document
                           .getElementById("expandLeftDropDown")
                           .classList.add("hidden");
@@ -234,26 +232,22 @@ class Navigationbar extends Component {
                     >
                       Home
                     </div>
-                    {this.state.NotshowInvitation ? (
-                      ""
-                    ) : (
-                      <div
-                        className={
-                          this.props.darkMode
-                            ? "NavLinks backGround_dark"
-                            : "NavLinks backGround_light"
-                        }
-                        onClick={() => {
-                          this.setState({ leftDropdown: "Send Invitation" });
-                          document
-                            .getElementById("expandLeftDropDown")
-                            .classList.add("hidden");
-                          this.props.history.push("/invitation");
-                        }}
-                      >
-                        Invitation
-                      </div>
-                    )}
+                    <div
+                      className={
+                        this.props.darkMode
+                          ? "NavLinks backGround_dark"
+                          : "NavLinks backGround_light"
+                      }
+                      onClick={() => {
+                        this.setState({ leftDropdown: "Send Invitation" });
+                        document
+                          .getElementById("expandLeftDropDown")
+                          .classList.add("hidden");
+                        this.props.history.push("/invitation");
+                      }}
+                    >
+                      Invitation
+                    </div>
 
                     <div
                       className={

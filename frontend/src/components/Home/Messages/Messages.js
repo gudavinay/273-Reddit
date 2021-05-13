@@ -4,6 +4,7 @@ import { FiX } from "react-icons/fi";
 import axios from "axios";
 import backendServer from "../../../webConfig";
 import "./message.css";
+//import { Redirect } from "react-router-dom";
 import MessageContent from "./MessageContent";
 import {
   getSQLUserID,
@@ -210,6 +211,7 @@ class Messages extends Component {
     );
     return (
       <React.Fragment>
+        {/* //{redirectVar} */}
         <Container>
           <Row className="row">
             <Col xs={3} className="colheight changePadding">

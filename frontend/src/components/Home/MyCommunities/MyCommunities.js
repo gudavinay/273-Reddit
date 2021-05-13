@@ -249,6 +249,10 @@ class MyCommunities extends Component {
           </Card>
         );
       });
+    } else {
+      myCommunities = (
+        <div style={{ color: "GrayText" }}>No Community Found</div>
+      );
     }
     return (
       <React.Fragment>

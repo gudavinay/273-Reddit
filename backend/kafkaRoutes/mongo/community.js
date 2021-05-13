@@ -266,4 +266,19 @@ app.post("/userLeaveRequestFromCommunity", (req, res) => {
     return res.status(400).send("Internal Server error");
   });
 });
+
+
+app.get("/getAllCommunitiesListForUser", (req, res) => {
+  console.log(req.body);
+  req.body.path = "getAllCommunitiesListForUser";
+  req.body.query = req.query;
+  kafka.make_request("post", req.body, (error, result) => {
+    if (result) {
+      return res.status(200).send(result);
+    }
+    console.log(error);
+    return res.status(400).send("Internal Server error");
+  });
+});
+
 module.exports = router;

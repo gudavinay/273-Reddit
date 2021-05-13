@@ -25,4 +25,37 @@ app.get("/getTopic", checkAuth, async (req, res) => {
   });
 });
 
+app.post("/addTopic", async (req, res) => {
+  req.body.path = "addTopic";
+  kafka.make_request("manage_topic", req.body, (error, result) => {
+    console.log(result);
+    if (result) {
+      return res.status(200).send(result);
+    }
+    return res.status(500).send(error);
+  });
+});
+
+app.post("/deleteTopic", async (req, res) => {
+  req.body.path = "deleteTopic";
+  kafka.make_request("manage_topic", req.body, (error, result) => {
+    console.log(result);
+    if (result) {
+      res.status(200).send(result);
+    } else {
+      res.status(500).send(error);
+    }
+  });
+});
+
+app.post("/editTopic", async (req, res) => {
+  req.body.path = "editTopic";
+  kafka.make_request("manage_topic", req.body, (error, result) => {
+    console.log(result);
+    if (result) {
+      return res.status(200).send(result);
+    }
+    return res.status(500).send(error);
+  });
+});
 module.exports = router;

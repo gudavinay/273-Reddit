@@ -3,6 +3,7 @@ const { createPost } = require("./createPost");
 const { getPostsInCommunity } = require("./getPostsInCommunity");
 const { getAllPostsWithUserId } = require("./getAllPostsWithUserId");
 const { searchPost } = require("./searchPost");
+const { getAllCommunitiesListForUser } = require('../community/getAllCommunitiesListForUser')
 
 let handle_request = (msg, callback) => {
   if (msg.path === "createPost") {
@@ -13,6 +14,8 @@ let handle_request = (msg, callback) => {
     getAllPostsWithUserId(msg, callback);
   } else if (msg.path === "Search-Post") {
     searchPost(msg, callback);
+  } else if (msg.path === "getAllCommunitiesListForUser") {
+    getAllCommunitiesListForUser(msg, callback);
   }
 };
 

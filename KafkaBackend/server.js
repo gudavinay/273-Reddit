@@ -16,6 +16,7 @@ const getTopic = require("./services/getTopic");
 const post = require("./services/post/topicMapping");
 const comment = require("./services/comment/topicMapping");
 const community_user = require("./services/Community/communityUser/topicMapping");
+const topic_sql = require("./services/Topic/topicMapping");
 
 require("./dbConnection");
 const sqldb = require("./models/sql");
@@ -38,10 +39,10 @@ function handleTopicRequest(topic_name, fname) {
           topic: data.replyTo,
           messages: JSON.stringify({
             correlationId: data.correlationId,
-            data: res
+            data: res,
           }),
-          partition: 0
-        }
+          partition: 0,
+        },
       ];
       producer.send(payloads, function (err, data) {
         console.log("payload sent:", data);
@@ -64,4 +65,5 @@ handleTopicRequest("get_topic", getTopic);
 handleTopicRequest("post", post);
 handleTopicRequest("comment", comment);
 handleTopicRequest("community_user", community_user);
-// handleTopicRequest("vote_mongo", vote_mongo);
+handleTopicRequest("vote_mongo", vote_mongo);
+handleTopicRequest("manage_topic", topic_sql);

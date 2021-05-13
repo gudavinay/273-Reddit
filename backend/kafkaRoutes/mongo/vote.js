@@ -7,9 +7,9 @@ const { checkAuth } = require("./../../Util/passport");
 
 app.post("/addVote", checkAuth, (req, res) => {
   req.body.path = "addVote";
-
-  kafka.make_request("mongo_vote", req.body, (error, result) => {
-    console.log(result);
+  console.log("redq.boody vote ", req.body);
+  kafka.make_request("vote_mongo", req.body, (error, result) => {
+    console.log("result vote = ", result);
     if (result.status === 200) {
       return res.status(200).send(result.data);
     }
@@ -22,7 +22,7 @@ app.get("/getVote", checkAuth, (req, res) => {
   req.body.entityId = req.query.entityId;
   req.body.path = "getVote";
 
-  kafka.make_request("mongo_vote", req.body, (error, result) => {
+  kafka.make_request("vote_mongo", req.body, (error, result) => {
     console.log(result);
     if (result.status === 200) {
       return res.status(200).send(result.data);
@@ -31,10 +31,9 @@ app.get("/getVote", checkAuth, (req, res) => {
   });
 });
 
-
 app.post("/vote", checkAuth, (req, res) => {
   req.body.path = "vote";
-  kafka.make_request("mongo_vote", req.body, (error, result) => {
+  kafka.make_request("vote_mongo", req.body, (error, result) => {
     console.log(result);
     if (result.status === 200) {
       return res.status(200).send(result.data);
