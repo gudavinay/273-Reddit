@@ -10,6 +10,7 @@ import {
   sortByTime,
   sortByComments,
   getDefaultRedditProfilePicture,
+  sortByVotes,
 } from "../../services/ControllerUtils";
 import HomeSearchResults from "./HomeSearchResults";
 import createPostRulesSVG from "../../assets/createPostRules.svg";
@@ -218,6 +219,9 @@ class Home extends Component {
     } else if (attribute == "Comments") {
       console.log("sorting by Comments and type " + type);
       sortValue = sortByComments(this.state.dataOfPosts, type);
+    } else if (attribute == "Votes") {
+      console.log("sorting by Votes and type " + type);
+      sortValue = sortByVotes(this.state.dataOfPosts, type);
     }
     console.log(sortValue);
     this.setState({
@@ -278,6 +282,7 @@ class Home extends Component {
                         <option value="Date">Created Date</option>
                         <option value="Comments">Comments</option>
                         <option value="User">User</option>
+                        <option value="User">Votes</option>
                       </select>
                     </Col>
                     <Col xs={2}>
@@ -380,7 +385,8 @@ class Home extends Component {
                                   }}
                                   onClick={() =>
                                     this.setState((state) => ({
-                                      showMoreCommunities: !state.showMoreCommunities,
+                                      showMoreCommunities:
+                                        !state.showMoreCommunities,
                                     }))
                                   }
                                 >
@@ -436,7 +442,8 @@ class Home extends Component {
                                         }}
                                         onClick={() =>
                                           this.setState((state) => ({
-                                            showMoreCommunities: !state.showMoreCommunities,
+                                            showMoreCommunities:
+                                              !state.showMoreCommunities,
                                           }))
                                         }
                                       >
