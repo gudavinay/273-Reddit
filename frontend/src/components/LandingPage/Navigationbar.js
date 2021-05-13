@@ -67,6 +67,15 @@ class Navigationbar extends Component {
     });
   };
   async componentDidMount() {
+    // const userId = getMongoUserID();
+    // Axios.defaults.headers.common["authorization"] = getToken();
+    // Axios.get(`${backendServer}/getVote?userId=${userId}`)
+    //   .then((result) => {
+    //     localStorage.setItem("userVote", JSON.stringify(result.data));
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
     this.getNotificationData();
   }
   // checkIfUserIsModerator = () => {
@@ -191,8 +200,9 @@ class Navigationbar extends Component {
                       padding: "0 15px",
                     }}
                     onClick={() => {
-                      let classListLeft =
-                        document.getElementById("expandLeftDropDown").classList;
+                      let classListLeft = document.getElementById(
+                        "expandLeftDropDown"
+                      ).classList;
                       let classListRight = document.getElementById(
                         "expandRightDropDown"
                       ).classList;
@@ -408,8 +418,9 @@ class Navigationbar extends Component {
                       padding: "0 15px",
                     }}
                     onClick={() => {
-                      let classListLeft =
-                        document.getElementById("expandLeftDropDown").classList;
+                      let classListLeft = document.getElementById(
+                        "expandLeftDropDown"
+                      ).classList;
                       let classListRight = document.getElementById(
                         "expandRightDropDown"
                       ).classList;

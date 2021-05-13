@@ -39,6 +39,7 @@ class Home extends Component {
       userId: getMongoUserID(),
       voteDir: userVoteDir == 1 ? 0 : 1,
       relScore: relScore,
+      entityName: "Post",
     })
       .then((response) => {
         // this.props.unsetLoader();
@@ -72,6 +73,7 @@ class Home extends Component {
       userId: getMongoUserID(),
       voteDir: userVoteDir == -1 ? 0 : -1,
       relScore: relScore,
+      entityName: "Post",
     })
       .then((response) => {
         // this.props.unsetLoader();

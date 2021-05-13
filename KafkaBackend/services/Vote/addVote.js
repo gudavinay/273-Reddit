@@ -5,7 +5,7 @@ const addVote = async (msg, callback) => {
   res = {};
   console.log(msg);
   console.log("add vote = req = ", msg);
-  const { userId, voteDir, entityId, relScore } = msg;
+  const { userId, voteDir, entityId, relScore, entityName } = msg;
   if (voteDir == 0) {
     console.log("delete document");
     Vote.findOneAndDelete(
@@ -16,26 +16,30 @@ const addVote = async (msg, callback) => {
           callback(null, res);
           //   res.status(500).send(err);
         } else {
-          Post.findById(entityId, (err, pst) => {
-            if (err) {
-              res.status = 500;
-              callback(null, res);
-            } else {
-              console.log("pst = ", pst);
-              pst.score = pst.score + relScore;
-              pst.save((err, updatePost) => {
-                if (err) {
-                  res.status = 500;
-                  callback(null, res);
-                } else {
-                  res.data = result;
-                  res.status = 200;
-                  callback(null, res);
-                }
-                console.log("updated post = ", updatePost);
-              });
-            }
-          });
+          if (entityName === "Post") {
+            Post.findById(entityId, (err, pst) => {
+              if (err) {
+                res.status = 500;
+                callback(null, res);
+              } else {
+                console.log("pst = ", pst);
+                pst.score = pst.score + relScore;
+                pst.upvotedBy.pull(userId);
+                pst.downvotedBy.pull(userId);
+                pst.save((err, updatePost) => {
+                  if (err) {
+                    res.status = 500;
+                    callback(null, res);
+                  } else {
+                    res.data = result;
+                    res.status = 200;
+                    callback(null, res);
+                  }
+                  console.log("updated post = ", updatePost);
+                });
+              }
+            });
+          }
         }
       }
     );
@@ -63,26 +67,35 @@ const addVote = async (msg, callback) => {
           callback(null, res);
           //   res.status(500).send(err);
         } else {
-          Post.findById(entityId, (err, pst) => {
-            if (err) {
-              res.status = 500;
-              callback(null, res);
-            } else {
-              console.log("pst = ", pst);
-              pst.score = pst.score + relScore;
-              pst.save((err, updatePost) => {
-                if (err) {
-                  res.status = 500;
-                  callback(null, res);
+          if (entityName == "Post") {
+            Post.findById(entityId, (err, pst) => {
+              if (err) {
+                res.status = 500;
+                callback(null, res);
+              } else {
+                console.log("pst = ", pst);
+                pst.score = pst.score + relScore;
+                if (voteDir == -1) {
+                  pst.upvotedBy.pull(userId);
+                  pst.downvotedBy.push(userId);
                 } else {
-                  res.data = result;
-                  res.status = 200;
-                  callback(null, res);
+                  pst.upvotedBy.push(userId);
+                  pst.downvotedBy.pull(userId);
                 }
-                console.log("updated post = ", updatePost);
-              });
-            }
-          });
+                pst.save((err, updatePost) => {
+                  if (err) {
+                    res.status = 500;
+                    callback(null, res);
+                  } else {
+                    res.data = result;
+                    res.status = 200;
+                    callback(null, res);
+                  }
+                  console.log("updated post = ", updatePost);
+                });
+              }
+            });
+          }
 
           //   res.status(200).send(result);
         }

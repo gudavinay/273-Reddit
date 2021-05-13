@@ -107,6 +107,10 @@ class Post extends Component {
                     style={{
                       cursor: "pointer",
                       color: this.props.data.userVoteDir == 1 ? "#ff4500" : "",
+                      // color:
+                      //   getEntityVoteDir(this.props.data._id) == 1
+                      //     ? "#ff4500"
+                      //     : "",
                     }}
                     className="icon icon-arrow-up"
                     onClick={() =>
@@ -122,6 +126,10 @@ class Post extends Component {
                     style={{
                       cursor: "pointer",
                       color: this.props.data.userVoteDir == -1 ? "#7193ff" : "",
+                      // color:
+                      //   getEntityVoteDir(this.props.data._id) == -1
+                      //     ? "#7193ff"
+                      //     : "",
                     }}
                     className="icon icon-arrow-down"
                     onClick={() =>

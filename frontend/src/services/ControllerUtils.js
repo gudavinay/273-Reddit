@@ -129,6 +129,18 @@ export function sortByNoOfUser(array, type) {
   return sortValue;
 }
 
+export function getEntityVoteDir(entityId) {
+  const votes = JSON.parse(localStorage.getItem("userVote"));
+  console.log("votes = ", votes);
+  votes.map((vote) => {
+    console.log("entitiyID = ", entityId, vote.entityId);
+    if (vote.entityId == entityId) {
+      return vote.voteDir;
+    }
+  });
+  return 0;
+}
+
 export function getToken() {
   const data = JSON.parse(localStorage.getItem("userData"));
   if (data != null) return data.token;
