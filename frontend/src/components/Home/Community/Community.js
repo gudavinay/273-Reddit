@@ -398,6 +398,18 @@ class Community extends Component {
             ></Post>
           );
         });
+        postsToRender.push(<div>
+          {" "}
+          <TablePagination
+            count={this.state.count}
+            page={this.state.page}
+            onChangePage={this.PageChange}
+            rowsPerPage={this.state.size}
+            onChangeRowsPerPage={this.PageSizeChange}
+            color="primary"
+            rowsPerPageOptions={[2, 5, 10]}
+          />
+        </div>);
       }
     } else {
       postsToRender.push(
@@ -498,18 +510,6 @@ class Community extends Component {
                     </div>
                   )}
                   {postsToRender}
-                  <div>
-                    {" "}
-                    <TablePagination
-                      count={this.state.count}
-                      page={this.state.page}
-                      onChangePage={this.PageChange}
-                      rowsPerPage={this.state.size}
-                      onChangeRowsPerPage={this.PageSizeChange}
-                      color="primary"
-                      rowsPerPageOptions={[2, 5, 10]}
-                    />
-                  </div>
                 </Col>
                 <Col>
                   {this.state.communityDetails &&
@@ -862,7 +862,7 @@ class Community extends Component {
               </Row>
             </div>
           </Row>
-          <div
+          {/* <div
             style={{
               textAlign: "right",
               position: "fixed",
@@ -882,7 +882,7 @@ class Community extends Component {
             >
               <span>Top ^ Yet to be impl</span>
             </div>
-          </div>
+          </div> */}
         </div>
       </React.Fragment>
     );
