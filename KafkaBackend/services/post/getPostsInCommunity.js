@@ -53,7 +53,6 @@ const getPostsInCommunity = async (msg, callback) => {
         userVoteDir: {
           $cond: {
             if: {
-              //   upvotedBy: { $in: [userId, "$upvotedBy"] },
               $setIsSubset: [
                 [{ _id: mongoose.Types.ObjectId(userId) }],
                 "$upvotedBy",

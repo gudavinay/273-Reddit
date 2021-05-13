@@ -16,6 +16,7 @@ const CommentSchema = new mongoose.Schema(
         userID: { type: Schema.Types.ObjectId, ref: "UserProfile" },
       },
     ],
+    score: { type: Number, default: 0 },
     // subComment: [
     //   {
     //     commentID: { type: Schema.Types.ObjectId, ref: "Comment" },

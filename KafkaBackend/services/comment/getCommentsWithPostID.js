@@ -85,6 +85,8 @@ const getCommentsWithPostID = async (msg, callback) => {
                     },
                   },
                 },
+                then: -1,
+                else: 0
               },
               // {
               //   $project: {

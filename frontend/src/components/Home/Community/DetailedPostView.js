@@ -56,12 +56,15 @@ class DetailedPostView extends Component {
   }
 
   upVote(commentId, userVoteDir, index, isParentComment, childIndex) {
+    var relScore = userVoteDir == 1 ? -1 : userVoteDir == 0 ? 1 : 2;
     Axios.defaults.headers.common["authorization"] = getToken();
     Axios.post(backendServer + "/addVote", {
       entityId: commentId,
       userId: getMongoUserID(),
       // userId: localStorage.getItem("userId"),
       voteDir: userVoteDir == 1 ? 0 : 1,
+      entityName: "Comment",
+      relScore: relScore,
     })
       .then((response) => {
         // this.props.unsetLoader();
@@ -102,6 +105,7 @@ class DetailedPostView extends Component {
   }
 
   downVote(commentId, userVoteDir, index, isParentComment, childIndex) {
+    var relScore = userVoteDir == -1 ? 1 : userVoteDir == 0 ? -1 : -2;
     console.log(
       "userid = ",
       getMongoUserID(),
@@ -116,6 +120,8 @@ class DetailedPostView extends Component {
       userId: getMongoUserID(),
       // userId: localStorage.getItem("userId"),
       voteDir: userVoteDir == -1 ? 0 : -1,
+      entityName: "Comment",
+      relScore: relScore,
       // voteDir: userVoteDir == -1 ? 0 : userVoteDir == 1 ? 0 : -1,
     })
       .then((response) => {
