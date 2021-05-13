@@ -764,7 +764,7 @@ class Community extends Component {
                         <Card.Body>
                           <div>
                             <strong>Total Posts:</strong>{" "}
-                            {this.state.posts?.length}
+                            {this.state.posts?.length ? this.state.posts?.length : "0"}
                           </div>
                           <div>
                             <strong>Total Users:</strong>{" "}
