@@ -31,6 +31,8 @@ export class invitation extends Component {
       page: 0,
       size: 2,
       count: 0,
+      NoCommunities: false,
+      NoInvitesSent: false,
     };
   }
   componentDidMount() {
@@ -44,7 +46,11 @@ export class invitation extends Component {
       .then((response) => {
         this.props.unsetLoader();
         console.log(response);
-        this.setState({ communities: response.data });
+        if (response.data.length > 0) {
+          this.setState({ communities: response.data });
+        } else {
+          this.setState({ NoCommunities: true });
+        }
       })
       .catch((err) => {
         this.props.unsetLoader();
@@ -65,14 +71,20 @@ export class invitation extends Component {
     Axios.post(backendServer + "/showInvitationStatus", data)
       .then((response) => {
         this.props.unsetLoader();
-        this.setState({
-          invitedDetails: response.data.sentInvitesTo,
-          listOfInvolvedUsers: response.data.listOfInvolvedUsers,
-          count: response.data.totalRecords,
-          selectedUsers: [], //to clear the suggestions and selected users
-          searchedUser: [],
-        });
-        console.log(this.state.count);
+        if (response.data.sentInvitesTo.length > 0) {
+          this.setState({
+            invitedDetails: response.data.sentInvitesTo,
+            listOfInvolvedUsers: response.data.listOfInvolvedUsers,
+            count: response.data.totalRecords,
+            selectedUsers: [], //to clear the suggestions and selected users
+            searchedUser: [],
+          });
+          console.log(this.state.count);
+        } else {
+          this.setState({
+            NoInvitesSent: true,
+          });
+        }
       })
       .catch((err) => {
         this.props.unsetLoader();
@@ -346,6 +358,8 @@ export class invitation extends Component {
               </Paper>
               <Card.Body>
                 <Card.Text>
+                  {this.state.NoInvitesSent ? "No Invites Sent" : ""}
+                  {this.state.NoCommunities ? "No communites Created" : ""}
                   {this.state.invitedDetails &&
                     this.state.invitedDetails.map((details, index) => (
                       <div key={index}>

@@ -103,28 +103,26 @@ class Home extends Component {
             user_id: getMongoUserID(),
           };
           this.props.setLoader();
-          Axios.defaults.headers.common["authorization"] = getToken();
-          Axios.post(backendServer + "/searchForPosts", data)
-            .then((result) => {
-              this.props.unsetLoader();
-              let searchRes = [];
-              result.data.forEach((post, index) => {
-                searchRes.push(
-                  <Post
-                    upVote={this.upVote}
-                    downVote={this.downVote}
-                    index={index}
-                    data={post}
-                    {...this.props}
-                  ></Post>
-                );
+          if (this.props.location.search === "") {
+            this.getDashboardData();
+          } else {
+            Axios.defaults.headers.common["authorization"] = getToken();
+            Axios.post(backendServer + "/searchForPosts", data)
+              .then((result) => {
+                this.props.unsetLoader();
+                let searchRes = [];
+                result.data.forEach((post, id) => {
+                  searchRes.push(
+                    <Post key={id} data={post} {...this.props}></Post>
+                  );
+                });
+                this.setState({ searchResults: searchRes });
+              })
+              .catch((err) => {
+                this.props.unsetLoader();
+                console.log(err);
               });
-              this.setState({ searchResults: searchRes });
-            })
-            .catch((err) => {
-              this.props.unsetLoader();
-              console.log(err);
-            });
+          }
         }
       );
     }
@@ -137,6 +135,7 @@ class Home extends Component {
       user_id: getMongoUserID(),
     };
     // console.log(data);
+    console.log("fetching!!!!!!!!!!!");
     this.props.setLoader();
     Axios.defaults.headers.common["authorization"] = getToken();
     Axios.post(backendServer + "/getAllPostsWithUserId", data)
