@@ -31,12 +31,14 @@ class Home extends Component {
     return qR.get("q") || "";
   };
   upVote(postId, userVoteDir, index) {
+    var relScore = userVoteDir == 1 ? -1 : userVoteDir == 0 ? 1 : 2;
     console.log("upvote req  = ", postId, " ", userVoteDir, " ", index);
     Axios.defaults.headers.common["authorization"] = getToken();
     Axios.post(backendServer + "/addVote", {
       entityId: postId,
       userId: getMongoUserID(),
       voteDir: userVoteDir == 1 ? 0 : 1,
+      relScore: relScore,
     })
       .then((response) => {
         // this.props.unsetLoader();
@@ -63,11 +65,13 @@ class Home extends Component {
   }
 
   downVote(postId, userVoteDir, index) {
+    var relScore = userVoteDir == -1 ? 1 : userVoteDir == 0 ? -1 : -2;
     Axios.defaults.headers.common["authorization"] = getToken();
     Axios.post(backendServer + "/addVote", {
       entityId: postId,
       userId: getMongoUserID(),
       voteDir: userVoteDir == -1 ? 0 : -1,
+      relScore: relScore,
     })
       .then((response) => {
         // this.props.unsetLoader();

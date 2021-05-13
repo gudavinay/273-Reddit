@@ -14,7 +14,7 @@ import {
   getMongoUserID,
   getToken,
 } from "../../../services/ControllerUtils";
-import errorSVG from '../../../assets/404.svg';
+import errorSVG from "../../../assets/404.svg";
 // import { withStyles } from "@material-ui/core/styles";
 // import { useTheme } from "@material-ui/core/styles";
 
@@ -43,7 +43,11 @@ class Community extends Component {
     this.props.setLoader();
     axios.defaults.headers.common["authorization"] = getToken();
     axios
-      .get(`${backendServer}/getCommunityDetails?ID=${this.state.community_id}&requirePopulate=${true}`)
+      .get(
+        `${backendServer}/getCommunityDetails?ID=${
+          this.state.community_id
+        }&requirePopulate=${true}`
+      )
       .then((response) => {
         this.props.unsetLoader();
         this.setState({ communityDetails: response.data });
@@ -57,13 +61,14 @@ class Community extends Component {
     axios.defaults.headers.common["authorization"] = getToken();
     axios
       .get(
-        `${backendServer}/getPostsInCommunity?ID=${this.state.community_id
+        `${backendServer}/getPostsInCommunity?ID=${
+          this.state.community_id
         }&userId=${getMongoUserID()}`
       )
       .then((response) => {
         this.props.unsetLoader();
         console.log("posts = ", response.data);
-        this.setState({ posts: response.data }, () => { });
+        this.setState({ posts: response.data }, () => {});
       })
       .catch((err) => {
         this.props.unsetLoader();
@@ -72,6 +77,7 @@ class Community extends Component {
   };
 
   upVote(postId, userVoteDir, index) {
+    var relScore = userVoteDir == 1 ? -1 : userVoteDir == 0 ? 1 : 2;
     console.log("upvote req  = ", postId, " ", userVoteDir, " ", index);
     axios.defaults.headers.common["authorization"] = getToken();
     axios
@@ -79,6 +85,7 @@ class Community extends Component {
         entityId: postId,
         userId: getMongoUserID(),
         voteDir: userVoteDir == 1 ? 0 : 1,
+        relScore: relScore,
       })
       .then((response) => {
         // this.props.unsetLoader();
@@ -90,8 +97,8 @@ class Community extends Component {
           userVoteDir == 1
             ? newPosts[index].score - 1
             : userVoteDir == 0
-              ? newPosts[index].score + 1
-              : newPosts[index].score + 2;
+            ? newPosts[index].score + 1
+            : newPosts[index].score + 2;
 
         newPosts[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
         console.log("newComments = ", newPosts);
@@ -105,12 +112,15 @@ class Community extends Component {
   }
 
   downVote(postId, userVoteDir, index) {
+    // const oldScore = 0;
+    var relScore = userVoteDir == -1 ? 1 : userVoteDir == 0 ? -1 : -2;
     axios.defaults.headers.common["authorization"] = getToken();
     axios
       .post(backendServer + "/addVote", {
         entityId: postId,
         userId: getMongoUserID(),
         voteDir: userVoteDir == -1 ? 0 : -1,
+        relScore: relScore,
       })
       .then((response) => {
         // this.props.unsetLoader();
@@ -120,8 +130,8 @@ class Community extends Component {
           userVoteDir == -1
             ? newPosts[index].score + 1
             : userVoteDir == 0
-              ? newPosts[index].score - 1
-              : newPosts[index].score - 2;
+            ? newPosts[index].score - 1
+            : newPosts[index].score - 2;
 
         // newComments[index].userVoteDir = response.data.userVoteDir;
         newPosts[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
@@ -143,8 +153,10 @@ class Community extends Component {
   };
 
   render() {
-    var postsToRender = [], usersPresentInTheCommunity = [];
-    var isUserBeingInvitedByModerator = false, didUserRequestToJoin = false;
+    var postsToRender = [],
+      usersPresentInTheCommunity = [];
+    var isUserBeingInvitedByModerator = false,
+      didUserRequestToJoin = false;
     var participationButton = null;
     var userStatusInCommunity = null;
     var showPosts = true;
@@ -323,8 +335,13 @@ class Community extends Component {
           );
         }
       }
-      if (this.state.communityDetails.listOfUsers && this.state.communityDetails.listOfUsers.length > 0) {
-        usersPresentInTheCommunity = this.state.communityDetails.listOfUsers.filter(user => user.isAccepted == 1);
+      if (
+        this.state.communityDetails.listOfUsers &&
+        this.state.communityDetails.listOfUsers.length > 0
+      ) {
+        usersPresentInTheCommunity = this.state.communityDetails.listOfUsers.filter(
+          (user) => user.isAccepted == 1
+        );
       }
     }
     if (showPosts) {
@@ -343,15 +360,20 @@ class Community extends Component {
         });
       }
     } else {
-      postsToRender.push(<div style={{ textAlign: 'center', padding: '8%' }}>
-        <img alt="" width="25%" src={errorSVG} />
-        <h3>r/<strong>{this.state.communityDetails?.communityName}</strong> is a private community</h3>
-        You need to be a part of this community to see the posts.
-        <Link to="/home"><h4>Home</h4></Link>
-      </div>)
+      postsToRender.push(
+        <div style={{ textAlign: "center", padding: "8%" }}>
+          <img alt="" width="25%" src={errorSVG} />
+          <h3>
+            r/<strong>{this.state.communityDetails?.communityName}</strong> is a
+            private community
+          </h3>
+          You need to be a part of this community to see the posts.
+          <Link to="/home">
+            <h4>Home</h4>
+          </Link>
+        </div>
+      );
     }
-
-
 
     return (
       <React.Fragment>
@@ -389,77 +411,95 @@ class Community extends Component {
             <div>
               <Row>
                 <Col xs={8}>
-                  {showPosts && <div className="createPostH">
-                    <a>
-                      <img
-                        style={{
-                          height: "30px",
-                          width: "30px",
-                          border: "1px solid",
-                          borderRadius: "27px",
-                          padding: "2px",
-                          margin: "3px",
+                  {showPosts && (
+                    <div className="createPostH">
+                      <a>
+                        <img
+                          style={{
+                            height: "30px",
+                            width: "30px",
+                            border: "1px solid",
+                            borderRadius: "27px",
+                            padding: "2px",
+                            margin: "3px",
+                          }}
+                          alt="User Logo"
+                          src={userSvg}
+                        />
+                      </a>{" "}
+                      <Link
+                        to={{
+                          pathname: `/createPost/${this.state.community_id}`,
+                          rules: this.state.communityDetails?.rules,
+                          communityName: this.state.communityDetails
+                            ?.communityName,
                         }}
-                        alt="User Logo"
-                        src={userSvg}
-                      />
-                    </a>{" "}
-                    <Link to={{
-                      pathname: `/createPost/${this.state.community_id}`,
-                      rules: this.state.communityDetails?.rules,
-                      communityName: this.state.communityDetails?.communityName
-                    }}>
-                      <input
-                        className="createPostInput"
-                        placeholder="Create Post"
-                        type="text"
-                      />
-                    </Link>
-                    <a className="galleryAnchor">
-                      <img
-                        style={{ height: "30px", width: "22px" }}
-                        alt="Gallery Logo"
-                        src={gallerySvg}
-                      />
-                    </a>
-                    <a className="galleryAnchor">
-                      <img
-                        style={{ height: "30px", width: "22px" }}
-                        alt="Link Logo"
-                        src={linkSvg}
-                      />
-                    </a>
-                  </div>}
+                      >
+                        <input
+                          className="createPostInput"
+                          placeholder="Create Post"
+                          type="text"
+                        />
+                      </Link>
+                      <a className="galleryAnchor">
+                        <img
+                          style={{ height: "30px", width: "22px" }}
+                          alt="Gallery Logo"
+                          src={gallerySvg}
+                        />
+                      </a>
+                      <a className="galleryAnchor">
+                        <img
+                          style={{ height: "30px", width: "22px" }}
+                          alt="Link Logo"
+                          src={linkSvg}
+                        />
+                      </a>
+                    </div>
+                  )}
                   {postsToRender}
                 </Col>
                 <Col>
-                  {this.state.communityDetails && this.state.communityDetails.imageURL &&
-                    this.state.communityDetails.imageURL.length > 0 && (<Row>
-                      <Card className="card">
-                        <Card.Header className="cardHeader">
-                          r/{this.state.communityDetails.communityName}&apos;s
-                          images
-                        </Card.Header>
-                        <Card.Body>
-                          <Carousel interval={1500}>
-                            {this.state.communityDetails.imageURL.map(
-                              (image) => {
-                                return (<Carousel.Item
-                                  key={image._id}>
-                                  <div style={{ textAlign: 'center', boxShadow: '10px ​5px 5px -4px white inset' }}>
-                                    <img
-                                      src={image.url}
-                                      alt=""
-                                      style={{ height: "220px", width: "320px" }}
-                                    ></img>
-                                  </div>
-                                </Carousel.Item>);
-                              }
-                            )}
-                          </Carousel>
-                        </Card.Body>
-                      </Card>
-                    </Row>)}
+                  {this.state.communityDetails &&
+                    this.state.communityDetails.imageURL &&
+                    this.state.communityDetails.imageURL.length > 0 && (
+                      <Row>
+                        <Card className="card">
+                          <Card.Header className="cardHeader">
+                            r/{this.state.communityDetails.communityName}&apos;s
+                            images
+                          </Card.Header>
+                          <Card.Body>
+                            <Carousel interval={1500}>
+                              {this.state.communityDetails.imageURL.map(
+                                (image) => {
+                                  return (
+                                    <Carousel.Item key={image._id}>
+                                      <div
+                                        style={{
+                                          textAlign: "center",
+                                          boxShadow:
+                                            "10px ​5px 5px -4px white inset",
+                                        }}
+                                      >
+                                        <img
+                                          src={image.url}
+                                          alt=""
+                                          style={{
+                                            height: "220px",
+                                            width: "320px",
+                                          }}
+                                        ></img>
+                                      </div>
+                                    </Carousel.Item>
+                                  );
+                                }
+                              )}
+                            </Carousel>
+                          </Card.Body>
+                        </Card>
+                      </Row>
+                    )}
 
                   {this.state.communityDetails &&
                     this.state.communityDetails.rules &&
@@ -521,7 +561,7 @@ class Community extends Component {
                                           {this.state.communityDetails.rules
                                             .length -
                                             1 ==
-                                            index ? (
+                                          index ? (
                                             <div
                                               className="downArrowRotate"
                                               style={{
@@ -611,7 +651,7 @@ class Community extends Component {
                                           {this.state.communityDetails
                                             .topicSelected.length -
                                             1 ==
-                                            index ? (
+                                          index ? (
                                             <div
                                               className="downArrowRotate"
                                               style={{
@@ -644,117 +684,130 @@ class Community extends Component {
                       </Row>
                     )}
 
-                  {this.state.communityDetails && showPosts && (<Row>
-                    <Card className="card">
-                      <Card.Header className="cardHeader">
-                        r/{this.state.communityDetails.communityName}&apos;s
+                  {this.state.communityDetails && showPosts && (
+                    <Row>
+                      <Card className="card">
+                        <Card.Header className="cardHeader">
+                          r/{this.state.communityDetails.communityName}&apos;s
                           Stats
                         </Card.Header>
-                      <Card.Body>
-                        <div><strong>Total Posts:</strong> {this.state.posts?.length}</div>
-                        <div><strong>Total Users:</strong> {usersPresentInTheCommunity.length}</div>
-                        {usersPresentInTheCommunity.length > 0 && <div>
-                          <div><strong>List of Users:</strong></div>
-                          {usersPresentInTheCommunity.map(
-                            (user, index) => {
-                              var normalView = [],
-                                expandedView = [];
+                        <Card.Body>
+                          <div>
+                            <strong>Total Posts:</strong>{" "}
+                            {this.state.posts?.length}
+                          </div>
+                          <div>
+                            <strong>Total Users:</strong>{" "}
+                            {usersPresentInTheCommunity.length}
+                          </div>
+                          {usersPresentInTheCommunity.length > 0 && (
+                            <div>
+                              <div>
+                                <strong>List of Users:</strong>
+                              </div>
+                              {usersPresentInTheCommunity.map((user, index) => {
+                                var normalView = [],
+                                  expandedView = [];
 
-                              if (index < 5) {
-                                normalView.push(
-                                  <div key={user.userID._id}>
-                                    {user.userID._id}
-                                  </div>
-                                );
-                              } else {
-                                if (index == 5) {
+                                if (index < 5) {
                                   normalView.push(
-                                    <div
-                                      className="upArrowRotate"
-                                      style={{
-                                        display: !this.state.showMoreUsers
-                                          ? "block"
-                                          : "none",
-                                        textAlign: "center",
-                                      }}
-                                      onClick={() =>
-                                        this.setState((state) => ({
-                                          showMoreUsers: !state.showMoreUsers,
-                                        }))
-                                      }
-                                    >
-                                      <i className="fa fa-angle-double-down" />
+                                    <div key={user.userID._id}>
+                                      {user.userID._id}
+                                    </div>
+                                  );
+                                } else {
+                                  if (index == 5) {
+                                    normalView.push(
+                                      <div
+                                        className="upArrowRotate"
+                                        style={{
+                                          display: !this.state.showMoreUsers
+                                            ? "block"
+                                            : "none",
+                                          textAlign: "center",
+                                        }}
+                                        onClick={() =>
+                                          this.setState((state) => ({
+                                            showMoreUsers: !state.showMoreUsers,
+                                          }))
+                                        }
+                                      >
+                                        <i className="fa fa-angle-double-down" />
+                                      </div>
+                                    );
+                                  }
+                                  expandedView.push(
+                                    <div key={user.userID._id}>
+                                      {user.userID._id}
                                     </div>
                                   );
                                 }
-                                expandedView.push(
-                                  <div key={user.userID._id}>
-                                    {user.userID._id}
+                                return (
+                                  <div key="">
+                                    {normalView}
+                                    <Collapse in={this.state.showMoreUsers}>
+                                      <Fade>
+                                        <div>
+                                          {expandedView}
+                                          {usersPresentInTheCommunity.length -
+                                            1 ==
+                                          index ? (
+                                            <div
+                                              className="downArrowRotate"
+                                              style={{
+                                                display: this.state
+                                                  .showMoreUsers
+                                                  ? "block"
+                                                  : "none",
+                                                textAlign: "center",
+                                              }}
+                                              onClick={() =>
+                                                this.setState((state) => ({
+                                                  showMoreUsers: !state.showMoreUsers,
+                                                }))
+                                              }
+                                            >
+                                              <i className="fa fa-angle-double-up" />
+                                            </div>
+                                          ) : (
+                                            ""
+                                          )}
+                                        </div>
+                                      </Fade>
+                                    </Collapse>
                                   </div>
                                 );
-                              }
-                              return (
-                                <div key="">
-                                  {normalView}
-                                  <Collapse in={this.state.showMoreUsers}>
-                                    <Fade>
-                                      <div>
-                                        {expandedView}
-                                        {usersPresentInTheCommunity.length -
-                                          1 ==
-                                          index ? (
-                                          <div
-                                            className="downArrowRotate"
-                                            style={{
-                                              display: this.state
-                                                .showMoreUsers
-                                                ? "block"
-                                                : "none",
-                                              textAlign: "center",
-                                            }}
-                                            onClick={() =>
-                                              this.setState((state) => ({
-                                                showMoreUsers: !state.showMoreUsers,
-                                              }))
-                                            }
-                                          >
-                                            <i className="fa fa-angle-double-up" />
-                                          </div>
-                                        ) : (
-                                          ""
-                                        )}
-                                      </div>
-                                    </Fade>
-                                  </Collapse>
-                                </div>
-                              );
-                            }
+                              })}
+                            </div>
                           )}
-                        </div>}
-                      </Card.Body>
-                    </Card>
-                  </Row>)}
+                        </Card.Body>
+                      </Card>
+                    </Row>
+                  )}
                 </Col>
               </Row>
             </div>
           </Row>
-          <div style={{
-            textAlign: "right",
-            position: "fixed",
-            left: "0",
-            bottom: "0",
-            height: "60px",
-            width: "100%"
-          }}>
-            <div style={{
-              display: "block",
-              padding: "20px",
+          <div
+            style={{
+              textAlign: "right",
+              position: "fixed",
+              left: "0",
+              bottom: "0",
               height: "60px",
-              width: "100%"
-            }}>
-              <span >Top ^ Yet to be impl</span>
+              width: "100%",
+            }}
+          >
+            <div
+              style={{
+                display: "block",
+                padding: "20px",
+                height: "60px",
+                width: "100%",
+              }}
+            >
+              <span>Top ^ Yet to be impl</span>
             </div>
-
           </div>
         </div>
       </React.Fragment>

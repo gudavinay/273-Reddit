@@ -111,7 +111,6 @@ const getPostsInCommunity = async (msg, callback) => {
                   resp.score = result[0].upvoteCount - result[0].downvoteCount;
                   resp.upvoteCount = result[0].upvoteCount;
                   resp.downvoteCount = result[0].downvoteCount;
-                  resp.userVoteDir = result[0].userVoteDir;
                   console.log("resp userDetails = ", resp.userDetails[0]);
                   resp.userID = resp.userDetails[0];
                   resp.commentsCount = resp.commentsDetails.length;
