@@ -208,7 +208,7 @@ class Community extends Component {
     var userStatusInCommunity = null;
     var showPosts = true;
     if (this.state.communityDetails) {
-      if (this.state.communityDetails.ownerID == getMongoUserID()) {
+      if (this.state.communityDetails.ownerID && this.state.communityDetails.ownerID._id == getMongoUserID()) {
         participationButton = (
           <button
             className="form-control"
@@ -764,7 +764,7 @@ class Community extends Component {
                         <Card.Body>
                           <div>
                             <strong>Total Posts:</strong>{" "}
-                            {this.state.posts?.length}
+                            {this.state.posts?.length ? this.state.posts?.length : "0"}
                           </div>
                           <div>
                             <strong>Total Users:</strong>{" "}
