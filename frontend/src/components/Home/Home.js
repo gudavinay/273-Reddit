@@ -221,7 +221,7 @@ class Home extends Component {
       sortValue = sortByComments(this.state.dataOfPosts, type);
     } else if (attribute == "Votes") {
       console.log("sorting by Votes and type " + type);
-      sortValue = sortByVotes(this.state.dataOfPosts, type);
+      sortValue = await sortByVotes(this.state.dataOfPosts, type);
     }
     console.log(sortValue);
     this.setState({
@@ -286,7 +286,7 @@ class Home extends Component {
                         <option value="Date">Created Date</option>
                         <option value="Comments">Comments</option>
                         <option value="User">User</option>
-                        <option value="User">Votes</option>
+                        <option value="Votes">Votes</option>
                       </select>
                     </Col>
                     <Col xs={2}>

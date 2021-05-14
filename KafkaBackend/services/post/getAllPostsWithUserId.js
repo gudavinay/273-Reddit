@@ -164,7 +164,7 @@ const getAllPostsWithUserId = async (msg, callback) => {
         createdAt: "$createdAt",
         userMongoID: "$userDetails._id",
         userSQLID: "$userDetails.userIDSQL",
-        userName: "$userDetails.name", // only if needed
+        userID: "$userDetails", // only if needed
         communityID: "$communityDetails._id",
         communityName: "$communityDetails.communityName",
         commentsDetails: "$commentsDetails",
