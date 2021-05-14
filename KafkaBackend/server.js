@@ -15,7 +15,7 @@ const community_analytics = require("./services/community/communityAnalytics/top
 const getTopic = require("./services/getTopic");
 const post = require("./services/post/topicMapping");
 const comment = require("./services/comment/topicMapping");
-const community_user = require("./services/Community/communityUser/topicMapping");
+const community_user = require("./services/community/communityUser/topicMapping");
 const topic_sql = require("./services/Topic/topicMapping");
 
 require("./dbConnection");
