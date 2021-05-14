@@ -67,7 +67,7 @@ class Post extends Component {
         <Row className="postHeader">
           <span>{this.props.data.communityName &&
             "r/" + this.props.data?.communityName + " "}
-          posted by u/<strong>{this.props.data?.userID[0]?.name}</strong>{" "}
+          posted by u/<strong>{this.props.data && this.props.data.userID && this.props.data.userID[0] ? this.props.data.userID[0].name : ""}</strong>{" "}
             {getRelativeTime(this.props.data?.createdAt)}
           </span>
         </Row>
