@@ -74,11 +74,7 @@ class UserProfile extends Component {
         .then(response => {
           this.props.unsetLoader();
           console.log(response);
-          if (
-            response.data &&
-            response.data[0] &&
-            response.data[0].Location
-          )
+          if (response.data && response.data[0] && response.data[0].Location)
             this.setState({
               profile_picture_url: response.data[0].Location
             });
@@ -92,7 +88,6 @@ class UserProfile extends Component {
         profile_picture_url: null
       });
     }
-
   };
 
   handleDelete = (e, topic) => {
@@ -238,7 +233,7 @@ class UserProfile extends Component {
                       <i
                         className="fa fa-camera"
                         style={{ opacity: 1, fontSize: "75px", color: "white" }}
-                        onClick={() => { }}
+                        onClick={() => {}}
                       >
                         <input
                           style={{
@@ -301,6 +296,7 @@ class UserProfile extends Component {
                     onChange={e => this.setState({ name: e.target.value })}
                     name="name"
                     id="name"
+                    maxLength="50"
                     title="Please enter valid name"
                     value={this.state.name}
                     required
@@ -328,8 +324,9 @@ class UserProfile extends Component {
                 </Row>
                 <Row>
                   <input
-                    type="tel"
+                    type="text"
                     className="form-control"
+                    maxLength="50"
                     onChange={e => this.setState({ location: e.target.value })}
                     name="location"
                     title="Please enter valid location"
@@ -459,7 +456,7 @@ class UserProfile extends Component {
           <Modal.Body>
             <React.Fragment>
               {/* <center> */}
-              <form onSubmit={() => { }}>
+              <form onSubmit={() => {}}>
                 <Row style={{ padding: "5px 0" }}>
                   <Col sm={1}></Col>
                   <Col sm={8}>
