@@ -19,8 +19,8 @@ import {
   getDefaultRedditProfilePicture,
   getToken,
   getUserProfile,
+  getMongoUserID
 } from "../../services/ControllerUtils";
-import { getMongoUserID } from "../../services/ControllerUtils";
 
 class Navigationbar extends Component {
   constructor(props) {
@@ -31,39 +31,39 @@ class Navigationbar extends Component {
       leftDropdown: "Home",
       showNotificationModal: false,
       notificationData: [],
-      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture(),
+      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture()
     };
   }
-  onSubmitSearch = (e) => {
+  onSubmitSearch = e => {
     e.preventDefault();
     if (this.state.search.trim() === "") return;
     this.processSearchSubmitActivity();
   };
-  onChangeSearchText = (e) => this.setState({ search: e.target.value });
+  onChangeSearchText = e => this.setState({ search: e.target.value });
   processSearchSubmitActivity = () => {
     const { pathname } = this.props.location;
     if (pathname === "/communitysearch") {
       this.props.history.push({
         pathname: "/communitysearch",
-        search: "?" + new URLSearchParams({ q: this.state.search }).toString(),
+        search: "?" + new URLSearchParams({ q: this.state.search }).toString()
       });
     } else if (pathname === "/home") {
       // Write logic for posts search
       this.props.history.push({
         pathname: "/home",
-        search: "?" + new URLSearchParams({ q: this.state.search }).toString(),
+        search: "?" + new URLSearchParams({ q: this.state.search }).toString()
       });
       console.log(this.state.search);
     }
   };
   hideModal = () => {
     this.setState({
-      showNotificationModal: false,
+      showNotificationModal: false
     });
   };
   showModal = () => {
     this.setState({
-      showNotificationModal: true,
+      showNotificationModal: true
     });
   };
   async componentDidMount() {
@@ -105,16 +105,16 @@ class Navigationbar extends Component {
   // };
   getNotificationData = async () => {
     let data = {
-      user_id: getMongoUserID(),
+      user_id: getMongoUserID()
     };
     this.props.setLoader();
     Axios.defaults.headers.common["authorization"] = getToken();
     Axios.post(backendServer + "/getNotificationData", data)
-      .then((result) => {
+      .then(result => {
         this.props.unsetLoader();
         this.setState({ notificationData: result.data });
       })
-      .catch((err) => {
+      .catch(err => {
         this.props.unsetLoader();
         console.log(err);
       });
@@ -146,7 +146,7 @@ class Navigationbar extends Component {
             color="secondary"
             style={{
               backgroundColor: this.props.darkMode ? "#363537" : "white",
-              transition: "all 0.5s ease",
+              transition: "all 0.5s ease"
             }}
           />
         )}
@@ -154,13 +154,13 @@ class Navigationbar extends Component {
           style={{
             boxShadow: "0px 0px 5px #777",
             // marginBottom: "30px",
-            maxWidth: "100%",
+            maxWidth: "100%"
           }}
         >
           <Navbar
             style={{
               padding: "0",
-              position: "relative",
+              position: "relative"
             }}
           >
             <Row style={{ display: "contents" }}>
@@ -189,7 +189,7 @@ class Navigationbar extends Component {
                     borderRadius: "5px",
                     backgroundColor: this.props.darkMode ? "#363537" : "#fff",
                     zIndex: "2",
-                    border: "1px solid #777",
+                    border: "1px solid #777"
                   }}
                 >
                   <div
@@ -197,12 +197,11 @@ class Navigationbar extends Component {
                       display: "flex",
                       justifyContent: "space-between",
                       fontWeight: "500",
-                      padding: "0 15px",
+                      padding: "0 15px"
                     }}
                     onClick={() => {
-                      let classListLeft = document.getElementById(
-                        "expandLeftDropDown"
-                      ).classList;
+                      let classListLeft =
+                        document.getElementById("expandLeftDropDown").classList;
                       let classListRight = document.getElementById(
                         "expandRightDropDown"
                       ).classList;
@@ -307,8 +306,8 @@ class Navigationbar extends Component {
                           search:
                             "?" +
                             new URLSearchParams({
-                              q: this.state.search,
-                            }).toString(),
+                              q: this.state.search
+                            }).toString()
                         });
                       }}
                     >
@@ -322,7 +321,7 @@ class Navigationbar extends Component {
                       }
                       onClick={() => {
                         this.setState({
-                          leftDropdown: "Community Moderation",
+                          leftDropdown: "Community Moderation"
                         });
                         document
                           .getElementById("expandLeftDropDown")
@@ -340,7 +339,7 @@ class Navigationbar extends Component {
                       }
                       onClick={() => {
                         this.setState({
-                          leftDropdown: "community Analytics",
+                          leftDropdown: "community Analytics"
                         });
                         document
                           .getElementById("expandLeftDropDown")
@@ -365,7 +364,7 @@ class Navigationbar extends Component {
                         backgroundColor: this.props.darkMode
                           ? "#363537"
                           : "white",
-                        borderColor: "#777",
+                        borderColor: "#777"
                       }}
                     />
                   </Form.Group>
@@ -407,7 +406,7 @@ class Navigationbar extends Component {
                     borderRadius: "5px",
                     backgroundColor: this.props.darkMode ? "#363537" : "#fff",
                     zIndex: "2",
-                    border: "1px solid #777",
+                    border: "1px solid #777"
                   }}
                 >
                   <div
@@ -415,12 +414,11 @@ class Navigationbar extends Component {
                       display: "flex",
                       justifyContent: "space-between",
                       fontWeight: "500",
-                      padding: "0 15px",
+                      padding: "0 15px"
                     }}
                     onClick={() => {
-                      let classListLeft = document.getElementById(
-                        "expandLeftDropDown"
-                      ).classList;
+                      let classListLeft =
+                        document.getElementById("expandLeftDropDown").classList;
                       let classListRight = document.getElementById(
                         "expandRightDropDown"
                       ).classList;
@@ -440,7 +438,7 @@ class Navigationbar extends Component {
                         style={{
                           width: "25px",
                           borderRadius: "3px",
-                          marginRight: "10px",
+                          marginRight: "10px"
                         }}
                       />
                       {getUserProfile() != null
@@ -515,7 +513,7 @@ class Navigationbar extends Component {
 }
 
 export default connect(
-  (state) => {
+  state => {
     return state;
   },
   { logoutRedux }

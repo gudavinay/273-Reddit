@@ -10,7 +10,7 @@ const months = [
   "SEP",
   "OCT",
   "NOV",
-  "DEC",
+  "DEC"
 ];
 
 const randomColors = [
@@ -38,7 +38,7 @@ const randomColors = [
   "FF66AC",
   "DB0064",
   "EA0027",
-  "FF585B",
+  "FF585B"
 ];
 const avatarStyle = [
   "01",
@@ -60,7 +60,7 @@ const avatarStyle = [
   "17",
   "18",
   "19",
-  "20",
+  "20"
 ];
 
 export function getUserProfile() {
@@ -145,7 +145,7 @@ export function sortByNoOfUser(array, type) {
 export function getEntityVoteDir(entityId) {
   const votes = JSON.parse(localStorage.getItem("userVote"));
   console.log("votes = ", votes);
-  votes.map((vote) => {
+  votes.map(vote => {
     console.log("entitiyID = ", entityId, vote.entityId);
     if (vote.entityId == entityId) {
       return vote.voteDir;
@@ -231,7 +231,7 @@ export function nFormatter(num, digits) {
     { value: 1e9, symbol: "G" },
     { value: 1e12, symbol: "T" },
     { value: 1e15, symbol: "P" },
-    { value: 1e18, symbol: "E" },
+    { value: 1e18, symbol: "E" }
   ];
   const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
   let i;

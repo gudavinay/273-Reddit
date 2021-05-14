@@ -108,7 +108,15 @@ class CreateCommunity extends Component {
         this.props.unsetLoader();
         if (response.status == 200) {
           this.setState({ error: "" });
-          alert("Community Updated successfully");
+          this.setState({
+            redirectVar: (
+              <Redirect
+                to={{
+                  pathname: `/community/${this.state.communityID}`
+                }}
+              />
+            )
+          });
         }
       })
       .catch(error => {
