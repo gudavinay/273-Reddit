@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Row, Col, Card, Modal, ModalBody } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import "./post.css";
 import { getRelativeTime } from "../../../services/ControllerUtils";
 import ModalHeader from "react-bootstrap/esm/ModalHeader";
@@ -68,14 +69,25 @@ class Post extends Component {
           <span>
             {this.props.data.communityName &&
               "r/" + this.props.data?.communityName + " "}
-            posted by u/
-            <strong>
-              {this.props.data &&
-              this.props.data.userID &&
-              this.props.data.userID[0]
-                ? this.props.data.userID[0].name
-                : ""}
-            </strong>{" "}
+
+            posted by &nbsp;
+            <Link
+              style={{ color: "black" }}
+              to={`/user/${this.props.data &&
+                this.props.data.userID &&
+                this.props.data.userID[0]
+                && this.props.data.userID[0].userIDSQL}`}
+            >
+              u/
+              <strong>
+                {this.props.data &&
+                  this.props.data.userID &&
+                  this.props.data.userID[0]
+                  ? this.props.data.userID[0].name
+                  : ""}
+              </strong>
+            </Link>
+            {" "}
             {getRelativeTime(this.props.data?.createdAt)}
           </span>
         </Row>

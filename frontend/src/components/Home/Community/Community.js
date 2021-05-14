@@ -61,7 +61,7 @@ class Community extends Component {
   componentDidUpdate(prevState) {
     if (
       JSON.stringify(prevState.communityDetails) !=
-        JSON.stringify(this.state.communityDetails) &&
+      JSON.stringify(this.state.communityDetails) &&
       this.state.communityDetails &&
       this.state.communityDetails.listOfUsers &&
       this.state.communityDetails.listOfUsers.length > 0
@@ -79,8 +79,7 @@ class Community extends Component {
     axios.defaults.headers.common["authorization"] = getToken();
     axios
       .get(
-        `${backendServer}/getCommunityDetails?ID=${
-          this.state.community_id
+        `${backendServer}/getCommunityDetails?ID=${this.state.community_id
         }&requirePopulate=${true}`
       )
       .then((response) => {
@@ -98,14 +97,12 @@ class Community extends Component {
     this.props.setLoader();
     axios.defaults.headers.common["authorization"] = getToken();
     console.log(
-      `${backendServer}/getPostsInCommunity?ID=${
-        this.state.community_id
+      `${backendServer}/getPostsInCommunity?ID=${this.state.community_id
       }&userId=${getMongoUserID()}&page=${page}&size=${size}`
     );
     axios
       .get(
-        `${backendServer}/getPostsInCommunity?ID=${
-          this.state.community_id
+        `${backendServer}/getPostsInCommunity?ID=${this.state.community_id
         }&userId=${getMongoUserID()}&page=${page}&size=${size}`
       )
       .then((response) => {
@@ -113,7 +110,7 @@ class Community extends Component {
         console.log("posts = ", response.data);
         this.setState(
           { posts: response.data.post, count: response.data.total },
-          () => {}
+          () => { }
         );
       })
       .catch((err) => {
@@ -144,8 +141,8 @@ class Community extends Component {
           userVoteDir == 1
             ? newPosts[index].score - 1
             : userVoteDir == 0
-            ? newPosts[index].score + 1
-            : newPosts[index].score + 2;
+              ? newPosts[index].score + 1
+              : newPosts[index].score + 2;
 
         newPosts[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
         console.log("newComments = ", newPosts);
@@ -178,8 +175,8 @@ class Community extends Component {
           userVoteDir == -1
             ? newPosts[index].score + 1
             : userVoteDir == 0
-            ? newPosts[index].score - 1
-            : newPosts[index].score - 2;
+              ? newPosts[index].score - 1
+              : newPosts[index].score - 2;
 
         // newComments[index].userVoteDir = response.data.userVoteDir;
         newPosts[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
@@ -638,7 +635,7 @@ class Community extends Component {
                                           {this.state.communityDetails.rules
                                             .length -
                                             1 ==
-                                          index ? (
+                                            index ? (
                                             <div
                                               className="downArrowRotate"
                                               style={{
@@ -731,7 +728,7 @@ class Community extends Component {
                                           {this.state.communityDetails
                                             .topicSelected.length -
                                             1 ==
-                                          index ? (
+                                            index ? (
                                             <div
                                               className="downArrowRotate"
                                               style={{
@@ -797,9 +794,9 @@ class Community extends Component {
                                     this.state.communityDetails.ownerID
                                       .profile_picture_url
                                       ? this.state.communityDetails.ownerID
-                                          .profile_picture_url
+                                        .profile_picture_url
                                       : this.state
-                                          .getDefaultRedditProfilePicture
+                                        .getDefaultRedditProfilePicture
                                   }
                                   style={{
                                     height: "30px",
@@ -850,10 +847,15 @@ class Community extends Component {
                                               {/* {user.userID.profile_picture_url ? <img src={user.userID.profile_picture_url} style={{ height: '30px', width: '30px', borderRadius: '15px' }} /> : <img src={getDefaultRedditProfilePicture()} style={{ height: '30px', width: '30px', borderRadius: '15px' }} />} */}
                                             </Col>
                                             <Col style={{ paddingLeft: "0" }}>
-                                              u/
-                                              <strong>
-                                                {user.userID.name}
-                                              </strong>
+                                              <Link
+                                                style={{ color: "black" }}
+                                                to={`/user/${user.userID.userIDSQL}`}
+                                              >
+                                                u/
+                                                <strong>
+                                                  {user.userID.name}
+                                                </strong>
+                                              </Link>
                                             </Col>
                                           </Row>
                                         </div>

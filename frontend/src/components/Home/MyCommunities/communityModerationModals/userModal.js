@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import {
   getMongoUserID,
   getToken,
@@ -145,8 +146,13 @@ class UserModal extends Component {
               />
             </div>
             <div>
-              u/
+              <Link
+                style={{ color: "black" }}
+                to={`/user/${this.state.userDetails?.userIDSQL}`}
+              >
+                u/
               {this.state.userDetails ? this.state.userDetails.name : ""}
+              </Link>
             </div>
           </div>
           <div style={{ width: "60%", margin: "auto" }}>

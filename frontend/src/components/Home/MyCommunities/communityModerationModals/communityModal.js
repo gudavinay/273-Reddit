@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { Component } from "react";
 import { Row, Col } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import {
   getDefaultRedditProfilePicture,
   getToken,
@@ -159,7 +160,12 @@ class CommunityModal extends Component {
                     justifyContent: "center",
                   }}
                 >
-                  u/{data.name}
+                  <Link
+                    style={{ color: "black" }}
+                    to={`/user/${data?.userIDSQL}`}
+                  >
+                    u/{data.name}
+                  </Link>
                 </div>
               </div>
             </div>
@@ -217,7 +223,12 @@ class CommunityModal extends Component {
                     justifyContent: "center",
                   }}
                 >
-                  u/{data.name}
+                  <Link
+                    style={{ color: "black" }}
+                    to={`/user/${data?.userIDSQL}`}
+                  >
+                    u/{data.name}
+                  </Link>
                 </div>
               </div>
             </div>

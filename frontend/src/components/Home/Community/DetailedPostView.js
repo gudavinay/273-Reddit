@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 // import Comment from './Comment';
+import { Link } from "react-router-dom";
 import Post from "./Post";
 import backendServer from "../../../webConfig";
 import Axios from "axios";
@@ -181,7 +182,12 @@ class DetailedPostView extends Component {
                   lineHeight: "16px",
                 }}
               >
-                u/<strong>{comment.userID.name}</strong>{" "}
+                <Link
+                  style={{ color: "black" }}
+                  to={`/user/${comment.userID.userIDSQL}`}
+                >
+                  u/<strong>{comment.userID.name}</strong>
+                </Link>{" "}
                 {getRelativeTime(comment.createdAt)}
               </span>
             </div>
@@ -351,7 +357,12 @@ class DetailedPostView extends Component {
                     lineHeight: "16px",
                   }}
                 >
-                  u/<strong>{childComment.userID.name}</strong>{" "}
+                  <Link
+                    style={{ color: "black" }}
+                    to={`/user/${childComment.userID?.userIDSQL}`}
+                  >
+                    u/<strong>{childComment.userID.name}</strong>{" "}
+                  </Link>
                   {getRelativeTime(childComment.createdAt)}
                 </span>
               </div>

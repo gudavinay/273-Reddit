@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import backendServer from "../../../webConfig";
 import { Col, Modal, Row } from "react-bootstrap";
 import { BiSearchAlt } from "react-icons/bi";
@@ -288,7 +289,12 @@ class MyCommunitiesModeration extends Component {
                   justifyContent: "center",
                 }}
               >
-                u/{item.name}
+                <Link
+                  style={{ color: "black" }}
+                  to={`/user/${item?.userIDSQL}`}
+                >
+                  u/{item.name}
+                </Link>
               </div>
               <div
                 style={{
