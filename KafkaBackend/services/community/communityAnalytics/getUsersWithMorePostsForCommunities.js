@@ -13,16 +13,20 @@ const getUsersWithMorePostsForCommunities = async (msg, callback) => {
       let userList = [];
       await Promise.all(
         result.map(async (item) => {
+          console.log(item);
           await Post.findOne(
             { communityID: item._id },
             "_id userID title score NoOfComments communityID",
-            { sort: { score: -1, createdAt: -1 } },
-            (error1, result1) => {
-              output = JSON.parse(JSON.stringify(result1));
-              output["communityName"] = item.communityName;
+            { sort: { score: -1, createdAt: -1 } }
+          )
+            .then((result) => {
+              output = JSON.parse(JSON.stringify(result));
+              output["communityName"] = item ? item.communityName : null;
               postList.push(output);
-            }
-          );
+            })
+            .catch((err) => {
+              console.log(err);
+            });
           await Post.aggregate([
             { $match: { communityID: item._id } },
             {

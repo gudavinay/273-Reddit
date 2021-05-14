@@ -6,7 +6,7 @@ import axios from "axios";
 import {
   getMongoUserID,
   getToken,
-  sortByPost
+  sortByPost,
 } from "../../../services/ControllerUtils";
 import { Row, Col, Container } from "react-bootstrap";
 class CommunityAnalytics extends Component {
@@ -27,20 +27,20 @@ class CommunityAnalytics extends Component {
             text: "Name of Community",
             font: {
               size: 18,
-              color: "#7f7f7f"
-            }
-          }
+              color: "#7f7f7f",
+            },
+          },
         },
         yaxis: {
           title: {
             text: "No Of Post vs No of User ",
             font: {
               size: 18,
-              color: "#7f7f7f"
-            }
-          }
-        }
-      }
+              color: "#7f7f7f",
+            },
+          },
+        },
+      },
     };
   }
 
@@ -49,7 +49,7 @@ class CommunityAnalytics extends Component {
     let yAxis = [];
     let yAxisUser = [];
     if (communityData.length > 0) {
-      communityData.map(community => {
+      communityData.map((community) => {
         label.push(community.communityName);
         yAxis.push(community.NoOfPost);
         yAxisUser.push(community.acceptedUsersSQLIds.length + 1);
@@ -62,15 +62,15 @@ class CommunityAnalytics extends Component {
           y: yAxis,
           x: label,
           type: "bar",
-          name: "Post"
+          name: "Post",
         },
         {
           y: yAxisUser,
           x: label,
           type: "bar",
-          name: "User"
-        }
-      ]
+          name: "User",
+        },
+      ],
     });
     // this.setState({
     //   data: [
@@ -97,9 +97,9 @@ class CommunityAnalytics extends Component {
                   values: yAxis,
                   labels: label,
                   type: "pie",
-                  name: "Post"
-                }
-              ]
+                  name: "Post",
+                },
+              ],
             });
             return;
           }
@@ -113,9 +113,9 @@ class CommunityAnalytics extends Component {
             values: yAxis,
             labels: label,
             type: "pie",
-            name: "Post"
-          }
-        ]
+            name: "Post",
+          },
+        ],
       });
       console.log(yAxis);
     }
@@ -127,20 +127,20 @@ class CommunityAnalytics extends Component {
     axios.defaults.headers.common["authorization"] = getToken();
     axios
       .get(`${backendServer}/communityAnalytics?ID=${ID}`)
-      .then(response => {
+      .then((response) => {
         if (response.status == 200) {
           this.setState({
-            communityData: response.data
+            communityData: response.data,
           });
           console.log(response.data);
           this.calculateValues(response.data);
           this.CommunityWithMaximumPost(response.data);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
         this.setState({
-          error: "Community name is not unique"
+          error: "Community name is not unique",
         });
       });
   }
@@ -150,16 +150,16 @@ class CommunityAnalytics extends Component {
     axios.defaults.headers.common["authorization"] = getToken();
     axios
       .get(`${backendServer}/getUsersWithMorePostsForCommunities?ID=${ID}`)
-      .then(response => {
+      .then((response) => {
         console.log(response.data);
         this.setState({
           mostUpvotedPost: response.data.mostUpvotedPost,
-          userWithMaxPosts: response.data.userWithMaxPosts
+          userWithMaxPosts: response.data.userWithMaxPosts,
         });
         this.DrawGraphForUsers(response.data.mostUpvotedPost);
         this.DrawUserGraph(response.data.userWithMaxPosts);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
@@ -168,7 +168,7 @@ class CommunityAnalytics extends Component {
     let label = [];
     let yAxis = [];
     if (mostUpvotedPost.length > 0) {
-      mostUpvotedPost.map(post => {
+      mostUpvotedPost.map((post) => {
         label.push(post.communityName);
         yAxis.push(post.score);
       });
@@ -180,9 +180,9 @@ class CommunityAnalytics extends Component {
           y: yAxis,
           x: label,
           type: "bar",
-          name: "Post"
-        }
-      ]
+          name: "Post",
+        },
+      ],
     });
   }
 
@@ -191,20 +191,23 @@ class CommunityAnalytics extends Component {
     let labelMostPost = [];
     let yAxisMostPost = [];
     if (userWithMaxPost.length > 0) {
-      userWithMaxPost.map(user => {
-        console.log(user);
-        labelMostPost.push(user[0].name);
-        yAxisMostPost.push(user[0].count);
-        this.setState({
-          dataForMaxPostByUser: [
-            {
-              y: yAxisMostPost,
-              x: labelMostPost,
-              type: "bar",
-              name: "User"
-            }
-          ]
-        });
+      userWithMaxPost.map((user) => {
+        if (user && user.length > 0) {
+          console.log(user);
+          labelMostPost.push(user[0].communityName);
+          yAxisMostPost.push(user[0].count);
+          this.setState({
+            dataForMaxPostByUser: [
+              {
+                y: yAxisMostPost,
+                x: labelMostPost,
+                type: "bar",
+                text: user[0].name,
+                name: "communityName",
+              },
+            ],
+          });
+        }
       });
     }
   }
@@ -215,45 +218,51 @@ class CommunityAnalytics extends Component {
   }
 
   render() {
-    console.log(this.state.data);
-    console.log(this.state.dataForUser);
+    console.log(this.state);
+    // console.log(this.state.dataForUser);
     return (
       <React.Fragment>
         <Container>
-          {JSON.stringify(this.state.mostUpvotedPost)}
-          {JSON.stringify(this.state.userWithMaxPosts)}
+          {/* {JSON.stringify(this.state.mostUpvotedPost)} */}
+          {/* {JSON.stringify(this.state.userWithMaxPosts)} */}
           <Row>
             <Col>
               <Plot
                 name="noOfPost"
                 data={this.state.dataToPlot}
                 layout={this.state.layoutForBar}
-                onInitialized={figure => this.setState(figure)}
-                onUpdate={figure => this.setState(figure)}
+                onInitialized={(figure) => this.setState(figure)}
+                onUpdate={(figure) => this.setState(figure)}
               />
             </Col>
+          </Row>
+          <Row>
             <Col>
               <Plot
                 name="noOfUser"
                 data={this.state.dataForPost}
-                onInitialized={figure => this.setState(figure)}
-                onUpdate={figure => this.setState(figure)}
+                onInitialized={(figure) => this.setState(figure)}
+                onUpdate={(figure) => this.setState(figure)}
               />
             </Col>
+          </Row>
+          <Row>
             <Col>
               <Plot
                 name="TopVotedPost"
                 data={this.state.dataToUpvote}
-                onInitialized={figure => this.setState(figure)}
-                onUpdate={figure => this.setState(figure)}
+                onInitialized={(figure) => this.setState(figure)}
+                onUpdate={(figure) => this.setState(figure)}
               />
             </Col>
+          </Row>
+          <Row>
             <Col>
               <Plot
                 name="UserWithMaxPost"
                 data={this.state.dataForMaxPostByUser}
-                onInitialized={figure => this.setState(figure)}
-                onUpdate={figure => this.setState(figure)}
+                onInitialized={(figure) => this.setState(figure)}
+                onUpdate={(figure) => this.setState(figure)}
               />
             </Col>
           </Row>
