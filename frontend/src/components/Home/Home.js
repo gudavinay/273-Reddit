@@ -55,8 +55,8 @@ class Home extends Component {
           userVoteDir == 1
             ? newPosts[index].score - 1
             : userVoteDir == 0
-              ? newPosts[index].score + 1
-              : newPosts[index].score + 2;
+            ? newPosts[index].score + 1
+            : newPosts[index].score + 2;
 
         newPosts[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
         console.log("newComments = ", newPosts);
@@ -87,8 +87,8 @@ class Home extends Component {
           userVoteDir == -1
             ? newPosts[index].score + 1
             : userVoteDir == 0
-              ? newPosts[index].score - 1
-              : newPosts[index].score - 2;
+            ? newPosts[index].score - 1
+            : newPosts[index].score - 2;
 
         // newComments[index].userVoteDir = response.data.userVoteDir;
         newPosts[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
@@ -256,16 +256,19 @@ class Home extends Component {
         <Row
           style={{
             margin: "0",
-            padding: '30px',
+            padding: "30px",
             background: this.props.darkMode ? "black" : "#DAE0E6",
             boxShadow: "rgb(119 119 119) 0px 0px 5px",
+            minHeight: "91.5vh",
           }}
         >
           <Col sm={8}>
-            <div style={{
-              float: "right",
-              width: "100%"
-            }}>
+            <div
+              style={{
+                float: "right",
+                width: "100%",
+              }}
+            >
               {/* <Alert variant="danger">
                 <button onClick={() => this.props.setLoader()}>
                   SET LOADER
@@ -274,39 +277,56 @@ class Home extends Component {
                   UNSET LOADER
                 </button>
               </Alert> */}
-              <Card>
-                <Card.Header>
-                  <Row>
-                    <Col xs={2}>Sort By</Col>
-                    <Col xs={3} style={{ marginLeft: "-80px" }}>
-                      <select
-                        className="form-control"
-                        onChange={this.SortItems}
-                      >
-                        <option value="Date">Created Date</option>
-                        <option value="Comments">Comments</option>
-                        <option value="User">User</option>
-                        <option value="Votes">Votes</option>
-                      </select>
-                    </Col>
-                    <Col xs={2}>
-                      <select className="form-control" onChange={this.SortType}>
-                        <option value="desc">Decending</option>
-                        <option value="asc">Ascending</option>
-                      </select>
-                    </Col>
-                  </Row>
-                </Card.Header>
-                <Card.Body>
-                  {this.state.searchResults.length ? (
-                    <HomeSearchResults
-                      data={this.state.searchResults}
-                    ></HomeSearchResults>
-                  ) : (
-                    postsToRender
-                  )}
-                </Card.Body>
-              </Card>
+              {this.state.dataOfPosts && this.state.dataOfPosts.length > 0 ? (
+                <Card>
+                  <Card.Header>
+                    <Row>
+                      <Col xs={2}>Sort By</Col>
+                      <Col xs={3} style={{ marginLeft: "-80px" }}>
+                        <select
+                          className="form-control"
+                          onChange={this.SortItems}
+                        >
+                          <option value="Date">Created Date</option>
+                          <option value="Comments">Comments</option>
+                          <option value="User">User</option>
+                          <option value="Votes">Votes</option>
+                        </select>
+                      </Col>
+                      <Col xs={2}>
+                        <select
+                          className="form-control"
+                          onChange={this.SortType}
+                        >
+                          <option value="desc">Decending</option>
+                          <option value="asc">Ascending</option>
+                        </select>
+                      </Col>
+                    </Row>
+                  </Card.Header>
+                  <Card.Body>
+                    {this.state.searchResults.length ? (
+                      <HomeSearchResults
+                        data={this.state.searchResults}
+                      ></HomeSearchResults>
+                    ) : (
+                      postsToRender
+                    )}
+                  </Card.Body>
+                </Card>
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    height: "70vh",
+                  }}
+                >
+                  No data
+                </div>
+              )}
 
               {/* <Post content="post 1" />
               <Post content="post 2" />
@@ -317,9 +337,7 @@ class Home extends Component {
               <Post content="post 7" /> */}
             </div>
           </Col>
-          <Col sm={4}
-            style={{ paddingRight: "50px" }}
-          >
+          <Col sm={4} style={{ paddingRight: "50px" }}>
             <Row>
               <Card className="card">
                 <Card.Header className="cardHeader">
@@ -436,7 +454,7 @@ class Home extends Component {
                                     {this.state.communitiesListForWidget
                                       .length -
                                       1 ==
-                                      index ? (
+                                    index ? (
                                       <div
                                         className="downArrowRotate"
                                         style={{
