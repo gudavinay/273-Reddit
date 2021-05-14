@@ -89,120 +89,120 @@ class CommunityModal extends Component {
     let counter = 1;
     this.state.communityDetails
       ? this.state.communityDetails.listOfUsers.forEach((item) => {
-        if (!item.isAccepted) {
-          let data = this.state.users ? this.state.users[item.userID] : {};
-          requestedUsers.push(
-            <div
-              key={item.userID}
-              className="row"
-              style={{ padding: "15px 30px" }}
-            >
+          if (item.isAccepted === 0) {
+            let data = this.state.users ? this.state.users[item.userID] : {};
+            requestedUsers.push(
               <div
-                className="col-1"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                <input
-                  type="checkbox"
-                  onChange={() => {
-                    let arr = this.state.userList;
-                    if (arr.includes(item.userID)) {
-                      arr.pop(item.userID);
-                    } else {
-                      arr.push(item.userID);
-                    }
-                    this.setState({
-                      userList: arr,
-                    });
-                  }}
-                />
-              </div>
-              <div
-                className="col"
-                style={{
-                  display: "flex",
-                }}
+                key={item.userID}
+                className="row"
+                style={{ padding: "15px 30px" }}
               >
                 <div
-                  style={{
-                    display: "block",
-                    width: "40px",
-                    height: "40px",
-                    backgroundColor: "#ccc",
-                    borderRadius: "5px",
-                    border: "1px solid #777",
-                    margin: "0 15px",
-                  }}
-                >
-                  .
-                  </div>
-                <div
+                  className="col-1"
                   style={{
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
                   }}
                 >
-                  u/{data.name}
+                  <input
+                    type="checkbox"
+                    onChange={() => {
+                      let arr = this.state.userList;
+                      if (arr.includes(item.userID)) {
+                        arr.pop(item.userID);
+                      } else {
+                        arr.push(item.userID);
+                      }
+                      this.setState({
+                        userList: arr,
+                      });
+                    }}
+                  />
                 </div>
-              </div>
-            </div>
-          );
-        } else {
-          let data = this.state.users ? this.state.users[item.userID] : {};
-          acceptedUsers.push(
-            <div
-              key={item.userID}
-              className="row"
-              style={{ padding: "15px" }}
-            >
-              <div
-                className="col-1"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                {counter}.
-                </div>
-              <div
-                className="col"
-                style={{
-                  display: "flex",
-                }}
-              >
                 <div
+                  className="col"
                   style={{
-                    display: "block",
-                    width: "40px",
-                    height: "40px",
-                    backgroundColor: "#ccc",
-                    borderRadius: "5px",
-                    border: "1px solid #777",
-                    margin: "0 15px",
+                    display: "flex",
                   }}
                 >
-                  .
+                  <div
+                    style={{
+                      display: "block",
+                      width: "40px",
+                      height: "40px",
+                      backgroundColor: "#ccc",
+                      borderRadius: "5px",
+                      border: "1px solid #777",
+                      margin: "0 15px",
+                    }}
+                  >
+                    .
                   </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                  >
+                    u/{data.name}
+                  </div>
+                </div>
+              </div>
+            );
+          } else if (item.isAccepted === 1) {
+            let data = this.state.users ? this.state.users[item.userID] : {};
+            acceptedUsers.push(
+              <div
+                key={item.userID}
+                className="row"
+                style={{ padding: "15px" }}
+              >
                 <div
+                  className="col-1"
                   style={{
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
                   }}
                 >
-                  u/{data.name}
+                  {counter}.
+                </div>
+                <div
+                  className="col"
+                  style={{
+                    display: "flex",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "block",
+                      width: "40px",
+                      height: "40px",
+                      backgroundColor: "#ccc",
+                      borderRadius: "5px",
+                      border: "1px solid #777",
+                      margin: "0 15px",
+                    }}
+                  >
+                    .
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                  >
+                    u/{data.name}
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-          counter++;
-        }
-      })
+            );
+            counter++;
+          }
+        })
       : [];
     return (
       <>
@@ -214,7 +214,7 @@ class CommunityModal extends Component {
             style={{
               fontWeight: "700",
               fontSize: "24px",
-              marginBottom: "50px",
+              marginBottom: "25px",
             }}
           >
             r/
@@ -266,7 +266,7 @@ class CommunityModal extends Component {
               </div>
               <div
                 style={{
-                  padding: "30px 0 0 0",
+                  padding: "20px 0 0 0",
                   textAlign: "center",
                   display: "flex",
                   justifyContent: "center",

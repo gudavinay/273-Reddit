@@ -109,6 +109,19 @@ export function sortByComments(array, type) {
   }
   return sortValue;
 }
+export function sortByVotes(array, type) {
+  let sortValue;
+  if (type == "desc") {
+    sortValue = array.sort((a, b) => {
+      return new Date(b.score) - new Date(a.score);
+    });
+  } else {
+    sortValue = array.sort((a, b) => {
+      return new Date(a.score) - new Date(b.score);
+    });
+  }
+  return sortValue;
+}
 export function sortByNoOfUser(array, type) {
   let sortValue;
   if (type == "desc") {
@@ -127,6 +140,18 @@ export function sortByNoOfUser(array, type) {
     });
   }
   return sortValue;
+}
+
+export function getEntityVoteDir(entityId) {
+  const votes = JSON.parse(localStorage.getItem("userVote"));
+  console.log("votes = ", votes);
+  votes.map((vote) => {
+    console.log("entitiyID = ", entityId, vote.entityId);
+    if (vote.entityId == entityId) {
+      return vote.voteDir;
+    }
+  });
+  return 0;
 }
 
 export function getToken() {
@@ -181,6 +206,7 @@ export function getRelativeTime(date) {
   }
   var now = new Date();
   var diff = parseInt((now.getTime() - Date.parse(date)) / 1000);
+
   if (diff < 60) {
     return "a few seconds ago";
   } else if (diff < 120) {

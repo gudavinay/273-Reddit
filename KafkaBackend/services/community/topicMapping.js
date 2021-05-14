@@ -14,6 +14,10 @@ const { acceptUsersToCommunity } = require("./acceptUsersToCommunity");
 const { rejectUsersForCommunity } = require("./rejectUsersForCommunity");
 const { getCommunitiesForUser } = require("./getCommunitiesForUser");
 const { removeUserFromCommunities } = require("./removeUserFromCommunities");
+const { vote } = require("./vote");
+const {
+  getCommunitiesForUserPartOfOwnerCommunity,
+} = require("./getCommunitiesForUserPartOfOwnerCommunity");
 
 let handle_request = (msg, callback) => {
   if (msg.path === "Get-Communities-For-Owner") {
@@ -42,6 +46,10 @@ let handle_request = (msg, callback) => {
     getCommunitiesForUser(msg, callback);
   } else if (msg.path === "Remove-User-From-Communities") {
     removeUserFromCommunities(msg, callback);
+  } else if (msg.path === "Vote-Community") {
+    vote(msg, callback);
+  } else if (msg.path === "Get-Communities-For-User-Part-Of-Owner-Community") {
+    getCommunitiesForUserPartOfOwnerCommunity(msg, callback);
   }
 };
 

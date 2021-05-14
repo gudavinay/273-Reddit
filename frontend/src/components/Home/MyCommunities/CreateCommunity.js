@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { Redirect } from "react-router-dom";
 import {
   Dropdown,
   Col,
@@ -78,7 +79,15 @@ class CreateCommunity extends Component {
         this.props.unsetLoader();
         if (response.status == 200) {
           this.setState({ error: "" });
-          alert("Community created successfully");
+          this.setState({
+            redirectVar: (
+              <Redirect
+                to={{
+                  pathname: `/community/${response.data._id}`
+                }}
+              />
+            )
+          });
         }
       })
       .catch(error => {
@@ -99,7 +108,15 @@ class CreateCommunity extends Component {
         this.props.unsetLoader();
         if (response.status == 200) {
           this.setState({ error: "" });
-          alert("Community Updated successfully");
+          this.setState({
+            redirectVar: (
+              <Redirect
+                to={{
+                  pathname: `/community/${this.state.communityID}`
+                }}
+              />
+            )
+          });
         }
       })
       .catch(error => {
@@ -339,6 +356,7 @@ class CreateCommunity extends Component {
     return (
       <React.Fragment>
         <Container fluid>
+          {this.state.redirectVar}
           <Row>
             <Col xs={1}>
               <img

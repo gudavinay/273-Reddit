@@ -13,7 +13,7 @@ import { TablePagination } from "@material-ui/core";
 import {
   getDefaultRedditProfilePicture,
   getMongoUserID,
-  getToken
+  getToken,
 } from "../../../services/ControllerUtils";
 import errorSVG from "../../../assets/404.svg";
 // import { withStyles } from "@material-ui/core/styles";
@@ -36,34 +36,40 @@ class Community extends Component {
       page: 0,
       size: 2,
       count: 0,
-      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture()
+      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture(),
     };
     this.upVote = this.upVote.bind(this);
     this.downVote = this.downVote.bind(this);
     this.setComments = this.setComments.bind(this);
   }
 
-  PageSizeChange = e => {
+  PageSizeChange = (e) => {
     this.setState({
       size: Number(e.target.value),
-      page: 0
+      page: 0,
     });
     this.getPostOfCommunity(0, Number(e.target.value));
   };
 
   PageChange = (e, page) => {
     this.setState({
-      page: Number(page)
+      page: Number(page),
     });
     this.getPostOfCommunity(Number(page), this.state.size);
   };
   componentDidUpdate(prevState) {
-    if (JSON.stringify(prevState.communityDetails) != JSON.stringify(this.state.communityDetails) && this.state.communityDetails && this.state.communityDetails.listOfUsers && this.state.communityDetails.listOfUsers.length > 0) {
-      this.state.communityDetails.listOfUsers.forEach(user => {
+    if (
+      JSON.stringify(prevState.communityDetails) !=
+      JSON.stringify(this.state.communityDetails) &&
+      this.state.communityDetails &&
+      this.state.communityDetails.listOfUsers &&
+      this.state.communityDetails.listOfUsers.length > 0
+    ) {
+      this.state.communityDetails.listOfUsers.forEach((user) => {
         if (!user.userID.profile_picture_url) {
           user.userID.profile_picture_url = getDefaultRedditProfilePicture();
         }
-      })
+      });
     }
   }
 
@@ -75,11 +81,11 @@ class Community extends Component {
         `${backendServer}/getCommunityDetails?ID=${this.state.community_id
         }&requirePopulate=${true}`
       )
-      .then(response => {
+      .then((response) => {
         this.props.unsetLoader();
         this.setState({ communityDetails: response.data });
       })
-      .catch(err => {
+      .catch((err) => {
         this.props.unsetLoader();
         console.log(err);
       });
@@ -98,15 +104,15 @@ class Community extends Component {
         `${backendServer}/getPostsInCommunity?ID=${this.state.community_id
         }&userId=${getMongoUserID()}&page=${page}&size=${size}`
       )
-      .then(response => {
+      .then((response) => {
         this.props.unsetLoader();
         console.log("posts = ", response.data);
         this.setState(
-          { posts: response.data.post, count: response.data.count },
+          { posts: response.data.post, count: response.data.total },
           () => { }
         );
       })
-      .catch(err => {
+      .catch((err) => {
         this.props.unsetLoader();
         console.log(err);
       });
@@ -121,9 +127,10 @@ class Community extends Component {
         entityId: postId,
         userId: getMongoUserID(),
         voteDir: userVoteDir == 1 ? 0 : 1,
-        relScore: relScore
+        relScore: relScore,
+        entityName: "Post",
       })
-      .then(response => {
+      .then((response) => {
         // this.props.unsetLoader();
         console.log("upVOted successfull = ", response);
         console.log("this.state = ", this.state);
@@ -141,7 +148,7 @@ class Community extends Component {
         this.setState({ parentCommentList: newPosts });
         // this.fetchCommentsWithPostID();
       })
-      .catch(err => {
+      .catch((err) => {
         // this.props.unsetLoader();
         console.log(err);
       });
@@ -156,9 +163,10 @@ class Community extends Component {
         entityId: postId,
         userId: getMongoUserID(),
         voteDir: userVoteDir == -1 ? 0 : -1,
-        relScore: relScore
+        relScore: relScore,
+        entityName: "Post",
       })
-      .then(response => {
+      .then((response) => {
         // this.props.unsetLoader();
         console.log("downvoted successfull = ", response);
         const newPosts = this.state.posts.slice();
@@ -175,7 +183,7 @@ class Community extends Component {
         this.setState({ parentCommentList: newPosts });
         // this.fetchCommentsWithPostID();
       })
-      .catch(err => {
+      .catch((err) => {
         // this.props.unsetLoader();
         console.log(err);
       });
@@ -194,10 +202,11 @@ class Community extends Component {
     var isUserBeingInvitedByModerator = false,
       didUserRequestToJoin = false;
     var participationButton = null;
-    var userStatusInCommunity = null;
+    var userStatusInCommunityForJoinReq = null;
+    var userStatusInCommunityForSentInvite = null;
     var showPosts = true;
     if (this.state.communityDetails) {
-      if (this.state.communityDetails.ownerID == getMongoUserID()) {
+      if (this.state.communityDetails.ownerID && this.state.communityDetails.ownerID._id == getMongoUserID()) {
         participationButton = (
           <button
             className="form-control"
@@ -207,7 +216,7 @@ class Community extends Component {
               borderRadius: "30px",
               background: "#e17157",
               color: "white",
-              cursor: "not-allowed"
+              cursor: "not-allowed",
             }}
           >
             Moderator
@@ -218,10 +227,10 @@ class Community extends Component {
           this.state.communityDetails.listOfUsers &&
           this.state.communityDetails.listOfUsers.length > 0
         ) {
-          userStatusInCommunity = this.state.communityDetails.listOfUsers.find(
-            user => user.userID._id == getMongoUserID()
+          userStatusInCommunityForJoinReq = this.state.communityDetails.listOfUsers.find(
+            (user) => user.userID._id == getMongoUserID()
           );
-          if (userStatusInCommunity) {
+          if (userStatusInCommunityForJoinReq) {
             didUserRequestToJoin = true;
           }
         }
@@ -229,16 +238,16 @@ class Community extends Component {
           this.state.communityDetails.sentInvitesTo &&
           this.state.communityDetails.sentInvitesTo.length > 0
         ) {
-          userStatusInCommunity = this.state.communityDetails.listOfUsers.find(
-            user => user.userID._id == getMongoUserID()
+          userStatusInCommunityForSentInvite = this.state.communityDetails.sentInvitesTo.find(
+            (user) => user.userID._id == getMongoUserID()
           );
-          if (userStatusInCommunity) {
+          if (userStatusInCommunityForSentInvite) {
             isUserBeingInvitedByModerator = true;
           }
         }
         if (didUserRequestToJoin || isUserBeingInvitedByModerator) {
           if (didUserRequestToJoin) {
-            if (userStatusInCommunity.isAccepted == 1) {
+            if (userStatusInCommunityForJoinReq.isAccepted == 1) {
               participationButton = (
                 <button
                   className="form-control"
@@ -246,7 +255,7 @@ class Community extends Component {
                     display: "block",
                     borderRadius: "30px",
                     background: "#e17157",
-                    color: "white"
+                    color: "white",
                   }}
                   onClick={() => {
                     this.props.setLoader();
@@ -254,14 +263,14 @@ class Community extends Component {
                     axios
                       .post(`${backendServer}/userLeaveRequestFromCommunity`, {
                         community_id: this.state.community_id,
-                        user_id: getMongoUserID()
+                        user_id: getMongoUserID(),
                       })
-                      .then(response => {
+                      .then((response) => {
                         this.props.unsetLoader();
                         console.log(response);
                         this.setState({ communityDetails: response.data });
                       })
-                      .catch(err => {
+                      .catch((err) => {
                         this.props.unsetLoader();
                         console.log(err);
                       });
@@ -270,7 +279,7 @@ class Community extends Component {
                   Leave
                 </button>
               );
-            } else if (userStatusInCommunity.isAccepted == -1) {
+            } else if (userStatusInCommunityForJoinReq.isAccepted == -1) {
               showPosts = false;
               participationButton = (
                 <button
@@ -280,7 +289,7 @@ class Community extends Component {
                     display: "block",
                     borderRadius: "30px",
                     background: "#e17157",
-                    color: "white"
+                    color: "white",
                   }}
                 >
                   Request to join denied.
@@ -296,7 +305,7 @@ class Community extends Component {
                     display: "block",
                     borderRadius: "30px",
                     background: "#e17157",
-                    color: "white"
+                    color: "white",
                   }}
                 >
                   Waiting for approval.
@@ -306,36 +315,40 @@ class Community extends Component {
           } else if (isUserBeingInvitedByModerator) {
             showPosts = false;
             participationButton = (
-              <div>
-                <button
-                  className="form-control"
-                  style={{
-                    display: "block",
-                    borderRadius: "30px",
-                    background: "#e17157",
-                    color: "white"
-                  }}
-                  onClick={() => {
-                    alert("Yet to be implemented");
-                  }}
-                >
-                  Accept
-                </button>
-                <button
-                  className="form-control"
-                  style={{
-                    display: "block",
-                    borderRadius: "30px",
-                    background: "#e17157",
-                    color: "white"
-                  }}
-                  onClick={() => {
-                    alert("Yet to be implemented");
-                  }}
-                >
-                  Reject
-                </button>
-              </div>
+              <Row>
+                <Col>
+                  <button
+                    className="form-control"
+                    style={{
+                      display: "block",
+                      borderRadius: "30px",
+                      background: "#e17157",
+                      color: "white",
+                    }}
+                    onClick={() => {
+                      alert("Yet to be implemented");
+                    }}
+                  >
+                    Accept
+                  </button>
+                </Col>
+                <Col>
+                  <button
+                    className="form-control"
+                    style={{
+                      display: "block",
+                      borderRadius: "30px",
+                      background: "#e17157",
+                      color: "white",
+                    }}
+                    onClick={() => {
+                      alert("Yet to be implemented");
+                    }}
+                  >
+                    Reject
+                  </button>
+                </Col>
+              </Row>
             );
           }
         } else {
@@ -347,7 +360,7 @@ class Community extends Component {
                 display: "block",
                 borderRadius: "30px",
                 background: "#e17157",
-                color: "white"
+                color: "white",
               }}
               onClick={() => {
                 this.props.setLoader();
@@ -355,14 +368,14 @@ class Community extends Component {
                 axios
                   .post(`${backendServer}/userJoinRequestToCommunity`, {
                     community_id: this.state.community_id,
-                    user_id: getMongoUserID()
+                    user_id: getMongoUserID(),
                   })
-                  .then(response => {
+                  .then((response) => {
                     this.props.unsetLoader();
                     console.log(response);
                     this.setState({ communityDetails: response.data });
                   })
-                  .catch(err => {
+                  .catch((err) => {
                     this.props.unsetLoader();
                     console.log(err);
                   });
@@ -377,10 +390,9 @@ class Community extends Component {
         this.state.communityDetails.listOfUsers &&
         this.state.communityDetails.listOfUsers.length > 0
       ) {
-        usersPresentInTheCommunity =
-          this.state.communityDetails.listOfUsers.filter(
-            user => user.isAccepted == 1
-          );
+        usersPresentInTheCommunity = this.state.communityDetails.listOfUsers.filter(
+          (user) => user.isAccepted == 1
+        );
       }
     }
     if (showPosts) {
@@ -398,18 +410,20 @@ class Community extends Component {
             ></Post>
           );
         });
-        postsToRender.push(<div>
-          {" "}
-          <TablePagination
-            count={this.state.count}
-            page={this.state.page}
-            onChangePage={this.PageChange}
-            rowsPerPage={this.state.size}
-            onChangeRowsPerPage={this.PageSizeChange}
-            color="primary"
-            rowsPerPageOptions={[2, 5, 10]}
-          />
-        </div>);
+        postsToRender.push(
+          <div>
+            {" "}
+            <TablePagination
+              count={this.state.count}
+              page={this.state.page}
+              onChangePage={this.PageChange}
+              rowsPerPage={this.state.size}
+              onChangeRowsPerPage={this.PageSizeChange}
+              color="primary"
+              rowsPerPageOptions={[2, 5, 10]}
+            />
+          </div>
+        );
       }
     } else {
       postsToRender.push(
@@ -433,7 +447,7 @@ class Community extends Component {
           style={{
             display: "block",
             height: "5%",
-            color: "white"
+            color: "white",
           }}
           className="gradientShade"
         >
@@ -473,7 +487,7 @@ class Community extends Component {
                             border: "1px solid",
                             borderRadius: "27px",
                             padding: "2px",
-                            margin: "3px"
+                            margin: "3px",
                           }}
                           alt="User Logo"
                           src={userSvg}
@@ -483,8 +497,8 @@ class Community extends Component {
                         to={{
                           pathname: `/createPost/${this.state.community_id}`,
                           rules: this.state.communityDetails?.rules,
-                          communityName:
-                            this.state.communityDetails?.communityName
+                          communityName: this.state.communityDetails
+                            ?.communityName,
                         }}
                       >
                         <input
@@ -524,14 +538,14 @@ class Community extends Component {
                           <Card.Body>
                             <Carousel interval={1500}>
                               {this.state.communityDetails.imageURL.map(
-                                image => {
+                                (image) => {
                                   return (
                                     <Carousel.Item key={image._id}>
                                       <div
                                         style={{
                                           textAlign: "center",
                                           boxShadow:
-                                            "10px ​5px 5px -4px white inset"
+                                            "10px ​5px 5px -4px white inset",
                                         }}
                                       >
                                         <img
@@ -539,7 +553,7 @@ class Community extends Component {
                                           alt=""
                                           style={{
                                             height: "220px",
-                                            width: "320px"
+                                            width: "320px",
                                           }}
                                         ></img>
                                       </div>
@@ -585,11 +599,11 @@ class Community extends Component {
                                           display: !this.state.showMoreRules
                                             ? "block"
                                             : "none",
-                                          textAlign: "center"
+                                          textAlign: "center",
                                         }}
                                         onClick={() =>
-                                          this.setState(state => ({
-                                            showMoreRules: !state.showMoreRules
+                                          this.setState((state) => ({
+                                            showMoreRules: !state.showMoreRules,
                                           }))
                                         }
                                       >
@@ -622,12 +636,11 @@ class Community extends Component {
                                                   .showMoreRules
                                                   ? "block"
                                                   : "none",
-                                                textAlign: "center"
+                                                textAlign: "center",
                                               }}
                                               onClick={() =>
-                                                this.setState(state => ({
-                                                  showMoreRules:
-                                                    !state.showMoreRules
+                                                this.setState((state) => ({
+                                                  showMoreRules: !state.showMoreRules,
                                                 }))
                                               }
                                             >
@@ -678,12 +691,11 @@ class Community extends Component {
                                           display: !this.state.showMoreTopics
                                             ? "block"
                                             : "none",
-                                          textAlign: "center"
+                                          textAlign: "center",
                                         }}
                                         onClick={() =>
-                                          this.setState(state => ({
-                                            showMoreTopics:
-                                              !state.showMoreTopics
+                                          this.setState((state) => ({
+                                            showMoreTopics: !state.showMoreTopics,
                                           }))
                                         }
                                       >
@@ -715,12 +727,11 @@ class Community extends Component {
                                                   .showMoreTopics
                                                   ? "block"
                                                   : "none",
-                                                textAlign: "center"
+                                                textAlign: "center",
                                               }}
                                               onClick={() =>
-                                                this.setState(state => ({
-                                                  showMoreTopics:
-                                                    !state.showMoreTopics
+                                                this.setState((state) => ({
+                                                  showMoreTopics: !state.showMoreTopics,
                                                 }))
                                               }
                                             >
@@ -749,20 +760,48 @@ class Community extends Component {
                           Stats
                         </Card.Header>
                         <Card.Body>
-                          <div><strong>Total Posts:</strong> {this.state.posts?.length}</div>
-                          <div><strong>Total Users:</strong> {usersPresentInTheCommunity.length + 1}</div>
-                          {usersPresentInTheCommunity.length > 0 && <div>
-                            <div><strong>List of Users:</strong></div>
-                            <Row style={{ padding: '0 10px', marginTop: '10px' }}>
-                              <Col sm={2} style={{ margin: '4px 0px' }}>
-                                <img src={this.state.communityDetails.ownerID.profile_picture_url ? this.state.communityDetails.ownerID.profile_picture_url : this.state.getDefaultRedditProfilePicture} style={{ height: '30px', width: '30px', borderRadius: '15px' }} />
+                          <div>
+                            <strong>Total Posts:</strong>{" "}
+                            {this.state.posts?.length ? this.state.posts?.length : "0"}
+                          </div>
+                          <div>
+                            <strong>Total Users:</strong>{" "}
+                            {usersPresentInTheCommunity.length + 1}
+                          </div>
+
+                          <div>
+                            <div>
+                              <strong>List of Users:</strong>
+                            </div>
+                            <Row
+                              style={{ padding: "0 10px", marginTop: "10px" }}
+                            >
+                              <Col sm={2} style={{ margin: "4px 0px" }}>
+                                <img
+                                  src={
+                                    this.state.communityDetails.ownerID
+                                      .profile_picture_url
+                                      ? this.state.communityDetails.ownerID
+                                        .profile_picture_url
+                                      : this.state
+                                        .getDefaultRedditProfilePicture
+                                  }
+                                  style={{
+                                    height: "30px",
+                                    width: "30px",
+                                    borderRadius: "15px",
+                                  }}
+                                />
                                 {/* {user.userID.profile_picture_url ? <img src={user.userID.profile_picture_url} style={{ height: '30px', width: '30px', borderRadius: '15px' }} /> : <img src={getDefaultRedditProfilePicture()} style={{ height: '30px', width: '30px', borderRadius: '15px' }} />} */}
                               </Col>
                               <Col style={{ paddingLeft: "0" }}>
-                                u/<strong>{this.state.communityDetails.ownerID.name}</strong>
+                                u/
+                                  <strong>
+                                  {this.state.communityDetails.ownerID.name}
+                                </strong>
                               </Col>
                             </Row>
-                            <div style={{ padding: "0 10px" }}>
+                            {usersPresentInTheCommunity.length > 0 && (<div style={{ padding: "0 10px" }}>
                               {usersPresentInTheCommunity.map(
                                 (user, index) => {
                                   var normalView = [],
@@ -772,12 +811,28 @@ class Community extends Component {
                                     normalView.push(
                                       <div key={user.userID._id}>
                                         <Row>
-                                          <Col sm={2} style={{ margin: '4px 0px' }}>
-                                            <img src={user.userID.profile_picture_url} style={{ height: '30px', width: '30px', borderRadius: '15px' }} />
+                                          <Col
+                                            sm={2}
+                                            style={{ margin: "4px 0px" }}
+                                          >
+                                            <img
+                                              src={
+                                                user.userID
+                                                  .profile_picture_url
+                                              }
+                                              style={{
+                                                height: "30px",
+                                                width: "30px",
+                                                borderRadius: "15px",
+                                              }}
+                                            />
                                             {/* {user.userID.profile_picture_url ? <img src={user.userID.profile_picture_url} style={{ height: '30px', width: '30px', borderRadius: '15px' }} /> : <img src={getDefaultRedditProfilePicture()} style={{ height: '30px', width: '30px', borderRadius: '15px' }} />} */}
                                           </Col>
                                           <Col style={{ paddingLeft: "0" }}>
-                                            u/<strong>{user.userID.name}</strong>
+                                            u/
+                                              <strong>
+                                              {user.userID.name}
+                                            </strong>
                                           </Col>
                                         </Row>
                                       </div>
@@ -805,12 +860,25 @@ class Community extends Component {
                                     }
                                     expandedView.push(
                                       <Row>
-                                        <Col sm={2} style={{ margin: '2px 0px' }}>
-                                          <img src={user.userID.profile_picture_url} style={{ height: '30px', width: '30px', borderRadius: '15px' }} />
+                                        <Col
+                                          sm={2}
+                                          style={{ margin: "2px 0px" }}
+                                        >
+                                          <img
+                                            src={
+                                              user.userID.profile_picture_url
+                                            }
+                                            style={{
+                                              height: "30px",
+                                              width: "30px",
+                                              borderRadius: "15px",
+                                            }}
+                                          />
                                           {/* {user.userID.profile_picture_url ? <img src={user.userID.profile_picture_url} style={{ height: '30px', width: '30px', borderRadius: '15px' }} /> : <img src={getDefaultRedditProfilePicture()} style={{ height: '30px', width: '30px', borderRadius: '15px' }} />} */}
                                         </Col>
                                         <Col style={{ paddingLeft: "0" }}>
-                                          u/<strong>{user.userID.name}</strong>
+                                          u/
+                                            <strong>{user.userID.name}</strong>
                                         </Col>
                                       </Row>
                                     );
@@ -832,12 +900,11 @@ class Community extends Component {
                                                     .showMoreUsers
                                                     ? "block"
                                                     : "none",
-                                                  textAlign: "center"
+                                                  textAlign: "center",
                                                 }}
                                                 onClick={() =>
-                                                  this.setState(state => ({
-                                                    showMoreUsers:
-                                                      !state.showMoreUsers
+                                                  this.setState((state) => ({
+                                                    showMoreUsers: !state.showMoreUsers,
                                                   }))
                                                 }
                                               >
@@ -853,11 +920,12 @@ class Community extends Component {
                                   );
                                 }
                               )}
-                            </div>
-                          </div>}
+                            </div>)}
+                          </div>
                         </Card.Body>
                       </Card>
-                    </Row>)}
+                    </Row>
+                  )}
                 </Col>
               </Row>
             </div>

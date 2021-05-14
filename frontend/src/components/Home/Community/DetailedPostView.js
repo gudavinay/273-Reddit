@@ -56,12 +56,15 @@ class DetailedPostView extends Component {
   }
 
   upVote(commentId, userVoteDir, index, isParentComment, childIndex) {
+    var relScore = userVoteDir == 1 ? -1 : userVoteDir == 0 ? 1 : 2;
     Axios.defaults.headers.common["authorization"] = getToken();
     Axios.post(backendServer + "/addVote", {
       entityId: commentId,
       userId: getMongoUserID(),
       // userId: localStorage.getItem("userId"),
       voteDir: userVoteDir == 1 ? 0 : 1,
+      entityName: "Comment",
+      relScore: relScore,
     })
       .then((response) => {
         // this.props.unsetLoader();
@@ -76,8 +79,8 @@ class DetailedPostView extends Component {
             userVoteDir == 1
               ? newComments[index].score - 1
               : userVoteDir == 0
-                ? newComments[index].score + 1
-                : newComments[index].score + 2;
+              ? newComments[index].score + 1
+              : newComments[index].score + 2;
           newComments[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
           console.log("newComments = ", newComments);
           this.setState({ parentCommentList: newComments });
@@ -87,8 +90,8 @@ class DetailedPostView extends Component {
             userVoteDir == 1
               ? newComments[index].child[childIndex].score - 1
               : userVoteDir == 0
-                ? newComments[index].child[childIndex].score + 1
-                : newComments[index].child[childIndex].score + 2;
+              ? newComments[index].child[childIndex].score + 1
+              : newComments[index].child[childIndex].score + 2;
           newComments[index].child[childIndex].userVoteDir =
             userVoteDir == 1 ? 0 : 1;
           console.log("newComments = ", newComments);
@@ -102,6 +105,7 @@ class DetailedPostView extends Component {
   }
 
   downVote(commentId, userVoteDir, index, isParentComment, childIndex) {
+    var relScore = userVoteDir == -1 ? 1 : userVoteDir == 0 ? -1 : -2;
     console.log(
       "userid = ",
       getMongoUserID(),
@@ -116,6 +120,8 @@ class DetailedPostView extends Component {
       userId: getMongoUserID(),
       // userId: localStorage.getItem("userId"),
       voteDir: userVoteDir == -1 ? 0 : -1,
+      entityName: "Comment",
+      relScore: relScore,
       // voteDir: userVoteDir == -1 ? 0 : userVoteDir == 1 ? 0 : -1,
     })
       .then((response) => {
@@ -127,8 +133,8 @@ class DetailedPostView extends Component {
             userVoteDir == -1
               ? newComments[index].score + 1
               : userVoteDir == 0
-                ? newComments[index].score - 1
-                : newComments[index].score - 2;
+              ? newComments[index].score - 1
+              : newComments[index].score - 2;
           newComments[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
           console.log("newComments = ", newComments);
           this.setState({ parentCommentList: newComments });
@@ -139,8 +145,8 @@ class DetailedPostView extends Component {
             userVoteDir == -1
               ? newComments[index].child[childIndex].score + 1
               : userVoteDir == 0
-                ? newComments[index].child[childIndex].score - 1
-                : newComments[index].child[childIndex].score - 2;
+              ? newComments[index].child[childIndex].score - 1
+              : newComments[index].child[childIndex].score - 2;
           newComments[index].child[childIndex].userVoteDir =
             userVoteDir == -1 ? 0 : -1;
           console.log("newComments = ", newComments);
@@ -154,6 +160,8 @@ class DetailedPostView extends Component {
   }
   render() {
     var commentsToRender = [];
+    // console.log(this.state);
+    // console.log(this.props.data.communityID);
     if (this.state.parentCommentList) {
       this.state.parentCommentList.forEach((comment, index) => {
         console.log("comment = ", comment, index);
@@ -173,7 +181,8 @@ class DetailedPostView extends Component {
                   lineHeight: "16px",
                 }}
               >
-                {comment.userID} {getRelativeTime(comment.createdAt)}
+                u/<strong>{comment.userID.name}</strong>{" "}
+                {getRelativeTime(comment.createdAt)}
               </span>
             </div>
             <div
@@ -280,13 +289,15 @@ class DetailedPostView extends Component {
                     }}
                     onClick={() => {
                       this.props.setLoader();
-                      Axios.defaults.headers.common["authorization"] = getToken();
+                      Axios.defaults.headers.common["authorization"] =
+                        getToken();
                       Axios.post(backendServer + "/comment", {
                         postID: this.props.data._id,
                         description: this.state[`${comment._id}:`],
                         isParentComment: 0,
                         userID: getMongoUserID(),
                         parentCommentID: comment._id,
+                        communityID: this.props.data.communityID,
                       })
                         .then((response) => {
                           this.props.unsetLoader();
@@ -340,7 +351,7 @@ class DetailedPostView extends Component {
                     lineHeight: "16px",
                   }}
                 >
-                  {childComment.userID}{" "}
+                  u/<strong>{childComment.userID.name}</strong>{" "}
                   {getRelativeTime(childComment.createdAt)}
                 </span>
               </div>
@@ -444,6 +455,7 @@ class DetailedPostView extends Component {
                   description: this.state.primaryComment,
                   isParentComment: 1,
                   userID: getMongoUserID(),
+                  communityID: this.props.data.communityID,
                 })
                   .then((response) => {
                     this.props.unsetLoader();

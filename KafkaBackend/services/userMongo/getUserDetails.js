@@ -32,42 +32,22 @@ const getUserDetailsById = async (msg, callback) => {
             },
             {
                 $lookup: {
-                    from: "votes",
-                    localField: "_id",
-                    foreignField: "entityId",
-                    as: "vote",
-                },
-            },
-            { $unwind: { path: "$vote", preserveNullAndEmptyArrays: true } },
-            {
-                $group: {
-                    _id: "$_id",
-                    communityName: { $first: "$communityName" },
-                    communityDescription: { $first: "$communityDescription" },
-                    ownerID: { $first: "$ownerID" },
-                    imageURL: { $first: "$imageURL" },
-                    createdAt: { $first: "$createdAt" },
-                    posts: { $first: "$posts" },
-                    listOfUsers: { $first: "$listOfUsers" },
-                    upvoteCount: {
-                        $sum: {
-                            $cond: { if: { $eq: ["$vote.voteDir", 1] }, then: 1, else: 0 },
-                        },
-                    },
-                    downvoteCount: {
-                        $sum: {
-                            $cond: { if: { $eq: ["$vote.voteDir", -1] }, then: 1, else: 0 },
-                        },
-                    },
-                },
-            },
-            {
-                $lookup: {
                     from: "posts",
                     localField: "_id",
                     foreignField: "communityID",
                     as: "posts",
                 },
+            },
+            {
+                "$addFields": {
+                    "listOfUsersLength": {
+                        "$reduce": {
+                            "input": "$listOfUsers",
+                            "initialValue": 0,
+                            "in": { "$add": ["$$value", "$$this.isAccepted"] }
+                        }
+                    }
+                }
             },
             {
                 $project: {
@@ -77,9 +57,9 @@ const getUserDetailsById = async (msg, callback) => {
                     imageURL: "$imageURL",
                     createdAt: "$createdAt",
                     postsLength: { $size: "$posts" },
-                    listOfUsersLength: { $size: "$listOfUsers" },
-                    upVotedLength: "$upvoteCount",
-                    downVotedLength: "$downvoteCount",
+                    listOfUsersLength: { "$add": ["$listOfUsersLength", 1] }, // Adding +1 means Owner
+                    upVotedLength: { $size: "$upvotedBy" },
+                    downVotedLength: { $size: "$downvotedBy" },
                 },
             },
             { $sort: { createdAt: -1 } },

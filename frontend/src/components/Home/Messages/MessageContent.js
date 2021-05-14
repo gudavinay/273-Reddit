@@ -124,7 +124,7 @@ class MessageContent extends Component {
               </Card.Header>
               <Card.Body className="messageBody"> {renderMessage}</Card.Body>
               <Card.Footer>
-                <Form>
+                <Form onSubmit={this.sendMessage}>
                   <Row>
                     <Col xs={10}>
                       <Form.Control
@@ -135,19 +135,14 @@ class MessageContent extends Component {
                         onChange={e =>
                           this.setState({ messageTobeSent: e.target.value })
                         }
+                        required
                       ></Form.Control>
                     </Col>
                     <Col xs={2}>
-                      <Button
-                        className="createCommunity"
-                        onClick={this.sendMessage}
-                      >
-                        Send
-                      </Button>
+                      <Button className="createCommunity">Send</Button>
                     </Col>
                   </Row>
                 </Form>
-                <Form></Form>
               </Card.Footer>
             </Card>
           </Col>

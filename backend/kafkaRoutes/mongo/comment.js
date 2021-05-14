@@ -6,6 +6,9 @@ const { checkAuth } = require("./../../Util/passport");
 
 app.post("/comment", checkAuth, (req, res) => {
   req.body.path = "comment";
+  console.log("**************************");
+  console.log(req.body);
+  console.log("**************************");
   kafka.make_request("comment", req.body, (error, result) => {
     console.log(result);
     if (result) {

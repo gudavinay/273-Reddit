@@ -19,7 +19,7 @@ app.post("/addVote", checkAuth, (req, res) => {
 
 app.get("/getVote", checkAuth, (req, res) => {
   console.log(req.query);
-  req.body.entityId = req.query.entityId;
+  req.body.userId = req.query.userId;
   req.body.path = "getVote";
 
   kafka.make_request("vote_mongo", req.body, (error, result) => {

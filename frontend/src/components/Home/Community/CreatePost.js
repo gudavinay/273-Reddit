@@ -8,8 +8,8 @@ import backendServer from "../../../webConfig";
 import { getMongoUserID, getToken } from "../../../services/ControllerUtils";
 import "./CreatePost.css";
 import { Collapse, Fade } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import YoutubeSearchedForIcon from '@material-ui/icons/YoutubeSearchedFor';
+import { Link, Redirect } from "react-router-dom";
+import YoutubeSearchedForIcon from "@material-ui/icons/YoutubeSearchedFor";
 class CreatePost extends Component {
   constructor(props) {
     super(props);
@@ -22,6 +22,7 @@ class CreatePost extends Component {
       link: null,
       description: null,
       user_id: getMongoUserID(),
+      redirectVar: null
     };
     console.log("PROPS AND STATE in create post", this.props, this.state);
   }
@@ -36,7 +37,7 @@ class CreatePost extends Component {
           this.props.unsetLoader();
           console.log(response);
           if (response.data && response.data[0] && response.data[0].Location)
-            this.setState({ postImageUrl: response.data[0].Location })
+            this.setState({ postImageUrl: response.data[0].Location });
         })
         .catch(error => {
           this.props.unsetLoader();
@@ -54,7 +55,7 @@ class CreatePost extends Component {
         placeholder="Title"
         id="title"
         name="post"
-        onChange={(e) => {
+        onChange={e => {
           this.setState({ title: e.target.value });
         }}
       />
@@ -70,7 +71,7 @@ class CreatePost extends Component {
           borderRadius: "50px",
           backgroundColor: this.state.title ? "#0266b3" : "#777",
           color: "white",
-          fontWeight: "500",
+          fontWeight: "500"
         }}
         variant="light"
       >
@@ -79,43 +80,61 @@ class CreatePost extends Component {
     );
     return (
       <React.Fragment>
+        {this.state.redirectVar}
         {/* inside CreatePost ... {this.props.content} */}
         <Row style={{ padding: "30px" }}>
           <Col sm={1}></Col>
-          <Col sm={7} >
-
-            <Link style={{ color: 'black', padding: '0 0 15px 0', display: "block", textAlign: 'center' }} to={"/community/".concat(this.state.community_id)}>
+          <Col sm={7}>
+            <Link
+              style={{
+                color: "black",
+                padding: "0 0 15px 0",
+                display: "block",
+                textAlign: "center"
+              }}
+              to={"/community/".concat(this.state.community_id)}
+            >
               Back to community <YoutubeSearchedForIcon />
             </Link>
 
             <form
-              onSubmit={(e) => {
+              onSubmit={e => {
                 e.preventDefault();
                 if (this.state.title) {
                   this.props.setLoader();
                   Axios.defaults.headers.common["authorization"] = getToken();
                   Axios.post(backendServer + "/createPost", this.state)
-                    .then((result) => {
+                    .then(result => {
+                      if (result.status == 200) {
+                        this.setState({
+                          redirectVar: (
+                            <Redirect
+                              to={{
+                                pathname: `/community/${this.state.community_id}`
+                              }}
+                            />
+                          )
+                        });
+                      }
                       this.props.unsetLoader();
                       console.log(result);
                     })
-                    .catch((err) => {
+                    .catch(err => {
                       this.props.unsetLoader();
                       console.log(err);
                     });
                 }
               }}
             >
-
               <Tab.Container
                 id="left-tabs-example"
                 defaultActiveKey="0"
-                onSelect={(eventKey) => {
+                onSelect={eventKey => {
                   this.setState({
                     type: eventKey,
                     title: null,
                     link: null,
-                    description: null,
+                    description: null
                   });
                 }}
               >
@@ -182,7 +201,7 @@ class CreatePost extends Component {
                           placeholder="Text (optional)"
                           id="description"
                           name="description"
-                          onChange={(e) => {
+                          onChange={e => {
                             this.setState({ description: e.target.value });
                           }}
                         />
@@ -200,7 +219,15 @@ class CreatePost extends Component {
                         ></input>
                         {postButton}
                         <Row>
-                          <img src={this.state.postImageUrl} alt="" style={{ width: '60%', margin: 'auto', padding: '10%' }} />
+                          <img
+                            src={this.state.postImageUrl}
+                            alt=""
+                            style={{
+                              width: "60%",
+                              margin: "auto",
+                              padding: "10%"
+                            }}
+                          />
                         </Row>
                       </Tab.Pane>
                       <Tab.Pane eventKey="1">
@@ -212,7 +239,7 @@ class CreatePost extends Component {
                           id="link"
                           name="link"
                           required={this.state.type == "1"}
-                          onChange={(e) => {
+                          onChange={e => {
                             this.setState({ link: e.target.value });
                           }}
                         />
@@ -254,11 +281,11 @@ class CreatePost extends Component {
                                   display: !this.state.showMoreRules
                                     ? "block"
                                     : "none",
-                                  textAlign: "center",
+                                  textAlign: "center"
                                 }}
                                 onClick={() =>
-                                  this.setState((state) => ({
-                                    showMoreRules: !state.showMoreRules,
+                                  this.setState(state => ({
+                                    showMoreRules: !state.showMoreRules
                                   }))
                                 }
                               >
@@ -280,18 +307,18 @@ class CreatePost extends Component {
                                 <div>
                                   {expandedView}
                                   {this.props.location.rules.length - 1 ==
-                                    index ? (
+                                  index ? (
                                     <div
                                       className="downArrowRotate"
                                       style={{
                                         display: this.state.showMoreRules
                                           ? "block"
                                           : "none",
-                                        textAlign: "center",
+                                        textAlign: "center"
                                       }}
                                       onClick={() =>
-                                        this.setState((state) => ({
-                                          showMoreRules: !state.showMoreRules,
+                                        this.setState(state => ({
+                                          showMoreRules: !state.showMoreRules
                                         }))
                                       }
                                     >

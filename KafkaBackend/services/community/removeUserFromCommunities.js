@@ -5,23 +5,32 @@ const Promise = require("bluebird");
 
 const removeUserFromCommunities = async (msg, callback) => {
   let res = {};
+  console.log("********************");
+  console.log(msg);
+  console.log("********************");
   try {
-    Promise.mapSeries(msg.body.commList, (item) => {
+    Promise.mapSeries(msg.commList, (item) => {
       return Community.findOneAndUpdate(
         {
           _id: item,
         },
-        { $pull: { listOfUsers: { userID: msg.body.userID } } },
+        {
+          $pull: {
+            listOfUsers: { userID: msg.userID },
+            sentInvitesTo: { userID: msg.userID },
+          },
+        },
         { useFindAndModify: false }
       );
     }).then(async () => {
+      console.log("user deleted from com");
       await Post.deleteMany({
-        communityID: { $in: msg.body.commList },
-        userID: msg.body.userID,
+        communityID: { $in: msg.commList },
+        userID: msg.userID,
       });
       await Comment.deleteMany({
-        communityID: { $in: msg.body.commList },
-        userID: msg.body.userID,
+        communityID: { $in: msg.commList },
+        userID: msg.userID,
       });
       res.status = 200;
       callback(null, res);
