@@ -128,6 +128,23 @@ class Navigationbar extends Component {
       }
     }
   }
+  getLeftDropdownText() {
+    let path = this.props.location.pathname;
+    if (path.includes("/invitation")) {
+      return "Invitation"
+    } else if (path.includes("/createCommunity")) {
+      return "Create New Community"
+    } else if (path.includes("/mycommunities")) {
+      return "My Communities"
+    } else if (path.includes("/communitysearch")) {
+      return "Community Search"
+    } else if (path.includes("/mycommunitiesmoderation")) {
+      return "Community Moderation"
+    } else if (path.includes("/communityanalytics")) {
+      return "Community Analytics"
+    }
+    return "Home";
+  }
 
   onSignout = () => {
     document.getElementById("expandRightDropDown").classList.add("hidden");
@@ -216,7 +233,7 @@ class Navigationbar extends Component {
                       }
                     }}
                   >
-                    {this.state.leftDropdown}
+                    {this.getLeftDropdownText()}
                     <div>
                       <BsFillCaretDownFill />
                     </div>
@@ -437,7 +454,7 @@ class Navigationbar extends Component {
                       <img
                         src={
                           getUserProfile() &&
-                          getUserProfile().profile_picture_url
+                            getUserProfile().profile_picture_url
                             ? getUserProfile().profile_picture_url
                             : this.state.getDefaultRedditProfilePicture
                         }
