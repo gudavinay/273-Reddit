@@ -9,7 +9,8 @@ import {
   getDefaultRedditProfilePicture,
   getMongoUserID,
   getToken,
-  SetLocalStorage
+  SetLocalStorage,
+  getSQLUserID
 } from "../../../services/ControllerUtils";
 import "./UserProfile.css";
 import EditIcon from "@material-ui/icons/Edit";
@@ -107,6 +108,7 @@ class UserProfile extends Component {
       location: this.state.location,
       profile_picture_url: this.state.profile_picture_url,
       gender: this.state.gender,
+      userIDSQL: getSQLUserID(),
       listOfTopics: this.state.listOfTopics,
       bio: this.state.bio,
       id: getMongoUserID(),
