@@ -80,8 +80,8 @@ class CreatePost extends Component {
     );
     return (
       <React.Fragment>
-        {/* inside CreatePost ... {this.props.content} */}
         {this.state.redirectVar}
+        {/* inside CreatePost ... {this.props.content} */}
         <Row style={{ padding: "30px" }}>
           <Col sm={1}></Col>
           <Col sm={7}>
@@ -106,7 +106,15 @@ class CreatePost extends Component {
                   Axios.post(backendServer + "/createPost", this.state)
                     .then(result => {
                       if (result.status == 200) {
-                        this.setState({ redirectVar: <Redirect to="/home" /> });
+                        this.setState({
+                          redirectVar: (
+                            <Redirect
+                              to={{
+                                pathname: `/community/${this.state.community_id}`
+                              }}
+                            />
+                          )
+                        });
                       }
                       this.props.unsetLoader();
                       console.log(result);

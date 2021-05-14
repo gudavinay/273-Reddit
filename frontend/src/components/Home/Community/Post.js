@@ -65,10 +65,11 @@ class Post extends Component {
         }}
       >
         <Row className="postHeader">
-          {this.props.data.communityName &&
+          <span>{this.props.data.communityName &&
             "r/" + this.props.data?.communityName + " "}
-          posted by {this.props.data?.userName}{" "}
-          {getRelativeTime(this.props.data?.createdAt)}
+          posted by u/<strong>{this.props.data?.userID[0]?.name}</strong>{" "}
+            {getRelativeTime(this.props.data?.createdAt)}
+          </span>
         </Row>
         <Row style={{ paddingLeft: "0px" }}>
           <h3 className="postBodyContent">[{this.props.data?.title}]</h3>
