@@ -113,8 +113,8 @@ class Post extends Component {
 
     return (
       <React.Fragment>
-        disableVoteButtons in post.js:
-        {JSON.stringify(this.props.disableVoteButtons)}
+        {/* disableVoteButtons in post.js:
+        {JSON.stringify(this.props.disableVoteButtons)} */}
         <Card
           style={{
             margin: "10px",

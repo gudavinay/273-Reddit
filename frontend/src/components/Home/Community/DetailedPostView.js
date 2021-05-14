@@ -455,8 +455,8 @@ class DetailedPostView extends Component {
     }
     return (
       <React.Fragment>
-        disableVoteButtons in detailedview:
-        {JSON.stringify(this.state.disableVoteButtonsForComments)}
+        {/* disableVoteButtons in detailedview:
+        {JSON.stringify(this.state.disableVoteButtonsForComments)} */}
         <Post data={this.props.data} {...this.props} detailedView={true} />
         <div
           style={{
