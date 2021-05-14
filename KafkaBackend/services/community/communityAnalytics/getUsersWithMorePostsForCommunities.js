@@ -18,7 +18,9 @@ const getUsersWithMorePostsForCommunities = async (msg, callback) => {
             "_id userID title score NoOfComments communityID",
             { sort: { score: -1, createdAt: -1 } },
             (error1, result1) => {
-              postList.push(result1);
+              output = JSON.parse(JSON.stringify(result1));
+              output["communityName"] = item.communityName;
+              postList.push(output);
             }
           );
           await Post.aggregate([
@@ -32,8 +34,22 @@ const getUsersWithMorePostsForCommunities = async (msg, callback) => {
               },
             },
             {
+              $lookup: {
+                from: "communities",
+                localField: "communityID",
+                foreignField: "_id",
+                as: "communityDetails",
+              },
+            },
+            {
               $unwind: {
                 path: "$userDetails",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $unwind: {
+                path: "$communityDetails",
                 preserveNullAndEmptyArrays: true,
               },
             },
@@ -44,6 +60,7 @@ const getUsersWithMorePostsForCommunities = async (msg, callback) => {
                 name: { $first: "$userDetails.name" },
                 email: { $first: "$userDetails.email" },
                 picture: { $first: "$userDetails.profile_picture_url" },
+                communityName: { $first: "$communityDetails.communityName" },
               },
             },
             { $sort: { count: -1 } },

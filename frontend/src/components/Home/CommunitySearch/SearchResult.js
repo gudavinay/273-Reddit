@@ -21,7 +21,7 @@ class SearchResult extends Component {
       //   downVotedLength,
       postsLength,
       createdAt,
-      ownerID
+      ownerID,
     } = data || {};
     return (
       <React.Fragment>
@@ -33,7 +33,7 @@ class SearchResult extends Component {
                 style={{
                   background: "#eef3f7",
                   maxWidth: "4.8%",
-                  marginLeft: "14px"
+                  marginLeft: "14px",
                 }}
               >
                 <div
@@ -41,13 +41,13 @@ class SearchResult extends Component {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
-                    textAlign: "center"
+                    textAlign: "center",
                   }}
                 >
                   <i
                     style={{
                       cursor: "pointer",
-                      color: this.props.data.userVoteDir == 1 ? "#ff4500" : ""
+                      color: this.props.data.userVoteDir == 1 ? "#ff4500" : "",
                     }}
                     className="icon icon-arrow-up"
                     onClick={() => {
@@ -60,7 +60,15 @@ class SearchResult extends Component {
                     }}
                   ></i>
 
-                  <span style={{ whiteSpace: "nowrap" }}>
+                  <span
+                    style={{
+                      whiteSpace: "nowrap",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      textAlign: "center",
+                    }}
+                  >
                     {/* {nFormatter(upVotedLength - downVotedLength, 1)} */}
                     {nFormatter(this.props.data.score, 1)}
                   </span>
@@ -68,7 +76,7 @@ class SearchResult extends Component {
                   <i
                     style={{
                       cursor: "pointer",
-                      color: this.props.data.userVoteDir == -1 ? "#7193ff" : ""
+                      color: this.props.data.userVoteDir == -1 ? "#7193ff" : "",
                     }}
                     className="icon icon-arrow-down"
                     onClick={() => {
@@ -98,7 +106,7 @@ class SearchResult extends Component {
                       lineHeight: "32px",
                       margin: "0 8px",
                       width: "65px",
-                      verticalAlign: "middle"
+                      verticalAlign: "middle",
                     }}
                   />
                 ) : (
@@ -106,7 +114,7 @@ class SearchResult extends Component {
                     style={{
                       background: "#eef3f7",
                       // height: "80%",
-                      borderRadius: "5px"
+                      borderRadius: "5px",
                     }}
                   >
                     <img
@@ -123,7 +131,7 @@ class SearchResult extends Component {
                       paddingLeft: "5px",
                       fontSize: "16px",
                       paddingTop: "8px",
-                      margin: "0px"
+                      margin: "0px",
                     }}
                   >
                     <Link to={"/community/".concat(community_id)}>
@@ -143,7 +151,7 @@ class SearchResult extends Component {
                       flexDirection: "row",
                       color: "#878a8c",
                       fill: "#878a8c",
-                      fontSize: "12px"
+                      fontSize: "12px",
                     }}
                   >
                     <div style={{ marginLeft: "0px" }}>

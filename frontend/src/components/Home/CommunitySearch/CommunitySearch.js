@@ -13,17 +13,17 @@ const options = {
     createdAt: "Created At",
     postsLength: "Most No Of Posts",
     listOfUsersLength: "Most No Of Users",
-    upVotedLength: "Most UpVoted"
+    upVotedLength: "Most UpVoted",
   },
   sortValue: {
     asc: "Ascending",
-    desc: "Descending"
+    desc: "Descending",
   },
   perPageValues: {
     2: "2",
     5: "5",
-    10: "10"
-  }
+    10: "10",
+  },
 };
 
 class CommunitySearch extends Component {
@@ -35,10 +35,10 @@ class CommunitySearch extends Component {
       communities: [],
       count: 0,
       page: 0,
-      size: 2,
+      size: 5,
       sortKey: "createdAt",
       sortValue: "desc",
-      disableVoteButtons: false
+      disableVoteButtons: false,
     };
     this.upVote = this.upVote.bind(this);
     this.downVote = this.downVote.bind(this);
@@ -55,7 +55,7 @@ class CommunitySearch extends Component {
         limit: this.state.size,
         sortKey: this.state.sortKey,
         sortValue: this.state.sortValue,
-        userId: getMongoUserID()
+        userId: getMongoUserID(),
       }).toString();
 
       this.props.setLoader();
@@ -72,7 +72,7 @@ class CommunitySearch extends Component {
       this.setState({
         communities: [...docs],
         processing: false,
-        count: totalDocs
+        count: totalDocs,
       });
     } catch (e) {
       console.log(e);
@@ -80,7 +80,7 @@ class CommunitySearch extends Component {
   };
   getSnapshotBeforeUpdate(prevProps) {
     return {
-      newQuery: prevProps.location.search !== this.props.location.search
+      newQuery: prevProps.location.search !== this.props.location.search,
     };
   }
   componentDidMount() {
@@ -92,11 +92,11 @@ class CommunitySearch extends Component {
       this.processSearch(true);
     }
   }
-  PageSizeChange = e => {
+  PageSizeChange = (e) => {
     this.setState(
       {
         size: Number(e.target.value),
-        page: 0
+        page: 0,
       },
       () => {
         this.processSearch();
@@ -107,7 +107,7 @@ class CommunitySearch extends Component {
   PageChange = (e, page) => {
     this.setState(
       {
-        page: Number(page)
+        page: Number(page),
       },
       () => {
         this.processSearch();
@@ -125,9 +125,9 @@ class CommunitySearch extends Component {
         userId: getMongoUserID(),
         voteDir: userVoteDir == 1 ? 0 : 1,
         relScore: relScore,
-        entityName: "Community"
+        entityName: "Community",
       })
-      .then(response => {
+      .then((response) => {
         // this.props.unsetLoader();
         this.setState({ disableVoteButtons: false });
         console.log("upVOted successfull = ", response);
@@ -146,7 +146,7 @@ class CommunitySearch extends Component {
         this.setState({ communities: newCommunities });
         // this.fetchCommentsWithPostID();
       })
-      .catch(err => {
+      .catch((err) => {
         // this.props.unsetLoader();
         this.setState({ disableVoteButtons: false });
         console.log(err);
@@ -164,9 +164,9 @@ class CommunitySearch extends Component {
         userId: getMongoUserID(),
         voteDir: userVoteDir == -1 ? 0 : -1,
         relScore: relScore,
-        entityName: "Community"
+        entityName: "Community",
       })
-      .then(response => {
+      .then((response) => {
         // this.props.unsetLoader();
         this.setState({ disableVoteButtons: false });
         console.log("downvoted successfull = ", response);
@@ -185,7 +185,7 @@ class CommunitySearch extends Component {
         this.setState({ communities: newCommunities });
         // this.fetchCommentsWithPostID();
       })
-      .catch(err => {
+      .catch((err) => {
         // this.props.unsetLoader();
 
         this.setState({ disableVoteButtons: false });
@@ -201,7 +201,7 @@ class CommunitySearch extends Component {
           <Row
             style={{
               background: this.props.darkMode ? "black" : "#DAE0E6",
-              maxWidth: "100%"
+              maxWidth: "100%",
             }}
           >
             <Col sm={12}>
@@ -219,7 +219,7 @@ class CommunitySearch extends Component {
                   margin: "0 auto",
                   background: "#fff",
                   height: "50px",
-                  borderRadius: "5px"
+                  borderRadius: "5px",
                 }}
               >
                 <div style={{ float: "left" }}>
@@ -228,14 +228,14 @@ class CommunitySearch extends Component {
                       style={{
                         whiteSpace: "nowrap",
                         marginTop: "5px",
-                        color: "#7d72728a"
+                        color: "#7d72728a",
                       }}
                     >
                       Sort By
                     </label>
                     <Form.Control
                       as="select"
-                      onChange={e => {
+                      onChange={(e) => {
                         this.setState({ sortKey: e.target.value }, () => {
                           this.processSearch(true);
                         });
@@ -244,10 +244,10 @@ class CommunitySearch extends Component {
                         fontSize: "14px",
                         marginLeft: "5px",
                         fontWeight: "600",
-                        width: "auto"
+                        width: "auto",
                       }}
                     >
-                      {Object.keys(options.sortKey).map(key => {
+                      {Object.keys(options.sortKey).map((key) => {
                         return (
                           <option
                             key={key}
@@ -263,7 +263,7 @@ class CommunitySearch extends Component {
                     </Form.Control>
                     <Form.Control
                       as="select"
-                      onChange={e => {
+                      onChange={(e) => {
                         this.setState({ sortValue: e.target.value }, () => {
                           this.processSearch(true);
                         });
@@ -272,10 +272,10 @@ class CommunitySearch extends Component {
                         fontSize: "14px",
                         marginLeft: "5px",
                         fontWeight: "600",
-                        width: "auto"
+                        width: "auto",
                       }}
                     >
-                      {Object.keys(options.sortValue).map(key => {
+                      {Object.keys(options.sortValue).map((key) => {
                         return (
                           <option
                             key={key}
@@ -336,6 +336,6 @@ class CommunitySearch extends Component {
   }
 }
 
-export default connect(state => {
+export default connect((state) => {
   return state;
 }, {})(CommunitySearch);
