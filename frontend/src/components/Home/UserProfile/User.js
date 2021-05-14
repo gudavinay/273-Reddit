@@ -8,9 +8,9 @@ import {
   getToken,
   nFormatter,
   getMongoUserID,
-  getDefaultRedditProfilePicture,
 } from "../../../services/ControllerUtils";
 import backendServer from "../../../webConfig";
+import DefaultCardText from "../../../assets/NoImage.png";
 
 class User extends Component {
   constructor(props) {
@@ -338,7 +338,7 @@ class UserCommunity extends Component {
                 ) : (
                   <div style={{ background: "#eef3f7", borderRadius: "5px" }}>
                     <img
-                      src={getDefaultRedditProfilePicture()}
+                      src={DefaultCardText}
                       style={{ width: "65px", margin: "4px" }}
                     />
                   </div>

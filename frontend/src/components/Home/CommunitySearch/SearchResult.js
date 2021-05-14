@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { Row, Col, Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import DefaultCardText from "../../../assets/NoImage.png";
 
-import { getDefaultRedditProfilePicture, getRelativeTime, nFormatter } from "../../../services/ControllerUtils";
+import { getRelativeTime, nFormatter } from "../../../services/ControllerUtils";
 
 class SearchResult extends Component {
   constructor(props) {
@@ -117,7 +118,7 @@ class SearchResult extends Component {
                     }}
                   >
                     <img
-                      src={getDefaultRedditProfilePicture()}
+                      src={DefaultCardText}
                       style={{ width: "65px", margin: "4px" }}
                     />
                   </div>
