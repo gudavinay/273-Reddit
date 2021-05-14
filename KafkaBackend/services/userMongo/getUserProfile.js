@@ -9,20 +9,20 @@ const getUserProfile = async (msg, callback) => {
       res.status = 200;
       callback(null, res);
     } else {
-      UserProfile.find({ userIDSQL: msg.ID }).then((result, error) => {
-        if (error) {
-          res.data = userProfile;
-          res.status = 500;
-          callback(null, res);
-        } else {
-          if (result.length > 0) {
+      UserProfile.findOne({ userIDSQL: msg.ID })
+        .then(result => {
+          if (result) {
             redisClient.setex(msg.ID, 36000, JSON.stringify(result));
           }
           res.data = result;
           res.status = 200;
           callback(null, res);
-        }
-      });
+        })
+        .catch(err => {
+          res.data = err;
+          res.status = 500;
+          callback(null, res);
+        });
     }
   });
 };

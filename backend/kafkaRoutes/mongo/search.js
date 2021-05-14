@@ -5,9 +5,8 @@ const kafka = require("../../kafka/client");
 const { checkAuth } = require("./../../Util/passport");
 
 app.get("/getAllCommunities", checkAuth, (req, res) => {
-    try {
-        const { sortKey, sortValue, limit, page, searchText } = req.query;
-
+  try {
+    const { sortKey, sortValue, limit, page, searchText } = req.query;
         kafka.make_request("search_mongo", {
             sortKey, sortValue, limit, page, searchText,
             path: "Get-All-Communities-Search",

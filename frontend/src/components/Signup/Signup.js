@@ -59,16 +59,17 @@ class Signup extends Component {
 
   componentDidUpdate(prevState) {
     if (prevState.user != this.props.user) {
-      if (this.props.user == "Registered") {
+      if (this.props.user && this.props.user.userID) {
+        this.CreateUserProfile(this.props.user.userID);
+        this.setState({
+          authFlag: true
+        });
+
+      } else {
         this.setState({
           authFlag: false,
           formerror: {},
           loginError: "User is already registered"
-        });
-      } else {
-        this.CreateUserProfile(this.props.user.userID);
-        this.setState({
-          authFlag: true
         });
       }
     }

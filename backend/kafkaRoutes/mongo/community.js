@@ -139,9 +139,9 @@ app.post("/showInvitationStatus", checkAuth, async (req, res) => {
 
 app.post("/sendInvite", checkAuth, async (req, res) => {
   var members = [];
-  req.body.users.forEach(user => {
+  req.body.users.forEach((user) => {
     const userData = {
-      userID: user.user_id
+      userID: user.user_id,
     };
     members.push(userData);
   });
@@ -220,6 +220,18 @@ app.post("/rejectUsersForCommunity", checkAuth, (req, res) => {
   });
 });
 
+app.get("/getCommunitiesForUserPartOfOwnerCommunity", checkAuth, (req, res) => {
+  req.body.path = "Get-Communities-For-User-Part-Of-Owner-Community";
+  req.body.query = req.query;
+  kafka.make_request("mongo_community", req.body, (error, result) => {
+    if (result) {
+      return res.status(200).send(result.data);
+    }
+    console.log(error);
+    return res.status(400).send(error);
+  });
+});
+
 app.get("/getCommunitiesForUser", checkAuth, (req, res) => {
   req.body.path = "Get-Communities-For-User";
   req.body.query = req.query;
@@ -232,7 +244,7 @@ app.get("/getCommunitiesForUser", checkAuth, (req, res) => {
   });
 });
 
-app.post("/removeUserFromCommunities", checkAuth, (req, res) => {
+app.post("/removeUserFromCommunities", (req, res) => {
   req.body.path = "Remove-User-From-Communities";
   kafka.make_request("mongo_community", req.body, (error, result) => {
     if (result) {
@@ -281,18 +293,22 @@ app.get("/getAllCommunitiesListForUser", (req, res) => {
 });
 
 app.post("/community/vote/:community_id", checkAuth, (req, res) => {
-  kafka.make_request("mongo_community", {
-    path: "Vote-Community",
-    community_id: req.params.community_id,
-    voting: req.body.voting,
-    user_id: req.body.user_id
-  }, (error, result) => {
-    if (result) {
-      return res.status(200).send(result);
+  kafka.make_request(
+    "mongo_community",
+    {
+      path: "Vote-Community",
+      community_id: req.params.community_id,
+      voting: req.body.voting,
+      user_id: req.body.user_id,
+    },
+    (error, result) => {
+      if (result) {
+        return res.status(200).send(result);
+      }
+      console.log(error);
+      return res.status(500).send("Internal Server error");
     }
-    console.log(error);
-    return res.status(500).send("Internal Server error");
-  });
+  );
 });
 
 module.exports = router;

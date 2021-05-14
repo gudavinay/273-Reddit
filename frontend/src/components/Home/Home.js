@@ -46,7 +46,7 @@ class Home extends Component {
       entityName: "Post",
     })
       .then((response) => {
-        // this.props.unsetLoader();
+        // this.props.unsetLoader() hahha;
         console.log("upVOted successfull = ", response);
         console.log("this.state = ", this.state);
         console.log("this.state = ", this.state.dataOfPosts[index].userVoteDir);
@@ -221,7 +221,7 @@ class Home extends Component {
       sortValue = sortByComments(this.state.dataOfPosts, type);
     } else if (attribute == "Votes") {
       console.log("sorting by Votes and type " + type);
-      sortValue = sortByVotes(this.state.dataOfPosts, type);
+      sortValue = await sortByVotes(this.state.dataOfPosts, type);
     }
     console.log(sortValue);
     this.setState({
@@ -255,13 +255,20 @@ class Home extends Component {
       <React.Fragment>
         <Row
           style={{
-            paddingTop: "70px",
+            margin: "0",
+            padding: "30px",
             background: this.props.darkMode ? "black" : "#DAE0E6",
             boxShadow: "rgb(119 119 119) 0px 0px 5px",
+            minHeight: "91.5vh",
           }}
         >
           <Col sm={8}>
-            <div style={{ float: "right", padding: "1rem", width: "100%" }}>
+            <div
+              style={{
+                float: "right",
+                width: "100%",
+              }}
+            >
               {/* <Alert variant="danger">
                 <button onClick={() => this.props.setLoader()}>
                   SET LOADER
@@ -270,39 +277,56 @@ class Home extends Component {
                   UNSET LOADER
                 </button>
               </Alert> */}
-              <Card>
-                <Card.Header>
-                  <Row>
-                    <Col xs={2}>Sort By</Col>
-                    <Col xs={3} style={{ marginLeft: "-80px" }}>
-                      <select
-                        className="form-control"
-                        onChange={this.SortItems}
-                      >
-                        <option value="Date">Created Date</option>
-                        <option value="Comments">Comments</option>
-                        <option value="User">User</option>
-                        <option value="User">Votes</option>
-                      </select>
-                    </Col>
-                    <Col xs={2}>
-                      <select className="form-control" onChange={this.SortType}>
-                        <option value="desc">Decending</option>
-                        <option value="asc">Ascending</option>
-                      </select>
-                    </Col>
-                  </Row>
-                </Card.Header>
-                <Card.Body>
-                  {this.state.searchResults.length ? (
-                    <HomeSearchResults
-                      data={this.state.searchResults}
-                    ></HomeSearchResults>
-                  ) : (
-                    postsToRender
-                  )}
-                </Card.Body>
-              </Card>
+              {this.state.dataOfPosts && this.state.dataOfPosts.length > 0 ? (
+                <Card>
+                  <Card.Header>
+                    <Row>
+                      <Col xs={2}>Sort By</Col>
+                      <Col xs={3} style={{ marginLeft: "-80px" }}>
+                        <select
+                          className="form-control"
+                          onChange={this.SortItems}
+                        >
+                          <option value="Date">Created Date</option>
+                          <option value="Comments">Comments</option>
+                          <option value="User">User</option>
+                          <option value="Votes">Votes</option>
+                        </select>
+                      </Col>
+                      <Col xs={2}>
+                        <select
+                          className="form-control"
+                          onChange={this.SortType}
+                        >
+                          <option value="desc">Decending</option>
+                          <option value="asc">Ascending</option>
+                        </select>
+                      </Col>
+                    </Row>
+                  </Card.Header>
+                  <Card.Body>
+                    {this.state.searchResults.length ? (
+                      <HomeSearchResults
+                        data={this.state.searchResults}
+                      ></HomeSearchResults>
+                    ) : (
+                      postsToRender
+                    )}
+                  </Card.Body>
+                </Card>
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    height: "70vh",
+                  }}
+                >
+                  No data
+                </div>
+              )}
 
               {/* <Post content="post 1" />
               <Post content="post 2" />
@@ -313,7 +337,7 @@ class Home extends Component {
               <Post content="post 7" /> */}
             </div>
           </Col>
-          <Col sm={4} style={{ padding: "1% 5% 1% 1%" }}>
+          <Col sm={4} style={{ paddingRight: "50px" }}>
             <Row>
               <Card className="card">
                 <Card.Header className="cardHeader">

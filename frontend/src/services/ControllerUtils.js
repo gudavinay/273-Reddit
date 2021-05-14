@@ -206,6 +206,7 @@ export function getRelativeTime(date) {
   }
   var now = new Date();
   var diff = parseInt((now.getTime() - Date.parse(date)) / 1000);
+
   if (diff < 60) {
     return "a few seconds ago";
   } else if (diff < 120) {

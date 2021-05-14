@@ -1,9 +1,8 @@
 const db = require("../../models/sql");
-const bcrypt = require("bcrypt");
+const passwordHash = require('password-hash');
 
 const signUp = async (msg, callback) => {
-  const salt = await bcrypt.genSalt(10);
-  msg.password = await bcrypt.hash(msg.password, salt);
+  msg.password = passwordHash.generate(msg.password)
   db.User.create({
     email: msg.email,
     password: msg.password,

@@ -1,6 +1,7 @@
 const Vote = require("../../models/mongo/vote");
 const Post = require("../../models/mongo/Post");
 const Comment = require("../../models/mongo/Comment");
+const Community = require("../../models/mongo/Community");
 
 const addVote = async (msg, callback) => {
   res = {};
@@ -60,6 +61,29 @@ const addVote = async (msg, callback) => {
                     callback(null, res);
                   }
                   console.log("updated comment = ", updateComment);
+                });
+              }
+            });
+          } else if (entityName == "Community") {
+            Community.findById(entityId, (err, commty) => {
+              if (err) {
+                res.status = 500;
+                callback(null, res);
+              } else {
+                console.log("commmty = ", commty);
+                commty.score = commty.score + relScore;
+                commty.upvotedBy.pull(userId);
+                commty.downvotedBy.pull(userId);
+                commty.save((err, updateCommunity) => {
+                  if (err) {
+                    res.status = 500;
+                    callback(null, res);
+                  } else {
+                    res.data = result;
+                    res.status = 200;
+                    callback(null, res);
+                  }
+                  console.log("updated comment = ", updateCommunity);
                 });
               }
             });
@@ -144,6 +168,34 @@ const addVote = async (msg, callback) => {
                     callback(null, res);
                   }
                   console.log("updated Comment = ", updateComment);
+                });
+              }
+            });
+          } else if (entityName == "Community") {
+            Community.findById(entityId, (err, commty) => {
+              if (err) {
+                res.status = 500;
+                callback(null, res);
+              } else {
+                console.log("commty = ", commty);
+                commty.score = commty.score + relScore;
+                if (voteDir == -1) {
+                  commty.upvotedBy.pull(userId);
+                  commty.downvotedBy.push(userId);
+                } else {
+                  commty.upvotedBy.push(userId);
+                  commty.downvotedBy.pull(userId);
+                }
+                commty.save((err, updateCommunity) => {
+                  if (err) {
+                    res.status = 500;
+                    callback(null, res);
+                  } else {
+                    res.data = result;
+                    res.status = 200;
+                    callback(null, res);
+                  }
+                  console.log("updated Community = ", updateCommunity);
                 });
               }
             });

@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const CommentSchema = new mongoose.Schema(
   {
+    communityID: { type: Schema.Types.ObjectId, ref: "Community" },
     postID: { type: Schema.Types.ObjectId, ref: "Post" },
     description: { type: String, required: true },
     parentCommentID: { type: Schema.Types.ObjectId, ref: "Comment" },

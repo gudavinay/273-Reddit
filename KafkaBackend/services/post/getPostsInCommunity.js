@@ -9,8 +9,6 @@ const getPostsInCommunity = async (msg, callback) => {
   let count = await Post.countDocuments({
     communityID: msg.query.ID,
   });
-  console.log("-------------------skip--------------", skip);
-  console.log("-------------------skip--------------", Number(msg.size));
   const userId = msg.query.userId;
   Post.aggregate([
     {
@@ -87,7 +85,8 @@ const getPostsInCommunity = async (msg, callback) => {
       console.log("results in posts community = ", result);
       console.log("upvoted ", result[0].upvoteCount);
       const responseData = JSON.parse(JSON.stringify(result));
-      res.data = result;
+      res.data = { post: result, total: count };
+      //res.data = result;
       res.status = 200;
       callback(null, res);
 

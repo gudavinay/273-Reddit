@@ -10,7 +10,7 @@ const acceptUsersToCommunity = async (msg, callback) => {
           _id: msg.communityID,
           "listOfUsers.userID": item,
         },
-        { $set: { "listOfUsers.$.isAccepted": true } }
+        { $set: { "listOfUsers.$.isAccepted": 1 } }
       );
     }).then(() => {
       res.status = 200;
