@@ -65,9 +65,10 @@ class Post extends Component {
         }}
       >
         <Row className="postHeader">
-          <span>{this.props.data.communityName &&
-            "r/" + this.props.data?.communityName + " "}
-          posted by u/<strong>{this.props.data?.userID[0]?.name}</strong>{" "}
+          <span>
+            {this.props.data.communityName &&
+              "r/" + this.props.data?.communityName + " "}
+            posted by u/<strong>{this.props.data?.userID[0]?.name}</strong>{" "}
             {getRelativeTime(this.props.data?.createdAt)}
           </span>
         </Row>
@@ -103,7 +104,14 @@ class Post extends Component {
           <Card.Body>
             <Row>
               <Col xs={1}>
-                <div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    textAlign: "center",
+                  }}
+                >
                   <i
                     style={{
                       cursor: "pointer",

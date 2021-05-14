@@ -45,7 +45,7 @@ const CommunitySchema = new mongoose.Schema(
       {
         userID: { type: Schema.Types.ObjectId, ref: "UserProfile" },
         isAccepted: { type: Number, default: 0 },
-        dateTime: { type: Date, default: Date.now() },
+        dateTime: { type: Date, default: Date.now },
       },
     ],
     rules: [

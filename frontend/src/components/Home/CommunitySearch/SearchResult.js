@@ -36,7 +36,14 @@ class SearchResult extends Component {
                   marginLeft: "14px",
                 }}
               >
-                <div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    textAlign: "center",
+                  }}
+                >
                   <i
                     style={{
                       cursor: "pointer",
