@@ -131,17 +131,17 @@ class Navigationbar extends Component {
   getLeftDropdownText() {
     let path = this.props.location.pathname;
     if (path.includes("/invitation")) {
-      return "Invitation"
+      return "Invitation";
     } else if (path.includes("/createCommunity")) {
-      return "Create New Community"
+      return "Create New Community";
     } else if (path.includes("/mycommunities")) {
-      return "My Communities"
+      return "My Communities";
     } else if (path.includes("/communitysearch")) {
-      return "Community Search"
+      return "Community Search";
     } else if (path.includes("/mycommunitiesmoderation")) {
-      return "Community Moderation"
+      return "Community Moderation";
     } else if (path.includes("/communityanalytics")) {
-      return "Community Analytics"
+      return "Community Analytics";
     }
     return "Home";
   }
@@ -450,11 +450,11 @@ class Navigationbar extends Component {
                       }
                     }}
                   >
-                    <div>
+                    <div style={{ display: "flex", width: "90%" }}>
                       <img
                         src={
                           getUserProfile() &&
-                            getUserProfile().profile_picture_url
+                          getUserProfile().profile_picture_url
                             ? getUserProfile().profile_picture_url
                             : this.state.getDefaultRedditProfilePicture
                         }
@@ -464,9 +464,18 @@ class Navigationbar extends Component {
                           marginRight: "10px",
                         }}
                       />
-                      {getUserProfile() != null
-                        ? getUserProfile().name
-                        : "User Name"}
+                      <div
+                        style={{
+                          height: "20px",
+                          textOverflow: "ellipsis",
+                          overflow: "hidden",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {getUserProfile() != null
+                          ? getUserProfile().name
+                          : "User Name"}
+                      </div>
                     </div>
                     <div>
                       <BsFillCaretDownFill />

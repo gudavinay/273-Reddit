@@ -21,7 +21,6 @@ class CommunityAnalytics extends Component {
       layoutForBar: {
         height: 400,
         width: 500,
-        title: "Community wise Analytics",
         xaxis: {
           title: {
             text: "Name of Community",
@@ -177,6 +176,12 @@ class CommunityAnalytics extends Component {
     this.setState({
       dataToUpvote: [
         {
+          showlegend: true,
+          legend: {
+            x: 1,
+            xanchor: "right",
+            y: 1,
+          },
           y: yAxis,
           x: label,
           type: "bar",
@@ -199,6 +204,12 @@ class CommunityAnalytics extends Component {
           this.setState({
             dataForMaxPostByUser: [
               {
+                showlegend: true,
+                legend: {
+                  x: 1,
+                  xanchor: "right",
+                  y: 1,
+                },
                 y: yAxisMostPost,
                 x: labelMostPost,
                 type: "bar",
@@ -218,51 +229,87 @@ class CommunityAnalytics extends Component {
   }
 
   render() {
-    console.log(this.state);
-    // console.log(this.state.dataForUser);
     return (
       <React.Fragment>
         <Container>
+          <div
+            style={{ textAlign: "center", fontSize: "24px", marginTop: "10px" }}
+          >
+            Community wise Analytics
+          </div>
           {/* {JSON.stringify(this.state.mostUpvotedPost)} */}
           {/* {JSON.stringify(this.state.userWithMaxPosts)} */}
           <Row>
-            <Col>
-              <Plot
-                name="noOfPost"
-                data={this.state.dataToPlot}
-                layout={this.state.layoutForBar}
-                onInitialized={(figure) => this.setState(figure)}
-                onUpdate={(figure) => this.setState(figure)}
-              />
+            <Col
+              xs={6}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                textAlign: "center",
+              }}
+            >
+              <div style={{ display: "flex" }}>
+                <Plot
+                  name="noOfPost"
+                  data={this.state.dataToPlot}
+                  layout={this.state.layoutForBar}
+                  onInitialized={(figure) => this.setState(figure)}
+                  onUpdate={(figure) => this.setState(figure)}
+                  style={{ width: "auto" }}
+                />
+              </div>
+            </Col>
+            <Col
+              xs={6}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                textAlign: "center",
+                overflow: "hidden",
+              }}
+            >
+              <div style={{ display: "flex", marginLeft: "-30%" }}>
+                <Plot
+                  name="noOfUser"
+                  data={this.state.dataForPost}
+                  onInitialized={(figure) => this.setState(figure)}
+                  onUpdate={(figure) => this.setState(figure)}
+                  style={{ width: "auto" }}
+                />
+              </div>
             </Col>
           </Row>
           <Row>
-            <Col>
-              <Plot
-                name="noOfUser"
-                data={this.state.dataForPost}
-                onInitialized={(figure) => this.setState(figure)}
-                onUpdate={(figure) => this.setState(figure)}
-              />
+            <Col
+              xs={6}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                textAlign: "center",
+                overflow: "hidden",
+                position: "relative",
+              }}
+            >
+              <div style={{ position: "absolute", right: "-13%" }}>
+                <Plot
+                  name="TopVotedPost"
+                  data={this.state.dataToUpvote}
+                  onInitialized={(figure) => this.setState(figure)}
+                  onUpdate={(figure) => this.setState(figure)}
+                  style={{ width: "auto" }}
+                />
+              </div>
             </Col>
-          </Row>
-          <Row>
-            <Col>
-              <Plot
-                name="TopVotedPost"
-                data={this.state.dataToUpvote}
-                onInitialized={(figure) => this.setState(figure)}
-                onUpdate={(figure) => this.setState(figure)}
-              />
-            </Col>
-          </Row>
-          <Row>
             <Col>
               <Plot
                 name="UserWithMaxPost"
                 data={this.state.dataForMaxPostByUser}
                 onInitialized={(figure) => this.setState(figure)}
                 onUpdate={(figure) => this.setState(figure)}
+                style={{ width: "auto" }}
               />
             </Col>
           </Row>
