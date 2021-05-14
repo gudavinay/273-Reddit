@@ -47,10 +47,8 @@ class MyCommunitiesModeration extends Component {
     axios.defaults.headers.common["authorization"] = getToken();
     await axios
       .get(
-        `${backendServer}/getCommunitiesForOwner?ID=${ownerID}&size=${
-          this.state.communityPagination.size
-        }&page=${this.state.communityPagination.page - 1}&search=${
-          this.state.communityPagination.search
+        `${backendServer}/getCommunitiesForOwner?ID=${ownerID}&size=${this.state.communityPagination.size
+        }&page=${this.state.communityPagination.page - 1}&search=${this.state.communityPagination.search
         }`
       )
       .then((response) => {
@@ -119,11 +117,11 @@ class MyCommunitiesModeration extends Component {
   componentDidUpdate = async (prevProps, prevState) => {
     if (
       this.state.communityPagination.page !==
-        prevState.communityPagination.page ||
+      prevState.communityPagination.page ||
       this.state.communityPagination.size !==
-        prevState.communityPagination.size ||
+      prevState.communityPagination.size ||
       this.state.communityPagination.search !==
-        prevState.communityPagination.search ||
+      prevState.communityPagination.search ||
       this.state.userPagination.page !== prevState.userPagination.page ||
       this.state.userPagination.size !== prevState.userPagination.size ||
       this.state.userPagination.search !== prevState.userPagination.search ||
@@ -199,138 +197,138 @@ class MyCommunitiesModeration extends Component {
 
     this.state.communities && this.state.communities.length > 0
       ? this.state.communities.forEach((item) => {
-          communitiesList.push(
-            <Row
-              key={item._id}
-              className={
-                this.props.dark_mode ? "cardrow-dark" : "cardrow-light"
-              }
-              style={{ margin: "0", padding: "15px 0", cursor: "pointer" }}
-              onClick={async () => {
-                await this.setState({
-                  selectedCommunity: item._id,
-                  showCommunityModal: true,
-                });
+        communitiesList.push(
+          <Row
+            key={item._id}
+            className={
+              this.props.dark_mode ? "cardrow-dark" : "cardrow-light"
+            }
+            style={{ margin: "0", padding: "15px 0", cursor: "pointer" }}
+            onClick={async () => {
+              await this.setState({
+                selectedCommunity: item._id,
+                showCommunityModal: true,
+              });
+            }}
+          >
+            <Col xs={2}>{communityCount}.</Col>
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                padding: "0 30px 0 0",
               }}
             >
-              <Col xs={2}>{communityCount}.</Col>
-              <Col
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "0 30px 0 0",
-                }}
-              >
-                <div style={{ fontWeight: "700" }}>r/{item.communityName}</div>
-                <div style={{ display: "flex" }}>
-                  <div
-                    style={{
-                      fontSize: "12px",
-                      color: "#777",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      marginRight: "10px",
-                    }}
-                  >
-                    Number of requests:
+              <div style={{ fontWeight: "700" }}>r/{item.communityName}</div>
+              <div style={{ display: "flex" }}>
+                <div
+                  style={{
+                    fontSize: "12px",
+                    color: "#777",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    marginRight: "10px",
+                  }}
+                >
+                  Number of requests:
                   </div>
-                  <strong>{item.requestedUserSQLIds.length}</strong>
-                </div>
-              </Col>
-            </Row>
-          );
-          communityCount++;
-        })
-      : communitiesList.push(
-          <div style={{ textAlign: "center", marginTop: "150px" }}>
-            No communities to display!
-          </div>
+                <strong>{item.requestedUserSQLIds.length}</strong>
+              </div>
+            </Col>
+          </Row>
         );
+        communityCount++;
+      })
+      : communitiesList.push(
+        <div style={{ textAlign: "center", marginTop: "150px" }}>
+          No communities to display!
+          </div>
+      );
 
     this.state.usersFromCommunities &&
-    this.state.usersFromCommunities.length > 0
+      this.state.usersFromCommunities.length > 0
       ? this.state.usersFromCommunities.forEach((item) => {
-          usersList.push(
-            <Row
-              key={item._id}
-              className={
-                this.props.dark_mode ? "cardrow-dark" : "cardrow-light"
-              }
-              style={{ margin: "0", padding: "15px 0", cursor: "pointer" }}
-              onClick={async () => {
-                await this.setState({
-                  selectedUser: item._id,
-                  showUserModal: true,
-                });
+        usersList.push(
+          <Row
+            key={item._id}
+            className={
+              this.props.dark_mode ? "cardrow-dark" : "cardrow-light"
+            }
+            style={{ margin: "0", padding: "15px 0", cursor: "pointer" }}
+            onClick={async () => {
+              await this.setState({
+                selectedUser: item._id,
+                showUserModal: true,
+              });
+            }}
+          >
+            <Col
+              xs={2}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
               }}
             >
-              <Col
-                xs={2}
+              {userCount}.
+              </Col>
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                padding: "0 30px 0 0",
+              }}
+            >
+              <div
                 style={{
+                  fontWeight: "700",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
                 }}
               >
-                {userCount}.
-              </Col>
-              <Col
+                u/{item.name}
+              </div>
+              <div
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "0 30px 0 0",
+                  display: "block",
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "25px",
+                  overflow: "hidden",
+                  border: "1px solid #777",
+                  // backgroundColor: "#ccc",
+
+                  // border: "1px solid #777",
                 }}
               >
-                <div
+                <img
+                  src={item.profile_picture_url ? item.profile_picture_url : this.state.getDefaultRedditProfilePicture}
+                  alt=""
                   style={{
-                    fontWeight: "700",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                  }}
-                >
-                  u/{item.name}
-                </div>
-                <div
-                  style={{
-                    display: "block",
-                    width: "40px",
                     height: "40px",
-                    borderRadius: "25px",
-                    overflow: "hidden",
-                    border: "1px solid #777",
-                    // backgroundColor: "#ccc",
-
-                    // border: "1px solid #777",
+                    width: "40px",
                   }}
-                >
-                  <img
-                    src={this.state.getDefaultRedditProfilePicture}
-                    alt=""
-                    style={{
-                      height: "40px",
-                      width: "40px",
-                    }}
-                  />
-                </div>
-              </Col>
-            </Row>
-          );
-          userCount++;
-        })
-      : usersList.push(
-          <div style={{ textAlign: "center", marginTop: "150px" }}>
-            No users to display!
-          </div>
+                />
+              </div>
+            </Col>
+          </Row>
         );
+        userCount++;
+      })
+      : usersList.push(
+        <div style={{ textAlign: "center", marginTop: "150px" }}>
+          No users to display!
+          </div>
+      );
 
     let comm_entries = {};
     if (this.state.communities) {
       if (
         (this.state.communityPagination.page - 1) *
-          this.state.communityPagination.size +
-          this.state.communityPagination.size <
+        this.state.communityPagination.size +
+        this.state.communityPagination.size <
         this.state.communityPagination.total_count
       ) {
         comm_entries = (
@@ -348,8 +346,8 @@ class MyCommunitiesModeration extends Component {
       } else {
         if (
           (this.state.communityPagination.page - 1) *
-            this.state.communityPagination.size +
-            1 ===
+          this.state.communityPagination.size +
+          1 ===
           this.state.communityPagination.total_count
         ) {
           comm_entries = (
@@ -376,7 +374,7 @@ class MyCommunitiesModeration extends Component {
     if (this.state.usersFromCommunities) {
       if (
         (this.state.userPagination.page - 1) * this.state.userPagination.size +
-          this.state.userPagination.size <
+        this.state.userPagination.size <
         this.state.usersFromCommunities.length
       ) {
         user_entries = (
@@ -394,8 +392,8 @@ class MyCommunitiesModeration extends Component {
       } else {
         if (
           (this.state.userPagination.page - 1) *
-            this.state.userPagination.size +
-            1 ===
+          this.state.userPagination.size +
+          1 ===
           this.state.usersFromCommunities.length
         ) {
           user_entries = (
