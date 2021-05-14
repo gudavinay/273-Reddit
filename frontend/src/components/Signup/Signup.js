@@ -155,8 +155,9 @@ class Signup extends Component {
                     id="email"
                     name="email"
                     placeholder="Email"
+                    maxLength="150"
                     onChange={this.handleChange}
-                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                    pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
                     title="Invalid email address"
                     required
                   ></Form.Control>
@@ -171,6 +172,7 @@ class Signup extends Component {
                     id="password"
                     name="password"
                     placeholder="Password"
+                    maxLength="25"
                     onChange={this.handleChange}
                     required
                   ></Form.Control>

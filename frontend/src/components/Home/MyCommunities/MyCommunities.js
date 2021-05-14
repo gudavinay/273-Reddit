@@ -327,6 +327,7 @@ class MyCommunities extends Component {
                         type="text"
                         id="name"
                         name="name"
+                        maxLength="50"
                         onKeyDown={evt =>
                           evt.key === " " && evt.preventDefault()
                         }
