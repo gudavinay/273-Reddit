@@ -10,7 +10,7 @@ import {
   sortByTime,
   sortByComments,
   getDefaultRedditProfilePicture,
-  sortByVotes,
+  sortByVotes
 } from "../../services/ControllerUtils";
 import HomeSearchResults from "./HomeSearchResults";
 import createPostRulesSVG from "../../assets/createPostRules.svg";
@@ -24,7 +24,7 @@ class Home extends Component {
       searchText: this.getSearchQueryFromLocation(),
       searchResults: [],
       sortby: "Date",
-      sortType: "desc",
+      sortType: "desc"
     };
     console.log("PROPS IN HOME", this.props);
     this.upVote = this.upVote.bind(this);
@@ -44,9 +44,9 @@ class Home extends Component {
       userId: getMongoUserID(),
       voteDir: userVoteDir == 1 ? 0 : 1,
       relScore: relScore,
-      entityName: "Post",
+      entityName: "Post"
     })
-      .then((response) => {
+      .then(response => {
         // this.props.unsetLoader() hahha;
         console.log("upVOted successfull = ", response);
         console.log("this.state = ", this.state);
@@ -56,15 +56,15 @@ class Home extends Component {
           userVoteDir == 1
             ? newPosts[index].score - 1
             : userVoteDir == 0
-              ? newPosts[index].score + 1
-              : newPosts[index].score + 2;
+            ? newPosts[index].score + 1
+            : newPosts[index].score + 2;
 
         newPosts[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
         console.log("newComments = ", newPosts);
         this.setState({ dataOfPosts: newPosts });
         // this.fetchCommentsWithPostID();
       })
-      .catch((err) => {
+      .catch(err => {
         // this.props.unsetLoader();
         console.log(err);
       });
@@ -78,9 +78,9 @@ class Home extends Component {
       userId: getMongoUserID(),
       voteDir: userVoteDir == -1 ? 0 : -1,
       relScore: relScore,
-      entityName: "Post",
+      entityName: "Post"
     })
-      .then((response) => {
+      .then(response => {
         // this.props.unsetLoader();
         console.log("downvoted successfull = ", response);
         const newPosts = this.state.dataOfPosts.slice();
@@ -88,8 +88,8 @@ class Home extends Component {
           userVoteDir == -1
             ? newPosts[index].score + 1
             : userVoteDir == 0
-              ? newPosts[index].score - 1
-              : newPosts[index].score - 2;
+            ? newPosts[index].score - 1
+            : newPosts[index].score - 2;
 
         // newComments[index].userVoteDir = response.data.userVoteDir;
         newPosts[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
@@ -97,7 +97,7 @@ class Home extends Component {
         this.setState({ dataOfPosts: newPosts });
         // this.fetchCommentsWithPostID();
       })
-      .catch((err) => {
+      .catch(err => {
         // this.props.unsetLoader();
         console.log(err);
       });
@@ -113,12 +113,12 @@ class Home extends Component {
     if (prevProps.location.search != this.props.location.search) {
       this.setState(
         {
-          searchText: this.getSearchQueryFromLocation(),
+          searchText: this.getSearchQueryFromLocation()
         },
         () => {
           let data = {
             search: this.state.searchText,
-            user_id: getMongoUserID(),
+            user_id: getMongoUserID()
           };
           this.props.setLoader();
           if (this.props.location.search === "") {
@@ -126,7 +126,7 @@ class Home extends Component {
           } else {
             Axios.defaults.headers.common["authorization"] = getToken();
             Axios.post(backendServer + "/searchForPosts", data)
-              .then((result) => {
+              .then(result => {
                 this.props.unsetLoader();
                 let searchRes = [];
                 result.data.forEach((post, index) => {
@@ -143,7 +143,7 @@ class Home extends Component {
                 });
                 this.setState({ searchResults: searchRes });
               })
-              .catch((err) => {
+              .catch(err => {
                 this.props.unsetLoader();
                 console.log(err);
               });
@@ -157,19 +157,19 @@ class Home extends Component {
   }
   getDashboardData = async () => {
     let data = {
-      user_id: getMongoUserID(),
+      user_id: getMongoUserID()
     };
     // console.log(data);
     console.log("fetching!!!!!!!!!!!");
     this.props.setLoader();
     Axios.defaults.headers.common["authorization"] = getToken();
     Axios.post(backendServer + "/getAllPostsWithUserId", data)
-      .then((result) => {
+      .then(result => {
         console.log(result.data);
         this.props.unsetLoader();
         this.setState({ dataOfPosts: result.data });
       })
-      .catch((err) => {
+      .catch(err => {
         this.props.unsetLoader();
         console.log(err);
       });
@@ -177,11 +177,11 @@ class Home extends Component {
     Axios.get(
       `${backendServer}/getAllCommunitiesListForUser?ID=${getMongoUserID()}`
     )
-      .then((result) => {
+      .then(result => {
         console.log(result.data);
         this.props.unsetLoader();
         if (result.data) {
-          result.data.forEach((comm) => {
+          result.data.forEach(comm => {
             comm.imageURL =
               comm.imageURL && comm.imageURL.length > 0
                 ? comm.imageURL[0].url
@@ -191,15 +191,15 @@ class Home extends Component {
 
         this.setState({ communitiesListForWidget: result.data });
       })
-      .catch((err) => {
+      .catch(err => {
         this.props.unsetLoader();
         console.log(err);
       });
   };
-  SortType = (e) => {
+  SortType = e => {
     this.setState(
       {
-        sortType: e.target.value,
+        sortType: e.target.value
       },
       () => {
         console.log(this.state.sortType);
@@ -226,13 +226,13 @@ class Home extends Component {
     }
     console.log(sortValue);
     this.setState({
-      dataOfPosts: sortValue,
+      dataOfPosts: sortValue
     });
   }
 
-  SortItems = (e) => {
+  SortItems = e => {
     this.setState({
-      sortby: e.target.value,
+      sortby: e.target.value
     });
     this.Sorting(e.target.value, this.state.sortType);
   };
@@ -260,14 +260,14 @@ class Home extends Component {
             padding: "30px",
             background: this.props.darkMode ? "black" : "#DAE0E6",
             boxShadow: "rgb(119 119 119) 0px 0px 5px",
-            minHeight: "91.5vh",
+            minHeight: "91.5vh"
           }}
         >
           <Col sm={8}>
             <div
               style={{
                 float: "right",
-                width: "100%",
+                width: "100%"
               }}
             >
               {/* <Alert variant="danger">
@@ -299,7 +299,7 @@ class Home extends Component {
                           className="form-control"
                           onChange={this.SortType}
                         >
-                          <option value="desc">Decending</option>
+                          <option value="desc">Descending</option>
                           <option value="asc">Ascending</option>
                         </select>
                       </Col>
@@ -318,9 +318,7 @@ class Home extends Component {
               ) : (
                 <div style={{ textAlign: "center", padding: "8%" }}>
                   <img alt="" width="25%" src={errorSVG} />
-                  <h3>
-                    No Data Available
-          </h3>
+                  <h3>No Data Available</h3>
                 </div>
               )}
 
@@ -375,7 +373,7 @@ class Home extends Component {
                                       style={{
                                         height: "30px",
                                         width: "30px",
-                                        borderRadius: "15px",
+                                        borderRadius: "15px"
                                       }}
                                     />
                                   </Col>
@@ -401,12 +399,12 @@ class Home extends Component {
                                     display: !this.state.showMoreCommunities
                                       ? "block"
                                       : "none",
-                                    textAlign: "center",
+                                    textAlign: "center"
                                   }}
                                   onClick={() =>
-                                    this.setState((state) => ({
+                                    this.setState(state => ({
                                       showMoreCommunities:
-                                        !state.showMoreCommunities,
+                                        !state.showMoreCommunities
                                     }))
                                   }
                                 >
@@ -423,7 +421,7 @@ class Home extends Component {
                                       style={{
                                         height: "30px",
                                         width: "30px",
-                                        borderRadius: "15px",
+                                        borderRadius: "15px"
                                       }}
                                     />
                                   </Col>
@@ -450,7 +448,7 @@ class Home extends Component {
                                     {this.state.communitiesListForWidget
                                       .length -
                                       1 ==
-                                      index ? (
+                                    index ? (
                                       <div
                                         className="downArrowRotate"
                                         style={{
@@ -458,12 +456,12 @@ class Home extends Component {
                                             .showMoreCommunities
                                             ? "block"
                                             : "none",
-                                          textAlign: "center",
+                                          textAlign: "center"
                                         }}
                                         onClick={() =>
-                                          this.setState((state) => ({
+                                          this.setState(state => ({
                                             showMoreCommunities:
-                                              !state.showMoreCommunities,
+                                              !state.showMoreCommunities
                                           }))
                                         }
                                       >
