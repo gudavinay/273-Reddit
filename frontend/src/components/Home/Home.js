@@ -55,8 +55,8 @@ class Home extends Component {
           userVoteDir == 1
             ? newPosts[index].score - 1
             : userVoteDir == 0
-            ? newPosts[index].score + 1
-            : newPosts[index].score + 2;
+              ? newPosts[index].score + 1
+              : newPosts[index].score + 2;
 
         newPosts[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
         console.log("newComments = ", newPosts);
@@ -87,8 +87,8 @@ class Home extends Component {
           userVoteDir == -1
             ? newPosts[index].score + 1
             : userVoteDir == 0
-            ? newPosts[index].score - 1
-            : newPosts[index].score - 2;
+              ? newPosts[index].score - 1
+              : newPosts[index].score - 2;
 
         // newComments[index].userVoteDir = response.data.userVoteDir;
         newPosts[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
@@ -255,13 +255,17 @@ class Home extends Component {
       <React.Fragment>
         <Row
           style={{
-            paddingTop: "70px",
+            margin: "0",
+            padding: '30px',
             background: this.props.darkMode ? "black" : "#DAE0E6",
             boxShadow: "rgb(119 119 119) 0px 0px 5px",
           }}
         >
           <Col sm={8}>
-            <div style={{ float: "right", padding: "1rem", width: "100%" }}>
+            <div style={{
+              float: "right",
+              width: "100%"
+            }}>
               {/* <Alert variant="danger">
                 <button onClick={() => this.props.setLoader()}>
                   SET LOADER
@@ -313,7 +317,9 @@ class Home extends Component {
               <Post content="post 7" /> */}
             </div>
           </Col>
-          <Col sm={4} style={{ padding: "1% 5% 1% 1%" }}>
+          <Col sm={4}
+            style={{ paddingRight: "50px" }}
+          >
             <Row>
               <Card className="card">
                 <Card.Header className="cardHeader">
@@ -430,7 +436,7 @@ class Home extends Component {
                                     {this.state.communitiesListForWidget
                                       .length -
                                       1 ==
-                                    index ? (
+                                      index ? (
                                       <div
                                         className="downArrowRotate"
                                         style={{

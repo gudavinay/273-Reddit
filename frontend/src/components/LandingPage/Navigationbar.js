@@ -434,7 +434,7 @@ class Navigationbar extends Component {
                   >
                     <div>
                       <img
-                        src={this.state.getDefaultRedditProfilePicture}
+                        src={getUserProfile() && getUserProfile().profile_picture_url ? getUserProfile().profile_picture_url : this.state.getDefaultRedditProfilePicture}
                         style={{
                           width: "25px",
                           borderRadius: "3px",
