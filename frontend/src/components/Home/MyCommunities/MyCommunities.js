@@ -34,7 +34,7 @@ class MyCommunities extends Component {
       size: 2,
       count: 0,
       sortby: "Date",
-      sortType: "asc"
+      sortType: "desc"
     };
   }
 
@@ -196,7 +196,11 @@ class MyCommunities extends Component {
         } else {
           imageCaraosel = (
             <Carousel.Item interval={1000}>
-              <img className="myCarasoulSize" src={getDefaultRedditProfilePicture()} alt="First slide" />
+              <img
+                className="myCarasoulSize"
+                src={getDefaultRedditProfilePicture()}
+                alt="First slide"
+              />
             </Carousel.Item>
           );
         }
@@ -276,8 +280,8 @@ class MyCommunities extends Component {
                     </Col>
                     <Col xs={2}>
                       <select className="form-control" onChange={this.SortType}>
+                        <option value="desc">Descending</option>
                         <option value="asc">Ascending</option>
-                        <option value="desc">Decending</option>
                       </select>
                     </Col>
                   </Row>
