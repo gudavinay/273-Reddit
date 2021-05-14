@@ -361,6 +361,7 @@ const getCommentsWithPostID = async (msg, callback) => {
     },
     {
       $sort: {
+        score: -1,
         upvoteCount: -1,
         createdAt: -1,
       },
