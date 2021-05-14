@@ -106,6 +106,7 @@ class UserProfile extends Component {
       name: this.state.name,
       email: this.state.email,
       location: this.state.location,
+      password: this.state.password,
       profile_picture_url: this.state.profile_picture_url,
       gender: this.state.gender,
       userIDSQL: getSQLUserID(),
@@ -214,7 +215,7 @@ class UserProfile extends Component {
                       <i
                         className="fa fa-camera"
                         style={{ opacity: 1, fontSize: "75px", color: "white" }}
-                        onClick={() => {}}
+                        onClick={() => { }}
                       >
                         <input
                           style={{
@@ -433,7 +434,7 @@ class UserProfile extends Component {
           <Modal.Body>
             <React.Fragment>
               {/* <center> */}
-              <form onSubmit={() => {}}>
+              <form onSubmit={() => { }}>
                 <Row style={{ padding: "5px 0" }}>
                   <Col sm={1}></Col>
                   <Col sm={8}>

@@ -53,7 +53,7 @@ class Login extends Component {
       .then((response) => {
         if (response.status == 200) {
           console.log(response.data);
-          const data = response.data[0];
+          const data = response.data;
           data.token = this.props.user.token;
           SetLocalStorage(data);
           this.setState({
