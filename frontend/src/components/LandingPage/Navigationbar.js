@@ -226,6 +226,7 @@ class Navigationbar extends Component {
                     id="expandLeftDropDown"
                   >
                     <hr style={{ margin: "12.5px 0" }} />
+
                     <div
                       className={
                         this.props.darkMode
@@ -233,16 +234,85 @@ class Navigationbar extends Component {
                           : "NavLinks backGround_light"
                       }
                       onClick={() => {
-                        this.setState({
-                          leftDropdown: "community Analytics",
-                        });
+                        this.setState({ leftDropdown: "Home", search: "" });
                         document
                           .getElementById("expandLeftDropDown")
                           .classList.add("hidden");
-                        this.props.history.push("/communityanalytics");
+                        this.props.history.push("/home");
                       }}
                     >
-                      Community Analytics
+                      Home
+                    </div>
+                    <div
+                      className={
+                        this.props.darkMode
+                          ? "NavLinks backGround_dark"
+                          : "NavLinks backGround_light"
+                      }
+                      onClick={() => {
+                        this.setState({ leftDropdown: "Invitation" });
+                        document
+                          .getElementById("expandLeftDropDown")
+                          .classList.add("hidden");
+                        this.props.history.push("/invitation");
+                      }}
+                    >
+                      Invitation
+                    </div>
+                    <div
+                      className={
+                        this.props.darkMode
+                          ? "NavLinks backGround_dark"
+                          : "NavLinks backGround_light"
+                      }
+                      onClick={() => {
+                        this.setState({ leftDropdown: "Create New Community" });
+                        document
+                          .getElementById("expandLeftDropDown")
+                          .classList.add("hidden");
+                        this.props.history.push("/createCommunity/");
+                      }}
+                    >
+                      Create New Community
+                    </div>
+                    <div
+                      className={
+                        this.props.darkMode
+                          ? "NavLinks backGround_dark"
+                          : "NavLinks backGround_light"
+                      }
+                      onClick={() => {
+                        this.setState({ leftDropdown: "My Communities" });
+                        document
+                          .getElementById("expandLeftDropDown")
+                          .classList.add("hidden");
+                        this.props.history.push("/mycommunities");
+                      }}
+                    >
+                      My Communities
+                    </div>
+                    <div
+                      className={
+                        this.props.darkMode
+                          ? "NavLinks backGround_dark"
+                          : "NavLinks backGround_light"
+                      }
+                      onClick={() => {
+                        this.setState({ leftDropdown: "Community Search" });
+                        document
+                          .getElementById("expandLeftDropDown")
+                          .classList.add("hidden");
+                        this.props.history.push({
+                          pathname: "/communitysearch",
+                          search:
+                            "?" +
+                            new URLSearchParams({
+                              q: this.state.search,
+                            }).toString(),
+                        });
+                      }}
+                    >
+                      Community Search
                     </div>
                     <div
                       className={
@@ -269,88 +339,16 @@ class Navigationbar extends Component {
                           : "NavLinks backGround_light"
                       }
                       onClick={() => {
-                        this.setState({ leftDropdown: "Create New Community" });
-                        document
-                          .getElementById("expandLeftDropDown")
-                          .classList.add("hidden");
-                        this.props.history.push("/createCommunity/");
-                      }}
-                    >
-                      Create New Community
-                    </div>
-                    <div
-                      className={
-                        this.props.darkMode
-                          ? "NavLinks backGround_dark"
-                          : "NavLinks backGround_light"
-                      }
-                      onClick={() => {
-                        this.setState({ leftDropdown: "Community Search" });
-                        document
-                          .getElementById("expandLeftDropDown")
-                          .classList.add("hidden");
-                        this.props.history.push({
-                          pathname: "/communitysearch",
-                          search:
-                            "?" +
-                            new URLSearchParams({
-                              q: this.state.search,
-                            }).toString(),
+                        this.setState({
+                          leftDropdown: "community Analytics",
                         });
-                      }}
-                    >
-                      Community Search
-                    </div>
-
-                    <div
-                      className={
-                        this.props.darkMode
-                          ? "NavLinks backGround_dark"
-                          : "NavLinks backGround_light"
-                      }
-                      onClick={() => {
-                        this.setState({ leftDropdown: "Home", search: "" });
                         document
                           .getElementById("expandLeftDropDown")
                           .classList.add("hidden");
-                        this.props.history.push("/home");
+                        this.props.history.push("/communityanalytics");
                       }}
                     >
-                      Home
-                    </div>
-
-                    <div
-                      className={
-                        this.props.darkMode
-                          ? "NavLinks backGround_dark"
-                          : "NavLinks backGround_light"
-                      }
-                      onClick={() => {
-                        this.setState({ leftDropdown: "My Communities" });
-                        document
-                          .getElementById("expandLeftDropDown")
-                          .classList.add("hidden");
-                        this.props.history.push("/mycommunities");
-                      }}
-                    >
-                      My Communities
-                    </div>
-
-                    <div
-                      className={
-                        this.props.darkMode
-                          ? "NavLinks backGround_dark"
-                          : "NavLinks backGround_light"
-                      }
-                      onClick={() => {
-                        this.setState({ leftDropdown: "Send Invitation" });
-                        document
-                          .getElementById("expandLeftDropDown")
-                          .classList.add("hidden");
-                        this.props.history.push("/invitation");
-                      }}
-                    >
-                      Send Invitation
+                      Community Analytics
                     </div>
                   </div>
                 </div>
