@@ -7,7 +7,7 @@ import Axios from "axios";
 import {
   getDefaultRedditProfilePicture,
   getRelativeTime,
-  getToken,
+  getToken
 } from "../../../services/ControllerUtils";
 import "../../styles/voteButtonStyles.css";
 import "./DetailedPostView.css";
@@ -19,6 +19,7 @@ class DetailedPostView extends Component {
     super(props);
     this.state = {
       getDefaultRedditProfilePicture: getDefaultRedditProfilePicture(),
+      disableVoteButtonsForComments: false
     };
   }
 
@@ -27,25 +28,25 @@ class DetailedPostView extends Component {
     Axios.defaults.headers.common["authorization"] = getToken();
     Axios.post(backendServer + "/getCommentsWithPostID", {
       postID: this.props.data._id,
-      userId: getMongoUserID(),
+      userId: getMongoUserID()
       // userId: localStorage.getItem("userId"),
     })
-      .then((response) => {
+      .then(response => {
         this.props.unsetLoader();
         console.log("response data comments postid = ", response.data);
         var parentCommentList = response.data.filter(
-          (comment) => comment.isParentComment
+          comment => comment.isParentComment
         );
-        parentCommentList.forEach((parentComment) => {
+        parentCommentList.forEach(parentComment => {
           var child = response.data.filter(
-            (comment) => comment.parentCommentID == parentComment._id
+            comment => comment.parentCommentID == parentComment._id
           );
           parentComment.child = child;
         });
         // this.props.setCommentsCount(parentCommentList.length);
         this.setState({ parentCommentList: parentCommentList });
       })
-      .catch((err) => {
+      .catch(err => {
         this.props.unsetLoader();
         console.log(err);
       });
@@ -57,112 +58,135 @@ class DetailedPostView extends Component {
   }
 
   upVote(commentId, userVoteDir, index, isParentComment, childIndex) {
-    var relScore = userVoteDir == 1 ? -1 : userVoteDir == 0 ? 1 : 2;
-    Axios.defaults.headers.common["authorization"] = getToken();
-    Axios.post(backendServer + "/addVote", {
-      entityId: commentId,
-      userId: getMongoUserID(),
-      // userId: localStorage.getItem("userId"),
-      voteDir: userVoteDir == 1 ? 0 : 1,
-      entityName: "Comment",
-      relScore: relScore,
-    })
-      .then((response) => {
-        // this.props.unsetLoader();
-        console.log("upVOted successfull = ", response);
-        console.log(
-          "this.state = ",
-          this.state.parentCommentList[index].userVoteDir
-        );
-        if (isParentComment) {
-          const newComments = this.state.parentCommentList.slice();
-          newComments[index].score =
-            userVoteDir == 1
-              ? newComments[index].score - 1
-              : userVoteDir == 0
+    if (!this.state.disableVoteButtonsForComments) {
+      var relScore = userVoteDir == 1 ? -1 : userVoteDir == 0 ? 1 : 2;
+      Axios.defaults.headers.common["authorization"] = getToken();
+      this.setState({
+        disableVoteButtonsForComments: true
+      });
+      Axios.post(backendServer + "/addVote", {
+        entityId: commentId,
+        userId: getMongoUserID(),
+        // userId: localStorage.getItem("userId"),
+        voteDir: userVoteDir == 1 ? 0 : 1,
+        entityName: "Comment",
+        relScore: relScore
+      })
+        .then(response => {
+          // this.props.unsetLoader();
+          console.log("upVOted successfull = ", response);
+          console.log(
+            "this.state = ",
+            this.state.parentCommentList[index].userVoteDir
+          );
+          this.setState({
+            disableVoteButtonsForComments: false
+          });
+          if (isParentComment) {
+            const newComments = this.state.parentCommentList.slice();
+            newComments[index].score =
+              userVoteDir == 1
+                ? newComments[index].score - 1
+                : userVoteDir == 0
                 ? newComments[index].score + 1
                 : newComments[index].score + 2;
-          newComments[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
-          console.log("newComments = ", newComments);
-          this.setState({ parentCommentList: newComments });
-        } else {
-          const newComments = this.state.parentCommentList.slice();
-          newComments[index].child[childIndex].score =
-            userVoteDir == 1
-              ? newComments[index].child[childIndex].score - 1
-              : userVoteDir == 0
+            newComments[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
+            console.log("newComments = ", newComments);
+            this.setState({ parentCommentList: newComments });
+          } else {
+            const newComments = this.state.parentCommentList.slice();
+            newComments[index].child[childIndex].score =
+              userVoteDir == 1
+                ? newComments[index].child[childIndex].score - 1
+                : userVoteDir == 0
                 ? newComments[index].child[childIndex].score + 1
                 : newComments[index].child[childIndex].score + 2;
-          newComments[index].child[childIndex].userVoteDir =
-            userVoteDir == 1 ? 0 : 1;
-          console.log("newComments = ", newComments);
-          this.setState({ parentCommentList: newComments });
-        }
-      })
-      .catch((err) => {
-        // this.props.unsetLoader();
-        console.log(err);
-      });
+            newComments[index].child[childIndex].userVoteDir =
+              userVoteDir == 1 ? 0 : 1;
+            console.log("newComments = ", newComments);
+            this.setState({ parentCommentList: newComments });
+          }
+        })
+        .catch(err => {
+          // this.props.unsetLoader();
+          this.setState({
+            disableVoteButtonsForComments: false
+          });
+          console.log(err);
+        });
+    }
   }
 
   downVote(commentId, userVoteDir, index, isParentComment, childIndex) {
-    var relScore = userVoteDir == -1 ? 1 : userVoteDir == 0 ? -1 : -2;
-    console.log(
-      "userid = ",
-      getMongoUserID(),
-      userVoteDir,
-      " ",
-      commentId,
-      index
-    );
-    Axios.defaults.headers.common["authorization"] = getToken();
-    Axios.post(backendServer + "/addVote", {
-      entityId: commentId,
-      userId: getMongoUserID(),
-      // userId: localStorage.getItem("userId"),
-      voteDir: userVoteDir == -1 ? 0 : -1,
-      entityName: "Comment",
-      relScore: relScore,
-      // voteDir: userVoteDir == -1 ? 0 : userVoteDir == 1 ? 0 : -1,
-    })
-      .then((response) => {
-        // this.props.unsetLoader();
-        console.log("downvoted successfull = ", response);
-        if (isParentComment) {
-          const newComments = this.state.parentCommentList.slice();
-          newComments[index].score =
-            userVoteDir == -1
-              ? newComments[index].score + 1
-              : userVoteDir == 0
+    if (!this.state.disableVoteButtonsForComments) {
+      var relScore = userVoteDir == -1 ? 1 : userVoteDir == 0 ? -1 : -2;
+      console.log(
+        "userid = ",
+        getMongoUserID(),
+        userVoteDir,
+        " ",
+        commentId,
+        index
+      );
+      Axios.defaults.headers.common["authorization"] = getToken();
+      this.setState({
+        disableVoteButtonsForComments: true
+      });
+      Axios.post(backendServer + "/addVote", {
+        entityId: commentId,
+        userId: getMongoUserID(),
+        // userId: localStorage.getItem("userId"),
+        voteDir: userVoteDir == -1 ? 0 : -1,
+        entityName: "Comment",
+        relScore: relScore
+        // voteDir: userVoteDir == -1 ? 0 : userVoteDir == 1 ? 0 : -1,
+      })
+        .then(response => {
+          // this.props.unsetLoader();
+          this.setState({
+            disableVoteButtonsForComments: false
+          });
+          console.log("downvoted successfull = ", response);
+          if (isParentComment) {
+            const newComments = this.state.parentCommentList.slice();
+            newComments[index].score =
+              userVoteDir == -1
+                ? newComments[index].score + 1
+                : userVoteDir == 0
                 ? newComments[index].score - 1
                 : newComments[index].score - 2;
-          newComments[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
-          console.log("newComments = ", newComments);
-          this.setState({ parentCommentList: newComments });
-        } else {
-          const newComments = this.state.parentCommentList.slice();
-          console.log("newComments = ", newComments);
-          newComments[index].child[childIndex].score =
-            userVoteDir == -1
-              ? newComments[index].child[childIndex].score + 1
-              : userVoteDir == 0
+            newComments[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
+            console.log("newComments = ", newComments);
+            this.setState({ parentCommentList: newComments });
+          } else {
+            const newComments = this.state.parentCommentList.slice();
+            console.log("newComments = ", newComments);
+            newComments[index].child[childIndex].score =
+              userVoteDir == -1
+                ? newComments[index].child[childIndex].score + 1
+                : userVoteDir == 0
                 ? newComments[index].child[childIndex].score - 1
                 : newComments[index].child[childIndex].score - 2;
-          newComments[index].child[childIndex].userVoteDir =
-            userVoteDir == -1 ? 0 : -1;
-          console.log("newComments = ", newComments);
-          this.setState({ parentCommentList: newComments });
-        }
-      })
-      .catch((err) => {
-        // this.props.unsetLoader();
-        console.log(err);
-      });
+            newComments[index].child[childIndex].userVoteDir =
+              userVoteDir == -1 ? 0 : -1;
+            console.log("newComments = ", newComments);
+            this.setState({ parentCommentList: newComments });
+          }
+        })
+        .catch(err => {
+          // this.props.unsetLoader();
+          this.setState({
+            disableVoteButtonsForComments: false
+          });
+          console.log(err);
+        });
+    }
   }
   render() {
     var commentsToRender = [];
     // console.log(this.state);
     // console.log(this.props.data.communityID);
+
     if (this.state.parentCommentList) {
       this.state.parentCommentList.forEach((comment, index) => {
         console.log("comment = ", comment, index);
@@ -173,13 +197,17 @@ class DetailedPostView extends Component {
                 alt=""
                 width="40px"
                 style={{ borderRadius: "20px", margin: "5px" }}
-                src={comment.userID.profile_picture_url ? comment.userID.profile_picture_url : this.state.getDefaultRedditProfilePicture}
+                src={
+                  comment.userID.profile_picture_url
+                    ? comment.userID.profile_picture_url
+                    : this.state.getDefaultRedditProfilePicture
+                }
               />
               <span
                 style={{
                   fontSize: "12px",
                   fontWeight: "400",
-                  lineHeight: "16px",
+                  lineHeight: "16px"
                 }}
               >
                 <Link
@@ -196,7 +224,7 @@ class DetailedPostView extends Component {
                 fontSize: "14px",
                 paddingLeft: "2%",
                 borderLeft: "2px solid #edeff1",
-                marginLeft: "2.5%",
+                marginLeft: "2.5%"
               }}
             >
               <div>{comment.description}</div>
@@ -204,18 +232,20 @@ class DetailedPostView extends Component {
                 <i
                   style={{
                     cursor: "pointer",
-                    color: comment.userVoteDir == 1 ? "#ff4500" : "",
+                    color: comment.userVoteDir == 1 ? "#ff4500" : ""
                   }}
                   className="icon icon-arrow-up upvote"
-                  onClick={() =>
-                    this.upVote(
-                      comment._id,
-                      comment.userVoteDir,
-                      index,
-                      true,
-                      0
-                    )
-                  }
+                  disabled={this.state.disableUpvote}
+                  onClick={() => {
+                    if (!this.props.disableVoteButtons)
+                      this.upVote(
+                        comment._id,
+                        comment.userVoteDir,
+                        index,
+                        true,
+                        0
+                      );
+                  }}
                 />
                 <span style={{ margin: "0 5px" }}>
                   <strong> {comment.score} </strong>
@@ -223,18 +253,19 @@ class DetailedPostView extends Component {
                 <i
                   style={{
                     cursor: "pointer",
-                    color: comment.userVoteDir == -1 ? "#7193ff" : "",
+                    color: comment.userVoteDir == -1 ? "#7193ff" : ""
                   }}
                   className="icon icon-arrow-down downvote"
-                  onClick={() =>
-                    this.downVote(
-                      comment._id,
-                      comment.userVoteDir,
-                      index,
-                      true,
-                      0
-                    )
-                  }
+                  onClick={() => {
+                    if (!this.props.disableVoteButtons)
+                      this.downVote(
+                        comment._id,
+                        comment.userVoteDir,
+                        index,
+                        true,
+                        0
+                      );
+                  }}
                 />
                 <span
                   style={{ cursor: "pointer" }}
@@ -254,7 +285,7 @@ class DetailedPostView extends Component {
                   style={{
                     boxShadow: "0px 0px 1px #777",
                     padding: "1px",
-                    margin: "5px",
+                    margin: "5px"
                   }}
                 >
                   <textarea
@@ -262,14 +293,14 @@ class DetailedPostView extends Component {
                       backgroundColor: this.props.darkMode
                         ? "#1B1B1B"
                         : "white",
-                      color: !this.props.darkMode ? "#1B1B1B" : "white",
+                      color: !this.props.darkMode ? "#1B1B1B" : "white"
                     }}
                     type="text"
                     className="commentTextArea"
                     name="subComment"
                     id={comment._id + "id"}
                     placeholder="What are your thoughts?"
-                    onChange={(e) => {
+                    onChange={e => {
                       let key = comment._id + ":"; //to denote the comment text
                       var obj = {};
                       obj[key] = e.target.value;
@@ -291,7 +322,7 @@ class DetailedPostView extends Component {
                       fontWeight: "bold",
                       lineHeight: "0px",
                       border: "none",
-                      margin: "1% 84%",
+                      margin: "1% 84%"
                     }}
                     onClick={() => {
                       this.props.setLoader();
@@ -303,9 +334,9 @@ class DetailedPostView extends Component {
                         isParentComment: 0,
                         userID: getMongoUserID(),
                         parentCommentID: comment._id,
-                        communityID: this.props.data.communityID,
+                        communityID: this.props.data.communityID
                       })
-                        .then((response) => {
+                        .then(response => {
                           this.props.unsetLoader();
                           console.log(response);
                           document.getElementById(comment._id + "id").value =
@@ -319,7 +350,7 @@ class DetailedPostView extends Component {
                           // this.props.data.commentsCount =
                           //   this.props.data.commentsCount + 1;
                         })
-                        .catch((err) => {
+                        .catch(err => {
                           this.props.unsetLoader();
                           console.log(err);
                         });
@@ -333,14 +364,14 @@ class DetailedPostView extends Component {
           </div>
         );
         // comment.child.forEach((childComment, childIndex) => {
-        comment.child.forEach((childComment) => {
+        comment.child.forEach(childComment => {
           commentsToRender.push(
             <div
               style={{
                 padding: "1% 4%",
                 borderLeft: "2px solid #edeff1",
                 marginLeft: "2.5%",
-                fontSize: "14px",
+                fontSize: "14px"
               }}
             >
               <div>
@@ -348,13 +379,17 @@ class DetailedPostView extends Component {
                   alt=""
                   width="30px"
                   style={{ borderRadius: "15px", margin: "2px" }}
-                  src={childComment.userID.profile_picture_url ? childComment.userID.profile_picture_url : this.state.getDefaultRedditProfilePicture}
+                  src={
+                    childComment.userID.profile_picture_url
+                      ? childComment.userID.profile_picture_url
+                      : this.state.getDefaultRedditProfilePicture
+                  }
                 />
                 <span
                   style={{
                     fontSize: "12px",
                     fontWeight: "400",
-                    lineHeight: "16px",
+                    lineHeight: "16px"
                   }}
                 >
                   <Link
@@ -371,7 +406,7 @@ class DetailedPostView extends Component {
                   fontSize: "14px",
                   paddingLeft: "2%",
                   borderLeft: "2px solid #edeff1",
-                  marginLeft: "2.5%",
+                  marginLeft: "2.5%"
                 }}
               >
                 <div>{childComment.description}</div>
@@ -420,28 +455,28 @@ class DetailedPostView extends Component {
     }
     return (
       <React.Fragment>
+        disableVoteButtons in detailedview:
+        {JSON.stringify(this.state.disableVoteButtonsForComments)}
         <Post data={this.props.data} {...this.props} detailedView={true} />
         <div
           style={{
             padding: "0 20px",
             marginTop: "20px",
-            backgroundColor: this.props.darkMode ? "#1B1B1B" : "white",
+            backgroundColor: this.props.darkMode ? "#1B1B1B" : "white"
           }}
         >
           <div style={{ boxShadow: "0px 0px 1px #777", padding: "1px" }}>
             <textarea
               style={{
                 backgroundColor: this.props.darkMode ? "#1B1B1B" : "white",
-                color: !this.props.darkMode ? "#1B1B1B" : "white",
+                color: !this.props.darkMode ? "#1B1B1B" : "white"
               }}
               type="text"
               className="commentTextArea"
               name="primaryComment"
               id="primaryComment"
               placeholder="What are your thoughts?"
-              onChange={(e) =>
-                this.setState({ primaryComment: e.target.value })
-              }
+              onChange={e => this.setState({ primaryComment: e.target.value })}
             />
             <button
               disabled={!this.state.primaryComment}
@@ -456,7 +491,7 @@ class DetailedPostView extends Component {
                 fontWeight: "bold",
                 lineHeight: "0px",
                 border: "none",
-                margin: "1% 85%",
+                margin: "1% 85%"
               }}
               onClick={() => {
                 this.props.setLoader();
@@ -466,9 +501,9 @@ class DetailedPostView extends Component {
                   description: this.state.primaryComment,
                   isParentComment: 1,
                   userID: getMongoUserID(),
-                  communityID: this.props.data.communityID,
+                  communityID: this.props.data.communityID
                 })
-                  .then((response) => {
+                  .then(response => {
                     this.props.unsetLoader();
                     console.log(response);
                     document.getElementById("primaryComment").value = "";
@@ -479,7 +514,7 @@ class DetailedPostView extends Component {
                       this.props.index
                     );
                   })
-                  .catch((err) => {
+                  .catch(err => {
                     this.props.unsetLoader();
                     console.log(err);
                   });
