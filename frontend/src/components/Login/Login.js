@@ -15,29 +15,29 @@ class Login extends Component {
       this.state = {
         error: "",
         redirect: <Redirect to="/" />,
-        token: "",
+        token: ""
       };
     }
   }
 
-  emailEventHandler = (e) => {
+  emailEventHandler = e => {
     this.setState({
-      email: e.target.value,
+      email: e.target.value
     });
   };
 
-  passEventHandler = (e) => {
+  passEventHandler = e => {
     this.setState({
-      password: e.target.value,
+      password: e.target.value
     });
   };
   ///LoginUser'
-  submitForm = (e) => {
+  submitForm = e => {
     //prevent page from refresh
     e.preventDefault();
     const data = {
       email: this.state.email,
-      password: this.state.password,
+      password: this.state.password
     };
     this.props.loginRedux(data);
 
@@ -50,18 +50,18 @@ class Login extends Component {
       .get(
         `${backendServer}/getUserProfile?ID=${this.props.user.userID.user_id}`
       )
-      .then((response) => {
+      .then(response => {
         if (response.status == 200) {
           console.log(response.data);
           const data = response.data;
           data.token = this.props.user.token;
           SetLocalStorage(data);
           this.setState({
-            redirect: <Redirect to="/home" />,
+            redirect: <Redirect to="/home" />
           });
         }
       })
-      .catch((error) => console.log("error " + error));
+      .catch(error => console.log("error " + error));
   }
 
   componentDidUpdate(prevState) {
@@ -69,11 +69,11 @@ class Login extends Component {
       if (prevState.error != this.props.error && this.props.error.length > 0) {
         this.setState({
           formerror: {},
-          error: this.props.error,
+          error: this.props.error
         });
       } else {
         this.setState({
-          error: "",
+          error: ""
         });
         this.getUserProfile();
       }
@@ -109,17 +109,14 @@ class Login extends Component {
               <div className="Sso__button Sso__appleIdContainer">
                 Continue with Apple
               </div>
-              <div className="Sso__divider">
+              <div
+                className="Sso__divider"
+                hidden={this.state.error.length > 0 ? true : false}
+              >
                 <span className="Sso__dividerLine"></span>
                 <span className="Sso__dividerText">or</span>
                 <span className="Sso__dividerLine"></span>
               </div>
-            </div>
-            <Form
-              className="loginForm"
-              style={{ width: "45%" }}
-              onSubmit={this.submitForm}
-            >
               <div
                 id="errorLogin"
                 hidden={this.state.error.length > 0 ? false : true}
@@ -128,6 +125,12 @@ class Login extends Component {
               >
                 {this.state.error}
               </div>
+            </div>
+            <Form
+              className="loginForm"
+              style={{ width: "45%" }}
+              onSubmit={this.submitForm}
+            >
               <Form.Group>
                 <Form.Label htmlFor="email" className="Lable-align">
                   Email address
@@ -175,7 +178,7 @@ class Login extends Component {
                   color: "rgb(0, 121, 211)",
                   cursor: "pointer",
                   display: "inline-block",
-                  fontWeight: "700",
+                  fontWeight: "700"
                 }}
                 onClick={() => {
                   this.props.signup();
@@ -191,10 +194,10 @@ class Login extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     user: state.login.user,
-    error: state.login.error,
+    error: state.login.error
   };
 };
 
