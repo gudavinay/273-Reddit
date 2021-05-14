@@ -43,6 +43,9 @@ const getPostsInCommunity = async (msg, callback) => {
         userID: "$userDetails",
         createdAt: "$createdAt",
         updatedAt: "$updatedAt",
+        postImageUrl: "$postImageUrl",
+        link: "$link",
+        NoOfComments: "$NoOfComments",
         // commentDetails: "$commentDetails",
         // voteDetails: "$voteDetails.userId",
         score: {
