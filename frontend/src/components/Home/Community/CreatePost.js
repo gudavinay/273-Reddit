@@ -28,7 +28,7 @@ class CreatePost extends Component {
   }
 
   uploadImage = e => {
-    if (e.target.files) {
+    if (e.target.files && e.target.files.length > 0) {
       let data = new FormData();
       data.append("file", e.target.files[0]);
       this.props.setLoader();
@@ -43,6 +43,8 @@ class CreatePost extends Component {
           this.props.unsetLoader();
           console.log("error " + error);
         });
+    } else {
+      this.setState({ postImageUrl: null });
     }
   };
 
@@ -55,29 +57,30 @@ class CreatePost extends Component {
         placeholder="Title"
         id="title"
         name="post"
+        value={this.state.title}
         onChange={e => {
           this.setState({ title: e.target.value });
         }}
       />
     );
-    const postButton = (
-      <Button
-        type="submit"
-        style={{
-          display: "block",
-          float: "right",
-          margin: "10px",
-          width: "82px",
-          borderRadius: "50px",
-          backgroundColor: this.state.title ? "#0266b3" : "#777",
-          color: "white",
-          fontWeight: "500"
-        }}
-        variant="light"
-      >
-        Post
-      </Button>
-    );
+    // const postButton = (
+    //   <Button
+    //     type="submit"
+    //     style={{
+    //       display: "block",
+    //       float: "right",
+    //       margin: "10px",
+    //       width: "82px",
+    //       borderRadius: "50px",
+    //       backgroundColor: this.state.title ? "#0266b3" : "#777",
+    //       color: "white",
+    //       fontWeight: "500"
+    //     }}
+    //     variant="light"
+    //   >
+    //     Post
+    //   </Button>
+    // );
     return (
       <React.Fragment>
         {this.state.redirectVar}
@@ -101,6 +104,10 @@ class CreatePost extends Component {
               onSubmit={e => {
                 e.preventDefault();
                 if (this.state.title) {
+                  if (this.state.type == "2" && !this.state.postImageUrl) {
+                    // alert("cant")
+                    return;
+                  }
                   this.props.setLoader();
                   Axios.defaults.headers.common["authorization"] = getToken();
                   Axios.post(backendServer + "/createPost", this.state)
@@ -126,16 +133,20 @@ class CreatePost extends Component {
                 }
               }}
             >
+              {/* {JSON.stringify(this.state)} */}
               <Tab.Container
                 id="left-tabs-example"
                 defaultActiveKey="0"
                 onSelect={eventKey => {
                   this.setState({
                     type: eventKey,
-                    title: null,
-                    link: null,
-                    description: null
+                    title: "",
+                    link: "",
+                    description: ""
                   });
+                  document.getElementById("description").value = "";
+                  document.getElementById("title").value = "";
+                  document.getElementById("link").value = "";
                 }}
               >
                 <Row>
@@ -201,11 +212,26 @@ class CreatePost extends Component {
                           placeholder="Text (optional)"
                           id="description"
                           name="description"
+                          value={this.state.description}
                           onChange={e => {
                             this.setState({ description: e.target.value });
                           }}
                         />
-                        {postButton}
+                        <Button
+                          type="submit"
+                          style={{
+                            display: "block",
+                            float: "right",
+                            margin: "10px",
+                            width: "82px",
+                            borderRadius: "50px",
+                            backgroundColor: this.state.title ? "#0266b3" : "#777",
+                            color: "white",
+                            fontWeight: "500"
+                          }}
+                          variant="light" >
+                          Post
+                        </Button>
                       </Tab.Pane>
                       <Tab.Pane eventKey="2">
                         {titleTag}
@@ -217,7 +243,22 @@ class CreatePost extends Component {
                           accept="image/*"
                           onChange={this.uploadImage}
                         ></input>
-                        {postButton}
+                        <Button
+                          type="submit"
+                          style={{
+                            display: "block",
+                            float: "right",
+                            margin: "10px",
+                            width: "82px",
+                            borderRadius: "50px",
+                            backgroundColor: this.state.title && this.state.postImageUrl ? "#0266b3" : "#777",
+                            color: "white",
+                            fontWeight: "500"
+                          }}
+                          variant="light"
+                        >
+                          Post
+                          </Button>
                         <Row>
                           <img
                             src={this.state.postImageUrl}
@@ -238,12 +279,28 @@ class CreatePost extends Component {
                           placeholder="Url"
                           id="link"
                           name="link"
+                          value={this.state.link}
                           required={this.state.type == "1"}
                           onChange={e => {
                             this.setState({ link: e.target.value });
                           }}
                         />
-                        {postButton}
+                        <Button
+                          type="submit"
+                          style={{
+                            display: "block",
+                            float: "right",
+                            margin: "10px",
+                            width: "82px",
+                            borderRadius: "50px",
+                            backgroundColor: this.state.title ? "#0266b3" : "#777",
+                            color: "white",
+                            fontWeight: "500"
+                          }}
+                          variant="light"
+                        >
+                          Post
+      </Button>
                       </Tab.Pane>
                     </Tab.Content>
                   </Row>
@@ -307,7 +364,7 @@ class CreatePost extends Component {
                                 <div>
                                   {expandedView}
                                   {this.props.location.rules.length - 1 ==
-                                  index ? (
+                                    index ? (
                                     <div
                                       className="downArrowRotate"
                                       style={{

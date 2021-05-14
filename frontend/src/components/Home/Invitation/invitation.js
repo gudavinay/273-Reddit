@@ -9,7 +9,7 @@ import inviteRejectedSVG from "../../../assets/inviteRejected.svg";
 import {
   getDefaultRedditProfilePicture,
   getRelativeTime,
-  getToken
+  getToken,
 } from "../../../services/ControllerUtils";
 import { getMongoUserID } from "../../../services/ControllerUtils";
 import Chip from "@material-ui/core/Chip";
@@ -32,18 +32,19 @@ export class invitation extends Component {
       size: 2,
       count: 0,
       NoCommunities: false,
-      NoInvitesSent: false
+      NoInvitesSent: false,
+      searchText: "",
     };
   }
   componentDidMount() {
     //user_id to be fetched from local Storage
     let data = {
-      user_id: getMongoUserID()
+      user_id: getMongoUserID(),
     };
     this.props.setLoader();
     Axios.defaults.headers.common["authorization"] = getToken();
     Axios.post(backendServer + "/getCommunitiesCreatedByMe", data)
-      .then(response => {
+      .then((response) => {
         this.props.unsetLoader();
         console.log(response);
         if (response.data.length > 0) {
@@ -52,7 +53,7 @@ export class invitation extends Component {
           this.setState({ NoCommunities: true });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         this.props.unsetLoader();
         console.log(err);
       });
@@ -63,13 +64,13 @@ export class invitation extends Component {
     let data = {
       community_id: communityID,
       page: page,
-      size: size
+      size: size,
     };
     console.log(data);
     this.props.setLoader();
     Axios.defaults.headers.common["authorization"] = getToken();
     Axios.post(backendServer + "/showInvitationStatus", data)
-      .then(response => {
+      .then((response) => {
         this.props.unsetLoader();
         if (response.data.sentInvitesTo.length > 0) {
           this.setState({
@@ -78,51 +79,63 @@ export class invitation extends Component {
             count: response.data.totalRecords,
             selectedUsers: [], //to clear the suggestions and selected users
             searchedUser: [],
-            NoInvitesSent: false
+            NoInvitesSent: false,
           });
-          console.log(this.state.count);
+          console.log(this.state.NoInvitesSent);
         } else {
+          console.log(this.state.selectedUsers);
+          console.log(this.state.selectedUsers);
+          console.log(this.state.count);
           this.setState({
-            NoInvitesSent: true
+            NoInvitesSent: true,
+            listOfInvolvedUsers: [],
+            invitedDetails: [],
+            count: 0,
+            selectedUsers: [], //to clear the suggestions and selected users
+            searchedUser: [],
           });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         this.props.unsetLoader();
         console.log(err);
       });
   };
-  searchUser = e => {
+  searchUser = (e) => {
+    this.setState({ searchText: e.target.value });
     if (e.target.value.length > 1) {
       const data = {
         name: e.target.value,
-        users: this.state.listOfInvolvedUsers
+        users: this.state.listOfInvolvedUsers,
+        selectedUsers: this.state.selectedUsers,
       };
+      console.log(data);
       this.props.setLoader();
       Axios.defaults.headers.common["authorization"] = getToken();
       Axios.post(backendServer + "/getSearchedUserForMongo", data)
-        .then(response => {
+        .then((response) => {
           this.props.unsetLoader();
           if (response.status == 200) {
             let results = [];
             let current_user = getMongoUserID();
-            response.data.forEach(user => {
+            response.data.forEach((user) => {
               if (user._id != current_user) {
                 results.push(user);
               }
             });
             this.setState({
-              searchedUser: results
+              searchedUser: results,
             });
+            console.log(this.state.searchedUser);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           this.props.unsetLoader();
           console.log(error);
         });
     } else if (e.target.value.length == 0) {
       this.setState({
-        searchedUser: []
+        searchedUser: [],
       });
     }
   };
@@ -131,61 +144,62 @@ export class invitation extends Component {
     let items = this.state.selectedUsers;
     items.splice(items.indexOf(user), 1);
     this.setState({
-      selectedUsers: items
+      selectedUsers: items,
     });
-
-    let userToAddBackInSearchedUsers = {
-      name: user.name,
-      _id: user.user_id
-    };
-    this.state.searchedUser.push(userToAddBackInSearchedUsers);
-    this.setState({
-      searchedUser: this.state.searchedUser
-    });
-    console.log(this.state.searchedUser);
+    if (this.state.searchText.length > 0) {
+      let userToAddBackInSearchedUsers = {
+        name: user.name,
+        _id: user.user_id,
+      };
+      this.state.searchedUser.push(userToAddBackInSearchedUsers);
+      this.setState({
+        searchedUser: this.state.searchedUser,
+      });
+      console.log(this.state.searchedUser);
+    }
   };
-  handleUsersSelection = user => {
+  handleUsersSelection = (user) => {
     this.setState(
-      prevState => ({
+      (prevState) => ({
         selectedUsers: [
           ...prevState.selectedUsers,
           {
             name: user.name,
-            user_id: user._id
-          }
-        ]
+            user_id: user._id,
+          },
+        ],
       }),
       () => {
         console.log(this.state.selectedUsers);
       }
     );
     //remove the user from searchedUser array which is selected to send invite
-    var filteredArray = this.state.searchedUser.filter(filterUser => {
+    var filteredArray = this.state.searchedUser.filter((filterUser) => {
       return filterUser._id != user._id;
     });
     this.setState({
-      searchedUser: filteredArray
+      searchedUser: filteredArray,
     });
   };
-  sendInvites = e => {
+  sendInvites = (e) => {
     e.preventDefault();
 
     if (this.state.selectedUsers.length > 0) {
       let inviteData = {
         community_id: this.state.communityID,
         users: this.state.selectedUsers,
-        invitedBy: getMongoUserID()
+        invitedBy: getMongoUserID(),
       };
       console.log(inviteData);
 
       this.props.setLoader();
       Axios.defaults.headers.common["authorization"] = getToken();
       Axios.post(backendServer + "/sendInvite", inviteData)
-        .then(response => {
+        .then((response) => {
           this.props.unsetLoader();
           this.setState({
             selectedUsers: [],
-            searchedUser: []
+            searchedUser: [],
           });
           console.log(response);
           this.getCommunityInvitationStatus(
@@ -194,20 +208,20 @@ export class invitation extends Component {
             this.state.size
           );
         })
-        .catch(error => {
+        .catch((error) => {
           this.props.unsetLoader();
           this.setState({
             selectedUsers: [],
-            searchedUser: []
+            searchedUser: [],
           });
           console.log(error);
         });
     }
   };
-  PageSizeChange = e => {
+  PageSizeChange = (e) => {
     this.setState({
       size: Number(e.target.value),
-      page: 0
+      page: 0,
     });
     this.getCommunityInvitationStatus(
       this.state.communityID,
@@ -218,7 +232,7 @@ export class invitation extends Component {
 
   PageChange = (e, page) => {
     this.setState({
-      page: Number(page)
+      page: Number(page),
     });
     this.getCommunityInvitationStatus(
       this.state.communityID,
@@ -230,7 +244,7 @@ export class invitation extends Component {
     let searchUsers = null;
     let selectedUsers = null;
     if (this.state.searchedUser.length > 0) {
-      searchUsers = this.state.searchedUser.map(user => {
+      searchUsers = this.state.searchedUser.map((user) => {
         return (
           <Dropdown.Item
             key={user._id}
@@ -242,18 +256,18 @@ export class invitation extends Component {
       });
     }
     if (this.state.selectedUsers.length > 0) {
-      selectedUsers = this.state.selectedUsers.map(user => {
+      selectedUsers = this.state.selectedUsers.map((user) => {
         return (
           <Chip
             key={user.user_id}
             label={user.name}
-            onDelete={e => this.handleDelete(e, user)}
+            onDelete={(e) => this.handleDelete(e, user)}
             className="chip"
           />
         );
       });
     }
-    const checkStatus = value => {
+    const checkStatus = (value) => {
       if (value == 1) {
         return (
           <span>
@@ -279,22 +293,28 @@ export class invitation extends Component {
         <React.Fragment>
           <Container style={{ padding: "0 15%" }}>
             <div>
-              <Row style={{ margin: "10px", padding: '25px 0', width: '45%' }}>
+              {/* {JSON.stringify(this.state.communityID)} */}
+              <Row style={{ margin: "10px", padding: "25px 0", width: "45%" }}>
                 <select
                   className="form-control"
                   name="community"
                   id="community"
-                  onChange={e => {
+                  onChange={(e) => {
+                    document.getElementById("searchbox").value = "";
                     this.setState({ communityID: e.target.value });
-                    this.getCommunityInvitationStatus(
-                      e.target.value,
-                      this.state.page,
-                      this.state.size
-                    );
+                    if (e.target.value != "Select Community") {
+                      this.getCommunityInvitationStatus(
+                        e.target.value,
+                        this.state.page,
+                        this.state.size
+                      );
+                    } else {
+                      this.setState({ invitedDetails: [] });
+                    }
                   }}
                   value={this.state.communityID}
                 >
-                  <option>Select Community</option>
+                  <option selected>Select Community</option>
                   {this.state.communities.map((community, index) => (
                     <option key={index} value={community.communityID}>
                       {community.communityName}
@@ -312,7 +332,7 @@ export class invitation extends Component {
                   style={{
                     display: "flex",
                     flexDirection: "column",
-                    justifyContent: "center"
+                    justifyContent: "center",
                   }}
                 >
                   Approved Users
@@ -323,7 +343,7 @@ export class invitation extends Component {
                     display: "flex",
                     border: "1px solid #777",
                     padding: "0 10px",
-                    borderRadius: "25px"
+                    borderRadius: "25px",
                   }}
                 >
                   <input
@@ -331,9 +351,10 @@ export class invitation extends Component {
                     style={{
                       border: "0",
                       backgroundColor: "transparent",
-                      height: "38px"
+                      height: "38px",
                     }}
                     type="text"
+                    id="searchbox"
                     placeholder="Search User"
                     className="searchbar"
                     onChange={this.searchUser}
@@ -342,9 +363,9 @@ export class invitation extends Component {
                     style={{
                       justifyContent: "center",
                       flexDirection: "column",
-                      display: "flex"
+                      display: "flex",
                     }}
-                    onClick={e => this.sendInvites(e)}
+                    onClick={(e) => this.sendInvites(e)}
                   >
                     <i
                       hidden={this.state.searchForUser}

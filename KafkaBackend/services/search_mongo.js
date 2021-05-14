@@ -1,9 +1,14 @@
-const Community = require("./../models/mongo/Community");
 const mongoose = require("mongoose");
+const Community = require("./../models/mongo/Community");
+const UserProfile = require("./../models/mongo/UserProfile");
 
 const getAllCommunitiesSearch = async (msg, callback) => {
   try {
-    const { sortKey, sortValue, limit, page, searchText, userId } = msg;
+    const { sortKey, sortValue, limit, page, searchText, user_id, loggedInUserId } = msg;
+
+    const loggedInUser = await UserProfile.findOne({
+      userIDSQL: loggedInUserId,
+    });
 
     const aggregate = Community.aggregate([
       {
@@ -20,15 +25,15 @@ const getAllCommunitiesSearch = async (msg, callback) => {
         },
       },
       {
-        $addFields: {
+        "$addFields": {
           listOfUsersLength: {
-            $reduce: {
+            $filter: {
               input: "$listOfUsers",
-              initialValue: 0,
-              in: { $add: ["$$value", "$$this.isAccepted"] },
+              as: "v",
+              cond: { $eq: ["$$v.isAccepted", 1] },
             },
           },
-        },
+        }
       },
       {
         $project: {
@@ -38,7 +43,7 @@ const getAllCommunitiesSearch = async (msg, callback) => {
           imageURL: "$imageURL",
           createdAt: "$createdAt",
           postsLength: { $size: "$posts" },
-          listOfUsersLength: { $add: ["$listOfUsersLength", 1] }, // Adding +1 means Owner
+          listOfUsersLength: { "$add": [{ $size: "$listOfUsersLength" }, 1] }, // Adding +1 means Owner
           upVotedLength: { $size: "$upvotedBy" },
           downVotedLength: { $size: "$downvotedBy" },
           score: {
@@ -48,7 +53,7 @@ const getAllCommunitiesSearch = async (msg, callback) => {
             $cond: {
               if: {
                 $setIsSubset: [
-                  [{ _id: mongoose.Types.ObjectId(userId) }],
+                  [{ _id: mongoose.Types.ObjectId(loggedInUser._id) }],
                   "$upvotedBy",
                 ],
               },
@@ -57,7 +62,7 @@ const getAllCommunitiesSearch = async (msg, callback) => {
                 $cond: {
                   if: {
                     $setIsSubset: [
-                      [{ _id: mongoose.Types.ObjectId(userId) }],
+                      [{ _id: mongoose.Types.ObjectId(loggedInUser._id) }],
                       "$downvotedBy",
                     ],
                   },

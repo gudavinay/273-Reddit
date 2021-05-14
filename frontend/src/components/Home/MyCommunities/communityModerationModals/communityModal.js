@@ -1,7 +1,11 @@
 import axios from "axios";
 import React, { Component } from "react";
 import { Row, Col } from "react-bootstrap";
-import { getToken } from "../../../../services/ControllerUtils";
+import { Link } from "react-router-dom";
+import {
+  getDefaultRedditProfilePicture,
+  getToken,
+} from "../../../../services/ControllerUtils";
 import backendServer from "../../../../webConfig";
 
 class CommunityModal extends Component {
@@ -11,6 +15,7 @@ class CommunityModal extends Component {
       communityDetails: null,
       users: null,
       userList: [],
+      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture(),
     };
   }
 
@@ -23,6 +28,7 @@ class CommunityModal extends Component {
           userList: this.state.userList,
         })
         .then(() => {
+          this.setState({ userList: null });
           this.fetchUsers();
         });
     }
@@ -37,6 +43,7 @@ class CommunityModal extends Component {
           userList: this.state.userList,
         })
         .then(() => {
+          this.setState({ userList: null });
           this.fetchUsers();
         });
     }
@@ -131,13 +138,26 @@ class CommunityModal extends Component {
                       display: "block",
                       width: "40px",
                       height: "40px",
-                      backgroundColor: "#ccc",
-                      borderRadius: "5px",
-                      border: "1px solid #777",
+                      // backgroundColor: "#ccc",
+                      borderRadius: "25px",
+                      overflow: "hidden",
+                      // border: "1px solid #777",
                       margin: "0 15px",
+                      border: "1px solid #777",
                     }}
                   >
-                    .
+                    <img
+                      src={
+                        data.profile_picture_url
+                          ? data.profile_picture_url
+                          : this.state.getDefaultRedditProfilePicture
+                      }
+                      alt=""
+                      style={{
+                        height: "40px",
+                        width: "40px",
+                      }}
+                    />
                   </div>
                   <div
                     style={{
@@ -146,7 +166,12 @@ class CommunityModal extends Component {
                       justifyContent: "center",
                     }}
                   >
-                    u/{data.name}
+                    <Link
+                      style={{ color: "black" }}
+                      to={`/user/${data?.userIDSQL}`}
+                    >
+                      u/{data.name}
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -180,13 +205,26 @@ class CommunityModal extends Component {
                       display: "block",
                       width: "40px",
                       height: "40px",
-                      backgroundColor: "#ccc",
-                      borderRadius: "5px",
-                      border: "1px solid #777",
+                      // backgroundColor: "#ccc",
+                      borderRadius: "25px",
+                      overflow: "hidden",
+                      // border: "1px solid #777",
                       margin: "0 15px",
+                      border: "1px solid #777",
                     }}
                   >
-                    .
+                    <img
+                      src={
+                        data.profile_picture_url
+                          ? data.profile_picture_url
+                          : this.state.getDefaultRedditProfilePicture
+                      }
+                      alt=""
+                      style={{
+                        height: "40px",
+                        width: "40px",
+                      }}
+                    />
                   </div>
                   <div
                     style={{
@@ -195,7 +233,12 @@ class CommunityModal extends Component {
                       justifyContent: "center",
                     }}
                   >
-                    u/{data.name}
+                    <Link
+                      style={{ color: "black" }}
+                      to={`/user/${data?.userIDSQL}`}
+                    >
+                      u/{data.name}
+                    </Link>
                   </div>
                 </div>
               </div>

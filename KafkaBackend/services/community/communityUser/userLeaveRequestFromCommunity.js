@@ -4,7 +4,10 @@ const userLeaveRequestFromCommunity = async (msg, callback) => {
   Community.findOneAndUpdate(
     { _id: msg.community_id },
     {
-      $pull: { listOfUsers: { userID: msg.user_id } }
+      $pull: {
+        listOfUsers: { userID: msg.user_id },
+        sentInvitesTo: { userID: msg.user_id }
+      }
     },
     {
       new: true

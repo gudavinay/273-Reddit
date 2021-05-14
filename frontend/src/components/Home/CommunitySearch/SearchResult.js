@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { Row, Col, Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import DefaultCardText from "../../../assets/NoImage.png";
 
 import { getRelativeTime, nFormatter } from "../../../services/ControllerUtils";
-import DefaultCardText from "../../../assets/communityIcons/card-text.svg";
 
 class SearchResult extends Component {
   constructor(props) {
@@ -50,16 +50,25 @@ class SearchResult extends Component {
                       color: this.props.data.userVoteDir == 1 ? "#ff4500" : "",
                     }}
                     className="icon icon-arrow-up"
-                    onClick={() =>
-                      this.props.upVote(
-                        this.props.data._id,
-                        this.props.data.userVoteDir,
-                        this.props.index
-                      )
-                    }
+                    onClick={() => {
+                      if (!this.props.disableVoteButtons)
+                        this.props.upVote(
+                          this.props.data._id,
+                          this.props.data.userVoteDir,
+                          this.props.index
+                        );
+                    }}
                   ></i>
 
-                  <span style={{ whiteSpace: "nowrap" }}>
+                  <span
+                    style={{
+                      whiteSpace: "nowrap",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      textAlign: "center",
+                    }}
+                  >
                     {/* {nFormatter(upVotedLength - downVotedLength, 1)} */}
                     {nFormatter(this.props.data.score, 1)}
                   </span>
@@ -70,13 +79,14 @@ class SearchResult extends Component {
                       color: this.props.data.userVoteDir == -1 ? "#7193ff" : "",
                     }}
                     className="icon icon-arrow-down"
-                    onClick={() =>
-                      this.props.downVote(
-                        this.props.data._id,
-                        this.props.data.userVoteDir,
-                        this.props.index
-                      )
-                    }
+                    onClick={() => {
+                      if (!this.props.disableVoteButtons)
+                        this.props.downVote(
+                          this.props.data._id,
+                          this.props.data.userVoteDir,
+                          this.props.index
+                        );
+                    }}
                   ></i>
                 </div>
               </Col>
@@ -103,13 +113,13 @@ class SearchResult extends Component {
                   <div
                     style={{
                       background: "#eef3f7",
-                      height: "80%",
+                      // height: "80%",
                       borderRadius: "5px",
                     }}
                   >
                     <img
                       src={DefaultCardText}
-                      style={{ width: "25px", margin: "23px" }}
+                      style={{ width: "65px", margin: "4px" }}
                     />
                   </div>
                 )}

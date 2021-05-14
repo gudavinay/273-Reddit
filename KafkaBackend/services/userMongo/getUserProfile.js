@@ -9,9 +9,9 @@ const getUserProfile = async (msg, callback) => {
       res.status = 200;
       callback(null, res);
     } else {
-      UserProfile.find({ userIDSQL: msg.ID })
+      UserProfile.findOne({ userIDSQL: msg.ID })
         .then(result => {
-          if (result.length > 0) {
+          if (result) {
             redisClient.setex(msg.ID, 36000, JSON.stringify(result));
           }
           res.data = result;

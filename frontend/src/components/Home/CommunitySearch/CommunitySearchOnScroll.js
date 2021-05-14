@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { TablePagination } from "@material-ui/core";
 import { connect } from "react-redux";
 import axios from "axios";
 import { Row, Col, Form } from "react-bootstrap";
@@ -33,12 +32,11 @@ class CommunitySearch extends Component {
       searchText: this.getSearchQueryFromLocation(),
       processing: false,
       communities: [],
-      count: 0,
-      page: 0,
-      size: 5,
+      hasMoreItems: true,
+      pagingCounter: 0,
+      perPage: 2,
       sortKey: "createdAt",
       sortValue: "desc",
-      disableVoteButtons: false,
     };
     this.upVote = this.upVote.bind(this);
     this.downVote = this.downVote.bind(this);
@@ -47,35 +45,65 @@ class CommunitySearch extends Component {
     const qR = new URLSearchParams(this.props.location.search);
     return qR.get("q") || "";
   };
-  processSearch = async () => {
-    try {
-      const queryParams = new URLSearchParams({
-        searchText: this.state.searchText,
-        page: Number(this.state.page) + 1,
-        limit: this.state.size,
-        sortKey: this.state.sortKey,
-        sortValue: this.state.sortValue,
-        userId: getMongoUserID(),
-      }).toString();
+  isBottom = (el) => {
+    return el.getBoundingClientRect().bottom <= window.innerHeight;
+  };
+  componentWillUnmount() {
+    document.removeEventListener("scroll", this.trackScrolling);
+  }
+  trackScrolling = () => {
+    const wrappedElement = document.getElementById("scroll_to_bottom_detector");
+    if (this.isBottom(wrappedElement)) {
+      this.processSearch();
+    }
+  };
+  processSearch = (restart = false) => {
+    if (restart || (!this.state.processing && this.state.hasMoreItems)) {
+      this.setState(
+        {
+          processing: true,
+          ...(restart
+            ? {
+                searchText: this.getSearchQueryFromLocation(),
+                pagingCounter: 0,
+                hasMoreItems: true,
+                communities: [],
+              }
+            : {}),
+        },
+        async () => {
+          try {
+            const queryParams = new URLSearchParams({
+              searchText: this.state.searchText,
+              page: this.state.pagingCounter + 1,
+              limit: this.state.perPage,
+              sortKey: this.state.sortKey,
+              sortValue: this.state.sortValue,
+              userId: getMongoUserID(),
+            }).toString();
 
-      this.props.setLoader();
+            this.props.setLoader();
 
-      axios.defaults.headers.common["authorization"] = getToken();
-      const { data } = await axios.get(
-        `${backendServer}/getAllCommunities?${queryParams}`
+            axios.defaults.headers.common["authorization"] = getToken();
+            const { data } = await axios.get(
+              `${backendServer}/getAllCommunities?${queryParams}`
+            );
+
+            this.props.unsetLoader();
+
+            const { docs, hasNextPage, pagingCounter } = data.communities || {};
+
+            this.setState({
+              communities: [...this.state.communities, ...docs],
+              hasMoreItems: hasNextPage,
+              pagingCounter,
+              processing: false,
+            });
+          } catch (e) {
+            console.log(e);
+          }
+        }
       );
-
-      this.props.unsetLoader();
-
-      const { docs, totalDocs } = data.communities || {};
-
-      this.setState({
-        communities: [...docs],
-        processing: false,
-        count: totalDocs,
-      });
-    } catch (e) {
-      console.log(e);
     }
   };
   getSnapshotBeforeUpdate(prevProps) {
@@ -85,42 +113,44 @@ class CommunitySearch extends Component {
   }
   componentDidMount() {
     this.processSearch();
+    document.addEventListener("scroll", this.trackScrolling);
   }
   componentDidUpdate(prevProps, prevState, snapshot) {
     const { newQuery } = snapshot;
     if (newQuery) {
-      this.setState({
-        searchText: this.getSearchQueryFromLocation(),
-        page: 0,
-      }, () => {
-        this.processSearch();
-      });
+      this.processSearch(true);
+    }
+    if (
+      window.innerHeight >= document.body.clientHeight &&
+      this.state.hasMoreItems
+    ) {
+      this.processSearch();
     }
   }
-  PageSizeChange = (e) => {
-    this.setState(
-      {
-        size: Number(e.target.value),
-        page: 0,
-      },
-      () => {
-        this.processSearch();
-      }
-    );
-  };
+  // vote = async ({ community_id, voting }) => {
+  //   try {
+  //     axios.defaults.headers.common["authorization"] = getToken();
+  //     const { data: { community } } = await axios.post(`${backendServer}/community/vote/${community_id}`, {
+  //       "voting": Number(voting)
+  //     });
+  //     if(!community) { return; }
+  //     const { communities } = this.state;
 
-  PageChange = (e, page) => {
-    this.setState(
-      {
-        page: Number(page),
-      },
-      () => {
-        this.processSearch();
-      }
-    );
-  };
+  //     let temp = communities.reduce((acc, it) => {
+  //       acc[it._id] = it;
+  //       return acc;
+  //     }, {});
+
+  //     temp[community._id].upVotedLength = community.upvotedBy.length;
+  //     temp[community._id].downVotedLength = community.downvotedBy.length;
+
+  //     this.setState({
+  //       communities: Object.values(temp)
+  //     });
+  //   } catch (e) { console.log(e) }
+  // }
+
   upVote(communityId, userVoteDir, index) {
-    this.setState({ disableVoteButtons: true });
     var relScore = userVoteDir == 1 ? -1 : userVoteDir == 0 ? 1 : 2;
     console.log("upvote req  = ", communityId, " ", userVoteDir, " ", index);
     axios.defaults.headers.common["authorization"] = getToken();
@@ -134,7 +164,6 @@ class CommunitySearch extends Component {
       })
       .then((response) => {
         // this.props.unsetLoader();
-        this.setState({ disableVoteButtons: false });
         console.log("upVOted successfull = ", response);
         console.log("this.state = ", this.state);
         console.log("this.state = ", this.state.communities[index].userVoteDir);
@@ -143,8 +172,8 @@ class CommunitySearch extends Component {
           userVoteDir == 1
             ? newCommunities[index].score - 1
             : userVoteDir == 0
-              ? newCommunities[index].score + 1
-              : newCommunities[index].score + 2;
+            ? newCommunities[index].score + 1
+            : newCommunities[index].score + 2;
 
         newCommunities[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
         console.log("newCommunities = ", newCommunities);
@@ -153,14 +182,12 @@ class CommunitySearch extends Component {
       })
       .catch((err) => {
         // this.props.unsetLoader();
-        this.setState({ disableVoteButtons: false });
         console.log(err);
       });
   }
 
   downVote(postId, userVoteDir, index) {
     // const oldScore = 0;
-    this.setState({ disableVoteButtons: true });
     var relScore = userVoteDir == -1 ? 1 : userVoteDir == 0 ? -1 : -2;
     axios.defaults.headers.common["authorization"] = getToken();
     axios
@@ -173,7 +200,6 @@ class CommunitySearch extends Component {
       })
       .then((response) => {
         // this.props.unsetLoader();
-        this.setState({ disableVoteButtons: false });
         console.log("downvoted successfull = ", response);
         console.log("communities = ", this.state.communities);
         const newCommunities = this.state.communities.slice();
@@ -181,8 +207,8 @@ class CommunitySearch extends Component {
           userVoteDir == -1
             ? newCommunities[index].score + 1
             : userVoteDir == 0
-              ? newCommunities[index].score - 1
-              : newCommunities[index].score - 2;
+            ? newCommunities[index].score - 1
+            : newCommunities[index].score - 2;
 
         // newComments[index].userVoteDir = response.data.userVoteDir;
         newCommunities[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
@@ -192,8 +218,6 @@ class CommunitySearch extends Component {
       })
       .catch((err) => {
         // this.props.unsetLoader();
-
-        this.setState({ disableVoteButtons: false });
         console.log(err);
       });
   }
@@ -296,6 +320,47 @@ class CommunitySearch extends Component {
                     </Form.Control>
                   </Form.Group>
                 </div>
+                <div style={{ float: "right" }}>
+                  <Form.Group style={{ margin: "5px", display: "inline-flex" }}>
+                    <label
+                      style={{
+                        whiteSpace: "nowrap",
+                        marginTop: "5px",
+                        color: "#7d72728a",
+                      }}
+                    >
+                      Per Page
+                    </label>
+                    <Form.Control
+                      as="select"
+                      onChange={(e) => {
+                        this.setState({ perPage: e.target.value }, () => {
+                          this.processSearch(true);
+                        });
+                      }}
+                      style={{
+                        fontSize: "14px",
+                        marginLeft: "5px",
+                        fontWeight: "600",
+                        width: "auto",
+                      }}
+                    >
+                      {Object.keys(options.perPageValues).map((key) => {
+                        return (
+                          <option
+                            key={key}
+                            selected={
+                              this.state.perPage === key ? "selected" : ""
+                            }
+                            value={key}
+                          >
+                            {options.perPageValues[key]}
+                          </option>
+                        );
+                      })}
+                    </Form.Control>
+                  </Form.Group>
+                </div>
               </div>
             </Col>
             <Col sm={12}>
@@ -303,15 +368,24 @@ class CommunitySearch extends Component {
                 {communities &&
                   communities.length > 0 &&
                   communities.map((c, index) => {
+                    {
+                      console.log("inside community rendering");
+                    }
                     return (
-                      <div key={c._id}>
+                      <div
+                        key={c._id}
+                        style={
+                          {
+                            // height: "400px" // load more testing purpose due to low data
+                          }
+                        }
+                      >
                         <SearchResult
                           key={c._id}
                           data={c}
                           upVote={this.upVote}
                           downVote={this.downVote}
                           index={index}
-                          disableVoteButtons={this.state.disableVoteButtons}
                         />
                       </div>
                     );
@@ -323,17 +397,15 @@ class CommunitySearch extends Component {
                   </div>
                 )}
               </div>
-              <TablePagination
-                count={this.state.count}
-                page={this.state.page}
-                onChangePage={this.PageChange}
-                rowsPerPage={this.state.size}
-                onChangeRowsPerPage={this.PageSizeChange}
-                variant="outlined"
-                color="primary"
-                rowsPerPageOptions={[2, 5, 10]}
-              />
+              <div id="scroll_to_bottom_detector"></div>
             </Col>
+            {processing && communities.length > 0 && (
+              <Col sm={12}>
+                <div style={{ textAlign: "center", height: "50px" }}>
+                  <p>Loading more communities...</p>
+                </div>
+              </Col>
+            )}
           </Row>
         </div>
       </React.Fragment>

@@ -19,7 +19,7 @@ import {
   getDefaultRedditProfilePicture,
   getToken,
   getUserProfile,
-  getMongoUserID
+  getMongoUserID,
 } from "../../services/ControllerUtils";
 
 class Navigationbar extends Component {
@@ -31,40 +31,41 @@ class Navigationbar extends Component {
       leftDropdown: "Home",
       showNotificationModal: false,
       notificationData: [],
-      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture()
+      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture(),
     };
   }
-  onSubmitSearch = e => {
+  onSubmitSearch = (e) => {
     e.preventDefault();
     if (this.state.search.trim() === "") return;
     this.processSearchSubmitActivity();
   };
-  onChangeSearchText = e => this.setState({ search: e.target.value });
+  onChangeSearchText = (e) => this.setState({ search: e.target.value });
   processSearchSubmitActivity = () => {
     const { pathname } = this.props.location;
     if (pathname === "/communitysearch") {
       this.props.history.push({
         pathname: "/communitysearch",
-        search: "?" + new URLSearchParams({ q: this.state.search }).toString()
+        search: "?" + new URLSearchParams({ q: this.state.search }).toString(),
       });
     } else if (pathname === "/home") {
       // Write logic for posts search
       this.props.history.push({
         pathname: "/home",
-        search: "?" + new URLSearchParams({ q: this.state.search }).toString()
+        search: "?" + new URLSearchParams({ q: this.state.search }).toString(),
       });
       console.log(this.state.search);
     }
   };
   hideModal = () => {
     this.setState({
-      showNotificationModal: false
+      showNotificationModal: false,
     });
   };
   showModal = () => {
     this.setState({
-      showNotificationModal: true
+      showNotificationModal: true,
     });
+    this.getNotificationData();
   };
   async componentDidMount() {
     // const userId = getMongoUserID();
@@ -105,16 +106,16 @@ class Navigationbar extends Component {
   // };
   getNotificationData = async () => {
     let data = {
-      user_id: getMongoUserID()
+      user_id: getMongoUserID(),
     };
     this.props.setLoader();
     Axios.defaults.headers.common["authorization"] = getToken();
     Axios.post(backendServer + "/getNotificationData", data)
-      .then(result => {
+      .then((result) => {
         this.props.unsetLoader();
         this.setState({ notificationData: result.data });
       })
-      .catch(err => {
+      .catch((err) => {
         this.props.unsetLoader();
         console.log(err);
       });
@@ -126,6 +127,23 @@ class Navigationbar extends Component {
         localStorage.clear();
       }
     }
+  }
+  getLeftDropdownText() {
+    let path = this.props.location.pathname;
+    if (path.includes("/invitation")) {
+      return "Invitation";
+    } else if (path.includes("/createCommunity")) {
+      return "Create New Community";
+    } else if (path.includes("/mycommunities")) {
+      return "My Communities";
+    } else if (path.includes("/communitysearch")) {
+      return "Community Search";
+    } else if (path.includes("/mycommunitiesmoderation")) {
+      return "Community Moderation";
+    } else if (path.includes("/communityanalytics")) {
+      return "Community Analytics";
+    }
+    return "Home";
   }
 
   onSignout = () => {
@@ -146,7 +164,7 @@ class Navigationbar extends Component {
             color="secondary"
             style={{
               backgroundColor: this.props.darkMode ? "#363537" : "white",
-              transition: "all 0.5s ease"
+              transition: "all 0.5s ease",
             }}
           />
         )}
@@ -154,13 +172,13 @@ class Navigationbar extends Component {
           style={{
             boxShadow: "0px 0px 5px #777",
             // marginBottom: "30px",
-            maxWidth: "100%"
+            maxWidth: "100%",
           }}
         >
           <Navbar
             style={{
               padding: "0",
-              position: "relative"
+              position: "relative",
             }}
           >
             <Row style={{ display: "contents" }}>
@@ -189,7 +207,7 @@ class Navigationbar extends Component {
                     borderRadius: "5px",
                     backgroundColor: this.props.darkMode ? "#363537" : "#fff",
                     zIndex: "2",
-                    border: "1px solid #777"
+                    border: "1px solid #777",
                   }}
                 >
                   <div
@@ -197,7 +215,7 @@ class Navigationbar extends Component {
                       display: "flex",
                       justifyContent: "space-between",
                       fontWeight: "500",
-                      padding: "0 15px"
+                      padding: "0 15px",
                     }}
                     onClick={() => {
                       let classListLeft =
@@ -215,7 +233,7 @@ class Navigationbar extends Component {
                       }
                     }}
                   >
-                    {this.state.leftDropdown}
+                    {this.getLeftDropdownText()}
                     <div>
                       <BsFillCaretDownFill />
                     </div>
@@ -225,6 +243,7 @@ class Navigationbar extends Component {
                     id="expandLeftDropDown"
                   >
                     <hr style={{ margin: "12.5px 0" }} />
+
                     <div
                       className={
                         this.props.darkMode
@@ -248,7 +267,7 @@ class Navigationbar extends Component {
                           : "NavLinks backGround_light"
                       }
                       onClick={() => {
-                        this.setState({ leftDropdown: "Send Invitation" });
+                        this.setState({ leftDropdown: "Invitation" });
                         document
                           .getElementById("expandLeftDropDown")
                           .classList.add("hidden");
@@ -257,7 +276,6 @@ class Navigationbar extends Component {
                     >
                       Invitation
                     </div>
-
                     <div
                       className={
                         this.props.darkMode
@@ -306,8 +324,8 @@ class Navigationbar extends Component {
                           search:
                             "?" +
                             new URLSearchParams({
-                              q: this.state.search
-                            }).toString()
+                              q: this.state.search,
+                            }).toString(),
                         });
                       }}
                     >
@@ -321,7 +339,7 @@ class Navigationbar extends Component {
                       }
                       onClick={() => {
                         this.setState({
-                          leftDropdown: "Community Moderation"
+                          leftDropdown: "Community Moderation",
                         });
                         document
                           .getElementById("expandLeftDropDown")
@@ -339,7 +357,7 @@ class Navigationbar extends Component {
                       }
                       onClick={() => {
                         this.setState({
-                          leftDropdown: "community Analytics"
+                          leftDropdown: "community Analytics",
                         });
                         document
                           .getElementById("expandLeftDropDown")
@@ -347,7 +365,7 @@ class Navigationbar extends Component {
                         this.props.history.push("/communityanalytics");
                       }}
                     >
-                      community Analytics
+                      Community Analytics
                     </div>
                   </div>
                 </div>
@@ -364,7 +382,7 @@ class Navigationbar extends Component {
                         backgroundColor: this.props.darkMode
                           ? "#363537"
                           : "white",
-                        borderColor: "#777"
+                        borderColor: "#777",
                       }}
                     />
                   </Form.Group>
@@ -406,7 +424,7 @@ class Navigationbar extends Component {
                     borderRadius: "5px",
                     backgroundColor: this.props.darkMode ? "#363537" : "#fff",
                     zIndex: "2",
-                    border: "1px solid #777"
+                    border: "1px solid #777",
                   }}
                 >
                   <div
@@ -414,7 +432,7 @@ class Navigationbar extends Component {
                       display: "flex",
                       justifyContent: "space-between",
                       fontWeight: "500",
-                      padding: "0 15px"
+                      padding: "0 15px",
                     }}
                     onClick={() => {
                       let classListLeft =
@@ -432,18 +450,32 @@ class Navigationbar extends Component {
                       }
                     }}
                   >
-                    <div>
+                    <div style={{ display: "flex", width: "90%" }}>
                       <img
-                        src={getUserProfile() && getUserProfile().profile_picture_url ? getUserProfile().profile_picture_url : this.state.getDefaultRedditProfilePicture}
+                        src={
+                          getUserProfile() &&
+                          getUserProfile().profile_picture_url
+                            ? getUserProfile().profile_picture_url
+                            : this.state.getDefaultRedditProfilePicture
+                        }
                         style={{
                           width: "25px",
                           borderRadius: "3px",
-                          marginRight: "10px"
+                          marginRight: "10px",
                         }}
                       />
-                      {getUserProfile() != null
-                        ? getUserProfile().name
-                        : "User Name"}
+                      <div
+                        style={{
+                          height: "20px",
+                          textOverflow: "ellipsis",
+                          overflow: "hidden",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {getUserProfile() != null
+                          ? getUserProfile().name
+                          : "User Name"}
+                      </div>
                     </div>
                     <div>
                       <BsFillCaretDownFill />
@@ -513,7 +545,7 @@ class Navigationbar extends Component {
 }
 
 export default connect(
-  state => {
+  (state) => {
     return state;
   },
   { logoutRedux }

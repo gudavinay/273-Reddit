@@ -4,7 +4,11 @@ const Community = require("../../models/mongo/Community");
 
 const getUserDetailsById = async (msg, callback) => {
     try {
-        const { user_id } = msg;
+        const { user_id, loggedInUserId } = msg;
+
+        const loggedInUser = await UserProfile.findOne({
+            userIDSQL: loggedInUserId,
+        });
 
         const user = await UserProfile.findOne({
             userIDSQL: user_id,
@@ -40,15 +44,15 @@ const getUserDetailsById = async (msg, callback) => {
             },
             {
                 "$addFields": {
-                    "listOfUsersLength": {
-                        "$reduce": {
-                            "input": "$listOfUsers",
-                            "initialValue": 0,
-                            "in": { "$add": ["$$value", "$$this.isAccepted"] }
-                        }
-                    }
+                  listOfUsersLength: {
+                    $filter: {
+                      input: "$listOfUsers",
+                      as: "v",
+                      cond: { $eq: ["$$v.isAccepted", 1] },
+                    },
+                  },
                 }
-            },
+              },
             {
                 $project: {
                     communityName: "$communityName",
@@ -57,9 +61,35 @@ const getUserDetailsById = async (msg, callback) => {
                     imageURL: "$imageURL",
                     createdAt: "$createdAt",
                     postsLength: { $size: "$posts" },
-                    listOfUsersLength: { "$add": ["$listOfUsersLength", 1] }, // Adding +1 means Owner
+                    listOfUsersLength: { "$add": [{ $size: "$listOfUsersLength" }, 1] }, // Adding +1 means Owner
                     upVotedLength: { $size: "$upvotedBy" },
                     downVotedLength: { $size: "$downvotedBy" },
+                    score: {
+                        $subtract: [{ $size: "$upvotedBy" }, { $size: "$downvotedBy" }],
+                    },
+                    userVoteDir: {
+                        $cond: {
+                            if: {
+                                $setIsSubset: [
+                                    [{ _id: mongoose.Types.ObjectId(loggedInUser._id) }],
+                                    "$upvotedBy",
+                                ],
+                            },
+                            then: 1,
+                            else: {
+                                $cond: {
+                                    if: {
+                                        $setIsSubset: [
+                                            [{ _id: mongoose.Types.ObjectId(loggedInUser._id) }],
+                                            "$downvotedBy",
+                                        ],
+                                    },
+                                    then: -1,
+                                    else: 0,
+                                },
+                            },
+                        },
+                    }
                 },
             },
             { $sort: { createdAt: -1 } },

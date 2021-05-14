@@ -17,7 +17,7 @@ const getCommunitiesForOwner = async (msg, callback) => {
     .populate("listOfUsers.userID")
     .limit(Number(msg.size))
     .skip(skip)
-    .sort({ createdAt: 1 })
+    .sort({ createdAt: -1 })
     .then(result => {
       let output = [];
       result.forEach(item => {

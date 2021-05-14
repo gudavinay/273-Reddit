@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Row, Col, Card, Modal, ModalBody } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import "./post.css";
 import { getRelativeTime } from "../../../services/ControllerUtils";
 import ModalHeader from "react-bootstrap/esm/ModalHeader";
@@ -9,7 +10,7 @@ class Post extends Component {
     super(props);
     console.log("PROPS IN POST COMPONENT", this.props.detailedView, props);
     this.state = {
-      showPostModal: false,
+      showPostModal: false
     };
     this.postClicked = this.postClicked.bind(this);
     // this.setComments = this.setComments.bind(this);
@@ -38,13 +39,13 @@ class Post extends Component {
         >
           <ModalHeader
             style={{
-              backgroundColor: this.props.darkMode ? "#1B1B1B" : "white",
+              backgroundColor: this.props.darkMode ? "#1B1B1B" : "white"
             }}
             closeButton
           ></ModalHeader>
           <ModalBody
             style={{
-              backgroundColor: this.props.darkMode ? "#1B1B1B" : "white",
+              backgroundColor: this.props.darkMode ? "#1B1B1B" : "white"
             }}
           >
             <DetailedPostView
@@ -68,14 +69,25 @@ class Post extends Component {
           <span>
             {this.props.data.communityName &&
               "r/" + this.props.data?.communityName + " "}
-            posted by u/
-            <strong>
-              {this.props.data &&
-              this.props.data.userID &&
-              this.props.data.userID[0]
-                ? this.props.data.userID[0].name
-                : ""}
-            </strong>{" "}
+            posted by &nbsp;
+            <Link
+              style={{ color: "black" }}
+              to={`/user/${
+                this.props.data &&
+                this.props.data.userID &&
+                this.props.data.userID[0] &&
+                this.props.data.userID[0].userIDSQL
+              }`}
+            >
+              u/
+              <strong>
+                {this.props.data &&
+                this.props.data.userID &&
+                this.props.data.userID[0]
+                  ? this.props.data.userID[0].name
+                  : ""}
+              </strong>
+            </Link>{" "}
             {getRelativeTime(this.props.data?.createdAt)}
           </span>
         </Row>
@@ -101,11 +113,12 @@ class Post extends Component {
 
     return (
       <React.Fragment>
-        {/* {JSON.stringify(this.props.data)} */}
+        {/* disableVoteButtons in post.js:
+        {JSON.stringify(this.props.disableVoteButtons)} */}
         <Card
           style={{
             margin: "10px",
-            backgroundColor: this.props.darkMode ? "#1B1B1B" : "white",
+            backgroundColor: this.props.darkMode ? "#1B1B1B" : "white"
           }}
         >
           <Card.Body>
@@ -116,45 +129,47 @@ class Post extends Component {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
-                    textAlign: "center",
+                    textAlign: "center"
                   }}
                 >
                   <i
                     style={{
                       cursor: "pointer",
-                      color: this.props.data.userVoteDir == 1 ? "#ff4500" : "",
+                      color: this.props.data.userVoteDir == 1 ? "#ff4500" : ""
                       // color:
                       //   getEntityVoteDir(this.props.data._id) == 1
                       //     ? "#ff4500"
                       //     : "",
                     }}
                     className="icon icon-arrow-up"
-                    onClick={() =>
-                      this.props.upVote(
-                        this.props.data._id,
-                        this.props.data.userVoteDir,
-                        this.props.index
-                      )
-                    }
+                    onClick={() => {
+                      if (!this.props.disableVoteButtons)
+                        this.props.upVote(
+                          this.props.data._id,
+                          this.props.data.userVoteDir,
+                          this.props.index
+                        );
+                    }}
                   ></i>
                   <span> {this.props.data.score}</span>
                   <i
                     style={{
                       cursor: "pointer",
-                      color: this.props.data.userVoteDir == -1 ? "#7193ff" : "",
+                      color: this.props.data.userVoteDir == -1 ? "#7193ff" : ""
                       // color:
                       //   getEntityVoteDir(this.props.data._id) == -1
                       //     ? "#7193ff"
                       //     : "",
                     }}
                     className="icon icon-arrow-down"
-                    onClick={() =>
-                      this.props.downVote(
-                        this.props.data._id,
-                        this.props.data.userVoteDir,
-                        this.props.index
-                      )
-                    }
+                    onClick={() => {
+                      if (!this.props.disableVoteButtons)
+                        this.props.downVote(
+                          this.props.data._id,
+                          this.props.data.userVoteDir,
+                          this.props.index
+                        );
+                    }}
                   ></i>
                 </div>
               </Col>
@@ -166,7 +181,7 @@ class Post extends Component {
             <div className="postFooter">
               <div
                 style={{
-                  cursor: this.props.detailedView ? "default" : "pointer",
+                  cursor: this.props.detailedView ? "default" : "pointer"
                 }}
                 onClick={() => {
                   if (!this.props.detailedView) {

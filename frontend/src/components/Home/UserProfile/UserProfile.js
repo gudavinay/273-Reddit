@@ -65,11 +65,29 @@ class UserProfile extends Component {
   }
 
   uploadImage = e => {
-    if (e.target.files)
+    if (e.target.files && e.target.files.length > 0) {
+      let data = new FormData();
+      data.append("file", e.target.files[0]);
+      this.props.setLoader();
+      axios
+        .post(`${backendServer}/upload`, data)
+        .then(response => {
+          this.props.unsetLoader();
+          console.log(response);
+          if (response.data && response.data[0] && response.data[0].Location)
+            this.setState({
+              profile_picture_url: response.data[0].Location
+            });
+        })
+        .catch(error => {
+          this.props.unsetLoader();
+          console.log("error " + error);
+        });
+    } else {
       this.setState({
-        file: e.target.files[0],
-        fileText: e.target.files[0].name
+        profile_picture_url: null
       });
+    }
   };
 
   handleDelete = (e, topic) => {
@@ -106,6 +124,7 @@ class UserProfile extends Component {
       name: this.state.name,
       email: this.state.email,
       location: this.state.location,
+      password: this.state.password,
       profile_picture_url: this.state.profile_picture_url,
       gender: this.state.gender,
       userIDSQL: getSQLUserID(),
@@ -137,11 +156,11 @@ class UserProfile extends Component {
       });
   };
 
-  componentDidUpdate(prevState) {
-    if (prevState.userProfile !== this.props.userProfile) {
-      this.setState({ saveSuccess: true, saveFailed: false });
-    }
-  }
+  // componentDidUpdate(prevState) {
+  //   if (prevState.userProfile !== this.props.userProfile) {
+  //     this.setState({ saveSuccess: true, saveFailed: false });
+  //   }
+  // }
 
   render() {
     let dropDownItem = null;
@@ -233,7 +252,7 @@ class UserProfile extends Component {
                       </i>
                     </div>
                   </div>
-                  <button
+                  {/* <button
                     className="form-control"
                     disabled={!this.state.file}
                     style={{ margin: "30px 0 0 0", width: "100px" }}
@@ -262,7 +281,7 @@ class UserProfile extends Component {
                     }}
                   >
                     Upload
-                  </button>
+                  </button> */}
                   <Row style={{ marginTop: "10px" }}>
                     <Col sm={9}></Col>
                   </Row>
@@ -277,6 +296,7 @@ class UserProfile extends Component {
                     onChange={e => this.setState({ name: e.target.value })}
                     name="name"
                     id="name"
+                    maxLength="50"
                     title="Please enter valid name"
                     value={this.state.name}
                     required
@@ -289,8 +309,9 @@ class UserProfile extends Component {
                     className="form-control"
                     onChange={e => this.setState({ email: e.target.value })}
                     name="email"
-                    title="Please enter valid email"
-                    pattern="^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$'%&*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])$"
+                    maxLength="150"
+                    title="Please enter a valid email"
+                    pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
                     value={this.state.email}
                     required
                   />
@@ -303,8 +324,9 @@ class UserProfile extends Component {
                 </Row>
                 <Row>
                   <input
-                    type="tel"
+                    type="text"
                     className="form-control"
+                    maxLength="50"
                     onChange={e => this.setState({ location: e.target.value })}
                     name="location"
                     title="Please enter valid location"
@@ -319,6 +341,7 @@ class UserProfile extends Component {
                     onChange={e => this.setState({ password: e.target.value })}
                     name="password"
                     id="password"
+                    maxLength="25"
                     title="Please enter valid password"
                     value={this.state.password}
                   />
@@ -441,6 +464,9 @@ class UserProfile extends Component {
                       type="text"
                       className="form-control"
                       placeholder="New topic name"
+                      maxLength="45"
+                      value={this.state.newTopic}
+                      required
                       onChange={e => {
                         this.setState({ newTopic: e.target.value });
                       }}
@@ -459,7 +485,10 @@ class UserProfile extends Component {
                           .then(result => {
                             this.props.unsetLoader();
                             console.log(result);
-                            this.setState({ listOfTopicsFromDB: result.data });
+                            this.setState({
+                              listOfTopicsFromDB: result.data,
+                              newTopic: ""
+                            });
                           })
                           .catch(err => {
                             this.props.unsetLoader();

@@ -43,7 +43,7 @@ app.post("/getAllPostsWithUserId", checkAuth, (req, res) => {
   });
 });
 
-app.post("/searchForPosts", (req, res) => {
+app.post("/searchForPosts", checkAuth, (req, res) => {
   console.log(req.body.search);
   req.body.search = req.body.search;
   req.body.user_id = req.body.user_id;

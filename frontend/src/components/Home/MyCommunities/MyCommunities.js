@@ -34,7 +34,7 @@ class MyCommunities extends Component {
       size: 2,
       count: 0,
       sortby: "Date",
-      sortType: "asc"
+      sortType: "desc"
     };
   }
 
@@ -276,8 +276,8 @@ class MyCommunities extends Component {
                     </Col>
                     <Col xs={2}>
                       <select className="form-control" onChange={this.SortType}>
+                        <option value="desc">Descending</option>
                         <option value="asc">Ascending</option>
-                        <option value="desc">Decending</option>
                       </select>
                     </Col>
                   </Row>
@@ -327,6 +327,7 @@ class MyCommunities extends Component {
                         type="text"
                         id="name"
                         name="name"
+                        maxLength="50"
                         onKeyDown={evt =>
                           evt.key === " " && evt.preventDefault()
                         }

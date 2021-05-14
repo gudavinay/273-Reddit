@@ -10,7 +10,8 @@ const rejectUsersForCommunity = async (msg, callback) => {
           _id: msg.communityID,
           "listOfUsers.userID": item,
         },
-        { $set: { "listOfUsers.$.isAccepted": -1 } }
+        { $set: { "listOfUsers.$.isAccepted": -1 } },
+        { $pull: { sentInvitesTo: { userID: item } } }
       );
     }).then(async () => {
       res.status = 200;

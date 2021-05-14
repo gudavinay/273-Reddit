@@ -114,6 +114,10 @@ class MessageContent extends Component {
     } else {
       console.log("No message found");
     }
+    if (document.getElementById("message-Body")) {
+      document.getElementById("message-Body").scrollTop =
+        document.getElementById("message-Body").scrollHeight;
+    }
     return (
       <React.Fragment>
         <Container>
@@ -122,7 +126,10 @@ class MessageContent extends Component {
               <Card.Header className="text-right">
                 {getUserProfile() != null ? getUserProfile().name : "Username"}
               </Card.Header>
-              <Card.Body className="messageBody"> {renderMessage}</Card.Body>
+              <Card.Body id="message-Body" className="messageBody">
+                {" "}
+                {renderMessage}
+              </Card.Body>
               <Card.Footer>
                 <Form onSubmit={this.sendMessage}>
                   <Row>
@@ -139,7 +146,9 @@ class MessageContent extends Component {
                       ></Form.Control>
                     </Col>
                     <Col xs={2}>
-                      <Button className="createCommunity">Send</Button>
+                      <Button type="submit" className="createCommunity">
+                        Send
+                      </Button>
                     </Col>
                   </Row>
                 </Form>

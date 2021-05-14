@@ -1,3 +1,4 @@
+const { Kafka } = require("aws-sdk");
 const express = require("express");
 const router = express.Router();
 const app = require("../../app");
@@ -31,20 +32,20 @@ app.get("/getUsersForCommunitiesForOwner", checkAuth, (req, res) => {
   });
 });
 
-app.get("/checkUserIsModerator/:id", (req, res) => {
-  console.log("checking user is moderator");
-  req.body.user_id = req.params.id;
-  req.body.path = "Check-Moderator";
+// app.get("/checkUserIsModerator/:id", (req, res) => {
+//   console.log("checking user is moderator");
+//   req.body.user_id = req.params.id;
+//   req.body.path = "Check-Moderator";
 
-  kafka.make_request("mongo_community", req.body, (error, result) => {
-    console.log(result);
-    if (result) {
-      return res.status(200).send(result);
-    }
-    console.log(error);
-    return res.status(500).send(error);
-  });
-});
+//   kafka.make_request("mongo_community", req.body, (error, result) => {
+//     console.log(result);
+//     if (result) {
+//       return res.status(200).send(result);
+//     }
+//     console.log(error);
+//     return res.status(500).send(error);
+//   });
+// });
 
 app.post("/checkForUniqueCommunity", checkAuth, async function (req, res) {
   req.body.path = "Unique-Community";
@@ -185,7 +186,7 @@ app.get("/communityDetails", checkAuth, function (req, res, next) {
   });
 });
 
-app.get("/getCommunityDetails", async (req, res) => {
+app.get("/getCommunityDetails", checkAuth, async (req, res) => {
   req.body.path = "getCommunityDetails";
   req.body.query = req.query;
   kafka.make_request("mongo_community", req.body, (error, result) => {
@@ -255,7 +256,7 @@ app.post("/removeUserFromCommunities", checkAuth, (req, res) => {
   });
 });
 
-app.post("/userJoinRequestToCommunity", (req, res) => {
+app.post("/userJoinRequestToCommunity", checkAuth, (req, res) => {
   console.log(req.body);
   req.body.path = "userJoinRequestToCommunity";
   kafka.make_request("community_user", req.body, (error, result) => {
@@ -267,7 +268,7 @@ app.post("/userJoinRequestToCommunity", (req, res) => {
   });
 });
 
-app.post("/userLeaveRequestFromCommunity", (req, res) => {
+app.post("/userLeaveRequestFromCommunity", checkAuth, (req, res) => {
   console.log(req.body);
   req.body.path = "userLeaveRequestFromCommunity";
   kafka.make_request("community_user", req.body, (error, result) => {
@@ -279,7 +280,7 @@ app.post("/userLeaveRequestFromCommunity", (req, res) => {
   });
 });
 
-app.get("/getAllCommunitiesListForUser", (req, res) => {
+app.get("/getAllCommunitiesListForUser", checkAuth, (req, res) => {
   console.log(req.body);
   req.body.path = "getAllCommunitiesListForUser";
   req.body.query = req.query;
@@ -292,19 +293,41 @@ app.get("/getAllCommunitiesListForUser", (req, res) => {
   });
 });
 
-app.post("/community/vote/:community_id", checkAuth, (req, res) => {
-  kafka.make_request("mongo_community", {
-    path: "Vote-Community",
-    community_id: req.params.community_id,
-    voting: req.body.voting,
-    user_id: req.body.user_id
-  }, (error, result) => {
-    if (result) {
-      return res.status(200).send(result);
+app.get("/getUsersWithMorePostsForCommunities", checkAuth, (req, res) => {
+  kafka.make_request(
+    "community_analytics",
+    {
+      path: "Get-Users-With-More-Posts-For-Communities",
+      ID: req.query.ID,
+    },
+    (error, result) => {
+      console.log(result);
+      if (result) {
+        return res.status(200).send(result);
+      }
+      console.log(error);
+      return res.status(500).send(error);
     }
-    console.log(error);
-    return res.status(500).send("Internal Server error");
-  });
+  );
+});
+
+app.post("/community/vote/:community_id", checkAuth, (req, res) => {
+  kafka.make_request(
+    "mongo_community",
+    {
+      path: "Vote-Community",
+      community_id: req.params.community_id,
+      voting: req.body.voting,
+      user_id: req.body.user_id,
+    },
+    (error, result) => {
+      if (result) {
+        return res.status(200).send(result);
+      }
+      console.log(error);
+      return res.status(500).send("Internal Server error");
+    }
+  );
 });
 
 module.exports = router;
