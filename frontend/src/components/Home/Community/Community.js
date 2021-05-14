@@ -796,12 +796,8 @@ class Community extends Component {
                                 {/* {user.userID.profile_picture_url ? <img src={user.userID.profile_picture_url} style={{ height: '30px', width: '30px', borderRadius: '15px' }} /> : <img src={getDefaultRedditProfilePicture()} style={{ height: '30px', width: '30px', borderRadius: '15px' }} />} */}
                               </Col>
                               <Col style={{ paddingLeft: "0" }}>
-                                u/
-                                <Link to={"/user/".concat(this.state.communityDetails.ownerID?.userIDSQL)}>
-                                  <strong>
-                                  {this.state.communityDetails.ownerID.name}
-                                </strong>
-                                </Link>
+
+                                <Link style={{ color: 'black' }} to={`/user/${this.state.communityDetails.ownerID?.userIDSQL}`}>u/<strong>{this.state.communityDetails.ownerID.name}</strong></Link>
                               </Col>
                             </Row>
                             {usersPresentInTheCommunity.length > 0 && (<div style={{ padding: "0 10px" }}>
@@ -832,12 +828,7 @@ class Community extends Component {
                                             {/* {user.userID.profile_picture_url ? <img src={user.userID.profile_picture_url} style={{ height: '30px', width: '30px', borderRadius: '15px' }} /> : <img src={getDefaultRedditProfilePicture()} style={{ height: '30px', width: '30px', borderRadius: '15px' }} />} */}
                                           </Col>
                                           <Col style={{ paddingLeft: "0" }}>
-                                            u/
-                                            <Link to={"/user/".concat(this.state.communityDetails.ownerID?.userIDSQL)}>
-                                              <strong>
-                                              {user.userID.name}
-                                            </strong>
-                                            </Link>
+                                            <Link style={{ color: 'black' }} to={`/user/${user.userID.userIDSQL}`}>u/<strong>{user.userID.name}</strong></Link>
                                           </Col>
                                         </Row>
                                       </div>
@@ -882,8 +873,7 @@ class Community extends Component {
                                           {/* {user.userID.profile_picture_url ? <img src={user.userID.profile_picture_url} style={{ height: '30px', width: '30px', borderRadius: '15px' }} /> : <img src={getDefaultRedditProfilePicture()} style={{ height: '30px', width: '30px', borderRadius: '15px' }} />} */}
                                         </Col>
                                         <Col style={{ paddingLeft: "0" }}>
-                                          u/
-                                            <strong>{user.userID.name}</strong>
+                                          <Link style={{ color: 'black' }} to={`/user/${user.userID.userIDSQL}`}>u/<strong>{user.userID.name}</strong></Link>
                                         </Col>
                                       </Row>
                                     );
@@ -956,8 +946,8 @@ class Community extends Component {
               <span>Top ^ Yet to be impl</span>
             </div>
           </div> */}
-        </div>
-      </React.Fragment>
+        </div >
+      </React.Fragment >
     );
   }
 }
