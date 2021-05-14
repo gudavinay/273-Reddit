@@ -300,6 +300,7 @@ export class invitation extends Component {
                   name="community"
                   id="community"
                   onChange={(e) => {
+                    document.getElementById("searchbox").value = "";
                     this.setState({ communityID: e.target.value });
                     if (e.target.value != "Select Community") {
                       this.getCommunityInvitationStatus(
@@ -353,6 +354,7 @@ export class invitation extends Component {
                       height: "38px",
                     }}
                     type="text"
+                    id="searchbox"
                     placeholder="Search User"
                     className="searchbar"
                     onChange={this.searchUser}
