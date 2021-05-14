@@ -359,11 +359,17 @@ const getCommentsWithPostID = async (msg, callback) => {
         },
       },
     },
+    {
+      $sort: {
+        upvoteCount: -1,
+        createdAt: -1,
+      },
+    },
   ])
     .then((result) => {
       console.log("result = ", result);
-      const resul = result.sort((a, b) => b.upvoteCount - a.upvoteCount);
-      res.data = resul;
+      // const resul = result.sort((a, b) => b.upvoteCount - a.upvoteCount);
+      res.data = result;
       res.status = 200;
       callback(null, res);
     })
