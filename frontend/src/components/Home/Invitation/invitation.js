@@ -307,6 +307,8 @@ export class invitation extends Component {
                         this.state.page,
                         this.state.size
                       );
+                    } else {
+                      this.setState({ invitedDetails: [] });
                     }
                   }}
                   value={this.state.communityID}
