@@ -46,7 +46,7 @@ const UserProfileSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: "UserProfile"
       },
-      dateTime: { type: Date, default: Date.now() }
+      dateTime: { type: Date, default: Date.now }
     }
   ]
 });

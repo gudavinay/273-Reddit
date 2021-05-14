@@ -12,7 +12,7 @@ app.get("/createDummyData", function (req, res, next) {
   let userProfile = new UserProfile({
     userIDSQL: "2",
     listOfTopics: ["topic1", "topic2"],
-    communityInvites: [],
+    communityInvites: []
   });
   userProfile.save();
 
@@ -22,21 +22,21 @@ app.get("/createDummyData", function (req, res, next) {
     communityDescription: "first day",
     topicSelected: [
       {
-        topic: "Art",
-      },
+        topic: "Art"
+      }
     ],
     listOfUsers: [
       {
         userID: "6089d63ea112c02c1df2914c",
         isAccepted: false,
-        isModerator: false,
-      },
+        isModerator: false
+      }
     ],
     ownerID: "6089d63ea112c02c1df2914c",
     upvotedBy: [],
     downvotedBy: [],
-    createdDate: Date.now(),
-    sentInvitesTo: [],
+    createdDate: Date.now,
+    sentInvitesTo: []
   });
   community.save();
 
