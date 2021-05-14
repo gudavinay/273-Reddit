@@ -80,10 +80,11 @@ export class invitation extends Component {
             searchedUser: [],
             NoInvitesSent: false,
           });
-          console.log(this.state.count);
+          console.log(response.data);
         } else {
           this.setState({
             NoInvitesSent: true,
+            listOfInvolvedUsers: [],
           });
         }
       })
@@ -97,7 +98,9 @@ export class invitation extends Component {
       const data = {
         name: e.target.value,
         users: this.state.listOfInvolvedUsers,
+        selectedUsers: this.state.selectedUsers,
       };
+      console.log(data);
       this.props.setLoader();
       Axios.defaults.headers.common["authorization"] = getToken();
       Axios.post(backendServer + "/getSearchedUserForMongo", data)
@@ -114,6 +117,7 @@ export class invitation extends Component {
             this.setState({
               searchedUser: results,
             });
+            console.log(this.state.searchedUser);
           }
         })
         .catch((error) => {
