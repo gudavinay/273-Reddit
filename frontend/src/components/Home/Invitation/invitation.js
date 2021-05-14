@@ -82,10 +82,16 @@ export class invitation extends Component {
           });
           console.log(this.state.NoInvitesSent);
         } else {
+          console.log(this.state.selectedUsers);
+          console.log(this.state.selectedUsers);
+          console.log(this.state.count);
           this.setState({
             NoInvitesSent: true,
             listOfInvolvedUsers: [],
             invitedDetails: [],
+            count: 0,
+            selectedUsers: [], //to clear the suggestions and selected users
+            searchedUser: [],
           });
         }
       })
