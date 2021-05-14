@@ -19,11 +19,11 @@ app.get("/getUserProfile", (req, res) => {
 app.get("/getUserDetails/:user_id", checkAuth, (req, res) => {
   try {
     const { user_id } = req.params;
-
     kafka.make_request(
       "mongo_user",
       {
         user_id,
+        loggedInUserId: req.user.user_id,
         path: "GET-USER-DETAILS-BY-ID",
       },
       (error, result) => {

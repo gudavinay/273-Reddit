@@ -1,9 +1,15 @@
 const mongoose = require("mongoose");
 const Community = require("./../models/mongo/Community");
+const UserProfile = require("./../models/mongo/UserProfile");
 
 const getAllCommunitiesSearch = async (msg, callback) => {
   try {
-    const { sortKey, sortValue, limit, page, searchText, user_id } = msg;
+    const { sortKey, sortValue, limit, page, searchText, user_id, loggedInUserId } = msg;
+
+    const loggedInUser = await UserProfile.findOne({
+      userIDSQL: loggedInUserId,
+    });
+
     const aggregate = Community.aggregate([
       {
         $match: {
@@ -40,24 +46,32 @@ const getAllCommunitiesSearch = async (msg, callback) => {
           listOfUsersLength: { "$add": ["$listOfUsersLength", 1] }, // Adding +1 means Owner
           upVotedLength: { $size: "$upvotedBy" },
           downVotedLength: { $size: "$downvotedBy" },
-          userUpVoted: {
-            $size: {
-              "$filter": {
-                "input": '$upvotedBy',
-                "as": 'item',
-                "cond": { "$setIsSubset": [["$$item.userID"], [mongoose.Types.ObjectId(user_id)]] }
-              }
-            }
+          score: {
+            $subtract: [{ $size: "$upvotedBy" }, { $size: "$downvotedBy" }],
           },
-          userDownVoted: {
-            $size: {
-              "$filter": {
-                "input": '$downvotedBy',
-                "as": 'item',
-                "cond": { "$setIsSubset": [["$$item.userID"], [mongoose.Types.ObjectId(user_id)]] }
-              }
-            }
-          }
+          userVoteDir: {
+            $cond: {
+              if: {
+                $setIsSubset: [
+                  [{ _id: mongoose.Types.ObjectId(loggedInUser._id) }],
+                  "$upvotedBy",
+                ],
+              },
+              then: 1,
+              else: {
+                $cond: {
+                  if: {
+                    $setIsSubset: [
+                      [{ _id: mongoose.Types.ObjectId(loggedInUser._id) }],
+                      "$downvotedBy",
+                    ],
+                  },
+                  then: -1,
+                  else: 0,
+                },
+              },
+            },
+          },
         },
       },
       {

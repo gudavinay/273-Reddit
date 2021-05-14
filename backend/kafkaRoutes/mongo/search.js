@@ -10,7 +10,7 @@ app.get("/getAllCommunities", checkAuth, (req, res) => {
         kafka.make_request("search_mongo", {
             sortKey, sortValue, limit, page, searchText,
             path: "Get-All-Communities-Search",
-            user_id: req.body.user_id
+            loggedInUserId: req.user.user_id
         }, (error, result) => {
             if (result.status === 200) {
                 return res.status(200).send(result.data);

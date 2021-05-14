@@ -3,8 +3,8 @@ import axios from "axios";
 import { Row, Col, Card } from "react-bootstrap";
 import { Link } from 'react-router-dom';
 
-import { getRelativeTime, getToken, nFormatter } from "../../../services/ControllerUtils";
-import DefaultCardText from "../../../assets/communityIcons/card-text.svg";
+import { getRelativeTime, getToken, nFormatter, getMongoUserID } from "../../../services/ControllerUtils";
+import DefaultCardText from "../../../assets/NoImage.png";
 import backendServer from "../../../webConfig";
 
 class User extends Component {
@@ -40,27 +40,98 @@ class User extends Component {
             })
         } catch (e) { console.log(e); }
     }
-    vote = async ({ community_id, voting }) => {
-        try {
-            axios.defaults.headers.common["authorization"] = getToken();
-            const { data: { community } } = await axios.post(`${backendServer}/community/vote/${community_id}`, {
-              "voting": Number(voting)
+    // vote = async ({ community_id, voting }) => {
+    //     try {
+    //         axios.defaults.headers.common["authorization"] = getToken();
+    //         const { data: { community } } = await axios.post(`${backendServer}/community/vote/${community_id}`, {
+    //           "voting": Number(voting)
+    //         });
+    //         if(!community) { return; }
+    //         const { communities } = this.state;
+
+    //         let temp = communities.reduce((acc, it) => {
+    //           acc[it._id] = it;
+    //           return acc;
+    //         }, {});
+
+    //         temp[community._id].upVotedLength = community.upvotedBy.length;
+    //         temp[community._id].downVotedLength = community.downvotedBy.length;
+
+    //         this.setState({
+    //           communities: Object.values(temp)
+    //         });
+    //       } catch (e) { console.log(e) }
+    // }
+    upVote = (communityId, userVoteDir, index) => {
+        var relScore = userVoteDir == 1 ? -1 : userVoteDir == 0 ? 1 : 2;
+        console.log("upvote req  = ", communityId, " ", userVoteDir, " ", index);
+        axios.defaults.headers.common["authorization"] = getToken();
+        axios
+            .post(backendServer + "/addVote", {
+                entityId: communityId,
+                userId: getMongoUserID(),
+                voteDir: userVoteDir == 1 ? 0 : 1,
+                relScore: relScore,
+                entityName: "Community",
+            })
+            .then((response) => {
+                // this.props.unsetLoader();
+                console.log("upVOted successfull = ", response);
+                console.log("this.state = ", this.state);
+                console.log("this.state = ", this.state.communities[index].userVoteDir);
+                const newCommunities = this.state.communities.slice();
+                newCommunities[index].score =
+                    userVoteDir == 1
+                        ? newCommunities[index].score - 1
+                        : userVoteDir == 0
+                            ? newCommunities[index].score + 1
+                            : newCommunities[index].score + 2;
+
+                newCommunities[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
+                console.log("newCommunities = ", newCommunities);
+                this.setState({ communities: newCommunities });
+                // this.fetchCommentsWithPostID();
+            })
+            .catch((err) => {
+                // this.props.unsetLoader();
+                console.log(err);
             });
-            if(!community) { return; }
-            const { communities } = this.state;
-      
-            let temp = communities.reduce((acc, it) => {
-              acc[it._id] = it;
-              return acc;
-            }, {});
-      
-            temp[community._id].upVotedLength = community.upvotedBy.length;
-            temp[community._id].downVotedLength = community.downvotedBy.length;
-      
-            this.setState({
-              communities: Object.values(temp)
+    }
+
+    downVote = (postId, userVoteDir, index) => {
+        // const oldScore = 0;
+        var relScore = userVoteDir == -1 ? 1 : userVoteDir == 0 ? -1 : -2;
+        axios.defaults.headers.common["authorization"] = getToken();
+        axios
+            .post(backendServer + "/addVote", {
+                entityId: postId,
+                userId: getMongoUserID(),
+                voteDir: userVoteDir == -1 ? 0 : -1,
+                relScore: relScore,
+                entityName: "Community",
+            })
+            .then((response) => {
+                // this.props.unsetLoader();
+                console.log("downvoted successfull = ", response);
+                console.log("communities = ", this.state.communities);
+                const newCommunities = this.state.communities.slice();
+                newCommunities[index].score =
+                    userVoteDir == -1
+                        ? newCommunities[index].score + 1
+                        : userVoteDir == 0
+                            ? newCommunities[index].score - 1
+                            : newCommunities[index].score - 2;
+
+                // newComments[index].userVoteDir = response.data.userVoteDir;
+                newCommunities[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
+                console.log("newCommunities = ", newCommunities);
+                this.setState({ communities: newCommunities });
+                // this.fetchCommentsWithPostID();
+            })
+            .catch((err) => {
+                // this.props.unsetLoader();
+                console.log(err);
             });
-          } catch (e) { console.log(e) }
     }
     render() {
         const { user, communities } = this.state;
@@ -73,10 +144,15 @@ class User extends Component {
                                 <Col xs={8}>
                                     <div style={{ margin: "0rem", padding: "0.7rem 0rem" }}>
                                         {(communities && communities.length > 0 && (
-                                            communities.map((c) => {
+                                            communities.map((c, index) => {
                                                 return (
                                                     <div key={c._id}>
-                                                        <UserCommunity key={c._id} data={c} vote={this.vote} />
+                                                        <UserCommunity
+                                                            key={c._id} data={c}
+                                                            upVote={this.upVote}
+                                                            downVote={this.downVote}
+                                                            index={index}
+                                                        />
                                                     </div>
                                                 );
                                             })
@@ -158,8 +234,8 @@ class UserCommunity extends Component {
             communityName,
             communityDescription,
             listOfUsersLength,
-            upVotedLength,
-            downVotedLength,
+            // upVotedLength,
+            // downVotedLength,
             postsLength,
             createdAt,
             ownerID
@@ -171,14 +247,39 @@ class UserCommunity extends Component {
                         <Row>
                             <Col xs={1} style={{ background: "#eef3f7", maxWidth: "5.8%", marginLeft: "14px" }}>
                                 <div>
-                                    <i style={{ cursor: "pointer" }} className="icon icon-arrow-up"
-                                        onClick={() => { this.props.vote({ community_id, voting: "1" }) }}
+                                    <i
+                                        style={{
+                                            cursor: "pointer",
+                                            color: this.props.data.userVoteDir == 1 ? "#ff4500" : "",
+                                        }}
+                                        className="icon icon-arrow-up"
+                                        onClick={() =>
+                                            this.props.upVote(
+                                                this.props.data._id,
+                                                this.props.data.userVoteDir,
+                                                this.props.index
+                                            )
+                                        }
                                     ></i>
 
-                                    <span style={{ whiteSpace: "nowrap" }}>{nFormatter(upVotedLength - downVotedLength, 1)}</span>
+                                    <span style={{ whiteSpace: "nowrap" }}>
+                                        {/* {nFormatter(upVotedLength - downVotedLength, 1)} */}
+                                        {nFormatter(this.props.data.score, 1)}
+                                    </span>
 
-                                    <i style={{ cursor: "pointer" }} className="icon icon-arrow-down"
-                                        onClick={() => { this.props.vote({ community_id, voting: "-1" }) }}
+                                    <i
+                                        style={{
+                                            cursor: "pointer",
+                                            color: this.props.data.userVoteDir == -1 ? "#7193ff" : "",
+                                        }}
+                                        className="icon icon-arrow-down"
+                                        onClick={() =>
+                                            this.props.downVote(
+                                                this.props.data._id,
+                                                this.props.data.userVoteDir,
+                                                this.props.index
+                                            )
+                                        }
                                     ></i>
                                 </div>
                             </Col>
@@ -189,8 +290,8 @@ class UserCommunity extends Component {
                                             backgroundPosition: "50%", backgroundRepeat: "no-repeat", backgroundSize: "100%", boxSizing: "border-box", flex: "none", fontSize: "32px", lineHeight: "32px", margin: "0 8px", width: "65px", verticalAlign: "middle"
                                         }} />
                                     ) : (
-                                        <div style={{ background: "#eef3f7", height: "80%", borderRadius: "5px" }}>
-                                            <img src={DefaultCardText} style={{ width: "25px", margin: "23px" }} />
+                                        <div style={{ background: "#eef3f7", borderRadius: "5px" }}>
+                                            <img src={DefaultCardText} style={{ width: "65px", margin: "4px" }} />
                                         </div>
                                     )
                                 }
