@@ -80,11 +80,12 @@ export class invitation extends Component {
             searchedUser: [],
             NoInvitesSent: false,
           });
-          console.log(response.data);
+          console.log(this.state.NoInvitesSent);
         } else {
           this.setState({
             NoInvitesSent: true,
             listOfInvolvedUsers: [],
+            invitedDetails: [],
           });
         }
       })
