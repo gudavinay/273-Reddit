@@ -28,22 +28,26 @@ const removeUserFromCommunities = async (msg, callback) => {
         "_id"
       );
       let output = [];
-      commentList.forEach((item) => {
-        output.push(item._id);
-      });
+      await Promise.all(
+        commentList.map((item) => {
+          output.push(item._id);
+        })
+      );
       let final_commentList = await Comment.find(
         {
           $or: [{ _id: { $in: output } }, { parentCommentID: { $in: output } }],
         },
         "_id postID communityID description"
       );
-      final_commentList.forEach(async (item) => {
-        await Post.findOneAndUpdate(
-          { _id: item.postID },
-          { $inc: { NoOfComments: -1 } }
-        );
-        await Comment.findOneAndRemove({ _id: item._id });
-      });
+      await Promise.all(
+        final_commentList.map(async (item) => {
+          await Post.findOneAndUpdate(
+            { _id: item.postID },
+            { $inc: { NoOfComments: -1 } }
+          );
+          await Comment.findOneAndRemove({ _id: item._id });
+        })
+      );
 
       let postList = await Post.find(
         {
@@ -52,14 +56,16 @@ const removeUserFromCommunities = async (msg, callback) => {
         },
         "_id communityID title"
       );
-      postList.forEach(async (item) => {
-        await Community.findOneAndUpdate(
-          { _id: item.communityID },
-          { $inc: { NoOfPost: -1 } }
-        );
-        await Post.findOneAndRemove({ _id: item._id });
-        await Comment.deleteMany({ postID: item._id });
-      });
+      await Promise.all(
+        postList.map(async (item) => {
+          await Community.findOneAndUpdate(
+            { _id: item.communityID },
+            { $inc: { NoOfPost: -1 } }
+          );
+          await Post.findOneAndRemove({ _id: item._id });
+          await Comment.deleteMany({ postID: item._id });
+        })
+      );
       res.status = 200;
       callback(null, res);
     });

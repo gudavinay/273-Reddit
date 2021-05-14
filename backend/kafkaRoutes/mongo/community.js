@@ -1,3 +1,4 @@
+const { Kafka } = require("aws-sdk");
 const express = require("express");
 const router = express.Router();
 const app = require("../../app");
@@ -292,7 +293,23 @@ app.get("/getAllCommunitiesListForUser", (req, res) => {
   });
 });
 
-// app.get("/getUsersWithMorePostsForCommunities", checkAuth, )
+app.get("/getUsersWithMorePostsForCommunities", (req, res) => {
+  kafka.make_request(
+    "community_analytics",
+    {
+      path: "Get-Users-With-More-Posts-For-Communities",
+      ID: req.query.ID,
+    },
+    (error, result) => {
+      console.log(result);
+      if (result) {
+        return res.status(200).send(result);
+      }
+      console.log(error);
+      return res.status(500).send(error);
+    }
+  );
+});
 
 app.post("/community/vote/:community_id", checkAuth, (req, res) => {
   kafka.make_request(

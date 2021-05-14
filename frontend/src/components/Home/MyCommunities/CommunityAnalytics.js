@@ -143,12 +143,26 @@ class CommunityAnalytics extends Component {
       });
   }
 
-  // getUsersWithMostsForEachCommunity = () => {
-
-  // }
+  getUsersWithMostsForEachCommunity = async () => {
+    const ID = getMongoUserID();
+    axios.defaults.headers.common["authorization"] = getToken();
+    axios
+      .get(`${backendServer}/getUsersWithMorePostsForCommunities?ID=${ID}`)
+      .then((response) => {
+        console.log(response.data);
+        this.setState({
+          mostUpvotedPost: response.data.mostUpvotedPost,
+          userWithMaxPosts: response.data.userWithMaxPosts,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   componentDidMount() {
     this.GetNoOfPostPerCommunity();
+    this.getUsersWithMostsForEachCommunity();
   }
 
   render() {
@@ -157,6 +171,8 @@ class CommunityAnalytics extends Component {
     return (
       <React.Fragment>
         <Container>
+          {JSON.stringify(this.state.mostUpvotedPost)}
+          {JSON.stringify(this.state.userWithMaxPosts)}
           <Row>
             <Col>
               <Plot
