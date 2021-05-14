@@ -3,7 +3,7 @@ import { Row, Col, Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import { getRelativeTime, nFormatter } from "../../../services/ControllerUtils";
-import DefaultCardText from "../../../assets/communityIcons/card-text.svg";
+import DefaultCardText from "../../../assets/NoImage.png";
 
 class SearchResult extends Component {
   constructor(props) {
@@ -103,13 +103,13 @@ class SearchResult extends Component {
                   <div
                     style={{
                       background: "#eef3f7",
-                      height: "80%",
+                      // height: "80%",
                       borderRadius: "5px",
                     }}
                   >
                     <img
                       src={DefaultCardText}
-                      style={{ width: "25px", margin: "23px" }}
+                      style={{ width: "65px", margin: "4px" }}
                     />
                   </div>
                 )}

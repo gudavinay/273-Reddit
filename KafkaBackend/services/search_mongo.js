@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const Community = require("./../models/mongo/Community");
-const mongoose = require("mongoose");
 
 const getAllCommunitiesSearch = async (msg, callback) => {
   try {

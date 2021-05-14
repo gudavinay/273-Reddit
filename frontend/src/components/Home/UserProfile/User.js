@@ -218,7 +218,7 @@ class UserCommunity extends Component {
                                         </div>
                                         <div style={{ marginLeft: "10px" }}>
                                             <i className="icon icon-user"></i>
-                                            <span style={{ marginLeft: "4px" }}> Created By <Link to={"/user/".concat(ownerID?.user_id)}>{ownerID?.name}</Link> {getRelativeTime(createdAt)}</span>
+                                            <span style={{ marginLeft: "4px" }}> Created By <Link to={"/user/".concat(ownerID?.userIDSQL)}>{ownerID?.name}</Link> {getRelativeTime(createdAt)}</span>
                                         </div>
                                     </div>
                                 </Row>

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+
 import Post from "./Post";
 import "./community.css";
 import gallerySvg from "../../../assets/communityIcons/galleryIcon.svg";
@@ -796,9 +797,11 @@ class Community extends Component {
                               </Col>
                               <Col style={{ paddingLeft: "0" }}>
                                 u/
+                                <Link to={"/user/".concat(this.state.communityDetails.ownerID?.userIDSQL)}>
                                   <strong>
                                   {this.state.communityDetails.ownerID.name}
                                 </strong>
+                                </Link>
                               </Col>
                             </Row>
                             {usersPresentInTheCommunity.length > 0 && (<div style={{ padding: "0 10px" }}>
@@ -830,9 +833,11 @@ class Community extends Component {
                                           </Col>
                                           <Col style={{ paddingLeft: "0" }}>
                                             u/
+                                            <Link to={"/user/".concat(this.state.communityDetails.ownerID?.userIDSQL)}>
                                               <strong>
                                               {user.userID.name}
                                             </strong>
+                                            </Link>
                                           </Col>
                                         </Row>
                                       </div>
