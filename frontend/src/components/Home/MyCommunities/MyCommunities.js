@@ -17,10 +17,10 @@ import {
   sortByTime,
   sortByNoOfUser,
   sortByPost,
-  getToken
+  getToken,
+  getDefaultRedditProfilePicture
 } from "../../../services/ControllerUtils";
 import { TablePagination } from "@material-ui/core";
-import NoImage from "../../../assets/NoImage.png";
 
 class MyCommunities extends Component {
   constructor(props) {
@@ -196,7 +196,7 @@ class MyCommunities extends Component {
         } else {
           imageCaraosel = (
             <Carousel.Item interval={1000}>
-              <img className="myCarasoulSize" src={NoImage} alt="First slide" />
+              <img className="myCarasoulSize" src={getDefaultRedditProfilePicture()} alt="First slide" />
             </Carousel.Item>
           );
         }

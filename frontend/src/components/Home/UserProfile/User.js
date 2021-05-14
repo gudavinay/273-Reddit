@@ -8,8 +8,8 @@ import {
   getToken,
   nFormatter,
   getMongoUserID,
+  getDefaultRedditProfilePicture,
 } from "../../../services/ControllerUtils";
-import DefaultCardText from "../../../assets/NoImage.png";
 import backendServer from "../../../webConfig";
 
 class User extends Component {
@@ -39,8 +39,8 @@ class User extends Component {
         data: { user, user_communities },
       } = await axios.get(
         backendServer +
-          "/getUserDetails/" +
-          (this.props.match.params.user_id || user_id[user_id.length - 1])
+        "/getUserDetails/" +
+        (this.props.match.params.user_id || user_id[user_id.length - 1])
       );
       this.props.unsetLoader();
       this.setState({
@@ -95,8 +95,8 @@ class User extends Component {
           userVoteDir == 1
             ? newCommunities[index].score - 1
             : userVoteDir == 0
-            ? newCommunities[index].score + 1
-            : newCommunities[index].score + 2;
+              ? newCommunities[index].score + 1
+              : newCommunities[index].score + 2;
 
         newCommunities[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
         console.log("newCommunities = ", newCommunities);
@@ -130,8 +130,8 @@ class User extends Component {
           userVoteDir == -1
             ? newCommunities[index].score + 1
             : userVoteDir == 0
-            ? newCommunities[index].score - 1
-            : newCommunities[index].score - 2;
+              ? newCommunities[index].score - 1
+              : newCommunities[index].score - 2;
 
         // newComments[index].userVoteDir = response.data.userVoteDir;
         newCommunities[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
@@ -198,10 +198,9 @@ class User extends Component {
                               padding: "3px",
                               position: "relative",
                               width: "86px",
-                              backgroundImage: `url(${
-                                user?.profile_picture_url ||
+                              backgroundImage: `url(${user?.profile_picture_url ||
                                 "https://www.redditstatic.com/avatars/avatar_default_07_7193FF.png"
-                              })`,
+                                })`,
                               backgroundSize: "cover",
                               border: "5px solid #f7f7f7",
                             }}
@@ -339,7 +338,7 @@ class UserCommunity extends Component {
                 ) : (
                   <div style={{ background: "#eef3f7", borderRadius: "5px" }}>
                     <img
-                      src={DefaultCardText}
+                      src={getDefaultRedditProfilePicture()}
                       style={{ width: "65px", margin: "4px" }}
                     />
                   </div>
