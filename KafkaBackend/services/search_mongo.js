@@ -1,9 +1,9 @@
+const mongoose = require("mongoose");
 const Community = require("./../models/mongo/Community");
 
 const getAllCommunitiesSearch = async (msg, callback) => {
     try {
-        const { sortKey, sortValue, limit, page, searchText } = msg;
-
+        const { sortKey, sortValue, limit, page, searchText, user_id } = msg;
         const aggregate = Community.aggregate([
             {
                 $match: {
@@ -40,6 +40,24 @@ const getAllCommunitiesSearch = async (msg, callback) => {
                     listOfUsersLength: { "$add": ["$listOfUsersLength", 1] }, // Adding +1 means Owner
                     upVotedLength: { $size: "$upvotedBy" },
                     downVotedLength: { $size: "$downvotedBy" },
+                    userUpVoted: {
+                        $size: {
+                            "$filter": {
+                                "input": '$upvotedBy',
+                                "as": 'item',
+                                "cond": { "$setIsSubset": [["$$item.userID"], [mongoose.Types.ObjectId(user_id)]] }
+                            }
+                        }
+                    },
+                    userDownVoted: {
+                        $size: {
+                            "$filter": {
+                                "input": '$downvotedBy',
+                                "as": 'item',
+                                "cond": { "$setIsSubset": [["$$item.userID"], [mongoose.Types.ObjectId(user_id)]] }
+                            }
+                        }
+                    }
                 },
             },
             {
