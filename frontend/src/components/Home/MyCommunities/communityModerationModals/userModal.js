@@ -1,6 +1,10 @@
 import axios from "axios";
 import React, { Component } from "react";
-import { getMongoUserID, getToken } from "../../../../services/ControllerUtils";
+import {
+  getMongoUserID,
+  getToken,
+  getDefaultRedditProfilePicture,
+} from "../../../../services/ControllerUtils";
 // import { Row } from "react-bootstrap";
 // import { Col } from "reactstrap";
 import backendServer from "../../../../webConfig";
@@ -12,6 +16,7 @@ class UserModal extends Component {
       communities: null,
       userDetails: null,
       removedList: [],
+      getDefaultRedditProfilePicture: getDefaultRedditProfilePicture(),
     };
   }
 
@@ -123,13 +128,21 @@ class UserModal extends Component {
                 display: "block",
                 width: "40px",
                 height: "40px",
-                backgroundColor: "#ccc",
-                borderRadius: "5px",
+                // backgroundColor: "#ccc",
+                borderRadius: "25px",
                 border: "1px solid #777",
                 margin: "0 15px",
+                overflow: "hidden",
               }}
             >
-              .
+              <img
+                src={this.state.getDefaultRedditProfilePicture}
+                alt=""
+                style={{
+                  height: "40px",
+                  width: "40px",
+                }}
+              />
             </div>
             <div>
               u/

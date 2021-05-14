@@ -299,6 +299,7 @@ class MyCommunitiesModeration extends Component {
                     height: "40px",
                     borderRadius: "25px",
                     overflow: "hidden",
+                    border: "1px solid #777",
                     // backgroundColor: "#ccc",
 
                     // border: "1px solid #777",

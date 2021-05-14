@@ -1,6 +1,6 @@
 // var express = require("express");
 // const app = require("../../app");
-// const router = express.Router();
+const router = express.Router();
 // const Community = require("../../models/mongo/Community");
 // const Post = require("../../models/mongo/Post");
 // const Comment = require("../../models/mongo/Comment");

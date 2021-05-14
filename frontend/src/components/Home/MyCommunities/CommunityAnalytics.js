@@ -6,7 +6,7 @@ import axios from "axios";
 import {
   getMongoUserID,
   getToken,
-  sortByPost
+  sortByPost,
 } from "../../../services/ControllerUtils";
 import { Row, Col, Container } from "react-bootstrap";
 class CommunityAnalytics extends Component {
@@ -25,20 +25,20 @@ class CommunityAnalytics extends Component {
             text: "Name of Community",
             font: {
               size: 18,
-              color: "#7f7f7f"
-            }
-          }
+              color: "#7f7f7f",
+            },
+          },
         },
         yaxis: {
           title: {
             text: "No Of Post vs No of User ",
             font: {
               size: 18,
-              color: "#7f7f7f"
-            }
-          }
-        }
-      }
+              color: "#7f7f7f",
+            },
+          },
+        },
+      },
     };
   }
 
@@ -47,7 +47,7 @@ class CommunityAnalytics extends Component {
     let yAxis = [];
     let yAxisUser = [];
     if (communityData.length > 0) {
-      communityData.map(community => {
+      communityData.map((community) => {
         label.push(community.communityName);
         yAxis.push(community.NoOfPost);
         yAxisUser.push(community.acceptedUsersSQLIds.length + 1);
@@ -60,15 +60,15 @@ class CommunityAnalytics extends Component {
           y: yAxis,
           x: label,
           type: "bar",
-          name: "Post"
+          name: "Post",
         },
         {
           y: yAxisUser,
           x: label,
           type: "bar",
-          name: "User"
-        }
-      ]
+          name: "User",
+        },
+      ],
     });
     // this.setState({
     //   data: [
@@ -95,9 +95,9 @@ class CommunityAnalytics extends Component {
                   values: yAxis,
                   labels: label,
                   type: "pie",
-                  name: "Post"
-                }
-              ]
+                  name: "Post",
+                },
+              ],
             });
             return;
           }
@@ -111,9 +111,9 @@ class CommunityAnalytics extends Component {
             values: yAxis,
             labels: label,
             type: "pie",
-            name: "Post"
-          }
-        ]
+            name: "Post",
+          },
+        ],
       });
       console.log(yAxis);
     }
@@ -125,23 +125,27 @@ class CommunityAnalytics extends Component {
     axios.defaults.headers.common["authorization"] = getToken();
     axios
       .get(`${backendServer}/communityAnalytics?ID=${ID}`)
-      .then(response => {
+      .then((response) => {
         if (response.status == 200) {
           this.setState({
-            communityData: response.data
+            communityData: response.data,
           });
           console.log(response.data);
           this.calculateValues(response.data);
           this.CommunityWithMaximumPost(response.data);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
         this.setState({
-          error: "Community name is not unique"
+          error: "Community name is not unique",
         });
       });
   }
+
+  // getUsersWithMostsForEachCommunity = () => {
+
+  // }
 
   componentDidMount() {
     this.GetNoOfPostPerCommunity();
@@ -159,16 +163,16 @@ class CommunityAnalytics extends Component {
                 name="noOfPost"
                 data={this.state.dataToPlot}
                 layout={this.state.layoutForBar}
-                onInitialized={figure => this.setState(figure)}
-                onUpdate={figure => this.setState(figure)}
+                onInitialized={(figure) => this.setState(figure)}
+                onUpdate={(figure) => this.setState(figure)}
               />
             </Col>
             <Col>
               <Plot
                 name="noOfUser"
                 data={this.state.dataForPost}
-                onInitialized={figure => this.setState(figure)}
-                onUpdate={figure => this.setState(figure)}
+                onInitialized={(figure) => this.setState(figure)}
+                onUpdate={(figure) => this.setState(figure)}
               />
             </Col>
           </Row>
