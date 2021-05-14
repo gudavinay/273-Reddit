@@ -108,6 +108,7 @@ class Community extends Component {
       .post(backendServer + "/rejectInvite", data)
       .then(result => {
         this.props.unsetLoader();
+        this.getCommunityDetails();
         console.log(result);
       })
       .catch(err => {
@@ -371,38 +372,92 @@ class Community extends Component {
             }
           } else if (isUserBeingInvitedByModerator) {
             showPosts = false;
-            participationButton = (
-              <Row>
-                <Col>
-                  <button
-                    className="form-control"
-                    style={{
-                      display: "block",
-                      borderRadius: "30px",
-                      background: "#e17157",
-                      color: "white"
-                    }}
-                    onClick={this.acceptInvite}
-                  >
-                    Accept
+            if (userStatusInCommunityForSentInvite.isAccepted == -1) {
+              participationButton = (
+                <Row>
+                  <Col>
+                    <button
+                      className="form-control"
+                      style={{
+                        display: "block",
+                        borderRadius: "30px",
+                        background: "#e17157",
+                        color: "white"
+                      }}
+                    // onClick={this.acceptInvite}
+                    >
+                      You rejected the invitation.
+                    </button>
+                  </Col>
+                </Row>
+              );
+            } else if (userStatusInCommunityForSentInvite.isAccepted == 0) {
+              participationButton = (
+                <Row>
+                  <Col>
+                    <button
+                      className="form-control"
+                      style={{
+                        display: "block",
+                        borderRadius: "30px",
+                        background: "#e17157",
+                        color: "white"
+                      }}
+                      onClick={this.acceptInvite}
+                    >
+                      Accept
                   </button>
-                </Col>
-                <Col>
-                  <button
-                    className="form-control"
-                    style={{
-                      display: "block",
-                      borderRadius: "30px",
-                      background: "#e17157",
-                      color: "white"
-                    }}
-                    onClick={this.rejectInvite}
-                  >
-                    Reject
+                  </Col>
+                  <Col>
+                    <button
+                      className="form-control"
+                      style={{
+                        display: "block",
+                        borderRadius: "30px",
+                        background: "#e17157",
+                        color: "white"
+                      }}
+                      onClick={this.rejectInvite}
+                    >
+                      Reject
                   </button>
-                </Col>
-              </Row>
-            );
+                  </Col>
+                </Row>
+              );
+            } else {
+              participationButton = (
+                <button
+                  className="form-control"
+                  style={{
+                    display: "block",
+                    borderRadius: "30px",
+                    background: "#e17157",
+                    color: "white"
+                  }}
+                  onClick={() => {
+                    this.props.setLoader();
+                    axios.defaults.headers.common["authorization"] = getToken();
+                    axios
+                      .post(`${backendServer}/userLeaveRequestFromCommunity`, {
+                        community_id: this.state.community_id,
+                        user_id: getMongoUserID()
+                      })
+                      .then(response => {
+                        this.props.unsetLoader();
+                        console.log(response);
+                        this.setState({ communityDetails: response.data });
+                      })
+                      .catch(err => {
+                        this.props.unsetLoader();
+                        console.log(err);
+                      });
+                  }}
+                >
+                  Leave
+                </button>
+              );
+            }
+
           }
         } else {
           showPosts = false;
