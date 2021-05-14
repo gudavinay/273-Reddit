@@ -65,11 +65,34 @@ class UserProfile extends Component {
   }
 
   uploadImage = e => {
-    if (e.target.files)
+    if (e.target.files && e.target.files.length > 0) {
+      let data = new FormData();
+      data.append("file", e.target.files[0]);
+      this.props.setLoader();
+      axios
+        .post(`${backendServer}/upload`, data)
+        .then(response => {
+          this.props.unsetLoader();
+          console.log(response);
+          if (
+            response.data &&
+            response.data[0] &&
+            response.data[0].Location
+          )
+            this.setState({
+              profile_picture_url: response.data[0].Location
+            });
+        })
+        .catch(error => {
+          this.props.unsetLoader();
+          console.log("error " + error);
+        });
+    } else {
       this.setState({
-        file: e.target.files[0],
-        fileText: e.target.files[0].name
+        profile_picture_url: null
       });
+    }
+
   };
 
   handleDelete = (e, topic) => {
@@ -215,7 +238,7 @@ class UserProfile extends Component {
                       <i
                         className="fa fa-camera"
                         style={{ opacity: 1, fontSize: "75px", color: "white" }}
-                        onClick={() => {}}
+                        onClick={() => { }}
                       >
                         <input
                           style={{
@@ -234,7 +257,7 @@ class UserProfile extends Component {
                       </i>
                     </div>
                   </div>
-                  <button
+                  {/* <button
                     className="form-control"
                     disabled={!this.state.file}
                     style={{ margin: "30px 0 0 0", width: "100px" }}
@@ -263,7 +286,7 @@ class UserProfile extends Component {
                     }}
                   >
                     Upload
-                  </button>
+                  </button> */}
                   <Row style={{ marginTop: "10px" }}>
                     <Col sm={9}></Col>
                   </Row>
@@ -436,7 +459,7 @@ class UserProfile extends Component {
           <Modal.Body>
             <React.Fragment>
               {/* <center> */}
-              <form onSubmit={() => {}}>
+              <form onSubmit={() => { }}>
                 <Row style={{ padding: "5px 0" }}>
                   <Col sm={1}></Col>
                   <Col sm={8}>
