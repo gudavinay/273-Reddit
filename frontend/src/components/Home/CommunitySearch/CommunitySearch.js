@@ -89,7 +89,12 @@ class CommunitySearch extends Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     const { newQuery } = snapshot;
     if (newQuery) {
-      this.processSearch(true);
+      this.setState({
+        searchText: this.getSearchQueryFromLocation(),
+        page: 0,
+      }, () => {
+        this.processSearch();
+      });
     }
   }
   PageSizeChange = (e) => {
@@ -138,8 +143,8 @@ class CommunitySearch extends Component {
           userVoteDir == 1
             ? newCommunities[index].score - 1
             : userVoteDir == 0
-            ? newCommunities[index].score + 1
-            : newCommunities[index].score + 2;
+              ? newCommunities[index].score + 1
+              : newCommunities[index].score + 2;
 
         newCommunities[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
         console.log("newCommunities = ", newCommunities);
@@ -176,8 +181,8 @@ class CommunitySearch extends Component {
           userVoteDir == -1
             ? newCommunities[index].score + 1
             : userVoteDir == 0
-            ? newCommunities[index].score - 1
-            : newCommunities[index].score - 2;
+              ? newCommunities[index].score - 1
+              : newCommunities[index].score - 2;
 
         // newComments[index].userVoteDir = response.data.userVoteDir;
         newCommunities[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
