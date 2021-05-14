@@ -33,6 +33,7 @@ export class invitation extends Component {
       count: 0,
       NoCommunities: false,
       NoInvitesSent: false,
+      searchText: "",
     };
   }
   componentDidMount() {
@@ -101,6 +102,7 @@ export class invitation extends Component {
       });
   };
   searchUser = (e) => {
+    this.setState({ searchText: e.target.value });
     if (e.target.value.length > 1) {
       const data = {
         name: e.target.value,
@@ -144,16 +146,17 @@ export class invitation extends Component {
     this.setState({
       selectedUsers: items,
     });
-
-    let userToAddBackInSearchedUsers = {
-      name: user.name,
-      _id: user.user_id,
-    };
-    this.state.searchedUser.push(userToAddBackInSearchedUsers);
-    this.setState({
-      searchedUser: this.state.searchedUser,
-    });
-    console.log(this.state.searchedUser);
+    if (this.state.searchText.length > 0) {
+      let userToAddBackInSearchedUsers = {
+        name: user.name,
+        _id: user.user_id,
+      };
+      this.state.searchedUser.push(userToAddBackInSearchedUsers);
+      this.setState({
+        searchedUser: this.state.searchedUser,
+      });
+      console.log(this.state.searchedUser);
+    }
   };
   handleUsersSelection = (user) => {
     this.setState(

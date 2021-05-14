@@ -49,7 +49,7 @@ app.post("/createUserProfile", (req, res) => {
   });
 });
 
-app.post("/getSearchedUserForMongo", async (req, res) => {
+app.post("/getSearchedUserForMongo", checkAuth, async (req, res) => {
   req.body.path = "Get-Searched-User-For-Mongo";
   req.body.name = req.body.name;
   req.body.users = req.body.users;
@@ -62,7 +62,7 @@ app.post("/getSearchedUserForMongo", async (req, res) => {
   });
 });
 
-app.post("/getNotificationData", (req, res) => {
+app.post("/getNotificationData", checkAuth, (req, res) => {
   req.body.path = "Get-Notification-Data";
   req.body.user_id = req.body.user_id;
 
@@ -76,7 +76,7 @@ app.post("/getNotificationData", (req, res) => {
   });
 });
 
-app.post("/acceptInvite", (req, res) => {
+app.post("/acceptInvite", checkAuth, (req, res) => {
   (req.body.user_id = req.body.user_id),
     (req.body.community_id = req.body.community_id);
   req.body.path = "Accept-Invite-As-User";
@@ -90,7 +90,7 @@ app.post("/acceptInvite", (req, res) => {
   });
 });
 
-app.post("/rejectInvite", (req, res) => {
+app.post("/rejectInvite", checkAuth, (req, res) => {
   console.log("reject called backend");
   (req.body.user_id = req.body.user_id),
     (req.body.community_id = req.body.community_id);
@@ -118,7 +118,7 @@ app.get("/getUserProfileByMongoID", (req, res) => {
   });
 });
 
-app.post("/RequestedUsersForCom", async (req, res) => {
+app.post("/RequestedUsersForCom", checkAuth, async (req, res) => {
   // console.log(req.body.usersList);
   req.body.path = "Requested-Users-For-Com";
   req.body.userList = req.body.userList;
@@ -132,7 +132,7 @@ app.post("/RequestedUsersForCom", async (req, res) => {
   });
 });
 
-app.post("/getListedUserDetails", async (req, res) => {
+app.post("/getListedUserDetails", checkAuth, async (req, res) => {
   req.body.page = req.body.page;
   req.body.size = req.body.size;
   req.body.usersList = req.body.usersList;

@@ -25,7 +25,7 @@ app.get("/getTopic", checkAuth, async (req, res) => {
   });
 });
 
-app.post("/addTopic", async (req, res) => {
+app.post("/addTopic", checkAuth, async (req, res) => {
   req.body.path = "addTopic";
   kafka.make_request("manage_topic", req.body, (error, result) => {
     console.log(result);
@@ -36,7 +36,7 @@ app.post("/addTopic", async (req, res) => {
   });
 });
 
-app.post("/deleteTopic", async (req, res) => {
+app.post("/deleteTopic", checkAuth, async (req, res) => {
   req.body.path = "deleteTopic";
   kafka.make_request("manage_topic", req.body, (error, result) => {
     console.log(result);
@@ -48,7 +48,7 @@ app.post("/deleteTopic", async (req, res) => {
   });
 });
 
-app.post("/editTopic", async (req, res) => {
+app.post("/editTopic", checkAuth, async (req, res) => {
   req.body.path = "editTopic";
   kafka.make_request("manage_topic", req.body, (error, result) => {
     console.log(result);
