@@ -19,7 +19,7 @@ const rejectInvite = async (msg, callback) => {
           {
             $set: {
               "sentInvitesTo.$.isAccepted": -1,
-              "sentInvitesTo.$.dateTime": Date.now
+              "sentInvitesTo.$.dateTime": Date.now()
             }
           },
           (err, result) => {
