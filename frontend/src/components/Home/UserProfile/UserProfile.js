@@ -138,11 +138,11 @@ class UserProfile extends Component {
       });
   };
 
-  componentDidUpdate(prevState) {
-    if (prevState.userProfile !== this.props.userProfile) {
-      this.setState({ saveSuccess: true, saveFailed: false });
-    }
-  }
+  // componentDidUpdate(prevState) {
+  //   if (prevState.userProfile !== this.props.userProfile) {
+  //     this.setState({ saveSuccess: true, saveFailed: false });
+  //   }
+  // }
 
   render() {
     let dropDownItem = null;
@@ -215,7 +215,7 @@ class UserProfile extends Component {
                       <i
                         className="fa fa-camera"
                         style={{ opacity: 1, fontSize: "75px", color: "white" }}
-                        onClick={() => {}}
+                        onClick={() => { }}
                       >
                         <input
                           style={{
@@ -436,7 +436,7 @@ class UserProfile extends Component {
           <Modal.Body>
             <React.Fragment>
               {/* <center> */}
-              <form onSubmit={() => {}}>
+              <form onSubmit={() => { }}>
                 <Row style={{ padding: "5px 0" }}>
                   <Col sm={1}></Col>
                   <Col sm={8}>
