@@ -215,7 +215,7 @@ class UserProfile extends Component {
                       <i
                         className="fa fa-camera"
                         style={{ opacity: 1, fontSize: "75px", color: "white" }}
-                        onClick={() => { }}
+                        onClick={() => {}}
                       >
                         <input
                           style={{
@@ -436,7 +436,7 @@ class UserProfile extends Component {
           <Modal.Body>
             <React.Fragment>
               {/* <center> */}
-              <form onSubmit={() => { }}>
+              <form onSubmit={() => {}}>
                 <Row style={{ padding: "5px 0" }}>
                   <Col sm={1}></Col>
                   <Col sm={8}>
@@ -445,6 +445,8 @@ class UserProfile extends Component {
                       className="form-control"
                       placeholder="New topic name"
                       maxLength="45"
+                      value={this.state.newTopic}
+                      required
                       onChange={e => {
                         this.setState({ newTopic: e.target.value });
                       }}
@@ -463,7 +465,10 @@ class UserProfile extends Component {
                           .then(result => {
                             this.props.unsetLoader();
                             console.log(result);
-                            this.setState({ listOfTopicsFromDB: result.data });
+                            this.setState({
+                              listOfTopicsFromDB: result.data,
+                              newTopic: ""
+                            });
                           })
                           .catch(err => {
                             this.props.unsetLoader();

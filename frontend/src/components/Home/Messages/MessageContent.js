@@ -7,7 +7,7 @@ import {
   getSQLUserID,
   getUserProfile,
   getRelativeTime,
-  getToken,
+  getToken
 } from "../../../services/ControllerUtils";
 class MessageContent extends Component {
   constructor(props) {
@@ -15,7 +15,7 @@ class MessageContent extends Component {
     this.state = {
       message: [],
       messageTobeSent: "",
-      getUniqueMembers: [],
+      getUniqueMembers: []
     };
   }
   getMessageFromUser(membeDetail) {
@@ -25,43 +25,43 @@ class MessageContent extends Component {
       .get(
         `${backendServer}/getMessage?ID=${user_id}&chatWith=${membeDetail.user_id}`
       )
-      .then((response) => {
+      .then(response => {
         if (response.status == 200) {
           this.setState({
             message: response.data,
-            messageTobeSent: "",
+            messageTobeSent: ""
           });
           console.log(response.data);
         }
       })
-      .catch((error) => {
+      .catch(error => {
         this.setState({
           message: "",
-          messageTobeSent: "",
+          messageTobeSent: ""
         });
         console.log(error);
       });
   }
 
-  sendMessage = (e) => {
+  sendMessage = e => {
     e.preventDefault();
     const user_id = getSQLUserID();
     console.log(this.state.messageTobeSent);
     const data = {
       message: this.state.messageTobeSent,
       sent_by: user_id,
-      sent_to: this.props.chattedWith.user_id,
+      sent_to: this.props.chattedWith.user_id
     };
     axios.defaults.headers.common["authorization"] = getToken();
     axios
       .post(`${backendServer}/sendMessage`, data)
-      .then((response) => {
+      .then(response => {
         if (response.status == 200) {
           this.getMessageFromUser(this.props.chattedWith);
           console.log(response.data);
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   };
@@ -85,7 +85,7 @@ class MessageContent extends Component {
               <label
                 className="changePadding messageBox border"
                 style={{
-                  color: this.props.darkMode ? "#DAE0E6" : "black",
+                  color: this.props.darkMode ? "#DAE0E6" : "black"
                 }}
               >
                 {message.message}
@@ -139,14 +139,16 @@ class MessageContent extends Component {
                         className="form-control"
                         style={{ align: "bottom" }}
                         value={this.state.messageTobeSent}
-                        onChange={(e) =>
+                        onChange={e =>
                           this.setState({ messageTobeSent: e.target.value })
                         }
                         required
                       ></Form.Control>
                     </Col>
                     <Col xs={2}>
-                      <Button className="createCommunity">Send</Button>
+                      <Button type="submit" className="createCommunity">
+                        Send
+                      </Button>
                     </Col>
                   </Row>
                 </Form>
