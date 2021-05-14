@@ -163,7 +163,7 @@ const mongoose = require("mongoose");
 //   console.log("userId =  ", userId);
 //   Comment.find({ postID: msg.postID })
 //     .populate("userID")
-//     .then(result => {
+//     .then((result) => {
 //       const responseData = JSON.parse(JSON.stringify(result));
 //       if (responseData && responseData.length > 0) {
 //         responseData.forEach((resp, index) => {
@@ -185,13 +185,21 @@ const mongoose = require("mongoose");
 //                   upvoteCount: {
 //                     $sum: {
 //                       $sum: {
-//                         $cond: { if: { $eq: ["$voteDir", 1] }, then: 1, else: 0 },
+//                         $cond: {
+//                           if: { $eq: ["$voteDir", 1] },
+//                           then: 1,
+//                           else: 0,
+//                         },
 //                       },
 //                     },
 //                   },
 //                   downvoteCount: {
 //                     $sum: {
-//                       $cond: { if: { $eq: ["$voteDir", -1] }, then: 1, else: 0 },
+//                       $cond: {
+//                         if: { $eq: ["$voteDir", -1] },
+//                         then: 1,
+//                         else: 0,
+//                       },
 //                     },
 //                   },
 //                   userVoteDir: {
@@ -256,11 +264,7 @@ const mongoose = require("mongoose");
 //                 res.status = 500;
 //                 callback(null, res);
 //               } else {
-//                 resp.score =
-//                   resp.upvoteCount =
-//                   resp.downvoteCount =
-//                   resp.userVoteDir =
-//                   0;
+//                 resp.score = resp.upvoteCount = resp.downvoteCount = resp.userVoteDir = 0;
 //                 if (result && result[0]) {
 //                   resp.score = result[0].upvoteCount - result[0].downvoteCount;
 //                   resp.upvoteCount = result[0].upvoteCount;
@@ -284,14 +288,13 @@ const mongoose = require("mongoose");
 //             }
 //           );
 //         });
-
 //       }
-//     }).catch(err => {
+//     })
+//     .catch((err) => {
 //       res.status = 500;
 //       res.data = "Internal Server Error";
 //       callback(null, res);
-//     })
-
+//     });
 // };
 
 const getCommentsWithPostID = async (msg, callback) => {
@@ -320,6 +323,8 @@ const getCommentsWithPostID = async (msg, callback) => {
         postID: "$postID",
         description: "$description",
         isParentComment: "$isParentComment",
+        parentCommentID: "$parentCommentID",
+        communityID: "$communityID",
         userID: { $first: "$userID" },
         createdAt: "$createdAt",
         updatedAt: "$updatedAt",
