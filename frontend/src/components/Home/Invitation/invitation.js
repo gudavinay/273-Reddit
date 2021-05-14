@@ -283,6 +283,7 @@ export class invitation extends Component {
         <React.Fragment>
           <Container style={{ padding: "0 15%" }}>
             <div>
+              {/* {JSON.stringify(this.state.communityID)} */}
               <Row style={{ margin: "10px", padding: "25px 0", width: "45%" }}>
                 <select
                   className="form-control"
@@ -290,15 +291,17 @@ export class invitation extends Component {
                   id="community"
                   onChange={(e) => {
                     this.setState({ communityID: e.target.value });
-                    this.getCommunityInvitationStatus(
-                      e.target.value,
-                      this.state.page,
-                      this.state.size
-                    );
+                    if (e.target.value != "Select Community") {
+                      this.getCommunityInvitationStatus(
+                        e.target.value,
+                        this.state.page,
+                        this.state.size
+                      );
+                    }
                   }}
                   value={this.state.communityID}
                 >
-                  <option>Select Community</option>
+                  <option selected>Select Community</option>
                   {this.state.communities.map((community, index) => (
                     <option key={index} value={community.communityID}>
                       {community.communityName}

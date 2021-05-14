@@ -9,9 +9,17 @@ const showInvitationStatus = async (msg, callback) => {
   }
   const limit = parseInt(msg.size);
   const recordCount = await new Promise((resolve, reject) => {
-    Community.findOne({ _id: msg.community_id }).then((result) => {
-      resolve(Object.keys(result.sentInvitesTo).length);
-    });
+    Community.findOne({ _id: msg.community_id })
+      .then((result) => {
+        resolve(
+          result && result.sentInvitesTo
+            ? Object.keys(result.sentInvitesTo).length
+            : 0
+        );
+      })
+      .catch((err) => {
+        callback(err, null);
+      });
   });
   console.log(limit);
   console.log(msg.skip);
