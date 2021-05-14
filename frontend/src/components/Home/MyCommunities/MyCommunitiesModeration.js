@@ -488,7 +488,11 @@ class MyCommunitiesModeration extends Component {
                 </div>
                 <div
                   className="card-body"
-                  style={{ padding: "10px 0", height: "60vh" }}
+                  style={{
+                    padding: "10px 0",
+                    height: "60vh",
+                    overflow: "scroll",
+                  }}
                 >
                   {communitiesList}
                 </div>
@@ -687,7 +691,11 @@ class MyCommunitiesModeration extends Component {
                 </div>
                 <div
                   className="card-body"
-                  style={{ padding: "10px 0", height: "60vh" }}
+                  style={{
+                    padding: "10px 0",
+                    height: "60vh",
+                    overflow: "scroll",
+                  }}
                 >
                   {usersList}
                 </div>
