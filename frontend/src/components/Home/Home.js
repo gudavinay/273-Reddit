@@ -15,6 +15,7 @@ import {
 import HomeSearchResults from "./HomeSearchResults";
 import createPostRulesSVG from "../../assets/createPostRules.svg";
 import { Link } from "react-router-dom";
+import errorSVG from "../../assets/404.svg";
 
 class Home extends Component {
   constructor(props) {
@@ -55,8 +56,8 @@ class Home extends Component {
           userVoteDir == 1
             ? newPosts[index].score - 1
             : userVoteDir == 0
-            ? newPosts[index].score + 1
-            : newPosts[index].score + 2;
+              ? newPosts[index].score + 1
+              : newPosts[index].score + 2;
 
         newPosts[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
         console.log("newComments = ", newPosts);
@@ -87,8 +88,8 @@ class Home extends Component {
           userVoteDir == -1
             ? newPosts[index].score + 1
             : userVoteDir == 0
-            ? newPosts[index].score - 1
-            : newPosts[index].score - 2;
+              ? newPosts[index].score - 1
+              : newPosts[index].score - 2;
 
         // newComments[index].userVoteDir = response.data.userVoteDir;
         newPosts[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
@@ -315,16 +316,11 @@ class Home extends Component {
                   </Card.Body>
                 </Card>
               ) : (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    textAlign: "center",
-                    height: "70vh",
-                  }}
-                >
-                  No data
+                <div style={{ textAlign: "center", padding: "8%" }}>
+                  <img alt="" width="25%" src={errorSVG} />
+                  <h3>
+                    No Data Available
+          </h3>
                 </div>
               )}
 
@@ -454,7 +450,7 @@ class Home extends Component {
                                     {this.state.communitiesListForWidget
                                       .length -
                                       1 ==
-                                    index ? (
+                                      index ? (
                                       <div
                                         className="downArrowRotate"
                                         style={{
