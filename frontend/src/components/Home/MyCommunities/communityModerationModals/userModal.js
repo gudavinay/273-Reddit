@@ -65,48 +65,48 @@ class UserModal extends Component {
     let communitiesList = [];
     this.state.communities
       ? this.state.communities.forEach((item) => {
-          communitiesList.push(
-            <div className="row" key={item._id} style={{ margin: "30px" }}>
+        communitiesList.push(
+          <div className="row" key={item._id} style={{ margin: "30px" }}>
+            <div
+              className="col-1"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              <input
+                type="checkbox"
+                onChange={() => {
+                  let arr = this.state.removedList;
+                  if (arr.includes(item._id)) {
+                    arr.pop(item._id);
+                  } else {
+                    arr.push(item._id);
+                  }
+                  this.setState({
+                    removedList: arr,
+                  });
+                }}
+              />
+            </div>
+            <div className="col">
               <div
-                className="col-1"
                 style={{
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
+                  fontSize: "18px",
+                  fontWeight: "500",
+                  paddingLeft: "15px",
                 }}
               >
-                <input
-                  type="checkbox"
-                  onChange={() => {
-                    let arr = this.state.removedList;
-                    if (arr.includes(item._id)) {
-                      arr.pop(item._id);
-                    } else {
-                      arr.push(item._id);
-                    }
-                    this.setState({
-                      removedList: arr,
-                    });
-                  }}
-                />
-              </div>
-              <div className="col">
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    fontSize: "18px",
-                    fontWeight: "500",
-                    paddingLeft: "15px",
-                  }}
-                >
-                  r/{item.communityName}
-                </div>
+                r/{item.communityName}
               </div>
             </div>
-          );
-        })
+          </div>
+        );
+      })
       : null;
     console.log(this.state);
     return (
@@ -136,7 +136,7 @@ class UserModal extends Component {
               }}
             >
               <img
-                src={this.state.getDefaultRedditProfilePicture}
+                src={this.state.userDetails && this.state.userDetails.profile_picture_url ? this.state.userDetails.profile_picture_url : this.state.getDefaultRedditProfilePicture}
                 alt=""
                 style={{
                   height: "40px",

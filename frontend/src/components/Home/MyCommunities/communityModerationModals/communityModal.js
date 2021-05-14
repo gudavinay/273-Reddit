@@ -93,138 +93,138 @@ class CommunityModal extends Component {
     let counter = 1;
     this.state.communityDetails
       ? this.state.communityDetails.listOfUsers.forEach((item) => {
-          if (item.isAccepted === 0) {
-            let data = this.state.users ? this.state.users[item.userID] : {};
-            requestedUsers.push(
+        if (item.isAccepted === 0) {
+          let data = this.state.users ? this.state.users[item.userID] : {};
+          requestedUsers.push(
+            <div
+              key={item.userID}
+              className="row"
+              style={{ padding: "15px 30px" }}
+            >
               <div
-                key={item.userID}
-                className="row"
-                style={{ padding: "15px 30px" }}
+                className="col-1"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  onChange={() => {
+                    let arr = this.state.userList;
+                    if (arr.includes(item.userID)) {
+                      arr.pop(item.userID);
+                    } else {
+                      arr.push(item.userID);
+                    }
+                    this.setState({
+                      userList: arr,
+                    });
+                  }}
+                />
+              </div>
+              <div
+                className="col"
+                style={{
+                  display: "flex",
+                }}
               >
                 <div
-                  className="col-1"
                   style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
+                    display: "block",
+                    width: "40px",
+                    height: "40px",
+                    // backgroundColor: "#ccc",
+                    borderRadius: "25px",
+                    overflow: "hidden",
+                    // border: "1px solid #777",
+                    margin: "0 15px",
+                    border: "1px solid #777",
                   }}
                 >
-                  <input
-                    type="checkbox"
-                    onChange={() => {
-                      let arr = this.state.userList;
-                      if (arr.includes(item.userID)) {
-                        arr.pop(item.userID);
-                      } else {
-                        arr.push(item.userID);
-                      }
-                      this.setState({
-                        userList: arr,
-                      });
+                  <img
+                    src={data.profile_picture_url ? data.profile_picture_url : this.state.getDefaultRedditProfilePicture}
+                    alt=""
+                    style={{
+                      height: "40px",
+                      width: "40px",
                     }}
                   />
                 </div>
                 <div
-                  className="col"
-                  style={{
-                    display: "flex",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "block",
-                      width: "40px",
-                      height: "40px",
-                      // backgroundColor: "#ccc",
-                      borderRadius: "25px",
-                      overflow: "hidden",
-                      // border: "1px solid #777",
-                      margin: "0 15px",
-                      border: "1px solid #777",
-                    }}
-                  >
-                    <img
-                      src={this.state.getDefaultRedditProfilePicture}
-                      alt=""
-                      style={{
-                        height: "40px",
-                        width: "40px",
-                      }}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                    }}
-                  >
-                    u/{data.name}
-                  </div>
-                </div>
-              </div>
-            );
-          } else if (item.isAccepted === 1) {
-            let data = this.state.users ? this.state.users[item.userID] : {};
-            acceptedUsers.push(
-              <div
-                key={item.userID}
-                className="row"
-                style={{ padding: "15px" }}
-              >
-                <div
-                  className="col-1"
                   style={{
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
                   }}
                 >
-                  {counter}.
-                </div>
-                <div
-                  className="col"
-                  style={{
-                    display: "flex",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "block",
-                      width: "40px",
-                      height: "40px",
-                      // backgroundColor: "#ccc",
-                      borderRadius: "25px",
-                      overflow: "hidden",
-                      // border: "1px solid #777",
-                      margin: "0 15px",
-                      border: "1px solid #777",
-                    }}
-                  >
-                    <img
-                      src={this.state.getDefaultRedditProfilePicture}
-                      alt=""
-                      style={{
-                        height: "40px",
-                        width: "40px",
-                      }}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                    }}
-                  >
-                    u/{data.name}
-                  </div>
+                  u/{data.name}
                 </div>
               </div>
-            );
-            counter++;
-          }
-        })
+            </div>
+          );
+        } else if (item.isAccepted === 1) {
+          let data = this.state.users ? this.state.users[item.userID] : {};
+          acceptedUsers.push(
+            <div
+              key={item.userID}
+              className="row"
+              style={{ padding: "15px" }}
+            >
+              <div
+                className="col-1"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                {counter}.
+                </div>
+              <div
+                className="col"
+                style={{
+                  display: "flex",
+                }}
+              >
+                <div
+                  style={{
+                    display: "block",
+                    width: "40px",
+                    height: "40px",
+                    // backgroundColor: "#ccc",
+                    borderRadius: "25px",
+                    overflow: "hidden",
+                    // border: "1px solid #777",
+                    margin: "0 15px",
+                    border: "1px solid #777",
+                  }}
+                >
+                  <img
+                    src={data.profile_picture_url ? data.profile_picture_url : this.state.getDefaultRedditProfilePicture}
+                    alt=""
+                    style={{
+                      height: "40px",
+                      width: "40px",
+                    }}
+                  />
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                  }}
+                >
+                  u/{data.name}
+                </div>
+              </div>
+            </div>
+          );
+          counter++;
+        }
+      })
       : [];
     return (
       <>

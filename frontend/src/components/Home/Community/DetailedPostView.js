@@ -79,8 +79,8 @@ class DetailedPostView extends Component {
             userVoteDir == 1
               ? newComments[index].score - 1
               : userVoteDir == 0
-              ? newComments[index].score + 1
-              : newComments[index].score + 2;
+                ? newComments[index].score + 1
+                : newComments[index].score + 2;
           newComments[index].userVoteDir = userVoteDir == 1 ? 0 : 1;
           console.log("newComments = ", newComments);
           this.setState({ parentCommentList: newComments });
@@ -90,8 +90,8 @@ class DetailedPostView extends Component {
             userVoteDir == 1
               ? newComments[index].child[childIndex].score - 1
               : userVoteDir == 0
-              ? newComments[index].child[childIndex].score + 1
-              : newComments[index].child[childIndex].score + 2;
+                ? newComments[index].child[childIndex].score + 1
+                : newComments[index].child[childIndex].score + 2;
           newComments[index].child[childIndex].userVoteDir =
             userVoteDir == 1 ? 0 : 1;
           console.log("newComments = ", newComments);
@@ -133,8 +133,8 @@ class DetailedPostView extends Component {
             userVoteDir == -1
               ? newComments[index].score + 1
               : userVoteDir == 0
-              ? newComments[index].score - 1
-              : newComments[index].score - 2;
+                ? newComments[index].score - 1
+                : newComments[index].score - 2;
           newComments[index].userVoteDir = userVoteDir == -1 ? 0 : -1;
           console.log("newComments = ", newComments);
           this.setState({ parentCommentList: newComments });
@@ -145,8 +145,8 @@ class DetailedPostView extends Component {
             userVoteDir == -1
               ? newComments[index].child[childIndex].score + 1
               : userVoteDir == 0
-              ? newComments[index].child[childIndex].score - 1
-              : newComments[index].child[childIndex].score - 2;
+                ? newComments[index].child[childIndex].score - 1
+                : newComments[index].child[childIndex].score - 2;
           newComments[index].child[childIndex].userVoteDir =
             userVoteDir == -1 ? 0 : -1;
           console.log("newComments = ", newComments);
@@ -172,7 +172,7 @@ class DetailedPostView extends Component {
                 alt=""
                 width="40px"
                 style={{ borderRadius: "20px", margin: "5px" }}
-                src={this.state.getDefaultRedditProfilePicture}
+                src={comment.userID.profile_picture_url ? comment.userID.profile_picture_url : this.state.getDefaultRedditProfilePicture}
               />
               <span
                 style={{
@@ -342,7 +342,7 @@ class DetailedPostView extends Component {
                   alt=""
                   width="30px"
                   style={{ borderRadius: "15px", margin: "2px" }}
-                  src={this.state.getDefaultRedditProfilePicture}
+                  src={childComment.userID.profile_picture_url ? childComment.userID.profile_picture_url : this.state.getDefaultRedditProfilePicture}
                 />
                 <span
                   style={{
