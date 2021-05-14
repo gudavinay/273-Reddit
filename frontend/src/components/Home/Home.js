@@ -46,7 +46,7 @@ class Home extends Component {
       entityName: "Post",
     })
       .then((response) => {
-        // this.props.unsetLoader();
+        // this.props.unsetLoader() hahha;
         console.log("upVOted successfull = ", response);
         console.log("this.state = ", this.state);
         console.log("this.state = ", this.state.dataOfPosts[index].userVoteDir);
