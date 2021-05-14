@@ -347,7 +347,7 @@ class Navigationbar extends Component {
                         this.props.history.push("/communityanalytics");
                       }}
                     >
-                      community Analytics
+                      Community Analytics
                     </div>
                   </div>
                 </div>
@@ -434,7 +434,12 @@ class Navigationbar extends Component {
                   >
                     <div>
                       <img
-                        src={getUserProfile() && getUserProfile().profile_picture_url ? getUserProfile().profile_picture_url : this.state.getDefaultRedditProfilePicture}
+                        src={
+                          getUserProfile() &&
+                          getUserProfile().profile_picture_url
+                            ? getUserProfile().profile_picture_url
+                            : this.state.getDefaultRedditProfilePicture
+                        }
                         style={{
                           width: "25px",
                           borderRadius: "3px",

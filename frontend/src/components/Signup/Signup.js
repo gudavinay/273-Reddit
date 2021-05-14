@@ -64,8 +64,8 @@ class Signup extends Component {
         this.setState({
           authFlag: true
         });
-
       } else {
+        console.log("Came here");
         this.setState({
           authFlag: false,
           formerror: {},
@@ -91,14 +91,6 @@ class Signup extends Component {
             </Col>
             <Col className="login-form" style={{ paddingLeft: "30px" }}>
               <div
-                id="errorLogin"
-                hidden={this.state.loginError.length > 0 ? false : true}
-                className="alert alert-danger"
-                role="alert"
-              >
-                {this.state.loginError}
-              </div>
-              <div
                 style={{
                   fontSize: "24px",
                   fontWeight: "500",
@@ -118,10 +110,21 @@ class Signup extends Component {
                 <div className="Sso__button Sso__appleIdContainer">
                   Continue with Apple
                 </div>
-                <div className="Sso__divider">
+                <div
+                  className="Sso__divider"
+                  hidden={this.state.loginError.length > 0 ? true : false}
+                >
                   <span className="Sso__dividerLine"></span>
                   <span className="Sso__dividerText">or</span>
                   <span className="Sso__dividerLine"></span>
+                </div>
+                <div
+                  id="errorLogin"
+                  hidden={this.state.loginError.length > 0 ? false : true}
+                  className="alert alert-danger"
+                  role="alert"
+                >
+                  {this.state.loginError}
                 </div>
               </div>
               <Form
@@ -152,8 +155,9 @@ class Signup extends Component {
                     id="email"
                     name="email"
                     placeholder="Email"
+                    maxLength="150"
                     onChange={this.handleChange}
-                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                    pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
                     title="Invalid email address"
                     required
                   ></Form.Control>
@@ -168,6 +172,7 @@ class Signup extends Component {
                     id="password"
                     name="password"
                     placeholder="Password"
+                    maxLength="25"
                     onChange={this.handleChange}
                     required
                   ></Form.Control>

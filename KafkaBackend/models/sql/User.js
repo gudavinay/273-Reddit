@@ -7,20 +7,20 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true
     },
     email: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.STRING(150),
       allowNull: false,
       unique: true
     },
     password: {
-      type: DataTypes.STRING(150),
+      type: DataTypes.STRING(200),
       allowNull: false
     },
     name: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.STRING(150),
       allowNull: false
     },
     profile_picture_url: {
-      type: DataTypes.STRING(80)
+      type: DataTypes.STRING(255)
     }
   });
 

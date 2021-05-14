@@ -292,6 +292,8 @@ app.get("/getAllCommunitiesListForUser", (req, res) => {
   });
 });
 
+// app.get("/getUsersWithMorePostsForCommunities", checkAuth, )
+
 app.post("/community/vote/:community_id", checkAuth, (req, res) => {
   kafka.make_request(
     "mongo_community",

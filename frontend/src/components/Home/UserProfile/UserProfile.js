@@ -215,7 +215,7 @@ class UserProfile extends Component {
                       <i
                         className="fa fa-camera"
                         style={{ opacity: 1, fontSize: "75px", color: "white" }}
-                        onClick={() => { }}
+                        onClick={() => {}}
                       >
                         <input
                           style={{
@@ -290,8 +290,9 @@ class UserProfile extends Component {
                     className="form-control"
                     onChange={e => this.setState({ email: e.target.value })}
                     name="email"
-                    title="Please enter valid email"
-                    pattern="^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$'%&*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])$"
+                    maxLength="150"
+                    title="Please enter a valid email"
+                    pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
                     value={this.state.email}
                     required
                   />
@@ -320,6 +321,7 @@ class UserProfile extends Component {
                     onChange={e => this.setState({ password: e.target.value })}
                     name="password"
                     id="password"
+                    maxLength="25"
                     title="Please enter valid password"
                     value={this.state.password}
                   />
@@ -434,7 +436,7 @@ class UserProfile extends Component {
           <Modal.Body>
             <React.Fragment>
               {/* <center> */}
-              <form onSubmit={() => { }}>
+              <form onSubmit={() => {}}>
                 <Row style={{ padding: "5px 0" }}>
                   <Col sm={1}></Col>
                   <Col sm={8}>
@@ -442,6 +444,7 @@ class UserProfile extends Component {
                       type="text"
                       className="form-control"
                       placeholder="New topic name"
+                      maxLength="45"
                       onChange={e => {
                         this.setState({ newTopic: e.target.value });
                       }}

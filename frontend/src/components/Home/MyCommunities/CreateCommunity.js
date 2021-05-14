@@ -393,6 +393,7 @@ class CreateCommunity extends Component {
                     type="text"
                     id="name"
                     name="name"
+                    maxLength="50"
                     onKeyDown={evt => evt.key === " " && evt.preventDefault()}
                     value={this.state.communityName}
                     onChange={e =>
@@ -476,6 +477,7 @@ class CreateCommunity extends Component {
                     id="outlined-basic"
                     label="Title"
                     variant="outlined"
+                    maxLength="50"
                     value={this.state.title}
                     required
                     onChange={e => this.setState({ title: e.target.value })}
